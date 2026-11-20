@@ -1,50 +1,77 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+# Software Factory Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. Human Approval and Review
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+The issue owner MUST approve the refined task before its build begins. Every build MUST
+use an issue-specific branch and return its changes in a linked pull request. The owner
+MUST review the result and decide what merges into `main`; the AI MUST NOT approve tasks
+or merge independently. Changes to the factory's n8n workflows MUST be committed as JSON,
+reviewed in the pull request, and imported manually by the owner after review.
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+### II. Clear Specifications and Traceable Decisions
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+One repository MUST hold the factory and a separate folder for the software it builds.
+Every task MUST be an issue whose labels record its state; comments MUST preserve questions
+and answers, and the linked pull request MUST record the result. Refined tasks MUST use a
+fixed template containing a goal, constraints, and checkable acceptance criteria. The coding
+agent MUST ask before proceeding when an unresolved decision would change the result.
+In Basic A, answers given in the agent session MUST be summarized on the issue when they
+resolve such a decision, so the repository retains the reasoning.
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+### III. Incremental Automation
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+Basic A MUST be built and validated through real tasks with a manually started coding agent
+before the Basic B runner is added. Basic B MUST build only owner-authored tasks, one at a
+time. Questions, failures, and timeouts MUST be visible on the issue with enough context
+for the owner to answer, retry, or stop the task. Advanced extensions MUST follow the basic
+stages. This sequence keeps automation grounded in a demonstrated review loop.
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+### IV. Bounded Permissions and Public Work
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+The repository MUST be public. Each component MUST receive only the permissions needed for
+its role. Credentials and machine-local secrets MUST stay out of Git, workflow exports,
+issue comments, and pull request logs. Project documentation MUST state each component's
+permissions, what the agent may do autonomously, and what requires owner action. Changes
+that expand access or autonomy MUST update that documentation and receive owner review.
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+### V. Evidence from Real Runs
+
+Each pull request MUST summarize the change and report the checks actually run and their
+outcomes, including any acceptance criteria left unchecked. Unrun checks MUST NOT be
+reported as passing. Run evidence MUST preserve failures, retries, and human intervention
+without exposing secrets. The final evaluation MUST link at least five real task runs to
+their issues and pull requests and explain where the factory worked, stopped, or needed help.
+
+## Assignment Requirements
+
+`project-brief.md` is the source for assignment requirements. This individual project MUST
+deliver a working factory with n8n workflows and a runner, an architecture diagram, the
+specification template, the refinement AI prompt, and evidence of at least five real tasks.
+The report MUST be at most five pages and cover architecture; agent and model choice with
+capabilities, cost, and limits; template and prompt design with an output example;
+implementation; evaluation; permissions and safety; and reflection and future work.
+Submission MUST include the report and public repository link through WISEflow.
+
+Exact label transitions, runner API, provider and model choice, and deployment details
+belong in Specify or Plan. Deferring these details MUST NOT waive requirements in the brief.
+
+## Planning and Review Gates
+
+Every plan MUST identify the applicable stage, acceptance checks, permission needs, and
+required human actions. Basic B plans MUST link evidence that Basic A was validated.
+Every pull request review MUST check task approval, issue linkage, branch isolation,
+acceptance evidence, secret exclusion, and any workflow JSON or permission changes.
+Unchecked criteria or failed checks MUST be visible to the owner before the merge decision.
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+This constitution governs project planning and review. Amendments MUST be proposed in a
+pull request with a rationale and an account of affected plans or practices; the owner
+MUST approve them. Versions MUST use semantic versioning: major for incompatible principle
+changes or removals, minor for added or materially expanded rules, and patch for clarifications.
+Every amendment MUST update the version and amendment date. Planning and pull request
+review MUST verify compliance with the current constitution.
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+**Version**: 1.0.0 | **Ratified**: 2026-11-20 | **Last Amended**: 2026-11-20
