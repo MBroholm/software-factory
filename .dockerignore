@@ -1,0 +1,21 @@
+# Compose uses upstream images; exclude these if a build context is added later.
+.git
+.agents
+.codex
+.aws
+**/node_modules
+**/__pycache__
+.venv
+**/.env
+**/.env.*
+!**/.env.example
+factory/local
+**/*.log
+**/*.log.*
+coverage
+Dockerfile*
+.dockerignore
+.DS_Store
+Thumbs.db
+.vscode
+.idea
