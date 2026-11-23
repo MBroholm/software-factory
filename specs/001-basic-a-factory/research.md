@@ -1,137 +1,160 @@
-# Research: Basic A Manual Software Factory
+# Research: Basic A — Manual Software Factory
 
-**Date**: 2026-11-22
-**Status**: Phase 0 draft — D1/D2 require owner answers. Phase 1 is blocked until resolved.
+**Updated**: 2026-11-23 | **Status**: Architecture decisions resolved as recommendations;
+local hardware/model suitability must be validated before activation.
 
-## Evidence and scope
+## Context and method
 
-Read the local brief, constitution v1.1.1, approved spec, quality checklist, ignore rules and
-SpecKit plan template. No application or deployment code exists locally. Anonymous REST calls
-confirmed the existing public repository and all nine state labels; no remote changes were made.
-Source URLs: [repository](https://api.github.com/repos/MBroholm/software-factory),
-[labels](https://api.github.com/repos/MBroholm/software-factory/labels).
+Read the brief, constitution v1.1.1, approved spec, original draft and checklist. The original
+artifacts remain in commit `920399e`. A research agent checked official deployment, GitHub and
+Ollama references; the primary agent reviewed the complexity against FR-001–016. Existing public
+repository and labels were verified by anonymous GitHub API reads on 2026-11-22. No server was
+accessed and no runtime/model benchmark was executed.
 
-The mandated Phase 0 research agent investigated n8n deployment, persistence, concurrency,
-retention and GitHub permissions using official documentation. The conclusions below are planning
-recommendations; claims about product capabilities are distinguished from design inferences.
+## R1 — Separate manual development from always-on orchestration
 
-## R1 — One n8n instance under Compose
+**Decision**: Recommend n8n and local Ollama on Ubuntu in Compose, with interactive Codex on Fedora.
 
-**Decision (recommendation)**: Run only n8n in regular mode on Ubuntu; Codex stays interactive on
-Fedora. Pin a tested supported image and persistent data volume. The owner imports reviewed JSON.
+**Rationale**: Matches owner preferences and leaves only issue/PR operations crossing machines.
+The brief requires n8n and manual agent launch, not a custom bridge into Fedora. Compose is a
+user preference, not a course mandate.
 
-**Rationale**: It separates always-on polling from laptop availability without developing a
-runner. Compose is the owner's preference. The current official Compose guide includes optional
-Assistant facilities; those are unrelated to this project's bounded refinement step and should
-not be copied into this prototype. [Official Compose guide](https://docs.n8n.io/deploy/host-n8n/install-options/install-using-docker-compose.md).
+**Alternatives considered**: Laptop-only n8n loses always-on operation. A runner, remote shell
+launcher, worker pool and current optional n8n Assistant sandbox services exceed Basic A.
+Do not copy a full hosted Assistant stack. [n8n Compose installation](https://docs.n8n.io/deploy/host-n8n/install-options/install-using-docker-compose.md).
 
-**Alternatives considered**: Entire factory on laptop (not always on); hosted n8n (different hosting
-preference); queue workers/Redis, Assistant sandboxes, runner container (unnecessary Basic A scope).
-Exact image pin is a tested deployment artifact, not a researched claim that an untested tag works.
+## R2 — Remove task ledger; retain one fail-stop flag
 
-## R2 — SQLite and built-in small ledger
+**Decision**: GitHub is the sole task record. Remove Data Table task cursors, reservation rows,
+approval journals and pending-operation replay. Keep exactly one `factory_control` row with a
+busy flag and execution/issue context for manual diagnosis.
 
-**Decision (recommendation)**: SQLite for n8n's database, small Data Tables for processing state,
-plus GitHub as the human-facing system of record. Back up the data volume and encryption key;
-test restart and restore before relying on them. No application DB schema or direct SQL against
-n8n internals.
+**Rationale**: FR-006/007 need a persistent occupied slot, supplied by `Building`. FR-004/016
+need repeat suppression, supplied by marked refinement source identifiers. FR-005 needs current
+explicit approval, not an approval database. However, FR-016/SC-005 need unattended polls not to
+repeat unknown writes: acquire the shared busy flag before side effects, clear only after
+success. Error/crash leaves it held. Recovery is manual, with no automatic journal replay.
 
-**Rationale**: n8n supports SQLite by default and PostgreSQL optionally. Data Tables persist data
-across workflows, including duplicate-prevention markers; they suit this small workload. These
-capabilities do not prove atomic distributed locking. [Database support](https://docs.n8n.io/deploy/host-n8n/configure-n8n/choose-n8ns-database.md),
-[Data Tables](https://docs.n8n.io/build/work-with-data/data-tables.md).
+**Alternatives considered**: No durable error flag leaves the next scheduled poll free to retry
+a timed-out operation. A per-operation journal plus automatic reconciliation adds substantially
+more code without creating a transaction with GitHub. Static workflow data has save/manual-test
+limitations and is not an appropriate cross-workflow fail-stop control. n8n Data Tables already
+provide small persistent records, but do not promise a distributed mutex.
+[Data Tables](https://docs.n8n.io/build/work-with-data/data-tables.md),
+[static workflow data](https://docs.n8n.io/build/code-in-n8n/cookbook/built-in-methods-and-variables-examples/getworkflowstaticdata.md).
 
-**Alternatives considered**: PostgreSQL adds a service and backup procedure; reconsider if the owner
-already operates it or deployment tests show need. Workflow static data alone is inappropriate:
-it is experimental and has save/testing limitations. [Static data documentation](https://docs.n8n.io/build/code-in-n8n/cookbook/built-in-methods-and-variables-examples/getworkflowstaticdata.md).
+## R3 — Serialize workflow writes; pause for manual recovery
 
-## R3 — Serialize scheduled writes and separately reserve the build slot
+**Decision**: One n8n instance in regular mode, `N8N_CONCURRENCY_PRODUCTION_LIMIT=1`, no manual
+production-mutating execution while schedules run. No parallel manual recovery. All workflows
+use the single flag. Set target label before removing source; preserve unrelated labels.
 
-**Decision (recommendation)**: Set `N8N_CONCURRENCY_PRODUCTION_LIMIT=1`; keep one factory instance.
-The build reservation persists independently of workflow execution completion. Stop and reconcile
-conflicting ledger/label states. Pausing schedules and draining active executions is required
-before manual production mutation tests.
+**Rationale**: The setting serializes production trigger executions but excludes manual,
+subworkflow, error and CLI execution. The flag detects incomplete previous work; it is not the
+manual-build slot. Label updates and comment writes are not atomic together, and human edits
+remain outside n8n serialization. Conservative halts/manual normalization are proportionate.
+[Concurrency control](https://docs.n8n.io/deploy/host-n8n/configure-n8n/scaling/control-concurrency.md).
 
-**Rationale**: n8n serializes production trigger executions with this setting, but manual,
-subworkflow, error and CLI executions bypass it. This is not a GitHub transaction or a distributed
-lock. The persistent reservation supplies the much longer manual-build occupancy. These last two
-points are design inferences. [Concurrency documentation](https://docs.n8n.io/deploy/host-n8n/configure-n8n/scaling/control-concurrency.md).
+**Alternatives considered**: Labels alone do not serialize concurrent workflow executions.
+Distributed locks/transaction services are unnecessary under a single writer. If FR-016 is
+intended to mean exactly-once across all remote failures and independent concurrent editors,
+clarify that stronger requirement rather than silently promising it. The plan explicitly covers
+normal repetition and stops after ambiguity, not arbitrary distributed exactly-once execution.
 
-**Alternatives considered**: Only checking `Building` labels fails on overlap/crash; distributed
-locking/queue services are disproportionate. Data Table upsert alone has no documented guarantee
-sufficient to claim exactly-once mutation. Use event IDs, comment markers and pending operations
-for crash reconciliation, with explicit failure-window tests.
+## R4 — Explicit approval and light build association
 
-## R4 — GitHub REST, approval provenance and minimal credentials
+**Decision**: Latest owner `Approved` event, current refinement ID/content times/source digest,
+and a marked handoff comment referencing both. Owner checks the exact task at manual launch.
+For rework, handoff records prior PR numbers/head SHAs; old results never override newer approval.
 
-**Decision (recommendation)**: Use existing GitHub/HTTP Request nodes and paginate REST reads.
-Fine-grained repository token: Issues write, Pull requests read, required metadata. Review actual
-endpoint requirements when configuring credentials. Use issue timeline actors to verify owner
-approval and comment IDs/content snapshots to bind it to the refined scope.
+**Rationale**: Meets FR-005/008/010/011 without reconstructing all edit history or automatic scope
+classification. Ambiguous history, multiple result PRs, changed approved inputs or unchanged
+reopened results require manual resolution/fresh approval. Digest validation uses the captured comment IDs, not every later owner comment: session
+summaries and unchanged-scope QA rework must remain compatible with reapproval. A hash detects
+changed inputs; it is
+not a semantic scope judgement or an immutable authorization token.
 
-**Rationale**: GitHub exposes issue comments, labels, timeline actors and PR merge state. Issue
-listings also contain PRs and must be filtered. Issue permission does not enforce label-specific
-approval authority; that is a policy/code boundary. An owner-owned token shares the owner's actor
-identity, so factory markers/known IDs must suppress self-triggered refinement. These guard rules
-are design decisions, not guarantees provided by GitHub.
-[Labels](https://docs.github.com/en/rest/issues/labels),
+**Alternatives considered**: Labels without actor/revision checks are too weak. Cryptographic
+signatures, approval journaling, reconstructing deleted versions and a general attempt database
+are not needed for this manual launch loop. Owner-authorized handoff gives future Basic B an
+input contract without implementing its runner now.
+
+GitHub endpoints support comments, timeline and PR state. Issues listings include PRs; paginate
+and exclude them. Use a single-repository fine-grained token with Issues write, Pull requests
+read and required Metadata access. n8n gets no Contents write/PR write/merge capability.
+An owner-owned token shares actor identity, so exclude known factory markers when watching owner
+comments. GitHub has no per-label approval permission; the policy remains code/operationally
+bounded. [Timeline](https://docs.github.com/en/rest/issues/timeline),
+[labels](https://docs.github.com/en/rest/issues/labels),
 [comments](https://docs.github.com/en/rest/issues/comments),
-[timeline](https://docs.github.com/en/rest/issues/timeline),
 [pull requests](https://docs.github.com/en/rest/pulls/pulls).
 
-**Alternatives considered**: GitHub App provides stronger automation attribution but more setup;
-classic broad token grants excessive access; public inbound webhooks are not required for polling.
-No factory PR-write, contents-write, merge, or GitHub Actions workflow-management permission.
-A distinct automation identity remains optional; do not create one without owner agreement.
+## R5 — Local refinement first, bounded evaluation
 
-## R5 — Minimal operational policy
+**Decision**: Recommend Ollama with `qwen3:4b-instruct` as the first small candidate; benchmark
+before activation, record model digest and tested settings. One inference at a time, explicit
+4096-token context and bounded output. No paid fallback is activated automatically.
 
-**Decision (recommendation)**: Poll every 60 seconds, process a bounded number of items per run,
-order valid approvals by timestamp then issue number. Use deterministic idempotency markers and
-bounded REST retries; never blindly retry a comment POST with uncertain outcome. Store durable
-sanitized course evidence outside ephemeral execution logs.
+**Rationale**: The user has Plus and asks whether local refinement suffices. This is a narrow
+rewrite/question task with human review, so local inference is worth trying; sufficient quality
+and latency on unknown hardware are hypotheses to test, not established facts. Plus does not
+include ordinary OpenAI API usage. [OpenAI Plus explanation](https://help.openai.com/en/articles/6950777-what-is-chatgpt-plus).
 
-**Rationale**: These are proportionate defaults, not source requirements. Record actual API usage
-and tune during validation. Paginate all relevant issue, timeline, comment and PR reads. Use
-execution pruning rather than unlimited payload retention; retain errors privately long enough
-to diagnose, and publish only sanitized evidence. [Execution data documentation](https://docs.n8n.io/deploy/host-n8n/configure-n8n/scaling/manage-execution-data.md).
+Use Ollama native `/api/chat`, `stream:false`, JSON schema in `format`, no tools. Validate final
+`message.content`; discard thinking output. Schema validity does not prove acceptance criteria
+are meaningful or that the model preserved scope. [Ollama structured outputs](https://docs.ollama.com/capabilities/structured-outputs),
+[chat API](https://docs.ollama.com/api/chat).
 
-**Alternatives considered**: Webhooks, high-frequency polling, custom dashboards and a general
-recovery engine increase setup without improving the course's manual loop. Never auto-expire a
-build reservation based on the deferred Basic B timeout.
+**Alternatives considered**: A hosted API minimizes hardware dependence but requires separately
+approved account/billing and spend limit; it is the fallback decision if the local trial fails.
+Do not automate Codex on the server to reuse a subscription. Generic `qwen3:4b` currently maps to
+a thinking variant; the distinct instruct tag avoids assuming every model can disable thinking.
+Inspect `/api/show`, pin the downloaded digest; model tags can change.
+[Qwen3 tags](https://ollama.com/library/qwen3/tags),
+[thinking controls](https://docs.ollama.com/capabilities/thinking).
 
-## D1 — Model access: owner answer required
+CPU-only Docker is supported; GPU setup is optional if existing hardware makes it useful. Model
+file size is not RAM needed at a particular context size. Ask for CPU/RAM/GPU before choosing
+larger models; bound context/concurrency and measure alongside n8n. Do not purchase hardware as
+part of this plan. [Ollama Docker](https://docs.ollama.com/docker),
+[Ollama FAQ](https://docs.ollama.com/faq).
 
-**Recommendation**: One hosted API refinement call with structured goal/constraints/acceptance
-criteria/questions output and no tools; validate output deterministically before posting it.
-Preserve the rough issue and prior comments. Treat their content as untrusted task data, never
-instructions to disclose credentials or invoke tools. Keep model/provider settings configurable
-and the prompt versioned, without building a multi-provider framework.
+## R6 — Private editor via existing SSH
 
-**Tradeoff**: Hosted access minimizes server requirements but needs a usable account, paid quota,
-data-sharing acceptance and an owner-approved spending boundary. A local model avoids hosted
-inference charges but requires hardware and output-quality validation that have not been provided.
-Codex's interactive coding-agent role does not select the refinement provider.
+**Decision**: Resolved by owner's confirmed Fedora-to-Ubuntu SSH access. Recommend server
+`127.0.0.1:5678` binding and Fedora local forwarding to the same loopback port; owner login remains.
+No public editor, TLS termination, domain, inbound GitHub webhook or VPN deployment.
 
-**NEEDS CLARIFICATION**: Existing model access or permission to recommend a hosted provider;
-provider/model, spending boundary and suitability for public task content must be confirmed.
-No secrets are requested in chat. Model-node and credential selection cannot be finalized yet.
+**Rationale**: Editor traffic goes through the encrypted SSH connection. The factory continues
+polling when the laptop/tunnel is off. Ollama is accessible only by Compose service name, with no
+published host port. Keep outbound access for GitHub/model downloads; do not mark the only n8n
+network internal without a separate egress network.
+[Compose networking](https://docs.docker.com/compose/how-tos/networking/).
 
-## D2 — Editor access: owner answer required
+**Alternatives considered**: Reuse an existing VPN/proxy if desired later. A public HTTPS editor
+adds setup with no Basic A requirement. The server alias is a runbook parameter, not a blocker.
 
-**Recommendation**: Bind the editor to server loopback and use SSH forwarding from Fedora; use
-n8n owner login. Scheduled outbound GitHub requests do not need a public editor or webhook.
+## R7 — Persistence, evidence and limited validation
 
-**Tradeoff**: SSH forwarding avoids domain/TLS/reverse-proxy operation but requires usable SSH
-access. Reuse an existing private VPN or protected proxy if present. Public HTTPS requires
-additional network/authentication configuration and is not assumed.
+**Decision**: Default SQLite, named volumes, backup stopped n8n data with the encryption key,
+private execution pruning and sanitized public evidence. Recommend 14-day execution retention,
+60-second schedules, bounded REST calls and no automatic write/model retries.
 
-**NEEDS CLARIFICATION**: Confirm private SSH access or describe the existing access path.
+**Rationale**: One owner and three low-volume workflows do not need another DB service. The final
+five-run evidence must outlive transient n8n execution logs. Runtime failures are retained until
+summarized without secrets; backup restores must inspect the busy flag before resuming.
+[Database support](https://docs.n8n.io/deploy/host-n8n/configure-n8n/choose-n8ns-database.md),
+[execution data](https://docs.n8n.io/deploy/host-n8n/configure-n8n/scaling/manage-execution-data.md).
 
-## Research gate and next step
+**Alternatives considered**: PostgreSQL if real operational need appears; unlimited logs risk
+payload/secret retention. A large mocked integration platform is unnecessary: use small fixtures,
+critical failure-window tests and real issue/PR demonstrations.
 
-D1 and D2 are pending, not resolved by inventing credentials, account access, costs or network
-infrastructure. Under the speckit-plan requirement to error on unresolved clarifications, stop
-before Phase 1 until answers are available. Then finalize the plan; generate data-model.md,
-contracts/ and quickstart.md; re-run the constitutional design check. No runtime validation is
-claimed by this research. No extension hooks are registered.
+## Remaining deployment checks and owner decisions
+
+Architecture is specified; no unresolved scope question blocks Phase 1. Before activation:
+confirm CPU/RAM/GPU and usable candidate model; pin tested software/model versions; configure
+repository token and SSH alias; review recommended FR-016/SC targets. If model quality/resource
+checks fail, owner chooses a different local candidate or approves a hosted budget; do not guess.
+The instructor-confirmation requirement remains outstanding and unchanged. No automated
+resumption is planned. No extension registry/hooks exist.

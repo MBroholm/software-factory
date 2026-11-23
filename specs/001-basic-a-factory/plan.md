@@ -1,225 +1,261 @@
 # Implementation Plan: Basic A — Manual Software Factory
 
-**Branch**: `main` (actual Git branch) | **Date**: 2026-11-22 | **Spec**: [spec.md](spec.md)
+**Branch**: `001-basic-a-factory` | **Date**: 2026-11-23 | **Spec**: [spec.md](spec.md)
 
-**Input**: Approved Basic A specification from `specs/001-basic-a-factory/spec.md`.
+**Input**: Approved Basic A specification; constitution v1.1.1; owner's complexity review,
+Fedora/Ubuntu/Compose preferences, SSH availability and interest in local Ollama refinement.
 
-**Status**: Phase 0 draft; model access and editor access await owner input. Phase 1 is gated.
-No implementation, installation, deployment, imports, or GitHub mutations have been performed.
-The setup script reports logical feature branch `001-basic-a-factory`; `git branch --show-current`
-reports `main`. Feature discovery uses `.specify/feature.json`, not a newly created branch.
+**Status**: Phase 0 research and Phase 1 design complete. Design recommendations are ready for
+review/task generation; deployment preflight and model evaluation remain implementation gates.
+No runtime, workflow, deployment, or server changes were made. The initial spec and draft plan
+were preserved in commit `920399e` on this feature branch before revision.
 
 ## Summary
 
-Keep the Basic A factory small: three scheduled n8n workflows on the Ubuntu server, interactive
-Codex development on Fedora, and GitHub issues/comments/pull requests as the shared interface.
-Use Docker Compose as requested. No network connection from n8n into the laptop is needed;
-the owner reads the reserved issue and manually launches Codex locally.
+Use three scheduled n8n workflows on Ubuntu and manually launched Codex on Fedora. GitHub issues,
+labels, comments and pull requests connect them. Deploy n8n and local Ollama with Docker Compose.
+The owner accesses n8n's editor through SSH forwarding; no public editor or webhook is needed.
+Keep human approval, questions in the agent session, review and manual workflow JSON import.
 
-### Established inputs versus recommendations
+### Requirements, preferences and recommendations
 
-| Source | Established requirement or preference |
+| Classification | Inputs |
 |---|---|
-| Brief; constitution I–III; FR-001–012 | Three scheduled workflows; refinement in n8n; explicit owner approval; manual agent start; issue branch and linked PR; owner review; reviewed JSON imported manually |
-| Owner clarification; FR-002 | Accept only issues authored by the project owner in Basic A |
-| Owner clarification; FR-006 | n8n sets `Building` to reserve the one build slot before manual launch; it does not prove the agent started |
-| Owner clarification; FR-011 | Unmerged PR closure with an open issue leaves `Your QA`; owner returns to `Approved` or closes issue |
-| Constitution IV–V; FR-013–014 | Public single repository; separate product folder; limited permissions; no secrets; truthful real-run evidence |
-| User preferences; FR-015 and planning request | Codex and SpecKit on Fedora, always-on factory on Ubuntu, Docker Compose preferred |
-| Recommendations in this plan | One n8n instance, SQLite, Data Tables ledger, private editor, serial production executions, 60-second polling, deterministic queue order and comment markers |
+| Brief/constitution; FR-001–014 | Three workflows; fixed refinement template; explicit approval; manual coding-agent launch; one build at a time; branch/PR linkage; human review; manual JSON import; bounded permissions and truthful evidence |
+| Confirmed owner policies; FR-002, 006, 011 | Only owner-authored issues; `Building` reserves the slot before manual launch; unmerged PR closure leaves `Your QA` while issue remains open |
+| Owner preferences; FR-015 | Interactive Codex/SpecKit on Fedora, always-on Ubuntu factory, Docker Compose; SSH access is available |
+| Design recommendations | SQLite; one serialized n8n instance; one shared fail-stop flag; GitHub comment markers; local Ollama first; SSH forwarding; 60-second polling |
+| Spec proposals, not brief mandates | FR-016 reliability behavior and P-labelled success targets; this plan retains them as design/validation targets without calling them assignment mandates |
 
-FR-016 and the spec's P-labelled acceptance targets remain proposed guidance. This plan recommends
-adopting them because they test duplicate processing, safe recovery, and a usable manual loop.
-The owner has not separately accepted them; include them explicitly in plan review rather than
-silently reclassifying them as assignment mandates.
+The spec and constitution are unchanged. The layout, polling interval, flag, marker format and
+model candidate are recommendations, not requirements discovered in the brief.
 
-### Repository inspection
+### Inspection and preservation
 
-- Existing tracked content is the brief, constitution, SpecKit/Codex scaffolding, and ignore rules;
-  the new feature spec/checklist are still untracked. No application, deployment, workflow JSON,
-  existing runtime database, or server configuration was found locally.
-- Origin is `https://github.com/MBroholm/software-factory.git`. Anonymous GitHub REST reads on
-  2026-11-22 confirm a public repository with `main` as default and owner ID `202449424`.
-- Remote labels were read successfully: `Ideas`, `Refining`, `Ready for approval`, `Approved`,
-  `Building`, `Waiting for you`, `Stuck`, `Your QA`, and `Done` all exist. Reuse them; do not create
-  or rename labels. Preserve unrelated labels such as `bug` and `documentation`.
-- `gh` is installed but unauthenticated. Anonymous reads verified repository facts, not write
-  permissions. Ubuntu resources, Docker installation, SSH access, existing services, and model
-  credentials have not been inspected. No applicable AGENTS.md or extension hooks were found.
+The repository has the brief, constitution and SpecKit scaffolding, with no application,
+workflow JSON or deployment to preserve. The original uncommitted feature files were committed
+on `001-basic-a-factory` before editing; `main` was not changed. Feature discovery uses the local,
+ignored `.specify/feature.json`. Anonymous GitHub reads on 2026-11-22 confirmed the public
+`MBroholm/software-factory` repository, owner ID `202449424`, default `main`, and all nine existing
+state labels. Reuse labels and preserve unrelated labels. `gh` exists but is not authenticated
+in this environment. Server hardware, installed software and write credentials are not verified.
+No applicable AGENTS.md or pre/post planning extension hooks were found.
 
-### Recommended architecture
+### Architecture
 
 ```mermaid
 flowchart LR
-    subgraph Fedora["Fedora laptop — interactive development"]
-        Owner[Project owner]
-        Agent[Codex and SpecKit]
-        Work[Issue-specific working branch]
-        Owner -->|manual launch and session answers| Agent
-        Agent --> Work
+    subgraph Fedora["Fedora laptop"]
+        Human[Project owner]
+        Codex[Interactive Codex and SpecKit]
+        Human -->|manual launch and answers| Codex
     end
-    GH["GitHub — issues, state labels, comments, pull requests"]
-    subgraph Ubuntu["Ubuntu server — Docker Compose"]
-        N8N["One n8n instance: refine, reserve, track"]
-        Data["Persistent n8n data: SQLite and small ledger"]
-        N8N --- Data
+    GH["GitHub: issues, labels, comments, PRs"]
+    subgraph Ubuntu["Ubuntu: Docker Compose"]
+        N8N["n8n: refine / reserve / track"]
+        Persist["SQLite volume: n8n data + one fail-stop flag"]
+        Ollama["Ollama: local refinement only"]
+        N8N --- Persist
+        N8N -->|private service network| Ollama
     end
     N8N <-->|scheduled REST polling and issue updates| GH
-    N8N -->|one bounded refinement call| Model["Refinement model — access awaiting owner decision"]
-    Work -->|push and linked pull request| GH
-    Owner <-->|approve, review, merge or close| GH
-    Owner -.->|private editor access proposed| N8N
+    Codex <-->|approved issue, branch and PR| GH
+    Human <-->|approval and review| GH
+    Human -.->|SSH tunnel: editor on loopback| N8N
 ```
 
-GitHub is the durable human-facing record; the n8n ledger stores processing cursors and recoverable
-operations, not a second task board. Refinement uses a basic model call with validated structured
-output, not a tool-using agent. The model cannot change labels, execute code, approve, or merge.
-The fixed task template is distinct from SpecKit's feature specification template; using SpecKit
-for development does not require every factory-built task to run the full SpecKit workflow.
+No runner, custom backend, Redis, workers, reverse proxy or PostgreSQL. Ollama has no published
+host port; n8n reaches `http://ollama:11434`. The Compose network permits n8n outbound GitHub
+access. Persist n8n data and model files in separate volumes. No Docker socket, host checkout,
+laptop credentials or command-execution ability is mounted into n8n.
 
 ## Technical Context
 
-**Language/Version**: n8n workflow JSON plus small JavaScript transforms supported by the pinned
-n8n release; Bash/Git/GitHub CLI for owner runbooks. No custom application runtime or service.
+**Language/Version**: n8n workflow JSON and small JavaScript transforms; Bash/Git/GitHub CLI for
+manual runbooks. Pin supported n8n/Ollama image versions and downloaded model digest when tested;
+no untested release number or floating production `latest` is prescribed.
 
-**Primary Dependencies**: Docker Engine and Compose plugin on Ubuntu; a supported n8n release
-with Schedule Trigger, HTTP Request, Data Table, and basic structured LLM output support. Pin the
-exact tested image version/digest during implementation; record it in release evidence rather
-than inventing an untested version now. GitHub REST API; Git and interactive Codex on Fedora.
+**Primary Dependencies**: Docker Engine/Compose on Ubuntu; n8n Schedule Trigger, HTTP Request,
+Data Table and transformation nodes; Ollama native chat API with JSON-schema output; GitHub REST.
+Codex remains interactive on Fedora; no change to its login or subscription is proposed.
+Python 3 standard-library unittest is the recommended lightweight fixture-test tool on Fedora.
 
-**Storage**: Recommend default SQLite in a named volume at `/home/node/.n8n`, with small n8n Data
-Tables for task cursors, reservations, and operations. Back up the stopped service's volume and
-encryption key together. No PostgreSQL, Redis, distributed workers, or product database yet.
+**Storage**: n8n's default SQLite and credential store under persisted `/home/node/.n8n`; one
+`factory_control` Data Table with one row, described in [data-model.md](data-model.md). GitHub
+holds task state and marked refinement/handoff comments. No per-task DB, event cursor table,
+approval journal, reservation table, operation journal or autonomous recovery state machine.
 
-**Testing**: Table-driven transition/guard tests; workflow JSON and secret checks; mock GitHub
-and deterministic model responses in an isolated instance; one real task including refinement
-revision, session question, issue summary, linked PR, and owner decision; targeted interruption,
-rework, unmerged-close, and queue tests. See acceptance map below. No tests have run yet.
+**Testing**: Small contract fixtures for guards/transitions and marker parsing; targeted live
+workflow exercises; one real manual run with a session question and PR. Use the acceptance matrix
+and commands in [quickstart.md](quickstart.md). No implementation or runtime checks have run.
 
-**Target Platform**: Ubuntu server for n8n; Fedora laptop for manual agent execution. Exact OS
-versions, server resources and Docker availability are deployment preflight checks, not assumed.
+**Target Platform**: Ubuntu server for n8n/Ollama; Fedora laptop for Codex, Git and SSH tunnel.
+Hardware, disk space, Docker availability and usable model performance are preflight gates.
 
-**Project Type**: Workflow automation with operating instructions and a separate product folder.
+**Project Type**: Single-user workflow automation, deployment/runbooks and a separate product folder.
 
-**Performance Goals**: Recommend 60-second polling for each workflow, one issue per refinement
-execution and at most one model request per issue revision. State changes appear on the next
-successful eligible check, allowing queueing or external-service failure; no hard latency SLA.
-Use a 60-second model request timeout and no automatic model retry after an ambiguous failure.
-These are recommendations, not course requirements or the deferred Basic B 30-minute timeout.
+**Performance Goals**: Recommend 60-second schedules and one refinement per execution; reserve
+lowest issue number among eligible approvals for deterministic selection. A successful eligible
+poll observes a change; no hard service SLA. Initial local-model request timeout: 120 seconds,
+one request at a time, 4096-token context, bounded input/output. These are tunable recommendations,
+not assignment requirements or Basic B's deferred 30-minute runner timeout.
 
-**Constraints**: Single factory instance; serial scheduled mutators; manual Codex start; only
-owner-authored issues; explicit approval per scope; no secret exports or autonomous import/merge.
-No production-mutating editor tests while schedules are active. One build reservation persists
-across workflow executions and restarts until reconciliation confirms release.
+**Constraints**: One production instance; `N8N_CONCURRENCY_PRODUCTION_LIMIT=1`; no manual mutating
+runs while schedules are active. A held control flag blocks all three workflows pending manual
+inspection; a `Building` label separately occupies the long-lived manual build slot. Single
+writer and operator discipline are deployment constraints, not distributed-lock guarantees.
 
-**Scale/Scope**: One owner, one repository, three workflows, one manual build at a time. Basic A
-validation first; the project's five-run evaluation and runner remain later obligations.
+**Scale/Scope**: One repository/owner, three workflows, one coding task building at a time.
+Basic B and advanced extensions are deferred; no runner API is designed or implemented here.
 
-**NEEDS CLARIFICATION — D1**: Refinement model access, provider/model and owner-approved spend
-boundary. Recommend a hosted API for predictable setup unless a usable local model already
-exists. No provider, paid account, key, local hardware, or subscription-to-API equivalence is assumed.
+### Model recommendation and resolved editor access
 
-**NEEDS CLARIFICATION — D2**: Private editor access. Recommend loopback-only server binding and
-SSH forwarding. Confirm whether SSH, an existing VPN, or public HTTPS is appropriate before
-finalizing Compose/network and quickstart contracts.
+Recommend **local Ollama first**, initially `qwen3:4b-instruct` with its tested digest recorded.
+This is a benchmark candidate, not a claim it will fit unknown hardware or meet task quality.
+Use CPU-only Compose initially; add GPU configuration only if existing hardware warrants it.
+The model download size is not a RAM requirement. Cap context and concurrency; benchmark five
+short examples (clear task, ambiguous task, revision, conflicting constraints, instruction
+injection). Require valid fields and owner-rated usable refinements without invented decisions;
+record response time and peak memory. If unsuitable, stop and ask the owner to choose another
+local model or separately billed hosted API; do not silently enable a paid fallback.
 
-### Workflow behavior recommendations
+ChatGPT Plus does not include ordinary OpenAI API billing. The local recommendation needs no
+new paid API account; it does not imply subscription credentials can be used by n8n. See verified
+sources and alternatives in [research.md](research.md).
 
-1. **Refine**: Poll eligible open owner-authored issues; exclude PR records. For `Ideas`, or a
-   new owner discussion comment at `Ready for approval`, record an input revision, enter
-   `Refining`, make one bounded model call, validate template fields, post a marked refinement
-   comment, then set `Ready for approval`. Store comment/event IDs; marked factory comments
-   never trigger refinement, even if the credential shares the owner's identity. Preserve
-   prior refinements and questions. Failed/ambiguous operations remain visible for owner recovery.
-2. **Reserve**: Poll `Approved`, oldest valid approval event first, issue number as tie-breaker.
-   Require author owner ID, a current successful refinement, and an owner-authored `Approved`
-   label event after that refinement. Snapshot the refinement comment content and issue body.
-   Reject a changed snapshot or missing actor/event provenance rather than guessing approval.
-   Read all `Building` issues and the ledger; only claim a free, consistent slot. Write a
-   pending reservation before GitHub updates; reconcile partial writes before choosing another
-   issue. Set `Building`, remove only the prior factory state label, and post a stable handoff
-   comment. The owner starts Codex locally on `issue-N` from the current `main` and approved
-   snapshot, then posts material session decisions back to the issue.
-3. **Track**: Reconcile closed task issues and PRs explicitly linked to each current build
-   attempt. Require same-repository `issue-N` head, `main` base, and an explicit issue reference;
-   ambiguous/multiple active results stop that task's progression. Record attempt/PR association
-   to avoid old PRs undoing owner-requested rework. Detect a new/reopened PR or new head work after
-   the latest approval, not merely an old PR sharing the branch. A current result enters
-   `Your QA`; merged result or closed issue enters `Done`; closed-unmerged result with open issue
-   remains `Your QA`. A later explicit owner return to `Approved` wins over stale QA observations.
+SSH access answers the editor question: bind n8n's published port to `127.0.0.1:5678` on Ubuntu,
+forward it to Fedora with `ssh -N -L 5678:127.0.0.1:5678 user@server`, then visit
+`http://localhost:5678`. Keep n8n owner login; the tunnel transports the connection, not the
+login. Configure editor URL/cookie behavior for that loopback origin in the pinned release;
+verify login through the tunnel before activation. No domain or public HTTPS decision remains.
+The actual server alias and hardware/model sizing are deployment parameters, not unresolved
+architecture choices. Planning does not claim to have logged into the server.
 
-Production serialization (`N8N_CONCURRENCY_PRODUCTION_LIMIT=1`) is a single-instance execution
-constraint, not a GitHub lock. Every workflow must read its preconditions again immediately
-before mutation; owner label changes still race REST writes. Inspect actor/timeline changes
-before committing transitions; on detected concurrent edits, reconcile and stop that operation.
-There is no claim of atomic transactions across GitHub and n8n. Persist pending operations and
-look for deterministic factory-comment markers before retrying writes with unknown outcomes.
+### Complexity review: requirement-to-mechanism decisions
 
-Approval provenance can be checked through GitHub timeline actors, refinement IDs and content
-snapshots. Revalidate before handoff. The owner must also compare the snapshot when launching
-Codex; labels alone cannot stop someone manually running an agent on unapproved inputs. For
-scope changes during a session, stop, summarize the proposed change, obtain renewed explicit
-owner approval, and update the snapshot before continuing. No automated scope judgement by an LLM.
-
-### Permissions and human actions
-
-| Component | Recommended minimum | Explicit boundary |
+| Previous mechanism | Requirement that needs the behavior | Smallest recommended design / disposition |
 |---|---|---|
-| n8n GitHub credential | Fine-grained token scoped to this repository: Issues write, Pull requests read, required Metadata read | No Contents write, PR write, Actions administration or merge authority; code never sets `Approved` |
-| Refinement step | Model inference credential only | No tools, host access, repository credentials or state-changing decisions |
-| Laptop agent | Issue reading; working-tree edits and owner-authorized branch push/PR creation | No autonomous task approval, main merge, production n8n access, or workflow activation |
-| Project owner | Approvals, review, merge/closure, retry decisions, server administration | Manually imports reviewed workflow JSON and confirms active revision |
+| Per-task processing/cursor ledger | FR-004 revision comments; FR-016/SC-005 no repeats/self-trigger loops | **Remove.** A marked refinement records source body digest and latest included owner comment ID; poll comments and skip an unchanged source. Low volume makes pagination acceptable. |
+| Approval journal and historical content reconstruction | FR-005, FR-008; constitution I explicit approval and renewed scope approval | **Remove journal.** Check the owner actor on the latest `Approved` label event, the latest refinement ID/edited time and its input digest; handoff cites that event/refinement. Owner verifies approved content at launch. No LLM judges scope. |
+| Independent reservation table | FR-006/007; one slot survives manual launch delay | **Remove.** All `Building` issues occupy the slot, even unexpected/non-owner issues. Polling serialization plus a held failure flag covers a partial transition; no elapsed-time release. |
+| Pending-operation journal with automatic reconciliation | FR-016 and SC-005 interruptions/uncertain writes | **Remove.** Stop safely and use documented owner recovery; no automatic resume from `Refining`, retry of an uncertain POST, or guessed state repair. |
+| Durable failure interlock | FR-016: ambiguous failures must not falsely advance/duplicate; SC-003/005 | **Keep one row only.** Set busy before mutating; clear last on success. Crash/error leaves busy; subsequent schedules skip. This flag is an interlock, not the build reservation or a work ledger. |
+| Build-attempt ledger and historical PR reconstruction | FR-010/011 rework and closed-unmerged behavior | **Remove.** One marked handoff per approval event records current PR numbers/head SHAs as a baseline; accept only unambiguous later work. Owner resolves ambiguous rework while paused. |
+| Automatic recovery of labels/outcomes | FR-016 requires owner-controlled recovery; constitution III/V evidence | **Remove.** Preserve current labels, log error, pause/drain/inspect, record reason and repair manually. No new `Stuck` or `Waiting for you` use. |
 
-A GitHub token's Issues write permission is coarser than individual label permissions. A token
-owned by the project owner also shares their actor identity. Software guards and owner-only
-manual operation constrain it; GitHub does not enforce a separate prohibition on setting
-`Approved`. A dedicated automation identity improves attribution but is optional extra setup,
-not silently required for Basic A. Never infer owner comments solely from matching author login:
-exclude known factory comment IDs/markers. Store credentials in n8n's credential store; keep the
-encryption key and server environment outside Git, with restricted file permissions. Do not
-mount the Docker socket, host Git checkout, or laptop credentials into n8n.
+Marked comments are normal human-visible task evidence with a few machine-readable identifiers,
+not a replayable event store. The one control row is justified because simply ending a failed
+execution would allow the next scheduled execution to retry an ambiguous write. It is shared by
+the three workflows and relies on production serialization; a Data Table upsert is not claimed
+to be an atomic distributed lock.
 
-### Proportionate delivery sequence and validation
+### Requirements that could drive disproportionate complexity
 
-| Increment | Deliverable | Acceptance focus |
+- FR-016 and edge-case wording do not explicitly require automatic crash recovery or unconditional
+  exactly-once delivery. This plan preserves repeat suppression and stops for manual recovery.
+  Guaranteeing exactly-once side effects under arbitrary late API responses and concurrent human
+  edits would require stronger coordination than GitHub labels provide. That guarantee is **not
+  claimed**. If intended, clarify/amend that requirement before implementation; do not quietly
+  drop it or add a transaction platform.
+- FR-005's explicit approval is mandatory, but a cryptographic approval/signature system or
+  complete reconstruction of all edited/deleted comment versions is not. Current digests and
+  timestamps plus the owner's manual launch check handle normal scope changes. Ambiguous edits
+  require fresh refinement/approval; missing history stops, never infers approval.
+- FR-010/011 require correct rework outcomes, not an automatic association of every historical
+  branch/PR combination. A simple explicit link and recorded baseline suffice for ordinary runs;
+  manual association checks are required if multiple results or unchanged reopened PRs are unclear.
+- SC-002 proposes at least one real Basic A run. It does not waive the final project minimum of
+  five runs, or the later runner. Use a few focused scenarios, not a new testing framework.
+
+### Workflow design
+
+All workflows enter the shared guard, read GitHub state, apply deterministic rules, then release
+the guard only after all side effects are acknowledged. Full behavior is in
+[contracts/task-lifecycle.md](contracts/task-lifecycle.md).
+
+1. **Refine**: Accept only owner-authored open issues. New `Ideas`, or new unmarked owner comments
+   at `Ready for approval`, select a source revision. Set `Refining` before calling Ollama; post
+   validated marked output; set `Ready for approval`. Ignore own marked comments even when the
+   token actor is the owner. Never rerun stranded `Refining` automatically.
+2. **Reserve**: Check all issues for occupied/conflicting `Building` labels. If free, select an
+   eligible `Approved` issue, validate owner approval/current refinement, set `Building`, and post
+   handoff evidence. Label persists until PR/issue outcome or owner repair. The owner manually
+   launches Codex on `issue-N` and summarizes material session answers on the issue.
+3. **Track**: Recognize explicitly linked current-attempt PRs to `main` from `issue-N` in this
+   repository. Enter `Your QA`, or `Done` for merged results/closed issues. Unmerged closure with
+   an open issue remains QA. Historical PRs cannot override a newer owner rework approval. An
+   ambiguous match is visible and held for owner resolution rather than guessed.
+
+Only manage the factory state labels; preserve other labels. GitHub label transitions require
+multiple requests, not a transaction. Add the target state before removing the source; the held
+control flag makes partial transitions safe to stop, and recovery normalizes them manually.
+Re-read approval/labels before writes. During normal operation the owner only makes documented
+state transitions; pause/drain before repairing state or editing already approved task content.
+There is no claim that REST reads prevent every race with an independent human/API client.
+
+### Deployment, permissions and recovery
+
+Use SQLite for the small single-instance deployment; back up the stopped n8n volume with its
+encryption key. Restore workflows, credentials and control row together and inspect the flag
+before resuming. Ollama models use a separate cache volume; they can be downloaded again. Retain
+private n8n failures for diagnosis, prune payloads (recommend 14 days), and store sanitized real-run
+links/outcomes in GitHub and `evidence/` so pruning does not erase course evidence.
+
+| Component | Recommended access | Human boundary |
 |---|---|---|
-| 1 | Compose/environment example, private access, persistence and backup runbook | Restart retains credentials/configuration; no public editor or secrets in exports |
-| 2 | Fixed task template, prompt, example, refine JSON | FR-001–005; revision and question history; owner-only intake; invalid output/outage stays unapproved |
-| 3 | Reserve JSON and manual launch/recovery guide | FR-006–008; one slot across polls/restart; second task waits; Codex never auto-starts |
-| 4 | Track JSON, branch/PR/decision/evidence conventions | FR-009–013; merge, issue-close, closed-unmerged, rework and stale PR handling |
-| 5 | Real-run evidence, architecture and permissions docs | FR-014–016; SC-001–006 proposed checks; honest failures and manual intervention |
+| n8n | Single-repository fine-grained token: Issues write, Pull requests read, required Metadata | Never sets `Approved`, changes code, creates/merges PRs, or imports workflow changes |
+| Ollama | Private Compose service, model cache, no tools/credentials | Returns candidate refinement only; no state-changing authority |
+| Fedora Codex | Working tree, issue reading and owner-authorized branch push/PR creation | Manual launch and in-session questions; no autonomous approval, main merge or production access |
+| Owner | Approval/review, GitHub merge/close, Ubuntu SSH and n8n administration | Manually imports reviewed JSON; performs failure recovery |
 
-For each workflow, generate and review JSON in Git before the owner manually imports it into
-an isolated test instance, then production. Do not activate via automatic deployment. Use small
-fixtures for non-owner issues, bot comments, pagination, malformed states, ambiguous timed-out
-comment POSTs, approval snapshot edits, and stale PRs. Interrupt before/after each multi-system
-write and prove reconciliation does not claim another slot or duplicate a completed refinement.
-Test manual UI executions only with all mutating schedules paused and in-flight work drained.
-Do not turn this prototype into a custom workflow engine or a comprehensive test platform.
+Issues write is coarser than permission to change individual labels. An owner-owned token has
+the same actor ID as the owner; code policy and operational separation enforce the no-approval
+rule, not label-specific GitHub authorization. Filter factory comments by markers as well as
+actor. A dedicated automation identity/App may improve attribution later but is not required.
+Store secrets in n8n credentials/server-local restricted files; exports contain no credential
+values, machine data, execution payloads or pinned test data. Never mount the Docker socket.
 
-Manual recovery: pause schedules, inspect the issue and operation/reservation rows, confirm no
-agent is still running, summarize the failure publicly without secrets, reconcile partial writes,
-and have the owner explicitly return eligible work to `Approved` or close it. Do not release a
-reservation merely due to elapsed time or borrow Basic B's `Stuck` label.
+Manual recovery is deliberately documented rather than automated: pause all three schedules,
+drain executions, check whether a laptop agent is still running, inspect GitHub and n8n failures,
+record the failure/decision on the issue, repair only the known outcome, obtain fresh approval
+for changed scope, then reset the shared flag and resume. Do not retry an uncertain comment POST
+until checking for its deterministic marker. If GitHub is unavailable, retain the held flag and
+private n8n failure; publish the sanitized issue summary when access returns. See quickstart.
+
+### Delivery increments and acceptance map
+
+| Increment | Deliverable | Acceptance / source |
+|---|---|---|
+| 1 | Minimal Compose, private access, persistence, one guard row | FR-013/015; restart/backup, blocked network exposure, guard crash-stop |
+| 2 | Task template, prompt/example, Ollama benchmark, refine workflow | FR-001–005; SC-001/005; owner-only intake, revision dedup, malformed/ambiguous output |
+| 3 | Reserve workflow and manual Codex instructions | FR-006–008; SC-002/003; delayed launch, second task waits, no auto-start |
+| 4 | Tracking workflow and manual recovery | FR-009–012/016; SC-004/005; merge, issue closure, closed-unmerged, rework and interrupted transition |
+| 5 | Architecture/permissions docs and real-run evidence | FR-014; SC-006; real task with question and PR; honest outcomes |
+
+Each workflow JSON change is committed for review and manually imported by the owner, including
+bootstrap changes. Develop on the feature branch; later factory tasks use issue-specific branches.
+No acceptance test result is claimed by this design. No task list or application implementation
+is generated by the planning command.
 
 ## Constitution Check
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-| Gate | Pre-research assessment | Required post-design evidence |
+| Gate | Pre-research | Post-design assessment / artifact |
 |---|---|---|
-| I: human approval/review | PASS: no auto-approve, merge or workflow import proposed | Transition/approval and import contracts; manual runbook |
-| II: issue traceability | PASS: issues, immutable revision references, linked result, session summaries | Entity model, task/PR contracts and evidence guide |
-| III: stages/bootstrap | PASS: interactive bootstrap; Basic A only; no runner | Manual handoff/recovery scenarios; real-run validation before Basic B |
-| IV: bounded/public work | PASS: repository verified public; component permissions specified | Private access confirmation; credential/export checks |
-| V: truthful evidence | PASS: checks reported as planned, never as passed | Acceptance guide with actual outcomes filled during implementation |
-| Planning/review gates | PASS in draft: stage, acceptance checks, permissions and owner actions identified | Phase 1 consistency review after D1/D2 resolved |
-| Instructor confirmation | Preserved follow-up: unconfirmed interpretation; automated resumption excluded | Do not claim instructor confirmation; amend constitution if contradicted |
+| I human approval/review | PASS | PASS: owner approval event plus current refinement; manual start, review and JSON import in lifecycle/quickstart |
+| II traceability | PASS | PASS: data model and handoff contract preserve issue, decisions, branch and PR |
+| III incremental/basic scope | PASS | PASS: no runner; documented manual failure recovery; real Basic A validation before Basic B |
+| IV permissions/public work | PASS | PASS: public repository verified, private services, component access documented; deployment checks still to run |
+| V evidence | PASS | PASS: quickstart records unrun/failed checks honestly; final five-run requirement preserved |
+| Review gates | PASS | PASS: acceptance matrix, source distinctions, human actions, workflow and permission review identified |
+| Instructor confirmation | Follow-up | Preserved: interpretation is unconfirmed; no automated resumption implemented; amend constitution if contradicted |
 
-**Gate result**: No identified constitutional violation. Phase 0 cannot be finalized while D1
-and D2 remain unresolved. Post-design gate is NOT YET RUN; Phase 1 is intentionally not generated.
-The skill requires stopping on unresolved clarifications; this is a reviewable draft, not an
-implementation-ready plan.
+No constitutional exceptions requested. Local model feasibility is a deployment validation gate,
+not a resolved claim about unknown hardware. All architecture choices have a stated recommended
+baseline; remaining choices are model sizing and actual image/configuration pins during preflight.
+Do not activate refinement if the benchmark fails. No unresolved scope decision is hidden by a
+default, and no implementation readiness is claimed before the operational checks pass.
 
 ## Project Structure
 
@@ -229,19 +265,19 @@ implementation-ready plan.
 specs/001-basic-a-factory/
 ├── spec.md
 ├── checklists/requirements.md
-├── plan.md                 # this draft
-├── research.md             # researched decisions and remaining questions
-├── data-model.md           # Phase 1, after D1/D2 resolution
-├── contracts/              # Phase 1: task lifecycle, model output, manual handoff
-└── quickstart.md            # Phase 1: runnable validation guide
+├── plan.md
+├── research.md
+├── data-model.md
+├── contracts/
+│   ├── task-lifecycle.md
+│   ├── refinement.md
+│   └── manual-handoff.md
+└── quickstart.md
 ```
-
-`tasks.md` is deliberately not created by the plan command. Proposed Phase 1 artifacts listed
-above are not yet present. The existing spec and its quality checklist remain unchanged.
 
 ### Source Code (repository root)
 
-Proposed layout for implementation, not files created by this planning turn:
+Proposed paths for implementation; none are created by this planning turn:
 
 ```text
 factory/
@@ -251,26 +287,21 @@ factory/
 ├── prompts/refinement.md
 ├── templates/task.md
 └── tests/fixtures/
-docs/
-├── architecture.md
-├── operations.md
-└── permissions.md
-evidence/                    # sanitized real-run links/outcomes
-product/                     # separate software built by the factory; choice deferred
+docs/{architecture,operations,permissions}.md
+evidence/
+product/
 ```
 
-**Structure Decision**: Group the three workflows and deployment artifacts under `factory/`;
-keep the future built software separate under `product/`. Names are recommendations, not source
-mandates. No web app, custom server, shared package, or future runner stub is introduced.
+**Structure Decision**: Keep the factory together, the built software separate, and evidence
+sanitized. Use existing SpecKit templates at runtime; no template source modifications.
 
 ## Complexity Tracking
 
-No constitutional exceptions requested. SQLite and built-in Data Tables are a small-instance
-tradeoff; production serialization and crash reconciliation still need tests. If reconciliation
-cannot meet FR-016 within this design, revisit it before implementing another service.
+No principle violation or exception. The only new durable application control is one fail-stop
+row; GitHub supplies task state/history. Data Tables are already part of n8n and add no service.
+The tradeoff is manual repair and occasional conservative halts instead of autonomous recovery.
 
-Basic B compatibility comes from the approved issue snapshot, one reservation, issue branch,
-linked PR and explicit outcomes. Later the reserve workflow can invoke a runner after reserving
-the slot. Do not build an HTTP runner API, queue infrastructure, remote shell execution, or
-agent container now. Basic B will require its own specification, evidence gate, and permissions
-review; its introduction is not a promise that this design scales to multiple workers unchanged.
+Basic B can later replace the manual launch after `Building` with a runner call, retaining the
+issue contract and review loop. Its runner/timeout/result-collection/authentication work remains
+separate and will need validated Basic A evidence and a new plan. No premature runner stub or
+transport abstraction is included.
