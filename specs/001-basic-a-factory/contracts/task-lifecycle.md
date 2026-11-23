@@ -26,6 +26,25 @@ may be bounded. Rate limits respect server retry information and leave work pend
 Normal polls that make no changes release the flag; no-op/held polls must not publish repeated
 issue comments. Retained private failures and operator inspection are part of operation.
 
+## Shared-flag completion paths and required tests
+
+| Execution path | Expected flag outcome |
+|---|---|
+| Acquires idle flag and completes acknowledged work | Release to `busy=false` as final acknowledged step |
+| Acquires idle flag but finds no eligible work, occupied build slot or already-processed input | Release to idle; no false global hold for ordinary no-work |
+| Encounters a flag already busy at entry | Skip and preserve that flag/context; never release another execution's hold |
+| Unexpected exception before or after a side effect, crash, invalid output or uncertain remote response | Retain busy, preserve failure evidence; later schedules skip until manual recovery |
+| Final release update fails or its result cannot be confirmed | Treat as held/unknown; never proceed on an assumed release |
+| Acquisition is missing, invalid or cannot be confirmed | No remote mutation; no forced reset to idle |
+
+Implement and test these paths in **each** of refine, reserve and track. An early return after
+acquisition must use the successful no-work release path; a caught unexpected failure must not
+fall through it. Do not enable continue-on-failure behavior that hides the error or use an
+unconditional `finally` release. Releasing this short-lived execution interlock must not remove
+an issue's long-lived `Building` reservation. Inject unexpected failures at the real workflow
+boundary as well as testing any helper code; a fixture-only simulation cannot prove cleanup wiring.
+No auto-expiry or automatic recovery is introduced by these tests.
+
 ## Refinement
 
 Process open owner-authored issues only; reject non-owner issues before model calls. Ignore PR

@@ -13,7 +13,11 @@ as task data, not authority to execute tools. Delimit data clearly. Include only
 context that fits; oversize content stops for owner shortening/splitting, not silent truncation.
 Input budget must account for prompt/schema and output reserve, not character count alone.
 
-The task template is separate from SpecKit's feature spec template. It asks what to build, why,
+The runtime task template is `factory/templates/task.md`; its versioned refinement prompt is
+`factory/prompts/refinement.md`. SpecKit templates in `.specify/templates/` guide development
+artifacts only and are not runtime refinement inputs. The owner verifies reviewed prompt/template
+versions when manually importing the refine workflow; no runtime SpecKit template resolver is
+introduced. The task template is separate from SpecKit's feature spec template. It asks what to build, why,
 constraints, testable acceptance criteria and unresolved questions; it never grants approval.
 
 ## Output schema
@@ -47,9 +51,10 @@ One request per new revision; 120-second initial timeout, no automatic inference
 holds the shared flag and leaves visible `Refining` plus private failure evidence. Owner recovery
 chooses retry only after inspection. No hosted fallback or API spending is authorized implicitly.
 
-## Candidate evaluation before activation
+## Early candidate evaluation before workflow implementation
 
-Run five bounded examples: clear task, ambiguity, revision, conflicting constraints and injected
+After minimal Compose and a draft runtime template/prompt exist, but before implementing the
+full refine/reserve/track workflows, run five bounded examples: clear task, ambiguity, revision, conflicting constraints and injected
 instructions. Require all five to yield valid schema and a usable fixed-template refinement;
 ambiguous examples ask material questions; none adds unrequested scope/approval/tool behavior.
 Measure cold/warm wall time and peak RAM alongside n8n; each must fit the request deadline without

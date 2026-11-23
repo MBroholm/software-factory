@@ -23,6 +23,11 @@ user preference, not a course mandate.
 launcher, worker pool and current optional n8n Assistant sandbox services exceed Basic A.
 Do not copy a full hosted Assistant stack. [n8n Compose installation](https://docs.n8n.io/deploy/host-n8n/install-options/install-using-docker-compose.md).
 
+SpecKit templates under `.specify/templates/` produce development artifacts only. The factory's
+runtime refinement inputs are versioned `factory/templates/task.md` and
+`factory/prompts/refinement.md`, reviewed together with the refine JSON and verified during
+manual import. No runtime SpecKit template resolver is part of Basic A.
+
 ## R2 — Remove task ledger; retain one fail-stop flag
 
 **Decision**: GitHub is the sole task record. Remove Data Table task cursors, reservation rows,
@@ -33,7 +38,9 @@ busy flag and execution/issue context for manual diagnosis.
 need repeat suppression, supplied by marked refinement source identifiers. FR-005 needs current
 explicit approval, not an approval database. However, FR-016/SC-005 need unattended polls not to
 repeat unknown writes: acquire the shared busy flag before side effects, clear only after
-success. Error/crash leaves it held. Recovery is manual, with no automatic journal replay.
+success. Error/crash leaves it held. Normal success and acquired-but-no-work exits explicitly release
+it; already-busy skips preserve the existing hold. Test these paths and unexpected failures in
+each actual workflow, not just helpers. Recovery is manual, with no automatic journal replay.
 
 **Alternatives considered**: No durable error flag leaves the next scheduled poll free to retry
 a timed-out operation. A per-operation journal plus automatic reconciliation adds substantially
@@ -92,7 +99,8 @@ bounded. [Timeline](https://docs.github.com/en/rest/issues/timeline),
 ## R5 — Local refinement first, bounded evaluation
 
 **Decision**: Recommend Ollama with `qwen3:4b-instruct` as the first small candidate; benchmark
-before activation, record model digest and tested settings. One inference at a time, explicit
+immediately after minimal Compose and draft runtime template/prompt setup, before full workflow
+implementation; record model digest and tested settings. One inference at a time, explicit
 4096-token context and bounded output. No paid fallback is activated automatically.
 
 **Rationale**: The user has Plus and asks whether local refinement suffices. This is a narrow

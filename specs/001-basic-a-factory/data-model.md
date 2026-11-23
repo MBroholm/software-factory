@@ -100,7 +100,10 @@ false. Missing/duplicate/unreadable row blocks mutation and raises a visible exe
 
 Under single serialized production execution, read idle row, set busy true with context and
 verify before GitHub writes/model invocation. On acknowledged successful completion clear busy
-as the final action. Any error/crash/unknown response leaves it true. Later schedules read busy
+as the final action, including a normal execution that acquired the flag but found no eligible
+work. A skipped execution finding the flag already busy preserves the existing row. Any
+unexpected exception/error/crash/unknown response after acquisition leaves it true; never use
+unconditional cleanup to clear it. Later schedules read busy
 and skip all mutating processing, reporting the held context in n8n. Owner resets only after
 pause/drain/inspection and recording recovery. A diagnostic update is best-effort; correctness
 does not depend on error handlers running. A failure clearing the row is also a safe hold.

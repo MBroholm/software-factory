@@ -61,13 +61,12 @@ with the pinned release's loopback editor settings. Bind the server's published 
 and configure the expected editor origin consistently. Disconnecting SSH closes browser access;
 the server factory continues polling. No public editor/domain/reverse proxy is required.
 
-## 4. Provision guard, import manually, test while inactive
+## 4. Evaluate Ollama early, then provision guard and import manually
 
-In the n8n Data Tables UI, create `factory_control` with the exact columns in
-[data-model.md](data-model.md), and one `global` row with `busy=false`. This is not a task ledger.
-Map the table and credential references in the three reviewed workflow JSONs during manual
-import. Keep schedules inactive until isolation, credentials and model checks pass. The owner
-imports JSON by hand after review; CLI/deployment automation must not replace this quality gate.
+Perform the Ollama trial now with the draft `factory/templates/task.md` and
+`factory/prompts/refinement.md`, before investing in full workflow implementation. These are the
+factory runtime inputs; `.specify/templates/` guides development artifacts only. Preserve tested
+versions in the trial evidence and check the same versions during manual workflow import.
 
 In the inactive test instance, verify HTTP Request access to Ollama at `http://ollama:11434`.
 Use the request/output contract and five examples in [refinement.md](contracts/refinement.md).
@@ -77,8 +76,20 @@ configured 120-second request deadline without OOM, invented decisions or missin
 questions. If it fails, leave refinement inactive, report hardware/results and ask the owner
 whether to change local model or approve a hosted API budget. No automatic paid fallback.
 
+Only after the early trial passes, proceed with workflow implementation and guard setup.
+
+In the n8n Data Tables UI, create `factory_control` with the exact columns in
+[data-model.md](data-model.md), and one `global` row with `busy=false`. This is not a task ledger.
+Map the table and credential references in the three reviewed workflow JSONs during manual
+import. Keep schedules inactive until isolation, credentials and model checks pass. The owner
+imports JSON by hand after review; CLI/deployment automation must not replace this quality gate.
+
+If small automated fixture checks are implemented, run them as follows; otherwise report them
+as unrun/not implemented and execute the required workflow-level matrix below. An empty test
+discovery result is not evidence that the guard works.
+
 ```bash
-# Fedora/repository root, after implementation provides the small fixture tests
+# Fedora/repository root, only after implementation provides actual test cases
 python3 -m unittest discover -s factory/tests -p 'test_*.py'
 ```
 
@@ -115,6 +126,11 @@ sharing credentials; use fixtures where a second identity is unavailable and rep
 | Rework | Owner comments and reapproves; observe fresh handoff, then new PR or new commits | Ordinary in-scope rework comment/session summary does not invalidate captured source; old PR does not overwrite Approved/Building; ambiguity holds; FR-010/011 |
 | Completion | Owner merges current result, or closes task issue | Done only for confirmed merge/issue closure; FR-011 |
 | Workflow change | Review JSON change and merge if accepted | Owner manually imports; no automatic activation; FR-012 |
+| Successful flag release | Exercise acknowledged work in each of refine/reserve/track | Acquired flag returns to idle; next scheduled execution can run; Building reservation persists where appropriate |
+| No-work flag release | Exercise each workflow with no eligible work, unchanged input or occupied build slot | Acquired flag returns to idle without repeated comments or global deadlock |
+| Existing hold | Enter each workflow with busy already true | Skip preserves busy and original context; no remote mutations |
+| Unexpected failure retention | Inject an unanticipated exception before and after a side effect in each workflow | Busy remains true; failure visible; next scheduled execution skips until manual repair |
+| Release/acquisition failure | Fail/lose acknowledgement of guard release or acquisition | No assumed idle; no forced reset or remote work without confirmed acquisition |
 | Model/API failure | Return invalid output or unavailable service in test instance | No false Ready/Done; failure retained and guard held; FR-016 |
 | Interrupted reservation | Stop test execution between add Building and remove Approved/comment | Guard remains held; no second task claimed; owner normalizes labels manually; FR-006/016 |
 | Unknown comment POST | Simulate response loss after comment accepted | Guard held; later polls skip; owner checks marker before retry; no blind duplicate POST; FR-016 |
