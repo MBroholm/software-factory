@@ -1,4 +1,4 @@
-# Basic A operations — T001–T003 setup and T004 handoff
+# Basic A operations — setup and isolated guard handoff
 
 ## Current provider decision — 2026-11-24
 
@@ -39,8 +39,10 @@ steps are in [quickstart section 4](../specs/001-basic-a-factory/quickstart.md#4
 ## Current boundary and verified repository configuration
 
 This is interactive factory bootstrapping under constitution III, on `001-basic-a-factory`.
-T001–T003 supply deployment configuration and draft refinement inputs. No scheduled workflow,
-runner, approval logic or shared-flag implementation exists yet. T004 remains unchecked.
+T001–T004 are complete. T007 supplies inactive guard-only workflow skeletons for isolated
+owner import/testing; no GitHub/model work, approval logic or runner is implemented. Actual
+row provisioning (T005) and primary isolated n8n guard validation (T008) are now complete;
+see the validation evidence for tested cases, unrun supplemental variants and inactive test state.
 
 Read-only anonymous GitHub API verification on 2026-11-23 confirmed:
 
@@ -257,3 +259,91 @@ and instructor-confirmation follow-up unchanged.
   [execution retention/configuration](https://docs.n8n.io/deploy/host-n8n/configure-n8n/basic-configuration/use-environment-variables/executions.md).
 - [Ollama context/concurrency configuration](https://docs.ollama.com/faq),
   [schema output](https://docs.ollama.com/capabilities/structured-outputs).
+
+## T005 — isolated control-row provisioning
+
+This is preparation for T008, not permission to import/activate production workflows. The owner
+must create the row through n8n's supported **Data Tables UI**; do not query or modify n8n's
+internal SQLite tables. Use an isolated 2.48.8 instance/project, separate persistent n8n volume,
+no production schedules or credentials. Do not replace the existing production deployment or
+its encryption key. Keep the test volume through the restart case; an ephemeral table cannot
+prove crash retention.
+
+In the isolated project's Overview -> Data Tables, create one table named `factory_control`.
+Add these five user columns (leave n8n's built-in `id`/timestamps alone):
+
+| Column | n8n type | Initial value / meaning |
+|---|---|---|
+| `key` | String | `global`, fixed singleton key |
+| `busy` | Boolean | `false` (actual boolean, not text) |
+| `execution_id` | String | Empty string initially; set to n8n execution ID at acquisition |
+| `issue_number` | Number | **null**, not 0 or empty text; unknown until issue selection |
+| `started_at` | String | Empty string initially; acquisition writes UTC ISO-8601 timestamp |
+
+Create exactly **one** row and explicitly save the empty strings for the two string context
+fields. Verify the node's read output contains strings rather than null. `issue_number=null` is
+valid even while held: the skeleton never selects an issue. A known issue must be a positive
+integer. Successful release changes only busy to false, retaining the last execution/start/issue
+context for diagnosis. Elapsed age is never permission to reset. No automatic timeout/reset,
+upsert, per-task ledger or SQL migration is added.
+
+A missing/duplicate/unreadable row, wrong key or invalid types must produce a visible error
+before work. Reads are unfiltered and bounded to two rows to detect even an unexpected second
+non-global row. Do not bypass this by filtering only global, keeping the first match, inserting a
+replacement on failure or clearing another execution's context. Missing rows may remain absent;
+this is fail-closed rather than a newly created hold. A pre-held valid row is reported unchanged.
+An invalid pre-held row errors without mutating it.
+
+After reviewing the JSON, the owner manually imports `factory/workflows/{refine,reserve,track}.json`
+into isolation, leaves them inactive, and selects the **same table ID in every Data Table node**.
+The placeholder `OWNER_SELECT_ISOLATED_CONTROL_TABLE` intentionally fails closed until mapped.
+Do not use table-name lookup, which could select the wrong similarly named table. Updates match
+row ID and global key; acquisition additionally requires idle, and release matches the acquiring
+execution/start and busy=true. These are defensive checks under one writer, not a distributed lock.
+All Code nodes stop on errors; no error handler clears busy. Zero-row operations still emit an
+item for validation through Always Output Data. Acquisition and release each require an update
+receipt plus a fresh singleton read. A failed/unconfirmed acquisition never reaches work.
+A failed release never reports idle; a release may have committed before acknowledgement was
+lost, so pause and inspect the actual row rather than claiming it is certainly still true.
+
+Read [the exact guard cases](../factory/tests/guard-scenarios.md) before any execution. Entire
+workflow runs only: running a mutation node alone bypasses entry checks. Test one execution at a
+time; n8n's production concurrency limit does not serialize manual editor runs. There are no
+GitHub or model credentials/calls in these skeletons, and no factory state labels are changed.
+The only default completion is acknowledged no-work. Test-copy synthetic success does not
+validate the future story side effects.
+
+Owner provisioning confirmation must record: isolated instance/version, project/table ID,
+column types, singleton row output (sanitized), timestamp and operator. The owner supplied
+that confirmation and native node output; T005 is now complete. Record it with the imported-revision and execution evidence in
+[evidence/guard-validation.md](../evidence/guard-validation.md). T008 requires actual n8n paths,
+unexpected exceptions, restart and later-poll checks on all three skeletons. Local graph tests
+cannot close it. Full recovery/permission runbooks remain T009; story workflows remain T010+.
+
+Sources checked against the pinned release:
+[n8n Data Table documentation](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.datatable/),
+[2.48.8 node schema](https://github.com/n8n-io/n8n/blob/n8n%402.48.8/packages/nodes-base/nodes/DataTable/DataTable.node.ts),
+[2.48.8 row selection](https://github.com/n8n-io/n8n/blob/n8n%402.48.8/packages/nodes-base/nodes/DataTable/common/selectMany.ts),
+[2.48.8 row update](https://github.com/n8n-io/n8n/blob/n8n%402.48.8/packages/nodes-base/nodes/DataTable/actions/row/update.operation.ts).
+Source inspection confirms the intended parameter shapes, not successful execution on the server.
+
+## T008 isolated validation closeout — 2026-11-24
+
+Owner manually imported/mapped the three skeletons and the reviewed isolated native test bridge.
+Primary validation passed: 57 native guard checks, 73 held-skip checks and six original-schedule
+checks. Failure/crash execution statuses, row/effect evidence, human setup errors and manual
+resets are preserved in [the validation record](../evidence/guard-validation.md) and
+[trace-checked results](../evidence/guard-bridge-results.json). No helper-only or standalone CLI
+result was substituted for actual native workflow execution.
+
+All 11 workflows in factory-guard-test are now unpublished. The bridge's HTTP endpoint returns
+404; test n8n health is 200. The isolated row intentionally remains busy, owned by execution 714
+with started_at `2026-11-24T12:58:47.418Z`; four guard_effects rows are retained. Missing-row tests
+recreated the disposable control row, so its createdAt now reflects the test fixture restoration.
+No production row, service, labels, model credentials or story workflow was changed. Leave the
+hold until an operator explicitly prepares the next isolated exercise; never infer expiry.
+
+Supplemental wrong-context/empty-receipt payload variants and direct UI cancellation remain
+unrun. Hard in-flight restart was verified for all three paths. Full refinement/handoff/tracking
+cases and finished-workflow guard coverage remain later tasks. T009 recovery/permission runbooks
+have not been implemented; the broader foundation checkpoint remains incomplete.
