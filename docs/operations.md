@@ -1,4 +1,4 @@
-# Basic A operations — setup and isolated guard handoff
+# Basic A operations — setup, guard and manual recovery
 
 ## Current provider decision — 2026-11-24
 
@@ -318,7 +318,7 @@ column types, singleton row output (sanitized), timestamp and operator. The owne
 that confirmation and native node output; T005 is now complete. Record it with the imported-revision and execution evidence in
 [evidence/guard-validation.md](../evidence/guard-validation.md). T008 requires actual n8n paths,
 unexpected exceptions, restart and later-poll checks on all three skeletons. Local graph tests
-cannot close it. Full recovery/permission runbooks remain T009; story workflows remain T010+.
+cannot close it. Recovery/permission instructions are below under T009; story workflows remain T010+.
 
 Sources checked against the pinned release:
 [n8n Data Table documentation](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.datatable/),
@@ -345,5 +345,169 @@ hold until an operator explicitly prepares the next isolated exercise; never inf
 
 Supplemental wrong-context/empty-receipt payload variants and direct UI cancellation remain
 unrun. Hard in-flight restart was verified for all three paths. Full refinement/handoff/tracking
-cases and finished-workflow guard coverage remain later tasks. T009 recovery/permission runbooks
-have not been implemented; the broader foundation checkpoint remains incomplete.
+cases and finished-workflow guard coverage remain later tasks. T009 below supplies the recovery
+and permission runbooks; it does not authorize activation of these guard-only skeletons.
+
+## T009 — manual failure recovery
+
+Use this sequence for a failed execution, unknown write, interrupted run, malformed control row
+or conflicting task state. The project owner controls recovery. The short-lived `busy` flag and
+the long-lived `Building` reservation are separate: releasing one never releases the other.
+An old timestamp, a healthy container or a successful skipped poll is not proof of completion.
+There is no automatic expiry, replay, resumed failed execution or repair workflow.
+
+The latest recorded isolated state is the deliberate hold owned by execution 714 and four
+retained effects described above. These instructions do not clear it. Story-specific recovery
+below describes the approved contracts for T010+; those behaviors are not yet implemented or
+validated. Keep production activation gated on the corresponding later tasks.
+
+### 1. Pause and drain
+
+Unpublish/deactivate all three scheduled workflows in the private n8n editor. Confirm their
+published state, rather than relying on the canvas name or an unsaved toggle. Prevent other
+operators from starting manual/CLI runs; also disable any isolated test bridge before maintenance.
+Do not launch another Codex task or use Retry/Execute on the failed execution.
+
+Inspect the instance execution list and queue until no running, queued or waiting execution can
+still mutate state. Pausing schedules does not establish that existing executions have drained.
+Let a known execution finish; if it is hung, record its ID and explicitly stop it through supported
+controls, then inspect for effects that may already have committed. If the editor is unavailable,
+the owner may stop the correct n8n service/container to prevent further work, preserving its
+volume/key; this is an interruption requiring inspection, not proof of rollback. Before restart,
+ensure schedules cannot run against unreconciled state, including an unexpectedly idle row.
+Do not use `down -v` or SQL against n8n internals.
+
+Check every Fedora terminal/session/worktree that could contain the manual agent, and ask its
+operator whether work or a Git push is still in progress. Laptop offline or `Building` alone
+proves neither active nor stopped. Do not remove a reservation or launch a replacement until
+the prior agent is confirmed stopped. An active agent's slot remains reserved during recovery.
+
+The production concurrency setting must remain 1 on a single instance. It excludes manual,
+CLI, error and subworkflow executions; it cannot replace this drain check.
+See [n8n concurrency control](https://docs.n8n.io/deploy/host-n8n/configure-n8n/scaling/control-concurrency.md).
+
+### 2. Inspect the actual outcome
+
+Read the full control table through the supported Data Tables UI. Record row count, row ID,
+`key`, `busy`, `execution_id`, nullable `issue_number` and `started_at`. Match the context to the
+failed execution's workflow ID, imported revision, node trace, error, UTC time and last confirmed
+effect. A missing/duplicate/invalid row blocks work even if there is no true busy flag. A lost
+release acknowledgement or failed final reread may leave the physical row idle: keep schedules
+paused until reconciled. Never change idle to a claimed successful outcome based on assumption.
+
+On GitHub inspect the current issue, all state labels, owner approval timeline, exact refinement
+and captured source, handoff markers and linked PRs/head SHAs. Paginate comments/history/results;
+check all repository `Building` issues, including closed or non-owner conflicts. Preserve
+unrelated labels. Compare against the last acknowledged request, not just the error message.
+
+For an unknown comment POST, look for its deterministic `factory:refinement:v1`,
+`factory:handoff:v1` or `factory:result:v1` marker and verify the complete associated source,
+approval and result metadata. Retain one already-posted matching output; a marker with conflicting
+content is an ambiguity, not permission to post again. For an unknown label write, read the
+actual label set and timeline. Inspect branch/PR state after an interrupted push or PR creation.
+**Never blindly retry an unknown write.** If absence or consistency cannot be established,
+remain paused and investigate; do not retry a whole execution to discover what happened.
+
+For a Gemini timeout/quota/invalid-output failure, inspect request completion/returned metadata
+privately, the issue's `Refining` state and any published output. Check quota availability before
+choosing a fresh attempt. No automatic inference retry, billing change or model fallback.
+
+### 3. Record before repair, including GitHub outages
+
+Record the observed failure and the proposed recovery on the issue before changing state when
+GitHub is available. A sanitized error comment is safe only when issue identity and write outcome
+are known; do not issue repeated diagnostic POSTs after an uncertain response. During a GitHub
+outage, the held/unknown control state and failed private n8n execution are the visibility fallback.
+Keep schedules paused and save a private incident note under ignored `factory/local/` (or another
+restricted operator location). There is no external notification guarantee. Do not force an issue
+write or clear busy to make the dashboard appear healthy. When access returns, re-read actual
+state and publish the sanitized summary before reset/resume, checking for an existing summary.
+
+Use this record; omit secrets and raw session/execution payloads:
+
+```text
+UTC time / operator / instance:
+Issue URL (or not yet selected) / workflow ID / reviewed commit / imported revision:
+Failed execution ID / node / sanitized error:
+Control row before / last acknowledged effect:
+Actual labels / matching comment IDs / approval event / PR and head SHA:
+Known committed effects / unresolved outcomes:
+Manual agent active, stopped or unknown / Building reservation:
+Repair decision and reason / scope changed? / fresh approval reference if required:
+Actions and results / row after / resume observation / remaining failed or unrun checks:
+```
+
+For a failure before issue selection, retain the private incident record and a sanitized
+repository evidence entry; do not invent an issue association. Preserve failed attempts,
+human intervention and later corrections. Publish only the minimum checked evidence described
+in [permissions and export boundaries](permissions.md).
+
+### 4. Repair only the reconciled state
+
+While paused/drained, the owner chooses the smallest known correction and records each action:
+
+| Observed problem | Owner action before reset |
+|---|---|
+| Partial target/source label transition | Verify intended transition and authority, normalize to one valid state, preserve unrelated labels and retain any valid matching comment. Never infer `Approved`. |
+| Stranded `Refining` or failed inference | Inspect source/output; deliberately select a fresh refinement attempt or retain a complete valid output. No automatic stranded-state continuation. |
+| `Building` with absent/inconsistent handoff | Inspect approval, labels, comments, branch and PRs. Reconcile known metadata without fabricating approval; do not reserve a second task. |
+| Retry/rework after agent stopped | Resolve the prior result/reservation first. Owner explicitly reapproves unchanged scope with a distinguishable new approval event and fresh handoff; changed scope needs fresh refinement and explicit approval. |
+| Closed unmerged PR, issue open | Keep `Your QA` unless owner explicitly reapproves rework or closes issue. Never infer merge/Done from PR closure. |
+| Multiple/edited markers, uncertain approval or several plausible result PRs | Resolve association with owner; retain history. If current approval cannot be proved, obtain fresh explicit approval before a build. |
+| Missing/duplicate/malformed control row | Preserve all observed rows in private evidence, establish the cause and repair schema/singleton through supported UI only. Reconcile every potentially affected execution first; never auto-create a replacement or select the first duplicate. |
+| Workflow/configuration defect or expired credential | Prepare the correction for review; owner saves replacement credentials privately and manually imports reviewed JSON as below. No permissions expansion without review. |
+
+An answer in the coding session does not grant initial approval or approve expanded scope.
+Summarize material questions/answers and decisions on the issue. Recheck approval against the
+exact current scope before any manual agent launch. Detailed coding/review runbooks remain
+T018/T022; this is the recovery launch gate.
+
+### 5. Reset and resume deliberately
+
+Before reset, confirm no pending/active n8n writer, all unknown effects resolved, recorded repairs
+complete, a valid singleton row and at most one legitimate `Building` reservation. Confirm the
+manual agent's status; freeing its slot additionally requires it to be stopped. If any check
+is unresolved, remain paused.
+
+Using the Data Tables UI, the owner sets **only `busy=false`** on the inspected `global` row.
+Keep execution/issue/start context for diagnosis and reread the saved row. Schema/singleton
+repairs are separate recorded actions, not a reason to erase context or fake completion.
+Reset is not task approval, reservation removal or authorization to retry failed nodes.
+
+Resume only reviewed, mapped workflows whose implementation/validation gates are complete.
+First observe one full scheduled poll with the other schedules paused, verify acknowledged
+completion/no-work release and expected GitHub state, then restore the remaining intended
+schedules under serialization. On any error or uncertain release, pause/drain/inspect again;
+do not reset repeatedly. Record execution ID, observed effects/row and remaining limitations.
+The current guard-only skeletons stay unpublished; T009 performs no recovery exercise or rollout.
+
+## T009 — reviewed JSON import and credential boundaries
+
+Workflow changes follow JSON in Git -> PR review -> owner manual import -> mapping/revision
+verification -> deliberate activation. This applies during bootstrap too; no agent, SSH script,
+CLI import or deployment pipeline substitutes for owner import. Review includes branch isolation,
+actual acceptance evidence, secret exclusion, workflow JSON and permissions; factory task PRs
+also require explicit approval and issue linkage. Owner alone decides merges.
+
+Before export/commit, apply [the export checklist](permissions.md#export-and-public-evidence-boundary).
+Keep private source exports separate from publishable JSON. The owner imports reviewed files
+through the private editor while paused/drained, saves them inactive and maps every control node
+to the same intended table ID and each credential to its role-specific saved reference. Verify
+node code/connections, no retry/continue-on-error release path, runtime prompt/template/schema
+versions and hashes, schedule settings and serialization. Never import the isolated guard bridge
+or its fixture mutators into production.
+
+Record reviewed Git commit/file hashes, instance/version, workflow ID and saved/published revision,
+mapping checks and operator/time. Export privately for comparison if needed; allow only documented
+instance IDs/mappings to differ. A workflow name or current revision is not historical proof for
+an earlier execution. Keep inactive if comparison or required story/credential checks are incomplete.
+No credential value belongs in Git, workflow parameters, issue comments or evidence. Full
+backup/restore and retention procedures remain T024.
+
+## Constitutional follow-up — instructor confirmation still outstanding
+
+Constitution v1.1.1 interprets owner answers as allowing resumption only within previously
+explicitly approved scope; answers never substitute for initial or changed-scope approval.
+The project owner must seek instructor confirmation and record the outcome. A conflicting
+answer requires a constitution amendment before relying on that interpretation. T009 does not
+resolve this follow-up or add automated question handling/resumption to Basic A.

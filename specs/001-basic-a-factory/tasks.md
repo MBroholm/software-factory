@@ -68,7 +68,17 @@ rows retained. No production change, issue/model call, automatic import or T009+
 The Phase 2 foundation checkpoint still requires T009; do not start user stories from this
 partial-phase closeout.
 
-- [ ] T009 Write pause/drain/inspect/record/repair/reset/resume instructions and credential/export boundaries in `docs/operations.md` and `docs/permissions.md`; include GitHub-outage visibility fallback, manual agent checks, no blind unknown-write retry, role-needed token permissions and manual reviewed JSON import. Retain the constitutional instructor-confirmation follow-up.
+- [X] T009 Write pause/drain/inspect/record/repair/reset/resume instructions and credential/export boundaries in `docs/operations.md` and `docs/permissions.md`; include GitHub-outage visibility fallback, manual agent checks, no blind unknown-write retry, role-needed token permissions and manual reviewed JSON import. Retain the constitutional instructor-confirmation follow-up.
+
+**T009 closeout, 2026-11-24**: Added owner-controlled recovery, outage incident record,
+uncertain-write/release reconciliation, agent/reservation checks and reviewed import/revision
+verification in `docs/operations.md`; added component/token, credential/data-transfer and public
+export boundaries in `docs/permissions.md`. Instructor confirmation remains outstanding.
+Validation: manual comparison with constitution/plan/contracts and T008 shutdown evidence;
+16 local Markdown links/anchors and both documents' code fences checked; `git diff --check`
+passed. GitHub/n8n technical references checked against official documentation. Documentation
+only: no guard/model checks repeated, recovery exercise, workflow change, import or runtime
+mutation. T010+ remains unchecked and production activation remains gated on later validation.
 
 **Checkpoint**: Minimal model trial and guard behavior validated; full story workflows can now
 be completed. All production-mutating manual tests require paused/drained schedules or isolation.
