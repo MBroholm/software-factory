@@ -1,5 +1,41 @@
 # Basic A operations — T001–T003 setup and T004 handoff
 
+## Current provider decision — 2026-11-24
+
+The project owner adopted **Gemini 3.5 Flash-Lite**, free tier only, replacing the failed local
+refinement candidates. [Evidence](../evidence/gemini-evaluation.md) records the model trials and
+successful Ubuntu n8n-container API smoke test. [The current contract](../specs/001-basic-a-factory/contracts/refinement.md)
+defines the HTTPS request, bounded input/output, credential/data-transfer boundary and failure path.
+
+The model-choice checkpoint and T004 evidence/review closeout are complete. The owner confirmed
+editor/owner-account access and accepted the refinements on 2026-11-24 after the three affected
+v3 cases passed technical/assistant semantic checks. See [the accepted outputs](../evidence/gemini-v3-review.md).
+Browser checks need not repeat. Before activating refinement, configure a dedicated Gemini
+header-auth credential in n8n and exercise the actual HTTP Request node after owner manual import
+of reviewed JSON (T012/T014); run only checks affected by subsequent changes. Those checks remain unrun.
+
+The server remains at commit `f4a8427` with prompt v2 modified locally; the v3 server smoke test
+passed its payload/key in memory. No Gemini credential is installed remotely yet. Do not overwrite
+server-local prompt work during a later reviewed rollout. The Compose file still starts Ollama
+by default; T012 will make it optional while preserving the cache. No service is stopped or volume
+deleted by this decision. For n8n-only startup, explicitly select the `n8n` service.
+
+Only bounded public issue/discussion content plus reviewed runtime prompt/template/schema goes to
+Google over HTTPS. No GitHub credentials, server environment or unrelated private data is sent.
+Keep the runtime key in n8n's encrypted credential store; the ignored Fedora key file is for
+evaluation only. Exports use a credential reference, not a key value. Scrub error messages and
+private execution data before publishing. Do not put the key in Compose, workflow literals or URLs.
+
+Before activation check active project quotas (owner-reported 15 RPM / 250,000 input TPM / 500 RPD,
+subject to change/shared usage). Infer only for new revisions. HTTP 429, transport/API errors,
+timeouts and invalid output retain the shared busy flag for pause/drain/inspect/manual recovery;
+no automatic retries, quota ledger, paid upgrade or alternate-model fallback. These are planned
+workflow behaviors, not checks already passed by the standalone smoke test.
+
+The original Ollama instructions below are **historical trial procedures**, retained for evidence
+reproduction. They are not the adopted provider's deployment instructions. The current activation
+steps are in [quickstart section 4](../specs/001-basic-a-factory/quickstart.md#4-verify-the-adopted-provider-then-provision-guard-and-import-manually).
+
 ## Current boundary and verified repository configuration
 
 This is interactive factory bootstrapping under constitution III, on `001-basic-a-factory`.
@@ -40,9 +76,13 @@ Codex can authenticate. See [actual local check results](../evidence/local-setup
 | Judge all five refinements against owner-review assertions | Not performed | Owner review of actual outputs |
 | Complete T004 and record results | Not performed | Actual server run and owner evaluation |
 
-No server hostname, credentials or remote session is available to the agent in this workspace.
-Existing Fedora-to-Ubuntu SSH access is the owner's confirmed prerequisite. Do not paste keys or
-tokens into chat. T004 needs no GitHub write token or workflow JSON imports.
+The original handoff table above records the T001–T003 implementation boundary. On 2026-11-24,
+owner-authorized SSH access to `broholm@nas` succeeded, and the assistant verified container
+health plus Gemini access from inside n8n. See [server evidence](../evidence/gemini-evaluation.md#ubuntu-verification--assistant-executed-2026-11-24)
+for actual observations and remaining checks. The hosted API credential was passed through
+SSH stdin into process memory, not installed on the server. The server checkout still contains
+prompt v2; the test supplied v3 in memory. No provider/deployment change is implied.
+Do not paste keys or tokens into chat. T004 needs no GitHub write token or workflow JSON imports.
 
 ## T004, step 1 — preflight and transfer (owner on Fedora/server)
 
@@ -136,8 +176,8 @@ and fixed task template are under `factory/`; `.specify/templates/` is developme
 Retrieve full model metadata through the private service connection, not a new published port:
 
 ```bash
-docker compose --env-file factory/.env -f factory/compose.yaml exec -T n8n node -e "fetch('http://ollama:11434/api/tags').then(r=>{if(!r.ok)throw Error(r.status);return r.text()}).then(t=>console.log(t)).catch(e=>{console.error(e.message);process.exitCode=1})" > factory/local/evaluation/model-tags.json
-docker compose --env-file factory/.env -f factory/compose.yaml exec -T n8n node -e "fetch('http://ollama:11434/api/show',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'qwen3:4b-instruct'})}).then(r=>{if(!r.ok)throw Error(r.status);return r.text()}).then(t=>console.log(t)).catch(e=>{console.error(e.message);process.exitCode=1})" > factory/local/evaluation/model-show.json
+docker compose --env-file factory/.env -f factory/compose.yaml exec -T n8n node -e 'fetch("http://ollama:11434/api/tags").then(r=>{if(r.ok===false)throw Error(r.status);return r.text()}).then(t=>console.log(t)).catch(e=>{console.error(e.message);process.exitCode=1})' > factory/local/evaluation/model-tags.json
+docker compose --env-file factory/.env -f factory/compose.yaml exec -T n8n node -e 'fetch("http://ollama:11434/api/show",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"qwen3:4b-instruct"})}).then(r=>{if(r.ok===false)throw Error(r.status);return r.text()}).then(t=>console.log(t)).catch(e=>{console.error(e.message);process.exitCode=1})' > factory/local/evaluation/model-show.json
 ```
 
 Record the full digest from `model-tags.json`, not only the shortened ID displayed by `ollama

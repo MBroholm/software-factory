@@ -1,19 +1,24 @@
 # Implementation Plan: Basic A — Manual Software Factory
 
-**Branch**: `001-basic-a-factory` | **Date**: 2026-11-23 | **Spec**: [spec.md](spec.md)
+**Branch**: `001-basic-a-factory` | **Date**: 2026-11-24 | **Spec**: [spec.md](spec.md)
 
 **Input**: Approved Basic A specification; constitution v1.1.1; owner's complexity review,
-Fedora/Ubuntu/Compose preferences, SSH availability and interest in local Ollama refinement.
+Fedora/Ubuntu/Compose preferences, SSH availability, completed model trials and explicit owner
+decision on 2026-11-24 to adopt Gemini 3.5 Flash-Lite refinement on the free tier.
 
-**Status**: Phase 0 research and Phase 1 design complete. Design recommendations are ready for
-review/task generation; deployment preflight and model evaluation remain implementation gates.
-No runtime, workflow, deployment, or server changes were made. The initial spec and draft plan
-were preserved in commit `920399e` on this feature branch before revision.
+**Status**: T001–T003 implemented; local model trials failed semantic checks. Owner selected
+Gemini after the hosted comparison and Ubuntu container-to-API smoke check. This amendment records
+that choice; n8n credential/node integration remains unrun. Targeted v3 quality checks passed
+assistant assessment; the owner confirmed editor login and accepted the outputs on 2026-11-24.
+T004 is complete and the alternative-model decision checkpoint is satisfied. No workflow or
+remote deployment is changed by this closeout; T012/T014 credential/node checks remain unrun.
 
 ## Summary
 
 Use three scheduled n8n workflows on Ubuntu and manually launched Codex on Fedora. GitHub issues,
-labels, comments and pull requests connect them. Deploy n8n and local Ollama with Docker Compose.
+labels, comments and pull requests connect them. Deploy n8n with Docker Compose; use the Gemini
+3.5 Flash-Lite HTTPS API for refinement. The existing Ollama service/cache are trial artifacts,
+not a runtime dependency; make its startup optional during T012 without deleting its data.
 The owner accesses n8n's editor through SSH forwarding; no public editor or webhook is needed.
 Keep human approval, questions in the agent session, review and manual workflow JSON import.
 
@@ -24,7 +29,8 @@ Keep human approval, questions in the agent session, review and manual workflow 
 | Brief/constitution; FR-001–014 | Three workflows; fixed refinement template; explicit approval; manual coding-agent launch; one build at a time; branch/PR linkage; human review; manual JSON import; bounded permissions and truthful evidence |
 | Confirmed owner policies; FR-002, 006, 011 | Only owner-authored issues; `Building` reserves the slot before manual launch; unmerged PR closure leaves `Your QA` while issue remains open |
 | Owner preferences; FR-015 | Interactive Codex/SpecKit on Fedora, always-on Ubuntu factory, Docker Compose; SSH access is available |
-| Design recommendations | SQLite; one serialized n8n instance; one shared fail-stop flag; GitHub comment markers; local Ollama first; SSH forwarding; 60-second polling |
+| Owner-selected design, 2026-11-24 | Gemini 3.5 Flash-Lite refinement using the confirmed free-tier project; no automatic paid/model fallback |
+| Design recommendations | SQLite; one serialized n8n instance; one shared fail-stop flag; GitHub comment markers; direct Gemini HTTP Request node; SSH forwarding; 60-second polling |
 | Spec proposals, not brief mandates | FR-016 reliability behavior and P-labelled success targets; this plan retains them as design/validation targets without calling them assignment mandates |
 
 The spec and constitution are unchanged. The layout, polling interval, flag, marker format and
@@ -44,13 +50,13 @@ to the running factory.
 
 ### Inspection and preservation
 
-The repository has the brief, constitution and SpecKit scaffolding, with no application,
-workflow JSON or deployment to preserve. The original uncommitted feature files were committed
+At initial planning, the repository had the brief, constitution and SpecKit scaffolding, with no
+application, workflow JSON or deployment. The original uncommitted feature files were committed
 on `001-basic-a-factory` before editing; `main` was not changed. Feature discovery uses the local,
 ignored `.specify/feature.json`. Anonymous GitHub reads on 2026-11-22 confirmed the public
 `MBroholm/software-factory` repository, owner ID `202449424`, default `main`, and all nine existing
-state labels. Reuse labels and preserve unrelated labels. `gh` exists but is not authenticated
-in this environment. Server hardware, installed software and write credentials are not verified.
+state labels. Reuse labels and preserve unrelated labels. Subsequently GitHub CLI authentication
+was verified and T001–T003 deployed; the 2026-11-24 evidence records actual server checks.
 No applicable AGENTS.md or pre/post planning extension hooks were found.
 
 ### Architecture
@@ -66,29 +72,30 @@ flowchart LR
     subgraph Ubuntu["Ubuntu: Docker Compose"]
         N8N["n8n: refine / reserve / track"]
         Persist["SQLite volume: n8n data + one fail-stop flag"]
-        Ollama["Ollama: local refinement only"]
         N8N --- Persist
-        N8N -->|private service network| Ollama
     end
+    Gemini["Google Gemini 3.5 Flash-Lite: candidate refinement"]
+    N8N -->|HTTPS: bounded task content, API-key header| Gemini
     N8N <-->|scheduled REST polling and issue updates| GH
     Codex <-->|approved issue, branch and PR| GH
     Human <-->|approval and review| GH
     Human -.->|SSH tunnel: editor on loopback| N8N
 ```
 
-No runner, custom backend, Redis, workers, reverse proxy or PostgreSQL. Ollama has no published
-host port; n8n reaches `http://ollama:11434`. The Compose network permits n8n outbound GitHub
-access. Persist n8n data and model files in separate volumes. No Docker socket, host checkout,
+No runner, custom backend, Redis, workers, reverse proxy or PostgreSQL. The Compose network
+permits n8n outbound GitHub and Google API access; no new inbound port is needed. Persist n8n
+data and preserve the separate existing Ollama cache during the transition. No Docker socket, host checkout,
 laptop credentials or command-execution ability is mounted into n8n.
 
 ## Technical Context
 
 **Language/Version**: n8n workflow JSON and small JavaScript transforms; Bash/Git/GitHub CLI for
-manual runbooks. Pin supported n8n/Ollama image versions and downloaded model digest when tested;
-no untested release number or floating production `latest` is prescribed.
+manual runbooks. Pin tested n8n images and record Gemini's requested model ID, returned model
+version and prompt/template hashes. The hosted model alias is not an immutable model digest.
 
 **Primary Dependencies**: Docker Engine/Compose on Ubuntu; n8n Schedule Trigger, HTTP Request,
-Data Table and transformation nodes; Ollama native chat API with JSON-schema output; GitHub REST.
+Data Table and transformation nodes; Gemini generateContent HTTPS API with JSON-schema output;
+GitHub REST. No SDK, model router, tool-enabled agent node or separate provider service is needed.
 Codex remains interactive on Fedora; no change to its login or subscription is proposed.
 Python 3 standard-library unittest is the recommended lightweight fixture-test tool on Fedora.
 
@@ -99,17 +106,21 @@ approval journal, reservation table, operation journal or autonomous recovery st
 
 **Testing**: Small contract fixtures for guards/transitions and marker parsing; targeted live
 workflow exercises; one real manual run with a session question and PR. Use the acceptance matrix
-and commands in [quickstart.md](quickstart.md). No implementation or runtime checks have run.
+and commands in [quickstart.md](quickstart.md). Actual model/server observations are in
+[Gemini evidence](../../evidence/gemini-evaluation.md); workflow checks remain unrun.
 
-**Target Platform**: Ubuntu server for n8n/Ollama; Fedora laptop for Codex, Git and SSH tunnel.
-Hardware, disk space, Docker availability and usable model performance are preflight gates.
+**Target Platform**: Ubuntu server for n8n; Fedora laptop for Codex, Git and SSH tunnel.
+Existing Ollama deployment remains unused until made optional. Server preflight and API smoke
+access passed; owner confirmed browser login. Saved n8n credential/node use remains untested.
 
 **Project Type**: Single-user workflow automation, deployment/runbooks and a separate product folder.
 
 **Performance Goals**: Recommend 60-second schedules and one refinement per execution; reserve
 lowest issue number among eligible approvals for deterministic selection. A successful eligible
-poll observes a change; no hard service SLA. Initial local-model request timeout: 120 seconds,
-one request at a time, 4096-token context, bounded input/output. These are tunable recommendations,
+poll observes a change; no hard service SLA. Gemini request timeout: 120 seconds,
+one request at a time, temperature 0, minimal thinking, 768-token output cap and the existing
+conservative short-input budget (4096-token comparison envelope, not a hosted context setting).
+No automatic retries; quota/API failures hold for manual recovery. These are design choices,
 not assignment requirements or Basic B's deferred 30-minute runner timeout.
 
 **Constraints**: One production instance; `N8N_CONCURRENCY_PRODUCTION_LIMIT=1`; no manual mutating
@@ -120,20 +131,28 @@ writer and operator discipline are deployment constraints, not distributed-lock 
 **Scale/Scope**: One repository/owner, three workflows, one coding task building at a time.
 Basic B and advanced extensions are deferred; no runner API is designed or implemented here.
 
-### Model recommendation and resolved editor access
+### Owner-selected model and resolved editor access
 
-Recommend **local Ollama first**, initially `qwen3:4b-instruct` with its tested digest recorded.
-This is a benchmark candidate, not a claim it will fit unknown hardware or meet task quality.
-Use CPU-only Compose initially; add GPU configuration only if existing hardware warrants it.
-The model download size is not a RAM requirement. Cap context and concurrency; benchmark five
-short examples (clear task, ambiguous task, revision, conflicting constraints, instruction
-injection). Require valid fields and owner-rated usable refinements without invented decisions;
-record response time and peak memory. If unsuitable, stop and ask the owner to choose another
-local model or separately billed hosted API; do not silently enable a paid fallback.
+**Owner decision, 2026-11-24**: Adopt `gemini-3.5-flash-lite` using the confirmed free-tier
+project, replacing the failed Ollama candidates. The five-case v2 comparison had four clean
+semantic passes and one privacy-criterion gap; v3 fixed that gap in a targeted rerun and a
+server-container smoke check. The affected ambiguity/revision/conflict cases subsequently passed
+v3; injection retains unaffected v2 evidence. Preserve these version distinctions;
+do not claim a five-case v3 regression pass. Close any change-affected validation before activation.
 
-ChatGPT Plus does not include ordinary OpenAI API billing. The local recommendation needs no
-new paid API account; it does not imply subscription credentials can be used by n8n. See verified
-sources and alternatives in [research.md](research.md).
+The tradeoff is better observed quality and reduced local inference needs in exchange for
+internet/provider availability, shared project quotas and sending bounded issue content to
+Google. Use a header-auth n8n credential, no key literals in workflow JSON. Owner-reported caps
+were 15 RPM / 250,000 input TPM / 500 RPD; verify the active dashboard before activation, since
+these are project-specific and may change. The 60-second poll is not permission for 1,440 daily
+inferences: only new revisions call the model. A 429 or any uncertain failure holds the flag;
+manual recovery checks quota availability before choosing a retry. Add no quota ledger.
+
+Free tier only: do not enable billing, increase spend or switch model/provider automatically.
+No model tools or GitHub credentials reach Gemini. See the exact request, permission and
+data-transfer boundary in [contracts/refinement.md](contracts/refinement.md) and verified
+sources in [research.md](research.md). Private owner-only development is the current scope;
+making an API client available to other users requires checking the provider's regional terms.
 
 SSH access answers the editor question: bind n8n's published port to `127.0.0.1:5678` on Ubuntu,
 forward it to Fedora with `ssh -N -L 5678:127.0.0.1:5678 user@server`, then visit
@@ -141,7 +160,8 @@ forward it to Fedora with `ssh -N -L 5678:127.0.0.1:5678 user@server`, then visi
 login. Configure editor URL/cookie behavior for that loopback origin in the pinned release;
 verify login through the tunnel before activation. No domain or public HTTPS decision remains.
 The actual server alias and hardware/model sizing are deployment parameters, not unresolved
-architecture choices. Planning does not claim to have logged into the server.
+architecture choices. SSH and container/API access were verified on 2026-11-24; browser login
+through the tunnel was subsequently confirmed by the owner.
 
 ### Complexity review: requirement-to-mechanism decisions
 
@@ -186,7 +206,7 @@ the guard only after all side effects are acknowledged. Full behavior is in
 [contracts/task-lifecycle.md](contracts/task-lifecycle.md).
 
 1. **Refine**: Accept only owner-authored open issues. New `Ideas`, or new unmarked owner comments
-   at `Ready for approval`, select a source revision. Set `Refining` before calling Ollama; post
+   at `Ready for approval`, select a source revision. Set `Refining` before calling Gemini; post
    validated marked output; set `Ready for approval`. Ignore own marked comments even when the
    token actor is the owner. Never rerun stranded `Refining` automatically.
 2. **Reserve**: Check all issues for occupied/conflicting `Building` labels. If free, select an
@@ -209,14 +229,14 @@ There is no claim that REST reads prevent every race with an independent human/A
 
 Use SQLite for the small single-instance deployment; back up the stopped n8n volume with its
 encryption key. Restore workflows, credentials and control row together and inspect the flag
-before resuming. Ollama models use a separate cache volume; they can be downloaded again. Retain
+before resuming. Preserve the unused Ollama cache; do not delete volumes as provider cleanup. Retain
 private n8n failures for diagnosis, prune payloads (recommend 14 days), and store sanitized real-run
 links/outcomes in GitHub and `evidence/` so pruning does not erase course evidence.
 
 | Component | Recommended access | Human boundary |
 |---|---|---|
 | n8n | Single-repository fine-grained token: Issues write, Pull requests read, required Metadata | Never sets `Approved`, changes code, creates/merges PRs, or imports workflow changes |
-| Ollama | Private Compose service, model cache, no tools/credentials | Returns candidate refinement only; no state-changing authority |
+| Gemini API | HTTPS input: reviewed prompt/template/schema and bounded public issue/discussion data; dedicated header-auth n8n credential | Candidate JSON only; no tools, approval, GitHub access or automatic paid/model fallback |
 | Fedora Codex | Working tree, issue reading and owner-authorized branch push/PR creation | Manual launch and in-session questions; no autonomous approval, main merge or production access |
 | Owner | Approval/review, GitHub merge/close, Ubuntu SSH and n8n administration | Manually imports reviewed JSON; performs failure recovery |
 
@@ -238,15 +258,15 @@ private n8n failure; publish the sanitized issue summary when access returns. Se
 
 | Increment | Deliverable | Acceptance / source |
 |---|---|---|
-| 1 | Minimal Compose/private access, runtime task template/prompt draft, early Ollama evaluation | FR-003/013/015; benchmark hardware/quality before building full workflows; stop for owner decision if unsuitable |
+| 1 | Minimal Compose/private access, runtime prompt/template and early model evaluation | FR-003/013/015; failed local trials preserved; owner selected Gemini after comparison/server smoke check; remaining evidence closeout visible |
 | 2 | One guard row, explicit guard-path tests, refine workflow and final prompt/example | FR-001–005/016; SC-001/005; successful/no-work release, unexpected-failure retention, owner-only intake and revision dedup |
 | 3 | Reserve workflow and manual Codex instructions | FR-006–008; SC-002/003; delayed launch, second task waits, no auto-start |
 | 4 | Tracking workflow and manual recovery | FR-009–012/016; SC-004/005; merge, issue closure, closed-unmerged, rework and interrupted transition |
 | 5 | Architecture/permissions docs and real-run evidence | FR-014; SC-006; real task with question and PR; honest outcomes |
 
-Implementation tasks must place the five-example Ollama trial immediately after minimal Compose
-and runtime prompt/template setup, before full workflow implementation. Passing that trial is a
-prerequisite to committing to local-model integration, not an end-of-project polish check.
+The early local-model trial preceded full workflow implementation. Its failure led to the
+explicit owner-selected Gemini alternative, satisfying the model-choice checkpoint. Complete
+remaining T004 evidence and change-affected prompt/credential/node checks before activating refinement.
 Shared-flag tests must exercise all three actual workflow paths: acknowledged success and
 acquired-but-no-work release to idle; unexpected exceptions, crashes, ambiguous writes and failed
 cleanup retain busy; a pre-existing busy flag is never cleared by a skipped execution. Use no
@@ -256,9 +276,8 @@ planning amendment.
 
 Each workflow JSON change is committed for review and manually imported by the owner, including
 bootstrap changes. Develop on the feature branch; later factory tasks use issue-specific branches.
-No acceptance test result is claimed by this design. The task list is generated in the
-subsequent task-generation step requested by the owner; no application implementation is
-performed here.
+Acceptance results come only from linked evidence, not this design. The existing task list is
+amended for the owner-selected provider; no workflow implementation is performed here.
 
 ## Constitution Check
 
@@ -274,9 +293,8 @@ performed here.
 | Review gates | PASS | PASS: acceptance matrix, source distinctions, human actions, workflow and permission review identified |
 | Instructor confirmation | Follow-up | Preserved: interpretation is unconfirmed; no automated resumption implemented; amend constitution if contradicted |
 
-No constitutional exceptions requested. Local model feasibility is a deployment validation gate,
-not a resolved claim about unknown hardware. All architecture choices have a stated recommended
-baseline; remaining choices are model sizing and actual image/configuration pins during preflight.
+No constitutional exceptions requested. The model choice is resolved by the owner's Gemini
+decision; remaining work is credential/node integration and evidence closeout, not local sizing.
 Do not activate refinement if the benchmark fails. No unresolved scope decision is hidden by a
 default, and no implementation readiness is claimed before the operational checks pass.
 

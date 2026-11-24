@@ -1,7 +1,7 @@
 # Research: Basic A — Manual Software Factory
 
-**Updated**: 2026-11-23 | **Status**: Architecture decisions resolved as recommendations;
-local hardware/model suitability must be validated before activation.
+**Updated**: 2026-11-24 | **Status**: Owner adopted Gemini 3.5 Flash-Lite after local failures,
+hosted comparison and Ubuntu API smoke verification. Credential/node activation checks remain.
 
 ## Context and method
 
@@ -9,13 +9,16 @@ Read the brief, constitution v1.1.1, approved spec, original draft and checklist
 artifacts remain in commit `920399e`. A research agent checked official deployment, GitHub and
 Ollama references; the primary agent reviewed the complexity against FR-001–016. Existing public
 repository and labels were verified by anonymous GitHub API reads on 2026-11-22. No server was
-accessed and no runtime/model benchmark was executed.
+accessed and no runtime/model benchmark was executed during initial planning. Subsequent
+evaluation results and the owner decision are recorded below; historical trial evidence is retained.
 
 ## R1 — Separate manual development from always-on orchestration
 
-**Decision**: Recommend n8n and local Ollama on Ubuntu in Compose, with interactive Codex on Fedora.
+**Decision**: n8n on Ubuntu in Compose, Gemini HTTPS refinement, interactive Codex on Fedora.
+Local Ollama was evaluated first and is no longer the chosen runtime dependency.
 
-**Rationale**: Matches owner preferences and leaves only issue/PR operations crossing machines.
+**Rationale**: Matches owner preferences; issue/PR operations and bounded refinement data cross
+machine/provider boundaries, with no remote coding-agent launcher.
 The brief requires n8n and manual agent launch, not a custom bridge into Fedora. Compose is a
 user preference, not a course mandate.
 
@@ -96,7 +99,38 @@ bounded. [Timeline](https://docs.github.com/en/rest/issues/timeline),
 [comments](https://docs.github.com/en/rest/issues/comments),
 [pull requests](https://docs.github.com/en/rest/pulls/pulls).
 
-## R5 — Local refinement first, bounded evaluation
+## R5 — Adopt Gemini after bounded local and hosted evaluation
+
+**Owner decision, 2026-11-24**: Adopt `gemini-3.5-flash-lite` using the confirmed free-tier
+project. The earlier local-first recommendation below is superseded, not erased as evidence.
+`qwen3:4b-instruct` and `qwen2.5:7b` failed semantic checks despite mostly valid JSON. Gemini's
+v2 comparison had four clean semantic passes and one acceptance-coverage gap; prompt v3's
+targeted clear-task runs addressed it on laptop and inside Ubuntu n8n. The affected ambiguity,
+revision and conflict cases subsequently passed v3; injection retains unaffected v2 evidence.
+Owner confirmed editor access and accepted the outputs; T004 is complete. Credential/node
+checks remain unrun for T012/T014.
+See [Gemini evidence](../../evidence/gemini-evaluation.md) and
+[local evidence](../../evidence/ollama-evaluation.md).
+
+**Rationale/tradeoff**: Better observed task faithfulness and about one-second responses without
+local inference load; adds outbound task-data transfer, API credentials, network dependence and
+project quotas. Use one direct HTTP Request node, not a provider framework. JSON validation and
+human approval remain mandatory. No paid/model fallback, tools, runner or recovery automation.
+
+Verified official [pricing](https://aistudio.google.com/docs/pricing) lists free standard input
+and output for the chosen model. The owner's active-dashboard limits were 15 RPM, 250,000 input
+TPM and 500 RPD; these are reported account limits, not a universal promise. Limits are per
+project and the [active dashboard](https://aistudio.google.com/docs/rate-limits) is authoritative.
+New revisions alone trigger inference; quota errors hold for manual recovery, not automatic retry.
+
+Data is sent to Google over HTTPS; no GitHub credentials or server secrets enter the prompt.
+The [provider terms](https://aistudio.google.com/docs/terms) have regional data-handling rules
+and restrict making API clients available to EEA/Swiss/UK users to Paid Services. Current scope
+is private owner-only development; do not infer public-service eligibility or enable billing
+automatically. Reassess terms before offering the factory to others. Runtime credentials belong
+in n8n's encrypted store, referenced by reviewed workflow JSON and never exported as values.
+
+### Superseded initial recommendation and sources
 
 **Decision**: Recommend Ollama with `qwen3:4b-instruct` as the first small candidate; benchmark
 immediately after minimal Compose and draft runtime template/prompt setup, before full workflow
@@ -134,8 +168,7 @@ part of this plan. [Ollama Docker](https://docs.ollama.com/docker),
 No public editor, TLS termination, domain, inbound GitHub webhook or VPN deployment.
 
 **Rationale**: Editor traffic goes through the encrypted SSH connection. The factory continues
-polling when the laptop/tunnel is off. Ollama is accessible only by Compose service name, with no
-published host port. Keep outbound access for GitHub/model downloads; do not mark the only n8n
+polling when the laptop/tunnel is off. Keep outbound access for GitHub and Gemini; do not mark the only n8n
 network internal without a separate egress network.
 [Compose networking](https://docs.docker.com/compose/how-tos/networking/).
 
@@ -161,8 +194,8 @@ critical failure-window tests and real issue/PR demonstrations.
 ## Remaining deployment checks and owner decisions
 
 Architecture is specified; no unresolved scope question blocks Phase 1. Before activation:
-confirm CPU/RAM/GPU and usable candidate model; pin tested software/model versions; configure
-repository token and SSH alias; review recommended FR-016/SC targets. If model quality/resource
-checks fail, owner chooses a different local candidate or approves a hosted budget; do not guess.
+retain observed server/image/model metadata; provision GitHub and Gemini credentials, verify
+browser login and the actual imported HTTP node, and close missing/change-affected quality
+checks. Model/provider choice is resolved; no paid budget is authorized. Review FR-016/SC targets.
 The instructor-confirmation requirement remains outstanding and unchanged. No automated
 resumption is planned. No extension registry/hooks exist.

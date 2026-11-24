@@ -2,10 +2,10 @@
 
 **Input**: [plan.md](plan.md), [spec.md](spec.md), [research.md](research.md),
 [data-model.md](data-model.md), [contracts/](contracts/task-lifecycle.md), [quickstart.md](quickstart.md).
-**Created**: 2026-11-23. **Validated against current design**: 2026-11-23.
+**Created**: 2026-11-23. **Validated against current design**: 2026-11-24.
 **Branch**: `001-basic-a-factory`. Existing task work and planning amendments are preserved.
 **Tests**: The owner explicitly requests shared-flag success/no-work release and unexpected-failure
-retention tests, plus early Ollama evaluation. These tasks plan those checks; no result is asserted.
+retention tests, plus early model evaluation (local trials retained; owner adopted Gemini). These tasks plan those checks; no result is asserted.
 **Organization**: Shared prerequisites followed by the four spec user stories in priority order.
 All paths below are repository-relative. Check a task only after completing it and recording checks.
 
@@ -17,7 +17,7 @@ SpecKit templates create development artifacts. Runtime refinement uses only
 `factory/templates/task.md` and `factory/prompts/refinement.md`, versioned with the refine JSON.
 No runtime SpecKit resolver/full pipeline is introduced.
 
-This is Basic A: three workflows, local refinement trial, manual Codex on Fedora, Ubuntu/Compose,
+This is Basic A: three workflows, owner-selected Gemini refinement, manual Codex on Fedora, Ubuntu/Compose,
 one Building slot, explicit approval, review and manual JSON import. No runner, Redis, automatic
 resume/repair, question-to-issue automation or advanced extension work. Manual recovery and the
 single fail-stop interlock remain intentional. No changes to the constitution or approved spec.
@@ -29,7 +29,16 @@ single fail-stop interlock remain intentional. No changes to the constitution or
 - [X] T001 Verify existing repository/labels and development prerequisites, record confirmed `Project owner.repository`, `Project owner.owner login` and `Project owner.stable owner ID` from [data-model.md — Project owner](data-model.md#project-owner) in `docs/operations.md`; establish `factory/`, `evidence/` and separate `product/` layout without choosing/implementing a product or recreating repository labels; extend `.gitignore` only for generated/private runtime artifacts.
 - [X] T002 Create minimal pinned n8n/Ollama deployment in `factory/compose.yaml` and nonsecret `factory/.env.example`; persist separate volumes, publish n8n on server loopback only, keep Ollama private with GitHub egress, serialize production executions and document existing SSH access in `docs/operations.md`; validate Compose configuration without exposing secrets.
 - [X] T003 [P] Write draft versioned runtime template and prompt in `factory/templates/task.md` and `factory/prompts/refinement.md` using `contracts/refinement.md`; map rendered `Refinement comment.goal`, `Refinement comment.constraints`, `Refinement comment.acceptance criteria` and `Refinement comment.questions` to [data-model.md — Refinement comment](data-model.md#refinement-comment); create five bounded evaluation inputs in `factory/tests/fixtures/refinement-cases.json` for clarity, ambiguity, revision, conflicting constraints and injected instructions. Record the reasons for the runtime template fields and refinement-prompt instructions in `docs/refinement-design.md`, distinguishing brief/constitution requirements from design choices; T014 supplies the validated output example.
-- [ ] T004 Evaluate Ollama on the actual Ubuntu server using T002/T003 before full workflow implementation; record hardware, model/image digests, prompt/template versions, all five schema/semantic results, cold/warm time and peak RAM in `evidence/ollama-evaluation.md` per `contracts/refinement.md`; if access/resources/quality fail, record the failure and stop dependent integration for owner choice, with no paid fallback or hardware purchase.
+- [X] T004 Close out early model evaluation using T002/T003 and `contracts/refinement.md`: retain failed Ubuntu local trials and incomplete memory observations in `evidence/ollama-evaluation.md`; record owner-selected Gemini 3.5 Flash-Lite (2026-11-24), versioned quality results and successful actual Ubuntu container-to-API smoke check in `evidence/gemini-evaluation.md`. Keep unrun checks visible; assess prompt-v3 effects on revision/ambiguity/conflict and run only needed checks, reusing unaffected results. Do not claim cold/warm loading or remote peak RAM for hosted inference. Confirm owner review and editor access; saved n8n credential/HTTP-node verification belongs to T012/T014. No paid fallback or hardware purchase.
+
+**Owner decision 2026-11-24**: Gemini 3.5 Flash-Lite adopted on the confirmed free tier after
+local failures and hosted/server checks. The explicit alternative-model checkpoint is satisfied,
+so foundation implementation may proceed. T004 is complete after owner acceptance; actual
+credential/node and any subsequent change-affected checks gate refinement activation.
+**Closeout update 2026-11-24**: Owner confirmed editor/owner-account access; the three affected
+v3 cases passed technical/assistant semantic checks. The owner reviewed and accepted the outputs
+("they look good to me"); T004 is complete. See `evidence/gemini-v3-review.md`. Later credential/node
+checks remain T012/T014.
 
 **Checkpoint**: T004 passes or the owner explicitly chooses a revised model plan. A missing server
 or failed trial is a visible blocker, not a completed task. Drafting unrelated documentation may
@@ -56,7 +65,7 @@ no coding agent is needed to demonstrate this story.
 
 - [ ] T010 [US1] Complete owner-only paginated discovery, PR-object exclusion and source-state validation in `factory/workflows/refine.json`, citing `Task issue.author ID`, `Task issue.current labels`, `Task issue.open/closed status` and preserved unrelated labels in [data-model.md — Task issue](data-model.md#task-issue); ordinary no-work/non-owner/already-processed paths release an acquired guard.
 - [ ] T011 [US1] Implement canonical source capture, marker filtering and repeat suppression in `factory/workflows/refine.json` using `Refinement comment.source body SHA-256`, `Refinement comment.captured source comment IDs`, `Refinement comment.last included unmarked owner comment ID`, `Refinement comment.prompt version`, `Refinement comment.source key` and its marker definition in [data-model.md — Refinement comment](data-model.md#refinement-comment); retain prior revisions and detect captured edits/deletions rather than including every later session/rework comment.
-- [ ] T012 [US1] Finalize `factory/templates/task.md` and `factory/prompts/refinement.md` from the early trial (repeat the bounded trial if they materially change), then wire their reviewed versions into `factory/workflows/refine.json` with bounded Ollama request, strict final-output validation and fixed Markdown rendering per `contracts/refinement.md`; do not load `.specify/templates/` or give the model state-changing tools.
+- [ ] T012 [US1] Finalize `factory/templates/task.md` and `factory/prompts/refinement.md` from the early trial, assessing material changes and running only missing/change-affected checks, then wire their reviewed versions into `factory/workflows/refine.json` with bounded Gemini generateContent request using a saved header-auth credential, strict final-output validation and fixed Markdown rendering per `contracts/refinement.md`; verify the actual credential/HTTP node after owner manual import before activation. Make Ollama startup optional in Compose without deleting the existing cache/data or changing the server without a reviewed rollout; do not load `.specify/templates/` or give the model state-changing tools.
 - [ ] T013 [US1] Implement `Ideas`/owner Ready-stage discussion -> `Refining` -> validated marked comment -> `Ready for approval` in `factory/workflows/refine.json` per [data-model.md — State transitions](data-model.md#state-transitions); failed/stranded Refining and unknown writes hold for manual recovery, never infer approval or auto-resume.
 - [ ] T014 [US1] Before live exercises, have the owner manually import the reviewed `factory/workflows/refine.json` with the reviewed runtime prompt/template versions; record the reviewed commit and imported revision in `evidence/refinement-validation.md`, then run refinement/revision/unchanged-poll and approval exercises in `specs/001-basic-a-factory/quickstart.md`, extending `factory/tests/fixtures/refinement-cases.json` only for necessary edge inputs, and record outcomes/example output in `evidence/refinement-validation.md`; verify no non-owner processing or factory-comment loop, no duplicate unchanged output, no initial AI approval, and no unexpected-failure release.
 
@@ -97,7 +106,7 @@ closure, including a closed-unmerged PR with the issue still open.
 trace a real task's input, decisions, PR and review entirely from sanitized repository evidence.
 
 - [ ] T024 [US4] Complete deployment/operations instructions in `docs/operations.md` for private SSH editor login, pinned model/images, one production instance, volume/encryption-key backup and restore, private execution retention and manual import/revision verification; preserve one-row guard and no automatic recovery/expiry tradeoff.
-- [ ] T025 [P] [US4] Create `docs/architecture.md` from the reviewed Basic A design, explicitly separating `.specify/templates/` development artifacts from runtime `factory/templates/task.md` and `factory/prompts/refinement.md`, and showing only the server n8n/Ollama services, Fedora manual coding and GitHub interface.
+- [ ] T025 [P] [US4] Create `docs/architecture.md` from the reviewed Basic A design, explicitly separating `.specify/templates/` development artifacts from runtime `factory/templates/task.md` and `factory/prompts/refinement.md`, and showing server n8n, outbound Gemini refinement, Fedora manual coding and GitHub interface; distinguish retained optional Ollama trial artifacts from runtime dependencies.
 - [ ] T026 [US4] Complete the `factory/tests/guard-scenarios.md` matrix against **all three completed workflows** in isolation; verify reviewed/manual-imported revisions, reuse applicable current-version story evidence and execute missing or change-affected cases, including success, every no-work early return, already-busy entry, unexpected exception before/after side effects, failed final release, crash/restart and missing/unconfirmed acquisition; record actual rows, failed/skipped executions and later-poll behavior in `evidence/guard-validation.md`; do not accept skeleton/helper-only results or unconditional cleanup that masks failures.
 - [ ] T027 [US4] Execute pause/drain/inspect/repair/reset/resume and backup/restore exercises, including GitHub outage, partial label transition and unknown comment POST, in an isolated deployment; record operator steps, marker inspection, retained Building reservations and sanitized failures in `evidence/recovery-validation.md`; ambiguous outcomes remain held rather than retried automatically.
 - [ ] T028 [US4] Assemble `evidence/index.md` linking the real task issue/PR, refinement, session decision, owner review and actual checks from the validation records; explicitly distinguish fixtures from real runs, count only genuine issue/PR-linked tasks and retain the final-project minimum of five runs as outstanding until actually met.
@@ -112,7 +121,7 @@ trace a real task's input, decisions, PR and review entirely from sanitized repo
 ## Dependencies and execution order
 
 - **Setup**: After T001, T002 (deployment) and T003 (prompt/template/evaluation cases) are
-  independent and may proceed in parallel. **T004 early Ollama gate requires both T002 and
+  independent and may proceed in parallel. **T004 early model gate requires both T002 and
   T003**. Drafting T003 does not wait for deployment readiness; do not implement full workflows
   to discover only later that local inference is unsuitable.
 - **Foundation**: T005 -> T006 -> T007 -> T008 -> T009. No user-story implementation before the
@@ -136,7 +145,7 @@ trace a real task's input, decisions, PR and review entirely from sanitized repo
 flowchart TD
     Setup["T001: prerequisites"] --> Deploy["T002: minimal deployment"]
     Setup --> Prompt["T003: runtime prompt, template and evaluation cases"]
-    Deploy --> Model["T004: early Ollama gate requires T002 and T003"]
+    Deploy --> Model["T004: early model gate requires T002 and T003"]
     Prompt --> Model
     Model --> Guard["T005–T009: shared guard, test cases and manual recovery"]
     Guard --> US1["US1 T010–T014: refinement and approval MVP"]
@@ -168,7 +177,7 @@ are specified before implementation in T006 and exercised by T014/T019/T023/T026
 ## Implementation strategy
 
 Start with the server preflight; prepare deployment and draft refinement inputs independently,
-then join them for the bounded Ollama trial before the single shared guard. Deliver
+then join them for the bounded model evaluation before the single shared guard. Deliver
 US1 as a useful refinement MVP; add manual handoff and reviewed results, then operate and gather
 real evidence. Tests requested here must cover actual workflow completion/error routing, not
 just duplicate control logic in Python. Manual fixture tests and isolated fault injection are

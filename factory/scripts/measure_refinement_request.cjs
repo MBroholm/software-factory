@@ -65,7 +65,9 @@ async function main() {
   if (error) process.exitCode = 1;
 }
 
-main().catch(error => {
+module.exports = {validate};
+
+if (require.main === module) main().catch(error => {
   console.error(`Evaluation request failed: ${error.message}; do not retry automatically.`);
   process.exitCode = 1;
 });

@@ -1,4 +1,4 @@
-# Runtime refinement design — draft v1
+# Runtime refinement design — template/schema v1, prompt v3 trial
 
 ## Ownership and scope
 
@@ -6,7 +6,19 @@
 source for the factory. Runtime artifacts are `factory/templates/task.md`,
 `factory/prompts/refinement.md` and `factory/templates/refinement.schema.json`. The schema is a
 machine-readable copy of the approved refinement contract, not an additional output format.
-The draft remains subject to T004's actual server evaluation and T012's final integration.
+T004's actual evaluation and owner review are complete; T012's final integration remains unrun.
+The owner-approved prompt v2 trial addresses v1's observed loss of explicit constraints and
+invented policies/criteria. It changes no schema, template, fixture or runtime limit. See
+[baseline evidence](../evidence/ollama-evaluation.md) and [v2 trial steps](ollama-v2-trial.md).
+The owner then approved prompt v3's targeted clarification: acceptance criteria must include
+observable checks for the goal and each constraint. The existing rule keeps unresolved checks
+pending owner decisions. A single Gemini clear-task rerun passed, covering the privacy check
+missing from v2. Subsequent targeted ambiguity/revision/conflict runs passed v3; the unaffected
+injection case retains v2 evidence. See the versioned results in
+[Gemini evaluation](../evidence/gemini-evaluation.md). The owner adopted Gemini 3.5 Flash-Lite
+on 2026-11-24; provider choice is now resolved, with deployment integration still pending.
+This is a design choice rather than a course requirement. The unchanged runtime fields and
+human review boundary apply equally to hosted refinement; no provider framework is added.
 
 ## Why these fields
 
@@ -37,7 +49,7 @@ are intentional rendering slots, not unresolved feature decisions. Lists will re
 empty constraints/questions will render a plain "None stated" / "None" rather than invented items.
 T011/T012 will implement that rendering and metadata; T003 supplies only its reviewed inputs.
 
-## Small local-model trial
+## Historical local-model trial
 
 The initial candidate is local `qwen3:4b-instruct`, not the similarly named thinking tag. The
 draft trial uses one inference at a time, 4096-token context, 768 output-token limit,
@@ -57,9 +69,12 @@ If any case cannot fit, shorten/split it or deliberately revise and retest the l
 
 ## Review and change control
 
-Record prompt/template/schema hashes, candidate model digest and image digests in T004 evidence.
-If the prompt/template changes materially, repeat the bounded trial before integration. The
-first validated output example belongs to T014; none has been generated here.
+Record prompt/template/schema hashes and tested image digests in T004 evidence. For the adopted
+Gemini API record requested model ID, returned version, token usage and latency; no hosted model
+digest or remote peak RAM is available. Keep original failed local-model digest/results as evidence.
+If the prompt/template changes materially, assess and run missing/change-affected checks before
+integration, preserving unchanged evidence and tested versions. The first workflow-generated
+validated output example belongs to T014; current synthetic examples are model trials only.
 When workflow JSON exists, changes are reviewed in a pull request and the owner manually imports
 it, verifying these runtime versions. No automatic workflow importer, runner or recovery engine
 is added. The single shared guard and manual-recovery tradeoff remain later implementation work.

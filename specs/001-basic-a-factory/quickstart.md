@@ -1,14 +1,14 @@
 # Quickstart and Validation: Basic A
 
-**Date**: 2026-11-23. This is a post-implementation guide, not a claim the planned files exist
+**Date**: 2026-11-24. This is a post-implementation guide, not a claim the planned files exist
 or tests have passed. No deployment is performed by planning. Use only reviewed artifacts on
 `001-basic-a-factory` initially; factory-run tasks later use their own issue branches.
 
 ## 1. Prerequisites and preflight
 
 Owner verifies on Ubuntu: CPU/RAM/GPU, free disk, supported Docker Engine/Compose, SSH access,
-no conflicting local ports, and enough headroom for Ollama alongside n8n. No GPU purchase or
-provider billing is assumed. On Fedora: Git, interactive Codex/SpecKit, SSH, GitHub CLI and Python 3
+no conflicting local ports and enough headroom for n8n. Gemini 3.5 Flash-Lite is the owner-selected
+refinement provider on the confirmed free tier; no GPU purchase or paid billing is authorized. On Fedora: Git, interactive Codex/SpecKit, SSH, GitHub CLI and Python 3
 for lightweight contract tests. Configure GitHub credentials locally, never in chat or tracked files.
 
 ```bash
@@ -29,7 +29,7 @@ permissions on Fedora; no factory Contents write or merge authority.
 The implementation will provide `factory/compose.yaml` and `factory/.env.example`. Inspect
 reviewed changes before installing. Server-local secrets/environment remain outside Git; use
 restricted file permissions, and never paste resolved configuration containing secrets into
-issues. Pin tested n8n/Ollama images rather than floating production tags.
+issues. Pin the tested n8n image rather than a floating production tag. Preserve existing volumes.
 
 ```bash
 # Ubuntu, from the checked-out repository root; after implementation
@@ -37,16 +37,15 @@ cp factory/.env.example factory/.env
 chmod 600 factory/.env
 # Edit server-local values and credential/encryption configuration privately.
 docker compose --env-file factory/.env -f factory/compose.yaml config --quiet
-docker compose --env-file factory/.env -f factory/compose.yaml up -d
+docker compose --env-file factory/.env -f factory/compose.yaml up -d n8n
 docker compose --env-file factory/.env -f factory/compose.yaml ps
-docker compose --env-file factory/.env -f factory/compose.yaml exec ollama ollama pull qwen3:4b-instruct
-docker compose --env-file factory/.env -f factory/compose.yaml exec ollama ollama list
 ```
 
-Record exact model digest and image versions in private deployment records and sanitized evidence.
-Model download size is not a RAM requirement. Start CPU-only; use a GPU only after verifying
-existing hardware/runtime support. Ollama exposes no host port. n8n has outbound GitHub access.
-Both named volumes survive container restart; do not use `down -v` during normal operation.
+Record the n8n image digest, requested Gemini model ID, returned model version and runtime
+prompt/template hashes. The hosted alias is not an immutable model digest. n8n requires outbound
+HTTPS to GitHub and Google; no additional inbound port is required. The existing Compose file
+still includes unused Ollama from the trials; T012 will make startup optional. Starting only n8n
+does not stop an already-running Ollama service. Do not delete caches/volumes or use `down -v`.
 
 ## 3. Access the private editor
 
@@ -61,22 +60,30 @@ with the pinned release's loopback editor settings. Bind the server's published 
 and configure the expected editor origin consistently. Disconnecting SSH closes browser access;
 the server factory continues polling. No public editor/domain/reverse proxy is required.
 
-## 4. Evaluate Ollama early, then provision guard and import manually
+## 4. Verify the adopted provider, then provision guard and import manually
 
-Perform the Ollama trial now with the draft `factory/templates/task.md` and
-`factory/prompts/refinement.md`, before investing in full workflow implementation. These are the
-factory runtime inputs; `.specify/templates/` guides development artifacts only. Preserve tested
-versions in the trial evidence and check the same versions during manual workflow import.
+The owner adopted Gemini 3.5 Flash-Lite on 2026-11-24 after unsuccessful local trials,
+a versioned hosted comparison and a successful Ubuntu-container API smoke check. See
+[actual evidence](../../evidence/gemini-evaluation.md). The alternative-model choice checkpoint
+is satisfied; T004 evidence closeout and owner acceptance are complete. Do not repeat local-model loading or
+full benchmark tests merely to reconfirm the verified network path.
 
-In the inactive test instance, verify HTTP Request access to Ollama at `http://ollama:11434`.
-Use the request/output contract and five examples in [refinement.md](contracts/refinement.md).
-Record schema/semantic quality, cold/warm latency and peak RAM; observe container memory with
-`docker stats --no-stream`. Require the proposed five-example benchmark to pass inside the
-configured 120-second request deadline without OOM, invented decisions or missing material
-questions. If it fails, leave refinement inactive, report hardware/results and ask the owner
-whether to change local model or approve a hosted API budget. No automatic paid fallback.
+Runtime inputs remain `factory/templates/task.md` and `factory/prompts/refinement.md`;
+`.specify/templates/` guides development artifacts only. Use the exact
+[Gemini request/output contract](contracts/refinement.md), including bounded input/output,
+JSON schema, pending decisions, 120-second timeout and no automatic retries or paid fallback.
+Before activation:
 
-Only after the early trial passes, proceed with workflow implementation and guard setup.
+1. Verify n8n owner login through SSH. Save the free-tier API key privately as a dedicated
+   header-auth credential (`x-goog-api-key`), never a workflow literal or URL query parameter.
+2. Confirm active project quotas in AI Studio; do not enable billing or switch models.
+3. Assess existing v2/v3 evidence and run only missing/change-affected prompt checks; don't
+   claim the four v2 outputs were tested against v3. Keep public results sanitized.
+4. After owner manual import of reviewed JSON, verify saved-credential use in the actual HTTP
+   Request node with the reviewed runtime versions (T012/T014). The earlier Node-in-container
+   smoke test did not exercise n8n's credential store or workflow engine. Keep schedules inactive.
+5. Verify API/quota errors stop and retain the shared flag, with redacted evidence and manual
+   recovery; no silent retry/model fallback. Reuse the appropriate guard/story checks.
 
 In the n8n Data Tables UI, create `factory_control` with the exact columns in
 [data-model.md](data-model.md), and one `global` row with `busy=false`. This is not a task ledger.
@@ -170,7 +177,8 @@ clarify FR-016 and revisit the design before implementation.
 Stop n8n before making a consistent volume copy; preserve its encryption key securely alongside
 the backup. Restore privately, inspect busy state and workflows while schedules remain inactive,
 then run the same review/reset protocol. Never commit the database, keys, raw private execution
-payloads or backup archives. Ollama's cache is separate and can be repulled from recorded digests.
+payloads or backup archives. Preserve the optional historical Ollama cache separately; Gemini
+access is restored through the encrypted n8n credential store, not a copied evaluation key file.
 
 Implementation produces architecture/operation/permission docs, prompt/template/example and a
 sanitized evidence index. For each run include issue/PR URLs, revision/approval, actual checks,
