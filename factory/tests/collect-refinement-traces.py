@@ -52,13 +52,13 @@ for(const entity of entities) {
   } else if(record&&typeof record.data==='object') details=record.data;
   let snapshot=record?.workflowData;
   if(typeof snapshot==='string') { try{snapshot=JSON.parse(snapshot);}catch{snapshot=null;} }
-  if(snapshot?.name!=='TEST ONLY — Basic A US1 native fault bridge') continue;
+  if(!['TEST ONLY — Basic A US1 native fault bridge','TEST ONLY — US1 scheduled refinement'].includes(snapshot?.name)) continue;
   const result=details?.resultData, runs=result?.runData||{};
   const first=name=>runs[name]?.at(-1)?.data?.main?.[0]?.[0]?.json;
   const completion=first('Report completion')||first('Report existing hold');
   output.push({id:String(entity.id),workflowId:entity.workflowId,workflowName:snapshot.name,
     mode:entity.mode,status:entity.status,startedAt:entity.startedAt,stoppedAt:entity.stoppedAt,
-    case:first('US1 test entry')?.body?.case,lastNode:result?.lastNodeExecuted,errorNode:result?.error?.node?.name,errorMessage:(result?.error?.message??runs[result?.lastNodeExecuted]?.at(-1)?.error?.message??'').slice(0,300),
+    case:first('US1 test entry')?.body?.case??(snapshot.name==='TEST ONLY — US1 scheduled refinement'?'scheduled-session-31001':null),lastNode:result?.lastNodeExecuted,errorNode:result?.error?.node?.name,errorMessage:(result?.error?.message??runs[result?.lastNodeExecuted]?.at(-1)?.error?.message??'').slice(0,300),
     reached:Object.entries(runs).map(([name,entries])=>({name,runs:entries.length,status:entries.at(-1)?.executionStatus,
       timings:entries.map(e=>({startTime:e.startTime,executionTime:e.executionTime}))})),
     generationResponses:(runs['Gemini generateContent']??[]).map(e=>({status:e.data?.main?.[0]?.[0]?.json?.statusCode,

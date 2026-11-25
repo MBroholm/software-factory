@@ -290,3 +290,19 @@ All tasks remain unchecked. Owner-only approvals, manual JSON imports and conser
 recovery are acceptance boundaries throughout. If stronger exactly-once behavior or autonomous
 recovery becomes necessary, surface that requirement and revise the plan instead of silently
 weakening FR-016 or implementing a new orchestration platform.
+
+
+## Phase 8: Convergence
+
+US1-only assessment (T010–T014), 2026-11-25. Existing completion markers and historical
+evidence are retained. This finding concerns scheduled-entry validation, not US2–US4 work.
+
+- [ ] T031 [US1] Close the HIGH scheduled-entry validation gap per US1/AC1–2, SC-001 and T014 (partial): after owner review/manual import, exercise the current refinement Schedule Trigger in isolation at its reviewed interval for eligible idea processing, owner-requested revision and an unchanged subsequent poll; verify Refining -> marked output -> Ready, one revision per new captured input, no duplicate output and acknowledged guard release. Reuse existing real-task/provider and unaffected guard/fault evidence; distinguish synthetic HTTP inputs from real GitHub/API observations and explicitly map scheduled-path evidence to the real US1 task exercises. Record source/import fingerprints, native schedule-trigger execution IDs, issue/comment or fixture references, guard observations and any failure/manual intervention in `evidence/refinement-validation.md`; update the acceptance matrix and PR summary accordingly. Existing skeleton schedules and webhook/manual-entry runs alone do not establish this acceptance condition. Keep production untouched, enable only one isolated test schedule at a time, and unpublish/drain it afterward; inspect the retained 1218 hold before any deliberate reset.
+
+
+**T031 implementation checkpoint, 2026-11-25**: Prepared the current-source scheduled test
+copy and persistent synthetic issue observer; all 31 source Code bodies, original Schedule
+Trigger/60-second interval and guard path are preserved. Fixture persistence/revision preflight
+and packaging/syntax checks pass. The loopback-only fixture service is ready, but no scheduled
+case is claimed: owner manual import of the reviewed new test copy is still required. Retained
+1218 hold is unchanged. T031 remains unchecked pending native scheduled evidence and PR update.

@@ -43,6 +43,15 @@ function ownerComment(s,number,body){const id=Math.max(20,...Object.values(s.com
 const server=http.createServer(async(req,res)=>{
  try{
  const url=new URL(req.url,'http://fixture');
+ if(url.pathname==='/schedule/inspect'&&req.method==='GET'){res.setHeader('Content-Type','application/json');res.end(JSON.stringify(runs['31001']??null));return;}
+ if(url.pathname==='/schedule/revision'&&req.method==='POST'){
+  let raw='';for await(const chunk of req){raw+=chunk;if(raw.length>2000)throw Error('Oversize operator request');}
+  const b=JSON.parse(raw),s=runs['31001'];
+  if(typeof b.reason!=='string'||b.reason.trim().length<12||!s||s.posts!==1||s.generation!==1||s.revisionInjected)throw Error('Inspect first completed scheduled refinement and supply reason before one revision');
+  const issue=s.issues.find(i=>i.number===101);if(!issue.labels.some(l=>l.name==='Ready for approval'))throw Error('Fixture not Ready');
+  const comment=ownerComment(s,101,'Add a brief usage example.');s.comments[101].push(comment);s.revisionInjected={reason:b.reason,commentId:comment.id,at:Date.now()};save();
+  res.setHeader('Content-Type','application/json');res.end(JSON.stringify(s.revisionInjected));return;
+ }
  if(url.pathname==='/health'){res.setHeader('Content-Type','application/json');res.end(JSON.stringify({synthetic:true,sourceSHA256:config.sourceSHA256,runs:Object.keys(runs).length}));return;}
  if(url.pathname==='/inspect'&&req.method==='GET'){res.setHeader('Content-Type','application/json');res.end(JSON.stringify(runs));return;}
  const name=req.headers['x-us1-case'],id=req.headers['x-us1-run'],node=req.headers['x-us1-node'];
@@ -50,7 +59,7 @@ const server=http.createServer(async(req,res)=>{
  const s=runs[id]??=fixture(name);if(s.case!==name)throw Error('Run changed case');
  let raw='';for await(const chunk of req){raw+=chunk;if(raw.length>100000)throw Error('Oversize fixture request');}
  const input=raw?JSON.parse(raw):null;
- s.calls.push({node,method:req.method,path:url.pathname,page:url.searchParams.get('page'),at:Date.now(),bodySHA256:input?digest(input):null});
+ s.calls.push({node,executionId:req.headers['x-us1-execution']??id,method:req.method,path:url.pathname,page:url.searchParams.get('page'),at:Date.now(),bodySHA256:input?digest(input):null});
  let status=200,body,headers={},disconnect=false;
  const number=Number(url.pathname.match(/\/issues\/(\d+)/)?.[1]);const issue=s.issues.find(i=>i.number===number);
  const page=Number(url.searchParams.get('page')||1);const paged=a=>a.slice((page-1)*100,page*100);

@@ -27,5 +27,15 @@ let stderr='';child.stderr.on('data',b=>stderr+=b);
  const s=await (await fetch(base+'/inspect')).json();assert.equal(s[id].countBodies[0],s[id].modelBodies[0]);
  id++;const p1=await call('pagination',id,'Discover issues','/github/repos/MBroholm/software-factory/issues?page=1');const p2=await call('pagination',id,'Discover issues','/github/repos/MBroholm/software-factory/issues?page=2');assert.equal(p1.body.length,100);assert.equal(p2.body.length,1);
  id++;await assert.rejects(call('transport',id,'Gemini generateContent','/gemini/v1beta/models/test:generateContent',payload));
+ // One persistent synthetic issue across separate scheduled execution identities.
+ const session=31001;
+ await call('success',session,'Discover issues','/github/repos/MBroholm/software-factory/issues');
+ await call('success',session,'Gemini countTokens','/gemini/v1beta/models/test:countTokens',{generateContentRequest:{model:'models/test',...payload}});
+ await call('success',session,'Gemini generateContent','/gemini/v1beta/models/test:generateContent',payload);
+ await call('success',session,'Add Ready','/github/repos/MBroholm/software-factory/issues/101/labels',{labels:['Ready for approval']});
+ await call('success',session,'Post refinement','/github/repos/MBroholm/software-factory/issues/101/comments',{body:'Synthetic marked output fixture'});
+ const revision=await fetch(base+'/schedule/revision',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({reason:'Inspected synthetic first scheduled refinement; add one owner revision'})});assert.equal(revision.status,200);
+ const added=await revision.json();const persisted=await (await fetch(base+'/schedule/inspect')).json();assert.equal(persisted.posts,1);assert.equal(persisted.comments[101].length,2);assert.equal(persisted.comments[101][1].id,added.commentId);
+ const duplicate=await fetch(base+'/schedule/revision',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({reason:'Attempt duplicate fixture revision; must be rejected'})});assert.equal(duplicate.status,400);
  console.log(`PASS ${config.cases.length} fixture initializations, retry response sequences, payload identity, pagination and actual dropped connection. Fixture checks only; native workflow not run.`);
 })().catch(e=>{console.error(e);process.exitCode=1;}).finally(()=>{child.kill();fs.rmSync(directory,{recursive:true,force:true});});

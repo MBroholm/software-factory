@@ -7,6 +7,30 @@ The reconciled acceptance matrix below is authoritative. Earlier dated observati
 retained as historical records; their pending/unrun statements describe those earlier stages.
 No production activation, US2+ completion or completed issue/PR-linked build run is claimed.
 
+## T031 scheduled-entry convergence follow-up — prepared, UNRUN
+
+US1 convergence found that SC-001/US1 AC1–2 require actual scheduled processing evidence;
+the real API exercises entered manually and the native fault bridge entered by webhook.
+The earlier closeout remains historical; **T031 is now the explicit open acceptance follow-up**.
+No already-recorded result is reclassified as a scheduled run.
+
+Prepared `factory/tests/refinement-schedule.json` and its mapped owner import
+`factory/local/refinement-native-bridge/schedule-mapped.json`, using the exact current source
+Schedule Trigger (Poll inactive, 60 seconds) directly entering Read control. All 31 source Code
+bodies/connections are retained; external HTTP is synthetic loopback with no credentials.
+One persistent synthetic issue/session 31001 will be refined, revised by an explicit operator
+comment after the first completion, then polled unchanged. The observer does not manually
+initiate any main workflow execution. It will match native trigger-mode traces to source hashes
+and completion/guard/HTTP logs, mapping this entry-path evidence to existing real issue #1 runs.
+
+Preflight PASS: source Code/connection/interval assertions, generated-file consistency, Python/
+JavaScript syntax, existing HTTP fixture self-check plus persistent session and one-time revision
+endpoint checks. The container-loopback fixture service is ready with current source SHA-256
+`ee3f6e782f72ec409d6e9a6cb02ca0f8b9a4b43eccbfad4dff0a9003ffe1ec38`.
+No workflow was imported/published or executed for T031; retained hold 1218 has not been reset.
+Owner manual import after review is required before the scheduled runs. T031 remains unchecked.
+See `factory/tests/refinement-schedule.md` for review/import/execution/cleanup boundaries.
+
 ## T014 closeout and evidence boundaries
 
 T014's required owner import, prompt/template identity, live output example, owner revision,

@@ -1,0 +1,29 @@
+{
+  "sourceSHA256": "ee3f6e782f72ec409d6e9a6cb02ca0f8b9a4b43eccbfad4dff0a9003ffe1ec38",
+  "scheduleName": "Poll inactive",
+  "scheduleParameters": {
+    "rule": {
+      "interval": [
+        {
+          "field": "seconds",
+          "secondsInterval": 60
+        }
+      ]
+    }
+  },
+  "scheduleConnection": {
+    "main": [
+      [
+        {
+          "node": "Read control",
+          "type": "main",
+          "index": 0
+        }
+      ]
+    ]
+  },
+  "sourceCodeBodiesUnchanged": 31,
+  "session": "31001",
+  "publicGraphSHA256": "e97d8d977ae78efac36a3ed1be5c4814ae8c2f51a326254e021305b97a3ab3c7",
+  "active": false
+}
