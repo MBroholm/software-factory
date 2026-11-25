@@ -103,22 +103,30 @@ def case(name):
 
 
 def restart_reservation():
-    prepare_idle('Inspected completed unknown-post fixture; prepare explicit in-flight restart')
+    idle_before = prepare_idle('Inspected completed synthetic suite and prior restart observation; prepare controlled in-flight restart')
+    existing = set(effects())
     with concurrent.futures.ThreadPoolExecutor(max_workers=1) as pool:
         future = pool.submit(request, 'run', {'case': 'restart-reservation'})
         deadline = time.monotonic() + 20
+        selected = None
         while time.monotonic() < deadline:
-            current = row()
-            state = effects().get(current['execution_id']) if current['busy'] else None
-            if state and state['case'] == 'restart-reservation' and state['waitingAt'] == 'Add Building':
+            candidates = [(key, value) for key, value in effects().items()
+                          if key not in existing and value['case'] == 'restart-reservation'
+                          and value['waitingAt'] == 'Add Building']
+            if candidates:
+                assert len(candidates) == 1, 'Ambiguous in-flight fixture; preserve state'
+                selected = candidates[0]
                 break
-            time.sleep(0.25)
-        else:
-            raise AssertionError('Did not observe in-flight synthetic label addition; do not restart blindly')
+            time.sleep(0.2)
+        assert selected, 'Did not observe new in-flight synthetic label addition; do not restart blindly'
+        execution_id, state = selected
+        assert not future.done(), 'Execution completed before restart; stop instead of claiming interruption'
         assert state['posts'] == 0
         assert set(l['name'] for l in state['issues'][0]['labels']) == {'Approved', 'documentation', 'Building'}
-        log('inspected_before_restart', row=current, effect=state)
-        subprocess.run(['docker', 'restart', 'factory-guard-test'], check=True, capture_output=True)
+        # Reuse the US1 lesson: state webhooks queue behind this serialized live execution.
+        # Observe the persisted synthetic effect outside n8n, then read the guard after restart.
+        log('inspected_before_restart', idle_before=idle_before, observed_execution=execution_id, effect=state)
+        subprocess.run(['docker', 'restart', '-t', '1', 'factory-guard-test'], check=True, capture_output=True)
         log('restarted_isolated_container', container='factory-guard-test')
         try:
             status, response = future.result(timeout=20)
@@ -130,26 +138,29 @@ def restart_reservation():
             try:
                 after = row()
                 break
-            except (urllib.error.URLError, TimeoutError, ValueError, AssertionError):
+            except (OSError, ValueError, AssertionError):
                 time.sleep(0.5)
         else:
             raise AssertionError('Isolated n8n did not become ready; preserve hold and inspect')
-        for key in ['id', 'key', 'busy', 'execution_id', 'issue_number', 'started_at']:
-            assert after[key] == current[key], (key, current, after)
-        assert effects().get(current['execution_id']) == state, 'Restart changed fixture effects'
+        assert after['id'] == idle_before['id'] and after['key'] == 'global'
+        assert after['busy'] is True and after['execution_id'] == execution_id and after['issue_number'] == 101, after
+        assert effects().get(execution_id) == state, 'Restart changed fixture effects'
         held_skip('restart-reservation')
-        log('PASS_restart_retention', row=after, effect=state)
+        log('PASS_restart_retention', idle_before=idle_before, row=after, effect=state)
         log('FINAL_HOLD_PRESERVED', row=row(), schedule='Still disabled; owner-only scheduled held-skip step next')
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--restart', action='store_true', help='Explicitly restart only the isolated container after the regular suite')
+    stage = parser.add_mutually_exclusive_group()
+    stage.add_argument('--restart', action='store_true', help='Explicitly restart only the isolated container after the regular suite')
+    stage.add_argument('--restart-only', action='store_true', help='Run only the remaining inspected restart case; retain regular-suite results')
     args = parser.parse_args()
     log('begin', scope='isolated US2 synthetic suite; no real GitHub/provider writes')
-    for name in CASES:
-        case(name)
-    if args.restart:
+    if not args.restart_only:
+        for name in CASES:
+            case(name)
+    if args.restart or args.restart_only:
         restart_reservation()
     else:
         log('FINAL_HOLD_PRESERVED', row=row(), remaining='In-flight restart and scheduled held skip unrun')

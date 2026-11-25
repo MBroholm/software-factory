@@ -185,27 +185,28 @@ laptop is idle, verify a second waits, then manually complete a small build and 
 - [X] T016 [US2] Implement single-slot discovery/selection and `Approved` -> `Building` in `factory/workflows/reserve.json`, citing `Build reservation and handoff comment.Reservation` and its label semantics in [data-model.md — Build reservation and handoff comment](data-model.md#build-reservation-and-handoff-comment); all Building issues block another claim regardless of author, lowest eligible issue number wins, and occupied-slot/no-candidate paths release only the short-lived acquired guard.
 - [X] T017 [US2] Post deterministic handoff evidence in `factory/workflows/reserve.json`, citing `Build reservation and handoff comment.issue number`, `Build reservation and handoff comment.approval event ID`, `Build reservation and handoff comment.refinement comment ID/URL and content digest`, `Build reservation and handoff comment.branch`, `Build reservation and handoff comment.baseline existing PR numbers/head SHAs and states`, and `Build reservation and handoff comment.timestamp` in [data-model.md](data-model.md#build-reservation-and-handoff-comment); uncertain label/comment outcomes retain busy for manual repair.
 - [X] T018 [P] [US2] Add Fedora manual issue-branch/worktree launch, approved-input check, in-session questions and issue-summary instructions to `docs/manual-coding.md`, citing `Decision record.question/answer and resulting choice`, `Decision record.whether scope changed`, `Decision record.explicit renewed approval reference` and its scope/secret rules in [data-model.md — Decision record](data-model.md#decision-record) and `contracts/manual-handoff.md`; expanded scope stops for fresh explicit approval, with no automatic agent launcher.
-- [ ] T019 [US2] Before live exercises, have the owner manually import the reviewed `factory/workflows/reserve.json` and verify the active refine workflow still matches its reviewed revision; record reviewed commits/imported revisions in `evidence/manual-build-validation.md`, then execute delayed-launch, second-approved-task, repeated-poll/restart and interrupted-reservation scenarios from `specs/001-basic-a-factory/quickstart.md`; record them and a real manually launched question/answer summary in `evidence/manual-build-validation.md`; prove successful reservation releases busy while Building persists, and unexpected failures block later schedules without releasing that slot.
+- [X] T019 [US2] Before live exercises, have the owner manually import the reviewed `factory/workflows/reserve.json` and verify the active refine workflow still matches its reviewed revision; record reviewed commits/imported revisions in `evidence/manual-build-validation.md`, then execute delayed-launch, second-approved-task, repeated-poll/restart and interrupted-reservation scenarios from `specs/001-basic-a-factory/quickstart.md`; record them and a real manually launched question/answer summary in `evidence/manual-build-validation.md`; prove successful reservation releases busy while Building persists, and unexpected failures block later schedules without releasing that slot.
 
-**US2 source implementation, 2026-11-25**: T015–T018 are complete in inactive
-`factory/workflows/reserve.json` and `docs/manual-coding.md`. The source-maintained generator
-reuses unchanged US1 canonical source/refinement validation and the T007 guard. Local policy
-and exported-graph checks pass; they do not prove native VM/HTTP/Data Table persistence or live
-GitHub behavior. T019 remains unchecked pending reviewed commit/import provenance, owner manual
-import, refine revision verification and delayed-launch/second-task/restart/interruption plus
-real manual question/answer/build evidence. See `evidence/manual-build-validation.md`.
-US1 evidence is reused unchanged; no US3 tasks or production activation were performed.
+**US2 closeout, 2026-11-25**: T015–T019 are complete. Owner reviewed/imported reserve
+source ec5a2de and the existing reviewed US1 pagination fix; imported revision IDs and source
+fingerprints are recorded in `evidence/manual-build-validation.md`. Real native 1275 reserved
+#1 and released busy while Building persisted; 1276/1277/1279 pass repeated polling, idle
+restart and a second explicitly approved #4 waiting. Owner-launched issue-1 produced PR #5
+and real question/answer/scope summary 7170400632, with actual checks/unrun criteria visible.
 
-**T019 real-run progress, 2026-11-25**: Owner accepted/imported reserve revision ec5a2de;
-source-matched native executions 1275/1276/1277/1279 pass real reservation, no-work, delayed
-launch, second explicit approval waiting and idle-guard restart checks. Owner reimported the
-reviewed US1 pagination fix; native 1278 refined queued issue #4. Manually launched issue-1
-produced PR #5 and real question/answer/scope summary 7170400632, with actual checks visible.
-T019 stays unchecked: isolated unexpected-failure/interrupted-reservation/busy-restart and
-native scheduled-held checks still need owner-reviewed/imported test bridge execution.
-Prepared test-only bridge/local fixture checks and 252 native VM/pagination checks pass;
-these parameter checks do not substitute for those missing full native runs. Production source
-and US3/track remain unchanged. See `evidence/manual-build-validation.md`.
+Owner-imported/published isolated test bridge passed 13 native cases plus seven held skips,
+including invalid approval/source, all Building variants, unexpected before/after effects,
+partial labels and lost POST response. Controlled in-flight restart 1369 retained partial
+synthetic reservation and busy; held 1372 and native scheduled 1376/1378 preserved the row
+without HTTP/release. Operator coordination/readiness issues and recovered-event metadata
+limits are retained, not hidden as successful runs. No production runtime fix was needed.
+
+Owner unpublished the bridge. Read-only export confirms all 20 isolated workflows inactive,
+its test webhook 404, and the exact busy=true/1369/issue101 row and fixture effects preserved.
+Source/package/VM/native evidence is in `evidence/reservation-native-results.json` and
+`evidence/reservation-fault-results.json`. Source guard/prompt/template and US1 evidence are
+reused unchanged; US3/track and production activation remain out of scope. PR #5 is open for
+owner review; this closeout does not claim a merged result, complete Basic A loop or five runs.
 
 **Checkpoint**: Manual execution works; no runner or automated question/restart behavior exists.
 

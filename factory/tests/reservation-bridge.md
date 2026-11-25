@@ -86,8 +86,15 @@ For each completed expected-failure case, the operator runner inspects the known
 and row, records the reason and calls the separate fixture reset before the next case. Unexpected
 results stop the script with the hold preserved. The final in-flight restart hold is deliberately
 **not reset**. The runner never imports/publishes workflows or calls real GitHub/provider APIs.
+State webhooks queue behind the serialized main execution. During in-flight restart monitoring,
+read the persisted fixture file outside n8n, require a new execution ID and a still-pending
+request, then read the guard after restart. The runner's `--restart-only` stage supports running
+only this remaining case after inspected completed regular cases. Readiness catches transient
+OS/network startup errors; it never resets the guard or retries an interrupted native execution.
+
 Restart may lack a completed node trace; retain row/fixture observations and native entity status
-without claiming missing runData exists. Supported-export traces and source fingerprints are
+without claiming missing runData exists. n8n can reconstruct node statuses with artificial
+recovered-event placeholders; distinguish that metadata from original node output payloads. Supported-export traces and source fingerprints are
 collected by `collect-reservation-traces.py`; no SQL or instance encryption-key access is used.
 
 ## Final scheduled held check and shutdown

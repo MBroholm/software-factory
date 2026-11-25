@@ -52,20 +52,25 @@ for(const entity of entities) {
   } else if(record&&typeof record.data==='object') details=record.data;
   let snapshot=record?.workflowData;
   if(typeof snapshot==='string') { try{snapshot=JSON.parse(snapshot);}catch{snapshot=null;} }
-  if(!['Basic A reserve — US2 INACTIVE','TEST ONLY — Basic A US2 native fault bridge'].includes(snapshot?.name)) continue;
+  const bridgeCrash=entity.workflowId==='bHUN2AuZtUysarZI' && ['crashed','canceled'].includes(entity.status);
+  if(!['Basic A reserve — US2 INACTIVE','TEST ONLY — Basic A US2 native fault bridge'].includes(snapshot?.name) && !bridgeCrash) continue;
   const result=details?.resultData, runs=result?.runData||{};
+  if(snapshot?.name==='TEST ONLY — Basic A US2 native fault bridge' && !runs['Read control'] && !bridgeCrash)continue;
   const first=name=>runs[name]?.at(-1)?.data?.main?.[0]?.[0]?.json;
   const completion=first('Report completion')||first('Report existing hold');
-  output.push({id:String(entity.id),workflowId:entity.workflowId,workflowName:snapshot.name,
+  const recovered=Object.keys(runs).some(name=>first(name)?.isArtificialRecoveredEventItem===true);
+  output.push({id:String(entity.id),workflowId:entity.workflowId,workflowName:snapshot?.name??'TEST ONLY — Basic A US2 native fault bridge',
+    workflowVersion:snapshot?.versionId??null,schedule:(snapshot?.nodes??[]).filter(n=>n.type.endsWith('.scheduleTrigger')).map(n=>({name:n.name,parameters:n.parameters,disabled:n.disabled===true})),
     mode:entity.mode,status:entity.status,startedAt:entity.startedAt,stoppedAt:entity.stoppedAt,
-    case:first('US2 test entry')?.body?.case??'owner-manual',lastNode:result?.lastNodeExecuted,errorNode:result?.error?.node?.name,errorMessage:(result?.error?.message??runs[result?.lastNodeExecuted]?.at(-1)?.error?.message??'').slice(0,300),
+    case:first('US2 test entry')?.body?.case??(bridgeCrash?'interrupted-recovered':entity.mode==='trigger'?'scheduled-held':'owner-manual'),lastNode:result?.lastNodeExecuted,errorNode:result?.error?.node?.name,errorMessage:(result?.error?.message??runs[result?.lastNodeExecuted]?.at(-1)?.error?.message??'').slice(0,300),
     reached:Object.entries(runs).map(([name,entries])=>({name,runs:entries.length,status:entries.at(-1)?.executionStatus,
       timings:entries.map(e=>({startTime:e.startTime,executionTime:e.executionTime}))})),
-    guard:first('Verify acquisition'),
+    recoveredEventMetadata:recovered,crashedNode:recovered?Object.entries(runs).find(([,entries])=>entries.at(-1)?.executionStatus==='crashed')?.[0]??null:null,
+    guard:recovered?null:first('Verify acquisition'),
     handoffReceipt: first('Check handoff receipt'),
-    githubWrites:['Add Building','Remove Approved','Post handoff'].filter(name=>runs[name]).map(name=>({node:name,status:first(name)?.statusCode})),
-    completion,codeHashes:Object.fromEntries(snapshot.nodes.filter(n=>n.type.endsWith('.code')).map(n=>[n.name,hash(n.parameters.jsCode)])),
-    connectionsHash:hash(snapshot.connections)});
+    githubWrites:['Add Building','Remove Approved','Post handoff'].filter(name=>runs[name]).map(name=>({node:name,status:first(name)?.statusCode??null})),
+    completion,codeHashes:Object.fromEntries((snapshot?.nodes??[]).filter(n=>n.type.endsWith('.code')).map(n=>[n.name,hash(n.parameters.jsCode)])),
+    connectionsHash:snapshot?.connections?hash(snapshot.connections):null});
 }
 
 console.log(JSON.stringify(output));

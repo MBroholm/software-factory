@@ -1,6 +1,6 @@
 # US2 manual-build validation
 
-**Date**: 2026-11-25. **Status**: T015–T018 complete; T019 in progress. Real reservation/build evidence passes; native fault/interruption/scheduled-hold checks remain pending.
+**Date**: 2026-11-25. **Status**: T015–T019 complete for US2. Real reservation/build, native fault/interruption/restart, scheduled held-skip and owner shutdown checks pass.
 Branch: `001-basic-a-factory-us2`. Source development is bootstrap work; the owner subsequently
 manually imported the reviewed reserve/refine JSON and ran real task exercises. The source export
 remains inactive with placeholders and no launcher; saved test workflows use private mappings.
@@ -98,16 +98,16 @@ approved environment; parameter evaluation is not a full-workflow execution.
 |---|---|---|
 | Reviewed owner import + refine revision | Recorded reviewed commits/imported revisions and mapping verification | PASS: ec5a2de acceptance/manual import; reserve 6c5cfd0e; refine reimport 915ef856, details below |
 | Approved current owner task, laptop idle | Building added before launch, Approved removed, exact handoff, busy=false; no process launched | PASS: real issue #1, native 1275 and public handoff 7169659105 |
-| Second approved issue | First Building blocks second regardless of owner/closed/conflicting state; ordinary busy release | PASS normal real second approval: #4 waits, native 1279; adversarial variants remain pending native fixtures |
+| Second approved issue | First Building blocks second regardless of owner/closed/conflicting state; ordinary busy release | PASS: real #4 waits at 1279; native closed/non-owner/conflicting Building variants 1291/1295/1299 |
 | Repeated full polls | No new handoff, no second reservation, Building unchanged and no-work releases | PASS: native 1276; public labels/all comments unchanged |
 | Restart with reservation and idle guard | Building survives restart; later polls cannot claim another task | PASS: isolated restart then native 1277/no-work, GitHub unchanged |
-| Unexpected exception before/after effect | busy=true persists, Building/partial labels retained as applicable, subsequent schedule skips with identical context | UNRUN native; local exported graph PASS |
-| Interrupted reservation between add/remove/post | Partial state stays visible with held guard; no automatic repair/retry or second claim | UNRUN native |
-| Restart while busy | Neither guard nor reservation auto-clears; later schedule skips | UNRUN native |
+| Unexpected exception before/after effect | busy=true persists, Building/partial labels retained as applicable, subsequent schedule skips with identical context | PASS: native faults/held webhook skips 1331/1339 and 1334/1342; scheduled held skips 1376/1378 |
+| Interrupted reservation between add/remove/post | Partial state stays visible with held guard; no automatic repair/retry or second claim | PASS: 1347/1350 partial label case; controlled in-flight restart 1369, metadata limits below |
+| Restart while busy | Neither guard nor reservation auto-clears; later schedule skips | PASS: restart/held webhook 1369/1372 and native scheduled held skips 1376/1378 |
 | Manual build + real question/answer | Owner launch, actual answer/decision on issue, scope status/renewed approval if needed, issue-N linked result PR | PASS: issue-1/PR #5, decision 7170400632; owner review/merge remain pending |
 
-T019 must remain unchecked until required observations exist. Existing US1 approval and guard
-skeleton evidence do not substitute for completed reserve-path persistence/restart/live checks.
+T019 is complete after the source-matched real/native observations and verified owner shutdown
+recorded below. Existing US1 evidence was reused; it was not substituted for US2 runtime checks.
 No US3/T020+ work, result tracking, owner acceptance decision or completed Basic A loop is claimed.
 
 ## Hooks
@@ -318,7 +318,7 @@ balanced Markdown fences. Source PR's reported `ssh -F /dev/null -G` parse was n
 its explicit environment limitation and unrun live connection remain visible. This passes T019's
 manual launch/branch/question-summary/linked-result evidence, not US3 tracking or owner acceptance.
 
-## Remaining native faults — prepared, not executed
+## Native faults — initial preparation before owner import
 
 Prepared `factory/tests/reservation-bridge.json` and source/check/runner described in
 [reservation-bridge.md](../factory/tests/reservation-bridge.md). The concrete ignored import copy
@@ -341,3 +341,165 @@ Actual pre-import checks:
 - Generator consistency and JS/Python syntax checks PASS. Native fault suite, in-flight restart
   and scheduled held-skip checks are **UNRUN**, pending owner review/manual import/publication of
   only the isolated test bridge. The final failure hold is intentionally preserved after testing.
+
+## Test bridge owner import verified — before native faults
+
+Owner reported the new bridge saved after the review/import handoff for commit 030c7d1.
+Supported read-only export identifies `bHUN2AuZtUysarZI`, name
+`TEST ONLY — Basic A US2 native fault bridge`, saved version
+`ae08106e-6b30-4f3b-8310-c0cfe593c890` at `2026-11-25T18:21:16.907Z`, inactive.
+All source/fixture Code bodies and connections exactly match the reviewed mapped bridge;
+all nine Data Table nodes select isolated `IgWCIu94ieyHQRHS`, and all 17 HTTP nodes retain
+fixed loopback URLs, no credentials/authentication and executeOnce=true. Poll inactive is
+disabled. All saved isolated workflows are inactive. No workflow was run or row changed.
+
+With approved SSH, assistant staged the reviewed fixture JS/config in container-only
+`/tmp/basic-a-us2-native/` and the explicit operator runner at NAS
+`/tmp/run-reservation-bridge.py`. Setup refuses existing fixture state/different files, does not
+mount production data, and starts only the credential-free loopback fixture on 127.0.0.1:18766.
+Health check confirms synthetic=true and accepted reserve source hash. Zero workflow runs;
+owner publication of only this bridge (schedule still disabled), followed by guard inspection,
+remains required before native tests. No automatic import/publication/activation occurred.
+
+
+## Native fault suite and controlled interruption — results
+
+Owner published bridge `bHUN2AuZtUysarZI` at accepted saved/active version
+`ae08106e-6b30-4f3b-8310-c0cfe593c890`. Export confirmed it was the sole active isolated
+workflow and Poll inactive remained disabled. Preflight read verified exact idle singleton
+context 1279, staged operator-runner hash and loopback fixture source hash before any case.
+
+**13 regular native cases PASS**, with **7 subsequent held-skip polls** and **7 explicitly
+recorded inspected fixture resets between completed expected-failure cases**. No failure path
+released busy and no automatic reset/replay occurred. Native error statuses are expected test
+outcomes, not successful application executions. See
+[reservation-fault-results.json](reservation-fault-results.json) and source-match traces in
+[reservation-native-results.json](reservation-native-results.json).
+
+| Case | Primary execution | Native outcome / observed effect | Held skip |
+|---|---|---|---|
+| success | 1283 | success, busy=false; synthetic 101 Building, one handoff; 102 remains Approved | — |
+| occupied | 1287 | success/no_work, busy=false; zero posts | — |
+| closed Building | 1291 | success/no_work, busy=false; zero posts | — |
+| non-owner Building | 1295 | success/no_work, busy=false; zero posts | — |
+| conflicting Building | 1299 | success/no_work, busy=false; zero posts | — |
+| non-owner candidate | 1303 | success/no_work, busy=false; zero posts | — |
+| missing approval | 1307 | expected error at Validate approval; busy=true; zero posts | 1310 |
+| wrong approval actor | 1315 | expected error at Validate approval; busy=true; zero posts | 1318 |
+| captured source edited | 1323 | expected error at Validate approval; busy=true; zero posts | 1326 |
+| unexpected before writes | 1331 | injected error at Prepare handoff; busy=true; zero posts | 1334 |
+| unexpected after side effect | 1339 | injected error after one handoff; Building/busy retained | 1342 |
+| partial label acknowledgement | 1347 | expected error after synthetic Building addition; Approved+Building/busy retained | 1350 |
+| lost POST response | 1355 | one accepted synthetic handoff, HTTP response lost; Building/busy retained; zero retry | 1358 |
+
+Each held skip preserved the entire control row (including updatedAt) and fixture effects exactly,
+with no HTTP work or release node. All 27 collected source/bridge execution snapshots match
+respective reviewed Code and connection fingerprints. Export data collection succeeded; the local
+summary initially assumed every failed/crashed record had a completion field and raised KeyError.
+That display-only assumption was corrected; sanitized records already existed and no workflow
+was rerun because of it. Collector now labels recovered event metadata explicitly.
+
+### Restart monitoring failures retained, then persistence verified
+
+The first restart-monitor attempt **1363** did not restart the container. The operator used a
+state webhook that queued behind the serialized main execution; the delayed synthetic reservation
+therefore completed normally after 25 seconds and released busy. This was a runner coordination
+failure, **not** a passing restart test or a failure to retain a guard after an actual interruption.
+Read-only inspection verified idle context 1363 and its one completed synthetic handoff. The
+operator runner was corrected using the existing US1 lesson: observe persisted fixture effects
+outside n8n, select a new execution ID, assert the request is still pending, then restart and read
+the guard afterward. A restart-only stage preserves the completed regular-case evidence.
+
+Corrected case **1369** observed the accepted synthetic Building addition while native Add Building
+was in flight, with Approved+Building and zero handoff posts, then explicitly restarted only
+`factory-guard-test`. The first readiness read hit ConnectionResetError during startup; the
+operator catch was broadened to transient OS/network startup errors. No second restart or guard
+reset occurred. A subsequent read-only verification and held poll completed the observation.
+
+**PASS restart retention**: persisted singleton id=1/key=global, busy=true,
+execution_id=1369, issue_number=101, started_at=`2026-11-25T18:30:27.005Z`,
+updatedAt=`2026-11-25T18:30:27.104Z`. The synthetic issue retains Approved+Building, zero posts,
+and its exact pre-restart fixture effects. Native **1372** succeeds as skipped_held and preserves
+all row fields/effects. No resumed write, extra handoff or second claim occurred.
+
+Native entity 1369 is **crashed**. n8n recovered node-event metadata through **Add Building**,
+marked that node crashed, and replaced outputs with `isArtificialRecoveredEventItem` placeholders;
+this is not a complete original payload trace. Code/connection snapshot hashes still match.
+The generic native crash text mentions a possible memory issue, but the observed cause here was
+our deliberate container restart; no OOM is inferred. Persistence/effect assertions rely on the
+operator's saved fixture snapshot, post-restart row and full held-skip trace, with this limitation
+visible. The pre-restart busy row was not separately read through the queued webhook.
+
+Fresh real GitHub reads confirm #1 still Building, #4 still Approved, and all comments on both
+issues unchanged from before the synthetic suite. No real GitHub/provider calls, imports,
+production changes or service/credential modifications occurred in these cases. The fixture
+server stopped with the isolated restart; its persisted files and busy hold are retained.
+
+**Remaining**: owner enables only the bridge's Poll inactive node, saves/publishes for a native
+scheduled held-skip observation, then unpublishes the bridge after verification. T019 remains
+unchecked until that planned check and shutdown are complete. Do not reset busy=1369.
+
+## Native scheduled held skip — PASS, shutdown pending
+
+Owner enabled Poll inactive and published the test bridge. Read-only workflow export confirms
+saved/active version `770bb2b7-3285-4a52-b074-3b867f2aac9b`, saved at
+`2026-11-25T18:39:10.020Z`, with enabled 60-second interval. Code and connections remain the
+reviewed bridge's; it is the sole active isolated workflow. No source workflow was activated.
+
+Native executions **1376** and **1378** are successful **mode=trigger**, both reporting
+skipped_held. Each reaches exactly Poll inactive → Read control → Validate entry → Already held
+→ Report existing hold. Neither acquires/releases the flag or reaches HTTP. Full persisted
+control context (including createdAt/updatedAt) matches the final restart hold 1369, with the
+runtime-only guard_action=held annotation excluded from the physical row comparison. The
+fixture process is stopped and all persisted synthetic effects remain unchanged. Source/bridge
+fingerprint verification now covers **29** native execution records; raw sanitized results and
+the fault/schedule summary are in the linked JSON evidence files.
+
+Execution snapshots omit a version UUID (workflowVersion=null). The verifier's initial assumption
+that this field would be populated was corrected without rerunning anything: provenance uses the
+explicit saved/active version readback, matching complete Code/connection hashes and actual
+enabled 60-second schedule metadata in each snapshot. This limitation is retained in the summary.
+
+All required T019 behavioral observations now pass. Final owner step is **unpublish the test
+bridge**, followed by read-only verification that no isolated workflows remain active and the
+known busy hold/effects are preserved. Until that shutdown is observed, T019 remains unchecked.
+No reset, automatic production activation, tracking implementation or merge is authorized by this
+scheduled test result. Real #1 remains Building and #4 remains Approved.
+
+
+## Owner shutdown and T019 closeout — PASS
+
+Owner reported the bridge unpublished. Supported workflow export confirms bridge
+`bHUN2AuZtUysarZI` inactive, activeVersionId=null, saved version
+`770bb2b7-3285-4a52-b074-3b867f2aac9b`; **all 20 isolated workflows are inactive**.
+Its registered test state webhook now returns **404**. Real #1 remains Building, #4 Approved;
+all real issue comments are unchanged and PR #5 remains open/unmerged for owner review.
+
+Since the bridge's read-only webhook is no longer registered, the final physical row was
+independently inspected through n8n's **supported encrypted Data Table export**, with execution
+history excluded. Only Data Table files were decrypted in container memory using a disposable
+export key; no direct SQL, instance encryption key, credential decryption or runtime reset.
+The first helper attempt failed because Docker stdin was closed; keeping stdin open corrected
+that readback helper without any state change. Its temporary exports/key were removed in both
+attempts. Target registry ID/name and all five column types were verified before interpreting
+the raw SQLite Boolean busy=1 as logical true; metadata UTC strings were normalized to the
+previously observed API representation for comparison.
+
+Exactly one row in `factory_control_us1` is unchanged: id=1, key=global, busy=true,
+execution_id=1369, issue_number=101, started_at=`2026-11-25T18:30:27.005Z`,
+createdAt=`2026-11-25T08:55:42.755Z`, updatedAt=`2026-11-25T18:30:27.104Z`.
+The complete persisted synthetic fixture state has unchanged canonical SHA-256
+`0a8d9e2931c118e10cc5f5544cba523929dc15b145af85088824b5ad8c8ea1c6`.
+The deliberately held row and fixture files remain as failure evidence; the fixture HTTP process
+was stopped by the controlled restart and was not restarted. No cleanup reset or resumed
+execution was performed. Final shutdown assertions are included in `reservation-fault-results.json`.
+
+**T019 complete**: reviewed owner import and refine revision, real delayed-launch reservation,
+second approved task waiting, repeated/no-work release, idle and busy restart behavior, unexpected
+before/after effects and interrupted/uncertain writes, native scheduled skips, and a real owner-
+launched issue branch/question/decision/linked PR are recorded with actual checks and limitations.
+Operator monitoring/readiness/formatter/readback issues are retained above; none required changing
+the reviewed reserve runtime or production JSON. Final generator/syntax/JSON/link/diff checks pass.
+US1 source/evidence remain unchanged; US3+ tasks and full Basic A/course acceptance remain pending.
+Production activation, owner PR acceptance/merge and any later recovery are separate owner actions.
+No SpecKit extension registry exists; no post-implementation hooks are registered.
