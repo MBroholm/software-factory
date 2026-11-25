@@ -7,29 +7,52 @@ The reconciled acceptance matrix below is authoritative. Earlier dated observati
 retained as historical records; their pending/unrun statements describe those earlier stages.
 No production activation, US2+ completion or completed issue/PR-linked build run is claimed.
 
-## T031 scheduled-entry convergence follow-up — prepared, UNRUN
+## T031 scheduled-entry convergence follow-up — completed
 
-US1 convergence found that SC-001/US1 AC1–2 require actual scheduled processing evidence;
-the real API exercises entered manually and the native fault bridge entered by webhook.
-The earlier closeout remains historical; **T031 is now the explicit open acceptance follow-up**.
-No already-recorded result is reclassified as a scheduled run.
+US1 convergence identified missing scheduled-entry evidence for SC-001/US1 AC1–2.
+**T031 now passes.** Owner manually imported the reviewed scheduled copy from commit 21f421f,
+workflow **OmzjTQGq75oRBNfR**, saved version **a613366f-ab78-4fa6-9f97-f74f96d222ac**.
+Before publishing, private supported workflow export confirmed every other isolated workflow
+inactive and matched all source Code/connections, schedule parameters, HTTP headers/URLs and
+table mappings against the prepared copy. The original 60-second Schedule Trigger enters
+Read control directly; none of the main work was manually/webhook-started.
 
-Prepared `factory/tests/refinement-schedule.json` and its mapped owner import
-`factory/local/refinement-native-bridge/schedule-mapped.json`, using the exact current source
-Schedule Trigger (Poll inactive, 60 seconds) directly entering Read control. All 31 source Code
-bodies/connections are retained; external HTTP is synthetic loopback with no credentials.
-One persistent synthetic issue/session 31001 will be refined, revised by an explicit operator
-comment after the first completion, then polled unchanged. The observer does not manually
-initiate any main workflow execution. It will match native trigger-mode traces to source hashes
-and completion/guard/HTTP logs, mapping this entry-path evidence to existing real issue #1 runs.
+After inspecting the known cancellation hold 1218, the operator explicitly reset only busy
+through the compare-by-row/execution fixture endpoint, with recorded reason. Three actual
+scheduled executions supplied the missing integration evidence:
 
-Preflight PASS: source Code/connection/interval assertions, generated-file consistency, Python/
-JavaScript syntax, existing HTTP fixture self-check plus persistent session and one-time revision
-endpoint checks. The container-loopback fixture service is ready with current source SHA-256
+| Execution | UTC start | Result | Observation |
+|---|---|---|---|
+| 1232 | 2026-11-25 16:16:22.322 | success | Synthetic Ideas -> Refining -> one marked comment -> Ready; one count/generation; acknowledged idle guard |
+| 1234 | 2026-11-25 16:17:22.320 | success | Explicit operator owner comment 22 after first completion; new source key captures 22; original comment 21 retained and new refinement 23 posted; one additional count/generation; idle guard |
+| 1263 | 2026-11-25 16:18:22.321 | no_work | Same Ready issue/three comments, zero count/generation/post; idle guard |
+
+All three have native **trigger** mode, successful terminal status and source Code/connection
+fingerprints matching the imported test copy. Ten additional scheduled no-work polls,
+**1265–1274**, occurred through 16:28:22 before unpublication took effect; these are retained,
+not hidden. Every extra poll made zero count/generation calls and verified idle control.
+No duplicate output or autonomous Approved label appeared. Two count/generation calls and two
+refinement posts in total served the shared synthetic session 31001. The explicit one-time
+revision injection and all row observations are retained in ignored operator JSONL.
+
+`refinement-scheduled-results.json` records all 13 native trigger IDs/results, imported version,
+source hash, cleanup and evidence mapping. Native export fingerprints match all 31 product Code
+bodies (plus operator helpers) and exact test connections. Current source SHA-256 remains
 `ee3f6e782f72ec409d6e9a6cb02ca0f8b9a4b43eccbfad4dff0a9003ffe1ec38`.
-No workflow was imported/published or executed for T031; retained hold 1218 has not been reset.
-Owner manual import after review is required before the scheduled runs. T031 remains unchecked.
-See `factory/tests/refinement-schedule.md` for review/import/execution/cleanup boundaries.
+
+Combined acceptance mapping: real issue #1/API refinement 753, owner revisions 755/757,
+unchanged polls 754/758 and explicit approval event 37246567614 establish real provider,
+credential, semantic review and human-authority behavior. T031 adds the missing actual native
+scheduled entry over the same refinement logic using **synthetic HTTP/model responses**.
+It does not claim additional real tasks/provider calls, a scheduled real GitHub mutation, or
+production activation. Unchanged quality/guard/fault checks were reused, not blindly repeated.
+
+Cleanup verified via supported export: scheduled workflow active=false, activeVersionId=null;
+operator route returns **404**; only the fixture process was stopped. Latest observed native
+persisted idle receipt/read: **busy=false, execution 1274, issue_number=null**. The former 1218
+hold was deliberately reconciled/reset solely for this isolated test. Every earlier failure
+remains recorded. Product source and production deployment were untouched. T031 is complete;
+PR review/merge and production manual import/activation remain owner decisions.
 
 ## T014 closeout and evidence boundaries
 
@@ -64,7 +87,7 @@ uses operator row/HTTP/fixture evidence because the collector has no completed c
 zero posts and no subsequent calls come from persisted synthetic HTTP logs and the held poll.
 Production activation, final PR acceptance/merge and US2 approval validation remain separate.
 
-Final isolated state: bridge unpublished (404 verified after the main suite; unpublished again
+Historical pre-T031 isolated state: bridge unpublished (404 verified after the main suite; unpublished again
 after cancellation), fixture process stopped, row deliberately **busy=true, execution 1218,
 issue 101**. No automatic reset. This closeout edits evidence/task status only; it neither
 imports nor activates the latest production-source workflow. That still requires owner review
@@ -719,6 +742,7 @@ faults, not production. No fixture-only test below counts as a real owner issue/
 | Stranded Refining / conflicting labels | No auto-resume or guessed transition; held failure | PASS native synthetic 1104/1118; zero count/inference/publication, guard held, later polls skip. |
 | Initial explicit approval | Before owner action: Ready only. Owner removes Ready and explicitly adds Approved; record owner event ID/time and latest refinement URL | PASS: owner event 37246567614 at 2026-11-25T11:45:26Z, actor 202449424, latest refinement 7161366810; details above |
 | Poll after approval | Refine leaves Approved alone; no Building claim (US2 not implemented) | PASS: 758 owner released/no_work/idle output; public issue remains Approved with six comments |
+| Scheduled idea/revision/unchanged entry | Current source Schedule Trigger at reviewed interval, native trigger mode and idle release | PASS T031: 1232/1234/1263; ten additional unchanged no-work polls 1265–1274 retained; synthetic entry evidence mapped to real issue #1 API/approval exercises above |
 | Selective 503 retry / exhaustion | Same counted payload, bounded 10/30-second waits, three attempts max; exhaustion held | PASS native synthetic 766/770/774; counts once, posts once on success, zero posts on exhaustion; held skip verified |
 | Source changes during backoff | Recheck and stop before next provider attempt | PASS native synthetic 970/984/998; source/discussion/state changes each stop held |
 | Restart during backoff | Persistent hold, no resumed provider work | PASS operator checks at 1204 and later held poll; no completed native crash trace claimed |

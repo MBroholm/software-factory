@@ -297,7 +297,7 @@ weakening FR-016 or implementing a new orchestration platform.
 US1-only assessment (T010–T014), 2026-11-25. Existing completion markers and historical
 evidence are retained. This finding concerns scheduled-entry validation, not US2–US4 work.
 
-- [ ] T031 [US1] Close the HIGH scheduled-entry validation gap per US1/AC1–2, SC-001 and T014 (partial): after owner review/manual import, exercise the current refinement Schedule Trigger in isolation at its reviewed interval for eligible idea processing, owner-requested revision and an unchanged subsequent poll; verify Refining -> marked output -> Ready, one revision per new captured input, no duplicate output and acknowledged guard release. Reuse existing real-task/provider and unaffected guard/fault evidence; distinguish synthetic HTTP inputs from real GitHub/API observations and explicitly map scheduled-path evidence to the real US1 task exercises. Record source/import fingerprints, native schedule-trigger execution IDs, issue/comment or fixture references, guard observations and any failure/manual intervention in `evidence/refinement-validation.md`; update the acceptance matrix and PR summary accordingly. Existing skeleton schedules and webhook/manual-entry runs alone do not establish this acceptance condition. Keep production untouched, enable only one isolated test schedule at a time, and unpublish/drain it afterward; inspect the retained 1218 hold before any deliberate reset.
+- [X] T031 [US1] Close the HIGH scheduled-entry validation gap per US1/AC1–2, SC-001 and T014 (partial): after owner review/manual import, exercise the current refinement Schedule Trigger in isolation at its reviewed interval for eligible idea processing, owner-requested revision and an unchanged subsequent poll; verify Refining -> marked output -> Ready, one revision per new captured input, no duplicate output and acknowledged guard release. Reuse existing real-task/provider and unaffected guard/fault evidence; distinguish synthetic HTTP inputs from real GitHub/API observations and explicitly map scheduled-path evidence to the real US1 task exercises. Record source/import fingerprints, native schedule-trigger execution IDs, issue/comment or fixture references, guard observations and any failure/manual intervention in `evidence/refinement-validation.md`; update the acceptance matrix and PR summary accordingly. Existing skeleton schedules and webhook/manual-entry runs alone do not establish this acceptance condition. Keep production untouched, enable only one isolated test schedule at a time, and unpublish/drain it afterward; inspect the retained 1218 hold before any deliberate reset.
 
 
 **T031 implementation checkpoint, 2026-11-25**: Prepared the current-source scheduled test
@@ -306,3 +306,14 @@ Trigger/60-second interval and guard path are preserved. Fixture persistence/rev
 and packaging/syntax checks pass. The loopback-only fixture service is ready, but no scheduled
 case is claimed: owner manual import of the reviewed new test copy is still required. Retained
 1218 hold is unchanged. T031 remains unchecked pending native scheduled evidence and PR update.
+
+
+**T031 complete, 2026-11-25**: Owner manually imported scheduled copy OmzjTQGq75oRBNfR,
+saved version a613366f-ab78-4fa6-9f97-f74f96d222ac. Native trigger-mode executions 1232/1234/1263
+passed idea/revision/unchanged polling at the exact 60-second source interval with acknowledged
+idle release. All Code/connection fingerprints match. Ten extra unchanged ticks 1265–1274 are
+retained, each with zero model calls/posts. Evidence is in `evidence/refinement-scheduled-results.json`
+and the reconciled matrix, explicitly mapped to real issue #1 exercises. Known 1218 hold was
+inspected and deliberately reset for this independent isolated test; final observed row is idle
+at 1274. Schedule unpublished, route 404, fixture stopped; production untouched. No other task
+status changed. Owner PR review/merge and any production import remain separate.

@@ -1,0 +1,287 @@
+{
+  "task": "T031",
+  "status": "PASS",
+  "reviewedTestCommit": "21f421f",
+  "sourceSHA256": "ee3f6e782f72ec409d6e9a6cb02ca0f8b9a4b43eccbfad4dff0a9003ffe1ec38",
+  "workflowId": "OmzjTQGq75oRBNfR",
+  "importedVersionId": "a613366f-ab78-4fa6-9f97-f74f96d222ac",
+  "intervalSeconds": 60,
+  "syntheticSession": "31001",
+  "nativeTriggerRuns": [
+    {
+      "execution": "1232",
+      "mode": "trigger",
+      "status": "success",
+      "startedAt": "2026-11-25 16:16:22.322",
+      "outcome": "success",
+      "source_key": "101:e31dbee69c01c62edb36029d0f2a6d0e3fa07b7f31e6c52c672b5f130790d6cf:0:v3",
+      "generationAttempts": 1,
+      "control": {
+        "key": "global",
+        "busy": false,
+        "execution_id": "1232",
+        "issue_number": 101,
+        "started_at": "2026-11-25T16:16:22.355Z",
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-25T16:16:22.898Z"
+      }
+    },
+    {
+      "execution": "1234",
+      "mode": "trigger",
+      "status": "success",
+      "startedAt": "2026-11-25 16:17:22.320",
+      "outcome": "success",
+      "source_key": "101:ed6cfba882af78adc53fccfa9366baf75d83425d51f0bbf8eba630ac9d8c256f:22:v3",
+      "generationAttempts": 1,
+      "control": {
+        "key": "global",
+        "busy": false,
+        "execution_id": "1234",
+        "issue_number": 101,
+        "started_at": "2026-11-25T16:17:22.359Z",
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-25T16:17:22.900Z"
+      }
+    },
+    {
+      "execution": "1263",
+      "mode": "trigger",
+      "status": "success",
+      "startedAt": "2026-11-25 16:18:22.321",
+      "outcome": "no_work",
+      "source_key": null,
+      "generationAttempts": 0,
+      "control": {
+        "key": "global",
+        "busy": false,
+        "execution_id": "1263",
+        "issue_number": null,
+        "started_at": "2026-11-25T16:18:22.353Z",
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-25T16:18:22.475Z"
+      }
+    },
+    {
+      "execution": "1265",
+      "mode": "trigger",
+      "status": "success",
+      "startedAt": "2026-11-25 16:19:22.322",
+      "outcome": "no_work",
+      "source_key": null,
+      "generationAttempts": 0,
+      "control": {
+        "key": "global",
+        "busy": false,
+        "execution_id": "1265",
+        "issue_number": null,
+        "started_at": "2026-11-25T16:19:22.359Z",
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-25T16:19:22.467Z"
+      }
+    },
+    {
+      "execution": "1266",
+      "mode": "trigger",
+      "status": "success",
+      "startedAt": "2026-11-25 16:20:22.311",
+      "outcome": "no_work",
+      "source_key": null,
+      "generationAttempts": 0,
+      "control": {
+        "key": "global",
+        "busy": false,
+        "execution_id": "1266",
+        "issue_number": null,
+        "started_at": "2026-11-25T16:20:22.362Z",
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-25T16:20:22.505Z"
+      }
+    },
+    {
+      "execution": "1267",
+      "mode": "trigger",
+      "status": "success",
+      "startedAt": "2026-11-25 16:21:22.320",
+      "outcome": "no_work",
+      "source_key": null,
+      "generationAttempts": 0,
+      "control": {
+        "key": "global",
+        "busy": false,
+        "execution_id": "1267",
+        "issue_number": null,
+        "started_at": "2026-11-25T16:21:22.355Z",
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-25T16:21:22.463Z"
+      }
+    },
+    {
+      "execution": "1268",
+      "mode": "trigger",
+      "status": "success",
+      "startedAt": "2026-11-25 16:22:22.322",
+      "outcome": "no_work",
+      "source_key": null,
+      "generationAttempts": 0,
+      "control": {
+        "key": "global",
+        "busy": false,
+        "execution_id": "1268",
+        "issue_number": null,
+        "started_at": "2026-11-25T16:22:22.355Z",
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-25T16:22:22.463Z"
+      }
+    },
+    {
+      "execution": "1269",
+      "mode": "trigger",
+      "status": "success",
+      "startedAt": "2026-11-25 16:23:22.317",
+      "outcome": "no_work",
+      "source_key": null,
+      "generationAttempts": 0,
+      "control": {
+        "key": "global",
+        "busy": false,
+        "execution_id": "1269",
+        "issue_number": null,
+        "started_at": "2026-11-25T16:23:22.364Z",
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-25T16:23:22.469Z"
+      }
+    },
+    {
+      "execution": "1270",
+      "mode": "trigger",
+      "status": "success",
+      "startedAt": "2026-11-25 16:24:22.321",
+      "outcome": "no_work",
+      "source_key": null,
+      "generationAttempts": 0,
+      "control": {
+        "key": "global",
+        "busy": false,
+        "execution_id": "1270",
+        "issue_number": null,
+        "started_at": "2026-11-25T16:24:22.354Z",
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-25T16:24:22.472Z"
+      }
+    },
+    {
+      "execution": "1271",
+      "mode": "trigger",
+      "status": "success",
+      "startedAt": "2026-11-25 16:25:22.322",
+      "outcome": "no_work",
+      "source_key": null,
+      "generationAttempts": 0,
+      "control": {
+        "key": "global",
+        "busy": false,
+        "execution_id": "1271",
+        "issue_number": null,
+        "started_at": "2026-11-25T16:25:22.354Z",
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-25T16:25:22.459Z"
+      }
+    },
+    {
+      "execution": "1272",
+      "mode": "trigger",
+      "status": "success",
+      "startedAt": "2026-11-25 16:26:22.324",
+      "outcome": "no_work",
+      "source_key": null,
+      "generationAttempts": 0,
+      "control": {
+        "key": "global",
+        "busy": false,
+        "execution_id": "1272",
+        "issue_number": null,
+        "started_at": "2026-11-25T16:26:22.352Z",
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-25T16:26:22.459Z"
+      }
+    },
+    {
+      "execution": "1273",
+      "mode": "trigger",
+      "status": "success",
+      "startedAt": "2026-11-25 16:27:22.320",
+      "outcome": "no_work",
+      "source_key": null,
+      "generationAttempts": 0,
+      "control": {
+        "key": "global",
+        "busy": false,
+        "execution_id": "1273",
+        "issue_number": null,
+        "started_at": "2026-11-25T16:27:22.355Z",
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-25T16:27:22.456Z"
+      }
+    },
+    {
+      "execution": "1274",
+      "mode": "trigger",
+      "status": "success",
+      "startedAt": "2026-11-25 16:28:22.320",
+      "outcome": "no_work",
+      "source_key": null,
+      "generationAttempts": 0,
+      "control": {
+        "key": "global",
+        "busy": false,
+        "execution_id": "1274",
+        "issue_number": null,
+        "started_at": "2026-11-25T16:28:22.354Z",
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-25T16:28:22.473Z"
+      }
+    }
+  ],
+  "requiredExecutions": [
+    "1232",
+    "1234",
+    "1263"
+  ],
+  "additionalUnchangedTicks": 10,
+  "codeAndConnectionsMatch": true,
+  "cleanup": {
+    "unpublished": true,
+    "active": false,
+    "activeVersionId": null,
+    "operatorRouteHTTP": 404,
+    "fixtureStopped": true
+  },
+  "realTaskEvidenceMapping": {
+    "issue": 1,
+    "initial": "753",
+    "revision": [
+      "755",
+      "757"
+    ],
+    "unchanged": [
+      "754",
+      "758"
+    ],
+    "approvalEvent": "37246567614"
+  },
+  "limit": "Scheduled remote HTTP/model responses are synthetic; real provider and owner approval evidence is reused, not rerun. Extra no-work ticks during observation/cleanup are retained."
+}
