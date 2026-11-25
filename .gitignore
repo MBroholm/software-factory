@@ -1,3 +1,17 @@
 .env
 .env.*
 !.env.example
+
+# Generated runtime/evaluation data and machine-local secrets.
+factory/local/
+*.log
+*.log.*
+__pycache__/
+*.py[cod]
+.venv/
+.DS_Store
+Thumbs.db
+*.tmp
+*.swp
+.vscode/
+.idea/

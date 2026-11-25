@@ -1,0 +1,3129 @@
+{
+  "name": "Basic A — ISOLATED guard validation bridge",
+  "active": false,
+  "nodes": [
+    {
+      "id": "2ae47d21-3f60-5248-bc0c-bd1befc26d31",
+      "name": "refine: Test entry",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "basic-a-guard-test/refine",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "position": [
+        -700,
+        0
+      ],
+      "webhookId": "2ae47d21-3f60-5248-bc0c-bd1befc26d31"
+    },
+    {
+      "id": "74779ddd-071a-5aa8-883a-3a65957800ef",
+      "name": "refine: Validate test request",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const body = $('refine: Test entry').first().json.body;\nif (!body || ![\"G01\", \"G02\", \"G03\", \"G04\", \"G05\", \"G06\", \"G07\", \"G08\", \"G09\", \"G10\", \"G11\", \"G12\", \"G13\", \"G14_DELAY\", \"G15\", \"G16\"].includes(body.case)) throw new Error('Unknown isolated test case');\nreturn $input.all();"
+      },
+      "position": [
+        -450,
+        0
+      ]
+    },
+    {
+      "id": "0bceb4ac-6834-5f3d-86aa-06d6b457f4a9",
+      "name": "refine: Read control",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        240,
+        0
+      ],
+      "parameters": {
+        "resource": "row",
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "I1JBIePgy75Ecnlp"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": []
+        },
+        "returnAll": false,
+        "limit": 2
+      },
+      "alwaysOutputData": true
+    },
+    {
+      "id": "80ff0f28-2fd2-5fa9-8420-132002764310",
+      "name": "refine: Validate entry",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        460,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const rows = $input.all().map(item => item.json);\nif (rows.length !== 1) throw new Error('Guard requires exactly one control row');\nconst row = rows[0];\nif (!Number.isInteger(row.id) || row.key !== 'global' || typeof row.busy !== 'boolean' ||\n    typeof row.execution_id !== 'string' || typeof row.started_at !== 'string' ||\n    !(row.issue_number === null || (Number.isInteger(row.issue_number) && row.issue_number > 0))) {\n  throw new Error('Invalid control row; no remote work or automatic repair');\n}\nreturn [{json: {...row, guard_action: row.busy ? 'held' : 'acquire'}}];"
+      }
+    },
+    {
+      "id": "413ef24b-3e95-5f18-b6f2-28fb014baff5",
+      "name": "refine: Already held",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        680,
+        0
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "held",
+              "leftValue": "={{ $json.busy }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "1c04e473-a361-50a0-9eb3-ba7e29aadde6",
+      "name": "refine: Report existing hold",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        900,
+        -220
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "return [{json: {status:'skipped_held', control:$input.first().json}}];"
+      }
+    },
+    {
+      "id": "5d298e3f-7757-53a0-85ad-c4194603bfb7",
+      "name": "refine: Prepare acquisition",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        900,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const row = $input.first().json;\nreturn [{json: {id:row.id, key:'global', busy:true, execution_id:String($execution.id),\n  issue_number:null, started_at:new Date().toISOString()}}];"
+      }
+    },
+    {
+      "id": "c6ba35fa-6ab2-53da-8266-54e0552fac23",
+      "name": "refine: Acquire control",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        1120,
+        0
+      ],
+      "parameters": {
+        "resource": "row",
+        "operation": "update",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ ($('refine: Test entry').first().json.body.case) === \"G07\" ? \"INTENTIONALLY_MISSING_GUARD_TEST_TABLE\" : \"I1JBIePgy75Ecnlp\" }}"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $json.id }}"
+            },
+            {
+              "keyName": "key",
+              "condition": "eq",
+              "keyValue": "global"
+            },
+            {
+              "keyName": "busy",
+              "condition": "isFalse"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "busy": true,
+            "execution_id": "={{ $json.execution_id }}",
+            "issue_number": "={{ null }}",
+            "started_at": "={{ $json.started_at }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "busy",
+              "displayName": "busy",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "execution_id",
+              "displayName": "execution_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "issue_number",
+              "displayName": "issue_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "started_at",
+              "displayName": "started_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "alwaysOutputData": true
+    },
+    {
+      "id": "c1e2cdf6-dfd5-5fbd-886d-85cfee752fa2",
+      "name": "refine: Check acquire receipt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1340,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const rows = ($('refine: Test entry').first().json.body.case) === 'G08' ? [{}] : $input.all().map(item => item.json);\nif (rows.length !== 1) throw new Error('Guard requires exactly one control row');\nconst row = rows[0];\nif (!Number.isInteger(row.id) || row.key !== 'global' || typeof row.busy !== 'boolean' ||\n    typeof row.execution_id !== 'string' || typeof row.started_at !== 'string' ||\n    !(row.issue_number === null || (Number.isInteger(row.issue_number) && row.issue_number > 0))) {\n  throw new Error('Invalid control row; no remote work or automatic repair');\n}\nconst expected = $('refine: Prepare acquisition').first().json;\nif (row.id !== expected.id || row.busy !== true ||\n    row.execution_id !== expected.execution_id || row.started_at !== expected.started_at ||\n    row.issue_number !== expected.issue_number) {\n  throw new Error('Guard acquisition receipt not confirmed; stop and inspect, never assume idle');\n}\nreturn [{json:row}];"
+      }
+    },
+    {
+      "id": "39740ef8-0e98-5077-93b8-d9e03636919a",
+      "name": "refine: Read acquired control",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        1560,
+        0
+      ],
+      "parameters": {
+        "resource": "row",
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ ($('refine: Test entry').first().json.body.case) === \"G09\" ? \"INTENTIONALLY_MISSING_GUARD_TEST_TABLE\" : \"I1JBIePgy75Ecnlp\" }}"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": []
+        },
+        "returnAll": false,
+        "limit": 2
+      },
+      "alwaysOutputData": true
+    },
+    {
+      "id": "292e8f8b-3fbc-5826-a2fc-6d90718bb2d1",
+      "name": "refine: Verify acquisition",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1780,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const rows = $input.all().map(item => item.json);\nif (rows.length !== 1) throw new Error('Guard requires exactly one control row');\nconst row = rows[0];\nif (!Number.isInteger(row.id) || row.key !== 'global' || typeof row.busy !== 'boolean' ||\n    typeof row.execution_id !== 'string' || typeof row.started_at !== 'string' ||\n    !(row.issue_number === null || (Number.isInteger(row.issue_number) && row.issue_number > 0))) {\n  throw new Error('Invalid control row; no remote work or automatic repair');\n}\nconst expected = $('refine: Prepare acquisition').first().json;\nif (row.id !== expected.id || row.busy !== true ||\n    row.execution_id !== expected.execution_id || row.started_at !== expected.started_at ||\n    row.issue_number !== expected.issue_number) {\n  throw new Error('Guard acquisition reread not confirmed; stop and inspect, never assume idle');\n}\nreturn [{json:row}];"
+      }
+    },
+    {
+      "id": "58bd32b1-560e-5514-963e-45e49adfa502",
+      "name": "refine: Skeleton work boundary",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2000,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const testCase = ($('refine: Test entry').first().json.body.case);\nif (['G04','G05'].includes(testCase)) throw new Error('injected ' + testCase + ' refine boundary fault');\nif (testCase === 'G10') return [{json:{outcome:'success',acknowledged:false}}];\nreturn [{json:{outcome:testCase === 'G02' ? 'success' : 'no_work',acknowledged:true}}];"
+      }
+    },
+    {
+      "id": "e0269ebc-7d8f-587d-8eda-4512fc20b667",
+      "name": "refine: Require acknowledged completion",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2220,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const items = $input.all();\nif (items.length !== 1 || items[0].json.acknowledged !== true ||\n    !['success','no_work'].includes(items[0].json.outcome)) {\n  throw new Error('Work incomplete or uncertain; retain guard');\n}\nreturn items;"
+      }
+    },
+    {
+      "id": "05da1de1-fb65-5808-aa50-5f74aa81e608",
+      "name": "refine: Read before release",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        2440,
+        0
+      ],
+      "parameters": {
+        "resource": "row",
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "I1JBIePgy75Ecnlp"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": []
+        },
+        "returnAll": false,
+        "limit": 2
+      },
+      "alwaysOutputData": true
+    },
+    {
+      "id": "1b524fd8-52ef-50c9-8a74-e7579bc68b1e",
+      "name": "refine: Verify release ownership",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2660,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const rows = $input.all().map(item => item.json);\nif (rows.length !== 1) throw new Error('Guard requires exactly one control row');\nconst row = rows[0];\nif (($('refine: Test entry').first().json.body.case) === 'G16') row.execution_id = 'injected-other-execution';\nif (!Number.isInteger(row.id) || row.key !== 'global' || typeof row.busy !== 'boolean' ||\n    typeof row.execution_id !== 'string' || typeof row.started_at !== 'string' ||\n    !(row.issue_number === null || (Number.isInteger(row.issue_number) && row.issue_number > 0))) {\n  throw new Error('Invalid control row; no remote work or automatic repair');\n}\nconst expected = $('refine: Prepare acquisition').first().json;\nif (row.id !== expected.id || row.busy !== true ||\n    row.execution_id !== expected.execution_id || row.started_at !== expected.started_at ||\n    row.issue_number !== expected.issue_number) {\n  throw new Error('Guard release ownership not confirmed; stop and inspect, never assume idle');\n}\nreturn [{json:row}];"
+      }
+    },
+    {
+      "id": "f3ad380f-fb99-5473-8553-8f7cf535a71e",
+      "name": "refine: Release control",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        2880,
+        0
+      ],
+      "parameters": {
+        "resource": "row",
+        "operation": "update",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ ($('refine: Test entry').first().json.body.case) === \"G11\" ? \"INTENTIONALLY_MISSING_GUARD_TEST_TABLE\" : \"I1JBIePgy75Ecnlp\" }}"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $json.id }}"
+            },
+            {
+              "keyName": "key",
+              "condition": "eq",
+              "keyValue": "global"
+            },
+            {
+              "keyName": "busy",
+              "condition": "isTrue"
+            },
+            {
+              "keyName": "execution_id",
+              "condition": "eq",
+              "keyValue": "={{ $json.execution_id }}"
+            },
+            {
+              "keyName": "started_at",
+              "condition": "eq",
+              "keyValue": "={{ $json.started_at }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "busy": false
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "busy",
+              "displayName": "busy",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "execution_id",
+              "displayName": "execution_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "issue_number",
+              "displayName": "issue_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "started_at",
+              "displayName": "started_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "alwaysOutputData": true
+    },
+    {
+      "id": "00ee0467-8c44-5c92-9ebf-dc30de201a96",
+      "name": "refine: Check release receipt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3100,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "if (($('refine: Test entry').first().json.body.case) === 'G12') throw new Error('injected lost release acknowledgement');\nconst rows = $input.all().map(item => item.json);\nif (rows.length !== 1) throw new Error('Guard requires exactly one control row');\nconst row = rows[0];\nif (!Number.isInteger(row.id) || row.key !== 'global' || typeof row.busy !== 'boolean' ||\n    typeof row.execution_id !== 'string' || typeof row.started_at !== 'string' ||\n    !(row.issue_number === null || (Number.isInteger(row.issue_number) && row.issue_number > 0))) {\n  throw new Error('Invalid control row; no remote work or automatic repair');\n}\nconst expected = $('refine: Prepare acquisition').first().json;\nif (row.id !== expected.id || row.busy !== false ||\n    row.execution_id !== expected.execution_id || row.started_at !== expected.started_at ||\n    row.issue_number !== expected.issue_number) {\n  throw new Error('Guard release receipt not confirmed; stop and inspect, never assume idle');\n}\nreturn [{json:row}];"
+      }
+    },
+    {
+      "id": "eb9caf53-61b5-562d-9b9b-d3394accdf4b",
+      "name": "refine: Read released control",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        3320,
+        0
+      ],
+      "parameters": {
+        "resource": "row",
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ ($('refine: Test entry').first().json.body.case) === \"G13\" ? \"INTENTIONALLY_MISSING_GUARD_TEST_TABLE\" : \"I1JBIePgy75Ecnlp\" }}"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": []
+        },
+        "returnAll": false,
+        "limit": 2
+      },
+      "alwaysOutputData": true
+    },
+    {
+      "id": "6e409d71-a83a-5c7f-a24f-34ac6ad68385",
+      "name": "refine: Confirm idle",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3540,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const rows = $input.all().map(item => item.json);\nif (rows.length !== 1) throw new Error('Guard requires exactly one control row');\nconst row = rows[0];\nif (!Number.isInteger(row.id) || row.key !== 'global' || typeof row.busy !== 'boolean' ||\n    typeof row.execution_id !== 'string' || typeof row.started_at !== 'string' ||\n    !(row.issue_number === null || (Number.isInteger(row.issue_number) && row.issue_number > 0))) {\n  throw new Error('Invalid control row; no remote work or automatic repair');\n}\nconst expected = $('refine: Prepare acquisition').first().json;\nif (row.id !== expected.id || row.busy !== false ||\n    row.execution_id !== expected.execution_id || row.started_at !== expected.started_at ||\n    row.issue_number !== expected.issue_number) {\n  throw new Error('Guard release reread not confirmed; stop and inspect, never assume idle');\n}\nreturn [{json:row}];"
+      }
+    },
+    {
+      "id": "709cdfd4-288f-59ef-a300-9f527846fe30",
+      "name": "refine: Report completion",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3760,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "return [{json: {status:'released', outcome:$('refine: Require acknowledged completion').first().json.outcome, control:$input.first().json}}];"
+      }
+    },
+    {
+      "id": "6a6d0faf-69ae-5ada-befc-93d94941c2ba",
+      "name": "refine: Optional crash window",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "if (($('refine: Test entry').first().json.body.case) === 'G14_DELAY') await new Promise(resolve => setTimeout(resolve, 30000));\nreturn $input.all();"
+      },
+      "position": [
+        1850,
+        0
+      ]
+    },
+    {
+      "id": "0d1b936c-233f-51d1-af23-4d056fd484e5",
+      "name": "refine: Post-effect case",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "0d1b936c-233f-51d1-af23-4d056fd484e5",
+              "leftValue": "={{ ($('refine: Test entry').first().json.body.case) === 'G05' }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "position": [
+        1950,
+        0
+      ]
+    },
+    {
+      "id": "6bd0b114-67bf-5f4f-ac6e-9f4e0441cfce",
+      "name": "refine: Insert test effect",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "parameters": {
+        "resource": "row",
+        "operation": "insert",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "8fCAvfPK5z11XeRJ"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": []
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "case_id": "={{ \"G05-refine-\" + String($execution.id) }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "case_id",
+              "displayName": "case_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "position": [
+        2100,
+        -200
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "id": "45c18a48-ed67-5815-a9ec-efe12b7b65bf",
+      "name": "reserve: Test entry",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "basic-a-guard-test/reserve",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "position": [
+        -700,
+        800
+      ],
+      "webhookId": "45c18a48-ed67-5815-a9ec-efe12b7b65bf"
+    },
+    {
+      "id": "cfff3081-2d1b-5ed0-97e2-989d933c1937",
+      "name": "reserve: Validate test request",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const body = $('reserve: Test entry').first().json.body;\nif (!body || ![\"G01\", \"G02\", \"G03\", \"G04\", \"G05\", \"G06\", \"G07\", \"G08\", \"G09\", \"G10\", \"G11\", \"G12\", \"G13\", \"G14_DELAY\", \"G15\", \"G16\"].includes(body.case)) throw new Error('Unknown isolated test case');\nreturn $input.all();"
+      },
+      "position": [
+        -450,
+        800
+      ]
+    },
+    {
+      "id": "78e8ef4c-1ca8-560a-b09e-185ce0d07b99",
+      "name": "reserve: Read control",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        240,
+        800
+      ],
+      "parameters": {
+        "resource": "row",
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "I1JBIePgy75Ecnlp"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": []
+        },
+        "returnAll": false,
+        "limit": 2
+      },
+      "alwaysOutputData": true
+    },
+    {
+      "id": "c339d5ae-d492-57a5-b78a-3323f6874350",
+      "name": "reserve: Validate entry",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        460,
+        800
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const rows = $input.all().map(item => item.json);\nif (rows.length !== 1) throw new Error('Guard requires exactly one control row');\nconst row = rows[0];\nif (!Number.isInteger(row.id) || row.key !== 'global' || typeof row.busy !== 'boolean' ||\n    typeof row.execution_id !== 'string' || typeof row.started_at !== 'string' ||\n    !(row.issue_number === null || (Number.isInteger(row.issue_number) && row.issue_number > 0))) {\n  throw new Error('Invalid control row; no remote work or automatic repair');\n}\nreturn [{json: {...row, guard_action: row.busy ? 'held' : 'acquire'}}];"
+      }
+    },
+    {
+      "id": "670e0e48-c4a1-5a80-beab-8697e1ce8aa2",
+      "name": "reserve: Already held",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        680,
+        800
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "held",
+              "leftValue": "={{ $json.busy }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "b9c26741-3d8c-5812-b0e3-7a2a1ab6d0c3",
+      "name": "reserve: Report existing hold",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        900,
+        580
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "return [{json: {status:'skipped_held', control:$input.first().json}}];"
+      }
+    },
+    {
+      "id": "ce7b2aa9-8c46-56f8-a078-fe9c7c5ac492",
+      "name": "reserve: Prepare acquisition",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        900,
+        800
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const row = $input.first().json;\nreturn [{json: {id:row.id, key:'global', busy:true, execution_id:String($execution.id),\n  issue_number:null, started_at:new Date().toISOString()}}];"
+      }
+    },
+    {
+      "id": "96cb1594-7dd8-5d06-a120-0354e533aaf2",
+      "name": "reserve: Acquire control",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        1120,
+        800
+      ],
+      "parameters": {
+        "resource": "row",
+        "operation": "update",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ ($('reserve: Test entry').first().json.body.case) === \"G07\" ? \"INTENTIONALLY_MISSING_GUARD_TEST_TABLE\" : \"I1JBIePgy75Ecnlp\" }}"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $json.id }}"
+            },
+            {
+              "keyName": "key",
+              "condition": "eq",
+              "keyValue": "global"
+            },
+            {
+              "keyName": "busy",
+              "condition": "isFalse"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "busy": true,
+            "execution_id": "={{ $json.execution_id }}",
+            "issue_number": "={{ null }}",
+            "started_at": "={{ $json.started_at }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "busy",
+              "displayName": "busy",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "execution_id",
+              "displayName": "execution_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "issue_number",
+              "displayName": "issue_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "started_at",
+              "displayName": "started_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "alwaysOutputData": true
+    },
+    {
+      "id": "f9426504-6080-5e2f-9edb-e06d2831e1cb",
+      "name": "reserve: Check acquire receipt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1340,
+        800
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const rows = ($('reserve: Test entry').first().json.body.case) === 'G08' ? [{}] : $input.all().map(item => item.json);\nif (rows.length !== 1) throw new Error('Guard requires exactly one control row');\nconst row = rows[0];\nif (!Number.isInteger(row.id) || row.key !== 'global' || typeof row.busy !== 'boolean' ||\n    typeof row.execution_id !== 'string' || typeof row.started_at !== 'string' ||\n    !(row.issue_number === null || (Number.isInteger(row.issue_number) && row.issue_number > 0))) {\n  throw new Error('Invalid control row; no remote work or automatic repair');\n}\nconst expected = $('reserve: Prepare acquisition').first().json;\nif (row.id !== expected.id || row.busy !== true ||\n    row.execution_id !== expected.execution_id || row.started_at !== expected.started_at ||\n    row.issue_number !== expected.issue_number) {\n  throw new Error('Guard acquisition receipt not confirmed; stop and inspect, never assume idle');\n}\nreturn [{json:row}];"
+      }
+    },
+    {
+      "id": "3f0bbf0d-9eec-5d3e-8383-4befe460d5f2",
+      "name": "reserve: Read acquired control",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        1560,
+        800
+      ],
+      "parameters": {
+        "resource": "row",
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ ($('reserve: Test entry').first().json.body.case) === \"G09\" ? \"INTENTIONALLY_MISSING_GUARD_TEST_TABLE\" : \"I1JBIePgy75Ecnlp\" }}"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": []
+        },
+        "returnAll": false,
+        "limit": 2
+      },
+      "alwaysOutputData": true
+    },
+    {
+      "id": "798d1a59-abf2-5f74-908d-e243acb20437",
+      "name": "reserve: Verify acquisition",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1780,
+        800
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const rows = $input.all().map(item => item.json);\nif (rows.length !== 1) throw new Error('Guard requires exactly one control row');\nconst row = rows[0];\nif (!Number.isInteger(row.id) || row.key !== 'global' || typeof row.busy !== 'boolean' ||\n    typeof row.execution_id !== 'string' || typeof row.started_at !== 'string' ||\n    !(row.issue_number === null || (Number.isInteger(row.issue_number) && row.issue_number > 0))) {\n  throw new Error('Invalid control row; no remote work or automatic repair');\n}\nconst expected = $('reserve: Prepare acquisition').first().json;\nif (row.id !== expected.id || row.busy !== true ||\n    row.execution_id !== expected.execution_id || row.started_at !== expected.started_at ||\n    row.issue_number !== expected.issue_number) {\n  throw new Error('Guard acquisition reread not confirmed; stop and inspect, never assume idle');\n}\nreturn [{json:row}];"
+      }
+    },
+    {
+      "id": "c5d5fdb6-6ea3-5fe8-aa61-a6688e1ce599",
+      "name": "reserve: Skeleton work boundary",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2000,
+        800
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const testCase = ($('reserve: Test entry').first().json.body.case);\nif (['G04','G05'].includes(testCase)) throw new Error('injected ' + testCase + ' reserve boundary fault');\nif (testCase === 'G10') return [{json:{outcome:'success',acknowledged:false}}];\nreturn [{json:{outcome:testCase === 'G02' ? 'success' : 'no_work',acknowledged:true}}];"
+      }
+    },
+    {
+      "id": "3c1bd1f7-deb2-5305-a73d-5941542af78a",
+      "name": "reserve: Require acknowledged completion",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2220,
+        800
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const items = $input.all();\nif (items.length !== 1 || items[0].json.acknowledged !== true ||\n    !['success','no_work'].includes(items[0].json.outcome)) {\n  throw new Error('Work incomplete or uncertain; retain guard');\n}\nreturn items;"
+      }
+    },
+    {
+      "id": "654dfa1e-cfc5-5c1c-b6d1-1fbfe8dae631",
+      "name": "reserve: Read before release",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        2440,
+        800
+      ],
+      "parameters": {
+        "resource": "row",
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "I1JBIePgy75Ecnlp"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": []
+        },
+        "returnAll": false,
+        "limit": 2
+      },
+      "alwaysOutputData": true
+    },
+    {
+      "id": "8ff3eddc-aa6e-5416-9225-6070d97ffd0b",
+      "name": "reserve: Verify release ownership",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2660,
+        800
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const rows = $input.all().map(item => item.json);\nif (rows.length !== 1) throw new Error('Guard requires exactly one control row');\nconst row = rows[0];\nif (($('reserve: Test entry').first().json.body.case) === 'G16') row.execution_id = 'injected-other-execution';\nif (!Number.isInteger(row.id) || row.key !== 'global' || typeof row.busy !== 'boolean' ||\n    typeof row.execution_id !== 'string' || typeof row.started_at !== 'string' ||\n    !(row.issue_number === null || (Number.isInteger(row.issue_number) && row.issue_number > 0))) {\n  throw new Error('Invalid control row; no remote work or automatic repair');\n}\nconst expected = $('reserve: Prepare acquisition').first().json;\nif (row.id !== expected.id || row.busy !== true ||\n    row.execution_id !== expected.execution_id || row.started_at !== expected.started_at ||\n    row.issue_number !== expected.issue_number) {\n  throw new Error('Guard release ownership not confirmed; stop and inspect, never assume idle');\n}\nreturn [{json:row}];"
+      }
+    },
+    {
+      "id": "0f6962c2-4d6e-54f8-a8f3-275bdb3da738",
+      "name": "reserve: Release control",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        2880,
+        800
+      ],
+      "parameters": {
+        "resource": "row",
+        "operation": "update",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ ($('reserve: Test entry').first().json.body.case) === \"G11\" ? \"INTENTIONALLY_MISSING_GUARD_TEST_TABLE\" : \"I1JBIePgy75Ecnlp\" }}"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $json.id }}"
+            },
+            {
+              "keyName": "key",
+              "condition": "eq",
+              "keyValue": "global"
+            },
+            {
+              "keyName": "busy",
+              "condition": "isTrue"
+            },
+            {
+              "keyName": "execution_id",
+              "condition": "eq",
+              "keyValue": "={{ $json.execution_id }}"
+            },
+            {
+              "keyName": "started_at",
+              "condition": "eq",
+              "keyValue": "={{ $json.started_at }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "busy": false
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "busy",
+              "displayName": "busy",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "execution_id",
+              "displayName": "execution_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "issue_number",
+              "displayName": "issue_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "started_at",
+              "displayName": "started_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "alwaysOutputData": true
+    },
+    {
+      "id": "704de379-dae2-548c-92ef-e372819e4655",
+      "name": "reserve: Check release receipt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3100,
+        800
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "if (($('reserve: Test entry').first().json.body.case) === 'G12') throw new Error('injected lost release acknowledgement');\nconst rows = $input.all().map(item => item.json);\nif (rows.length !== 1) throw new Error('Guard requires exactly one control row');\nconst row = rows[0];\nif (!Number.isInteger(row.id) || row.key !== 'global' || typeof row.busy !== 'boolean' ||\n    typeof row.execution_id !== 'string' || typeof row.started_at !== 'string' ||\n    !(row.issue_number === null || (Number.isInteger(row.issue_number) && row.issue_number > 0))) {\n  throw new Error('Invalid control row; no remote work or automatic repair');\n}\nconst expected = $('reserve: Prepare acquisition').first().json;\nif (row.id !== expected.id || row.busy !== false ||\n    row.execution_id !== expected.execution_id || row.started_at !== expected.started_at ||\n    row.issue_number !== expected.issue_number) {\n  throw new Error('Guard release receipt not confirmed; stop and inspect, never assume idle');\n}\nreturn [{json:row}];"
+      }
+    },
+    {
+      "id": "37fab2b0-d88a-5f35-8fca-37647a8cc5e3",
+      "name": "reserve: Read released control",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        3320,
+        800
+      ],
+      "parameters": {
+        "resource": "row",
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ ($('reserve: Test entry').first().json.body.case) === \"G13\" ? \"INTENTIONALLY_MISSING_GUARD_TEST_TABLE\" : \"I1JBIePgy75Ecnlp\" }}"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": []
+        },
+        "returnAll": false,
+        "limit": 2
+      },
+      "alwaysOutputData": true
+    },
+    {
+      "id": "311b9640-ee49-5af5-a6b0-ac13d9605a35",
+      "name": "reserve: Confirm idle",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3540,
+        800
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const rows = $input.all().map(item => item.json);\nif (rows.length !== 1) throw new Error('Guard requires exactly one control row');\nconst row = rows[0];\nif (!Number.isInteger(row.id) || row.key !== 'global' || typeof row.busy !== 'boolean' ||\n    typeof row.execution_id !== 'string' || typeof row.started_at !== 'string' ||\n    !(row.issue_number === null || (Number.isInteger(row.issue_number) && row.issue_number > 0))) {\n  throw new Error('Invalid control row; no remote work or automatic repair');\n}\nconst expected = $('reserve: Prepare acquisition').first().json;\nif (row.id !== expected.id || row.busy !== false ||\n    row.execution_id !== expected.execution_id || row.started_at !== expected.started_at ||\n    row.issue_number !== expected.issue_number) {\n  throw new Error('Guard release reread not confirmed; stop and inspect, never assume idle');\n}\nreturn [{json:row}];"
+      }
+    },
+    {
+      "id": "de13da77-fc0d-56cd-83b3-5ccfc2135f62",
+      "name": "reserve: Report completion",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3760,
+        800
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "return [{json: {status:'released', outcome:$('reserve: Require acknowledged completion').first().json.outcome, control:$input.first().json}}];"
+      }
+    },
+    {
+      "id": "c1d14547-bf4a-5af7-a8b9-7d58de1027ae",
+      "name": "reserve: Optional crash window",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "if (($('reserve: Test entry').first().json.body.case) === 'G14_DELAY') await new Promise(resolve => setTimeout(resolve, 30000));\nreturn $input.all();"
+      },
+      "position": [
+        1850,
+        800
+      ]
+    },
+    {
+      "id": "ba601dc7-73bc-5325-8bfb-da1dc12c42d5",
+      "name": "reserve: Post-effect case",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "ba601dc7-73bc-5325-8bfb-da1dc12c42d5",
+              "leftValue": "={{ ($('reserve: Test entry').first().json.body.case) === 'G05' }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "position": [
+        1950,
+        800
+      ]
+    },
+    {
+      "id": "3c8168df-1710-5061-8536-4c235f2ba9e7",
+      "name": "reserve: Insert test effect",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "parameters": {
+        "resource": "row",
+        "operation": "insert",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "8fCAvfPK5z11XeRJ"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": []
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "case_id": "={{ \"G05-reserve-\" + String($execution.id) }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "case_id",
+              "displayName": "case_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "position": [
+        2100,
+        600
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "id": "0afbb070-3898-550f-8f40-b0312d745772",
+      "name": "track: Test entry",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "basic-a-guard-test/track",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "position": [
+        -700,
+        1600
+      ],
+      "webhookId": "0afbb070-3898-550f-8f40-b0312d745772"
+    },
+    {
+      "id": "3c96729d-c39f-575b-8111-e6b88e587f69",
+      "name": "track: Validate test request",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const body = $('track: Test entry').first().json.body;\nif (!body || ![\"G01\", \"G02\", \"G03\", \"G04\", \"G05\", \"G06\", \"G07\", \"G08\", \"G09\", \"G10\", \"G11\", \"G12\", \"G13\", \"G14_DELAY\", \"G15\", \"G16\"].includes(body.case)) throw new Error('Unknown isolated test case');\nreturn $input.all();"
+      },
+      "position": [
+        -450,
+        1600
+      ]
+    },
+    {
+      "id": "32ecca8b-c12d-5504-9084-380427eb1d33",
+      "name": "track: Read control",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        240,
+        1600
+      ],
+      "parameters": {
+        "resource": "row",
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "I1JBIePgy75Ecnlp"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": []
+        },
+        "returnAll": false,
+        "limit": 2
+      },
+      "alwaysOutputData": true
+    },
+    {
+      "id": "6909249f-fa90-5caa-997b-200ee3510534",
+      "name": "track: Validate entry",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        460,
+        1600
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const rows = $input.all().map(item => item.json);\nif (rows.length !== 1) throw new Error('Guard requires exactly one control row');\nconst row = rows[0];\nif (!Number.isInteger(row.id) || row.key !== 'global' || typeof row.busy !== 'boolean' ||\n    typeof row.execution_id !== 'string' || typeof row.started_at !== 'string' ||\n    !(row.issue_number === null || (Number.isInteger(row.issue_number) && row.issue_number > 0))) {\n  throw new Error('Invalid control row; no remote work or automatic repair');\n}\nreturn [{json: {...row, guard_action: row.busy ? 'held' : 'acquire'}}];"
+      }
+    },
+    {
+      "id": "9d635c24-0eaa-51df-83ea-b98b88eeefac",
+      "name": "track: Already held",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        680,
+        1600
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "held",
+              "leftValue": "={{ $json.busy }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "ab93e805-892a-543e-88ed-4de50444d7e0",
+      "name": "track: Report existing hold",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        900,
+        1380
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "return [{json: {status:'skipped_held', control:$input.first().json}}];"
+      }
+    },
+    {
+      "id": "ae54b6c6-07b1-5f0a-83e2-259fff07b37b",
+      "name": "track: Prepare acquisition",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        900,
+        1600
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const row = $input.first().json;\nreturn [{json: {id:row.id, key:'global', busy:true, execution_id:String($execution.id),\n  issue_number:null, started_at:new Date().toISOString()}}];"
+      }
+    },
+    {
+      "id": "66f1e458-829e-530e-9b3e-f7b103feaa5c",
+      "name": "track: Acquire control",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        1120,
+        1600
+      ],
+      "parameters": {
+        "resource": "row",
+        "operation": "update",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ ($('track: Test entry').first().json.body.case) === \"G07\" ? \"INTENTIONALLY_MISSING_GUARD_TEST_TABLE\" : \"I1JBIePgy75Ecnlp\" }}"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $json.id }}"
+            },
+            {
+              "keyName": "key",
+              "condition": "eq",
+              "keyValue": "global"
+            },
+            {
+              "keyName": "busy",
+              "condition": "isFalse"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "busy": true,
+            "execution_id": "={{ $json.execution_id }}",
+            "issue_number": "={{ null }}",
+            "started_at": "={{ $json.started_at }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "busy",
+              "displayName": "busy",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "execution_id",
+              "displayName": "execution_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "issue_number",
+              "displayName": "issue_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "started_at",
+              "displayName": "started_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "alwaysOutputData": true
+    },
+    {
+      "id": "2592909c-a14e-5905-98af-e7337f02fe4c",
+      "name": "track: Check acquire receipt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1340,
+        1600
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const rows = ($('track: Test entry').first().json.body.case) === 'G08' ? [{}] : $input.all().map(item => item.json);\nif (rows.length !== 1) throw new Error('Guard requires exactly one control row');\nconst row = rows[0];\nif (!Number.isInteger(row.id) || row.key !== 'global' || typeof row.busy !== 'boolean' ||\n    typeof row.execution_id !== 'string' || typeof row.started_at !== 'string' ||\n    !(row.issue_number === null || (Number.isInteger(row.issue_number) && row.issue_number > 0))) {\n  throw new Error('Invalid control row; no remote work or automatic repair');\n}\nconst expected = $('track: Prepare acquisition').first().json;\nif (row.id !== expected.id || row.busy !== true ||\n    row.execution_id !== expected.execution_id || row.started_at !== expected.started_at ||\n    row.issue_number !== expected.issue_number) {\n  throw new Error('Guard acquisition receipt not confirmed; stop and inspect, never assume idle');\n}\nreturn [{json:row}];"
+      }
+    },
+    {
+      "id": "60c6ce23-37d7-5c4f-9a32-739c0ad97953",
+      "name": "track: Read acquired control",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        1560,
+        1600
+      ],
+      "parameters": {
+        "resource": "row",
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ ($('track: Test entry').first().json.body.case) === \"G09\" ? \"INTENTIONALLY_MISSING_GUARD_TEST_TABLE\" : \"I1JBIePgy75Ecnlp\" }}"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": []
+        },
+        "returnAll": false,
+        "limit": 2
+      },
+      "alwaysOutputData": true
+    },
+    {
+      "id": "6168426a-ecad-5227-8dad-932cf088a83b",
+      "name": "track: Verify acquisition",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1780,
+        1600
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const rows = $input.all().map(item => item.json);\nif (rows.length !== 1) throw new Error('Guard requires exactly one control row');\nconst row = rows[0];\nif (!Number.isInteger(row.id) || row.key !== 'global' || typeof row.busy !== 'boolean' ||\n    typeof row.execution_id !== 'string' || typeof row.started_at !== 'string' ||\n    !(row.issue_number === null || (Number.isInteger(row.issue_number) && row.issue_number > 0))) {\n  throw new Error('Invalid control row; no remote work or automatic repair');\n}\nconst expected = $('track: Prepare acquisition').first().json;\nif (row.id !== expected.id || row.busy !== true ||\n    row.execution_id !== expected.execution_id || row.started_at !== expected.started_at ||\n    row.issue_number !== expected.issue_number) {\n  throw new Error('Guard acquisition reread not confirmed; stop and inspect, never assume idle');\n}\nreturn [{json:row}];"
+      }
+    },
+    {
+      "id": "6db8ae2c-fee6-51d5-80df-95fa6ba80f0c",
+      "name": "track: Skeleton work boundary",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2000,
+        1600
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const testCase = ($('track: Test entry').first().json.body.case);\nif (['G04','G05'].includes(testCase)) throw new Error('injected ' + testCase + ' track boundary fault');\nif (testCase === 'G10') return [{json:{outcome:'success',acknowledged:false}}];\nreturn [{json:{outcome:testCase === 'G02' ? 'success' : 'no_work',acknowledged:true}}];"
+      }
+    },
+    {
+      "id": "8fe7a964-f06b-5161-bfec-003b63007359",
+      "name": "track: Require acknowledged completion",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2220,
+        1600
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const items = $input.all();\nif (items.length !== 1 || items[0].json.acknowledged !== true ||\n    !['success','no_work'].includes(items[0].json.outcome)) {\n  throw new Error('Work incomplete or uncertain; retain guard');\n}\nreturn items;"
+      }
+    },
+    {
+      "id": "08567439-2feb-5027-aa02-d8daef5ef867",
+      "name": "track: Read before release",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        2440,
+        1600
+      ],
+      "parameters": {
+        "resource": "row",
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "I1JBIePgy75Ecnlp"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": []
+        },
+        "returnAll": false,
+        "limit": 2
+      },
+      "alwaysOutputData": true
+    },
+    {
+      "id": "1af00595-3190-5ec5-9b43-f73df29153b2",
+      "name": "track: Verify release ownership",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2660,
+        1600
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const rows = $input.all().map(item => item.json);\nif (rows.length !== 1) throw new Error('Guard requires exactly one control row');\nconst row = rows[0];\nif (($('track: Test entry').first().json.body.case) === 'G16') row.execution_id = 'injected-other-execution';\nif (!Number.isInteger(row.id) || row.key !== 'global' || typeof row.busy !== 'boolean' ||\n    typeof row.execution_id !== 'string' || typeof row.started_at !== 'string' ||\n    !(row.issue_number === null || (Number.isInteger(row.issue_number) && row.issue_number > 0))) {\n  throw new Error('Invalid control row; no remote work or automatic repair');\n}\nconst expected = $('track: Prepare acquisition').first().json;\nif (row.id !== expected.id || row.busy !== true ||\n    row.execution_id !== expected.execution_id || row.started_at !== expected.started_at ||\n    row.issue_number !== expected.issue_number) {\n  throw new Error('Guard release ownership not confirmed; stop and inspect, never assume idle');\n}\nreturn [{json:row}];"
+      }
+    },
+    {
+      "id": "6d548070-3b4f-57ca-8f08-835c92b9c3dc",
+      "name": "track: Release control",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        2880,
+        1600
+      ],
+      "parameters": {
+        "resource": "row",
+        "operation": "update",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ ($('track: Test entry').first().json.body.case) === \"G11\" ? \"INTENTIONALLY_MISSING_GUARD_TEST_TABLE\" : \"I1JBIePgy75Ecnlp\" }}"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $json.id }}"
+            },
+            {
+              "keyName": "key",
+              "condition": "eq",
+              "keyValue": "global"
+            },
+            {
+              "keyName": "busy",
+              "condition": "isTrue"
+            },
+            {
+              "keyName": "execution_id",
+              "condition": "eq",
+              "keyValue": "={{ $json.execution_id }}"
+            },
+            {
+              "keyName": "started_at",
+              "condition": "eq",
+              "keyValue": "={{ $json.started_at }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "busy": false
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "busy",
+              "displayName": "busy",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "execution_id",
+              "displayName": "execution_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "issue_number",
+              "displayName": "issue_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "started_at",
+              "displayName": "started_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "alwaysOutputData": true
+    },
+    {
+      "id": "321615ea-4eb4-5036-9fc1-7d3b89e4dc84",
+      "name": "track: Check release receipt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3100,
+        1600
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "if (($('track: Test entry').first().json.body.case) === 'G12') throw new Error('injected lost release acknowledgement');\nconst rows = $input.all().map(item => item.json);\nif (rows.length !== 1) throw new Error('Guard requires exactly one control row');\nconst row = rows[0];\nif (!Number.isInteger(row.id) || row.key !== 'global' || typeof row.busy !== 'boolean' ||\n    typeof row.execution_id !== 'string' || typeof row.started_at !== 'string' ||\n    !(row.issue_number === null || (Number.isInteger(row.issue_number) && row.issue_number > 0))) {\n  throw new Error('Invalid control row; no remote work or automatic repair');\n}\nconst expected = $('track: Prepare acquisition').first().json;\nif (row.id !== expected.id || row.busy !== false ||\n    row.execution_id !== expected.execution_id || row.started_at !== expected.started_at ||\n    row.issue_number !== expected.issue_number) {\n  throw new Error('Guard release receipt not confirmed; stop and inspect, never assume idle');\n}\nreturn [{json:row}];"
+      }
+    },
+    {
+      "id": "856dc061-82f9-5723-8ea8-193f20ea5229",
+      "name": "track: Read released control",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        3320,
+        1600
+      ],
+      "parameters": {
+        "resource": "row",
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ ($('track: Test entry').first().json.body.case) === \"G13\" ? \"INTENTIONALLY_MISSING_GUARD_TEST_TABLE\" : \"I1JBIePgy75Ecnlp\" }}"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": []
+        },
+        "returnAll": false,
+        "limit": 2
+      },
+      "alwaysOutputData": true
+    },
+    {
+      "id": "89847bf4-80b0-56ee-85e7-e368cc8f3211",
+      "name": "track: Confirm idle",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3540,
+        1600
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const rows = $input.all().map(item => item.json);\nif (rows.length !== 1) throw new Error('Guard requires exactly one control row');\nconst row = rows[0];\nif (!Number.isInteger(row.id) || row.key !== 'global' || typeof row.busy !== 'boolean' ||\n    typeof row.execution_id !== 'string' || typeof row.started_at !== 'string' ||\n    !(row.issue_number === null || (Number.isInteger(row.issue_number) && row.issue_number > 0))) {\n  throw new Error('Invalid control row; no remote work or automatic repair');\n}\nconst expected = $('track: Prepare acquisition').first().json;\nif (row.id !== expected.id || row.busy !== false ||\n    row.execution_id !== expected.execution_id || row.started_at !== expected.started_at ||\n    row.issue_number !== expected.issue_number) {\n  throw new Error('Guard release reread not confirmed; stop and inspect, never assume idle');\n}\nreturn [{json:row}];"
+      }
+    },
+    {
+      "id": "6c3664a3-97ff-59fa-b5f1-f004921af70a",
+      "name": "track: Report completion",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3760,
+        1600
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "return [{json: {status:'released', outcome:$('track: Require acknowledged completion').first().json.outcome, control:$input.first().json}}];"
+      }
+    },
+    {
+      "id": "517a3ce0-d87c-5241-9bb5-ef8703084b46",
+      "name": "track: Optional crash window",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "if (($('track: Test entry').first().json.body.case) === 'G14_DELAY') await new Promise(resolve => setTimeout(resolve, 30000));\nreturn $input.all();"
+      },
+      "position": [
+        1850,
+        1600
+      ]
+    },
+    {
+      "id": "3786b11f-3392-5598-9f74-378e16516741",
+      "name": "track: Post-effect case",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "3786b11f-3392-5598-9f74-378e16516741",
+              "leftValue": "={{ ($('track: Test entry').first().json.body.case) === 'G05' }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "position": [
+        1950,
+        1600
+      ]
+    },
+    {
+      "id": "189a59ca-970f-5784-87f2-f7a3ad13f725",
+      "name": "track: Insert test effect",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "parameters": {
+        "resource": "row",
+        "operation": "insert",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "8fCAvfPK5z11XeRJ"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": []
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "case_id": "={{ \"G05-track-\" + String($execution.id) }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "case_id",
+              "displayName": "case_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "position": [
+        2100,
+        1400
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "id": "20552839-96aa-5508-8842-a4208ab793e7",
+      "name": "Read test state",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "parameters": {
+        "httpMethod": "GET",
+        "path": "basic-a-guard-test/state",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "position": [
+        -700,
+        2600
+      ],
+      "webhookId": "20552839-96aa-5508-8842-a4208ab793e7"
+    },
+    {
+      "id": "9fa2f40d-0ebb-5195-99fe-a51539935547",
+      "name": "Read fixture control",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "parameters": {
+        "resource": "row",
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "I1JBIePgy75Ecnlp"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": []
+        },
+        "returnAll": false,
+        "limit": 100,
+        "options": {}
+      },
+      "position": [
+        -450,
+        2600
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "id": "913e6981-2d71-5ad2-bced-3a66bd06f879",
+      "name": "Capture fixture control",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "return [{json:{control:$input.all().map(x=>x.json).filter(x=>Number.isInteger(x.id))}}];"
+      },
+      "position": [
+        -200,
+        2600
+      ]
+    },
+    {
+      "id": "bee4e48b-ca50-56ad-8714-6c0fc8cbae11",
+      "name": "Read fixture effects",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "parameters": {
+        "resource": "row",
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "8fCAvfPK5z11XeRJ"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": []
+        },
+        "returnAll": false,
+        "limit": 100,
+        "options": {}
+      },
+      "position": [
+        50,
+        2600
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "id": "b5beb7a1-94f7-5d12-8dc1-b51c1eb1d29d",
+      "name": "Report test state",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "return [{json:{control:$('Capture fixture control').first().json.control,effects:$input.all().map(x=>x.json).filter(x=>Number.isInteger(x.id))}}];"
+      },
+      "position": [
+        300,
+        2600
+      ]
+    },
+    {
+      "id": "81329b3c-46a1-529f-bb65-d4e6f8548ec9",
+      "name": "Operator fixture request",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "basic-a-guard-test/fixture",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "position": [
+        -700,
+        3100
+      ],
+      "webhookId": "81329b3c-46a1-529f-bb65-d4e6f8548ec9"
+    },
+    {
+      "id": "ba35a251-603f-591b-8c33-be787a6562de",
+      "name": "Validate fixture request",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const b = $input.first().json.body;\nif (!b || !['update','insert','delete'].includes(b.action) || typeof b.reason !== 'string' || !b.reason.trim())\n  throw new Error('Explicit operator action/reason required');\nif (b.action !== 'insert' && (!Number.isInteger(b.id) || b.id < 1)) throw new Error('Fixture row ID required');\nif (b.action !== 'delete') {\n  const r=b.row;\n  if (!r || typeof r.key !== 'string' || typeof r.busy !== 'boolean' ||\n      typeof r.execution_id !== 'string' || typeof r.started_at !== 'string' ||\n      !(r.issue_number === null || Number.isInteger(r.issue_number))) throw new Error('Invalid fixture types');\n}\nreturn [{json:b}];"
+      },
+      "position": [
+        -450,
+        3100
+      ]
+    },
+    {
+      "id": "0d6eb5f6-3f33-51dd-adea-8d28bd354f4a",
+      "name": "Fixture update?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "0d6eb5f6-3f33-51dd-adea-8d28bd354f4a",
+              "leftValue": "={{ $json.action === 'update' }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "position": [
+        -200,
+        3100
+      ]
+    },
+    {
+      "id": "09802bb6-afab-5e4b-8f20-de85166b316b",
+      "name": "Fixture insert?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "09802bb6-afab-5e4b-8f20-de85166b316b",
+              "leftValue": "={{ $json.action === 'insert' }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "position": [
+        50,
+        3350
+      ]
+    },
+    {
+      "id": "53f98bbf-1dd3-5a57-b0be-4d8f05ea05f1",
+      "name": "Operator update fixture",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "parameters": {
+        "resource": "row",
+        "operation": "update",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "I1JBIePgy75Ecnlp"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $json.id }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "key": "={{ $json.row.key }}",
+            "busy": "={{ $json.row.busy }}",
+            "execution_id": "={{ $json.row.execution_id }}",
+            "issue_number": "={{ $json.row.issue_number }}",
+            "started_at": "={{ $json.row.started_at }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "key",
+              "displayName": "key",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "busy",
+              "displayName": "busy",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "execution_id",
+              "displayName": "execution_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "issue_number",
+              "displayName": "issue_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "started_at",
+              "displayName": "started_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "position": [
+        300,
+        3000
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "id": "e00a307c-eb0b-5f28-8a9d-81319bf37837",
+      "name": "Operator insert fixture",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "parameters": {
+        "resource": "row",
+        "operation": "insert",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "I1JBIePgy75Ecnlp"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": []
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "key": "={{ $json.row.key }}",
+            "busy": "={{ $json.row.busy }}",
+            "execution_id": "={{ $json.row.execution_id }}",
+            "issue_number": "={{ $json.row.issue_number }}",
+            "started_at": "={{ $json.row.started_at }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "key",
+              "displayName": "key",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "busy",
+              "displayName": "busy",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "execution_id",
+              "displayName": "execution_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "issue_number",
+              "displayName": "issue_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "started_at",
+              "displayName": "started_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "position": [
+        300,
+        3250
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "id": "7ef82914-8ecb-535d-bbf4-344d10c30168",
+      "name": "Operator delete fixture",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "parameters": {
+        "resource": "row",
+        "operation": "deleteRows",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "I1JBIePgy75Ecnlp"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $json.id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "position": [
+        300,
+        3500
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "id": "ab670a75-c297-52d3-965d-df8fcbc7dccc",
+      "name": "Report fixture acknowledgement",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "return [{json:{action:$('Validate fixture request').first().json.action,reason:$('Validate fixture request').first().json.reason,rows:$input.all().map(x=>x.json)}}];"
+      },
+      "position": [
+        650,
+        3250
+      ]
+    },
+    {
+      "id": "d750c1b2-ba2a-5e9e-97fb-7fb3d7b16b52",
+      "name": "ISOLATED TEST BRIDGE — REVIEW BEFORE IMPORT",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "parameters": {
+        "content": "## Test-only native n8n bridge\nOwner manually imports and publishes in factory-guard-test ONLY. No schedules or credentials. Loopback-only access. Fixed test control/effects table IDs. Fault requests run the three copied guard paths. Fixture endpoints modify/delete ONLY disposable test control rows on explicit operator requests; never connected to automatic error recovery. Unpublish after tests. See factory/tests/guard-bridge.md.",
+        "height": 300,
+        "width": 700
+      },
+      "position": [
+        -700,
+        -550
+      ]
+    }
+  ],
+  "connections": {
+    "refine: Test entry": {
+      "main": [
+        [
+          {
+            "node": "refine: Validate test request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "refine: Validate test request": {
+      "main": [
+        [
+          {
+            "node": "refine: Read control",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "refine: Read control": {
+      "main": [
+        [
+          {
+            "node": "refine: Validate entry",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "refine: Validate entry": {
+      "main": [
+        [
+          {
+            "node": "refine: Already held",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "refine: Already held": {
+      "main": [
+        [
+          {
+            "node": "refine: Report existing hold",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "refine: Prepare acquisition",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "refine: Prepare acquisition": {
+      "main": [
+        [
+          {
+            "node": "refine: Acquire control",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "refine: Acquire control": {
+      "main": [
+        [
+          {
+            "node": "refine: Check acquire receipt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "refine: Check acquire receipt": {
+      "main": [
+        [
+          {
+            "node": "refine: Read acquired control",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "refine: Read acquired control": {
+      "main": [
+        [
+          {
+            "node": "refine: Verify acquisition",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "refine: Verify acquisition": {
+      "main": [
+        [
+          {
+            "node": "refine: Optional crash window",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "refine: Skeleton work boundary": {
+      "main": [
+        [
+          {
+            "node": "refine: Require acknowledged completion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "refine: Require acknowledged completion": {
+      "main": [
+        [
+          {
+            "node": "refine: Read before release",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "refine: Read before release": {
+      "main": [
+        [
+          {
+            "node": "refine: Verify release ownership",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "refine: Verify release ownership": {
+      "main": [
+        [
+          {
+            "node": "refine: Release control",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "refine: Release control": {
+      "main": [
+        [
+          {
+            "node": "refine: Check release receipt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "refine: Check release receipt": {
+      "main": [
+        [
+          {
+            "node": "refine: Read released control",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "refine: Read released control": {
+      "main": [
+        [
+          {
+            "node": "refine: Confirm idle",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "refine: Confirm idle": {
+      "main": [
+        [
+          {
+            "node": "refine: Report completion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "refine: Optional crash window": {
+      "main": [
+        [
+          {
+            "node": "refine: Post-effect case",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "refine: Post-effect case": {
+      "main": [
+        [
+          {
+            "node": "refine: Insert test effect",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "refine: Skeleton work boundary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "refine: Insert test effect": {
+      "main": [
+        [
+          {
+            "node": "refine: Skeleton work boundary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "reserve: Test entry": {
+      "main": [
+        [
+          {
+            "node": "reserve: Validate test request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "reserve: Validate test request": {
+      "main": [
+        [
+          {
+            "node": "reserve: Read control",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "reserve: Read control": {
+      "main": [
+        [
+          {
+            "node": "reserve: Validate entry",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "reserve: Validate entry": {
+      "main": [
+        [
+          {
+            "node": "reserve: Already held",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "reserve: Already held": {
+      "main": [
+        [
+          {
+            "node": "reserve: Report existing hold",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "reserve: Prepare acquisition",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "reserve: Prepare acquisition": {
+      "main": [
+        [
+          {
+            "node": "reserve: Acquire control",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "reserve: Acquire control": {
+      "main": [
+        [
+          {
+            "node": "reserve: Check acquire receipt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "reserve: Check acquire receipt": {
+      "main": [
+        [
+          {
+            "node": "reserve: Read acquired control",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "reserve: Read acquired control": {
+      "main": [
+        [
+          {
+            "node": "reserve: Verify acquisition",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "reserve: Verify acquisition": {
+      "main": [
+        [
+          {
+            "node": "reserve: Optional crash window",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "reserve: Skeleton work boundary": {
+      "main": [
+        [
+          {
+            "node": "reserve: Require acknowledged completion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "reserve: Require acknowledged completion": {
+      "main": [
+        [
+          {
+            "node": "reserve: Read before release",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "reserve: Read before release": {
+      "main": [
+        [
+          {
+            "node": "reserve: Verify release ownership",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "reserve: Verify release ownership": {
+      "main": [
+        [
+          {
+            "node": "reserve: Release control",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "reserve: Release control": {
+      "main": [
+        [
+          {
+            "node": "reserve: Check release receipt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "reserve: Check release receipt": {
+      "main": [
+        [
+          {
+            "node": "reserve: Read released control",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "reserve: Read released control": {
+      "main": [
+        [
+          {
+            "node": "reserve: Confirm idle",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "reserve: Confirm idle": {
+      "main": [
+        [
+          {
+            "node": "reserve: Report completion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "reserve: Optional crash window": {
+      "main": [
+        [
+          {
+            "node": "reserve: Post-effect case",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "reserve: Post-effect case": {
+      "main": [
+        [
+          {
+            "node": "reserve: Insert test effect",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "reserve: Skeleton work boundary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "reserve: Insert test effect": {
+      "main": [
+        [
+          {
+            "node": "reserve: Skeleton work boundary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "track: Test entry": {
+      "main": [
+        [
+          {
+            "node": "track: Validate test request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "track: Validate test request": {
+      "main": [
+        [
+          {
+            "node": "track: Read control",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "track: Read control": {
+      "main": [
+        [
+          {
+            "node": "track: Validate entry",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "track: Validate entry": {
+      "main": [
+        [
+          {
+            "node": "track: Already held",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "track: Already held": {
+      "main": [
+        [
+          {
+            "node": "track: Report existing hold",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "track: Prepare acquisition",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "track: Prepare acquisition": {
+      "main": [
+        [
+          {
+            "node": "track: Acquire control",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "track: Acquire control": {
+      "main": [
+        [
+          {
+            "node": "track: Check acquire receipt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "track: Check acquire receipt": {
+      "main": [
+        [
+          {
+            "node": "track: Read acquired control",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "track: Read acquired control": {
+      "main": [
+        [
+          {
+            "node": "track: Verify acquisition",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "track: Verify acquisition": {
+      "main": [
+        [
+          {
+            "node": "track: Optional crash window",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "track: Skeleton work boundary": {
+      "main": [
+        [
+          {
+            "node": "track: Require acknowledged completion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "track: Require acknowledged completion": {
+      "main": [
+        [
+          {
+            "node": "track: Read before release",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "track: Read before release": {
+      "main": [
+        [
+          {
+            "node": "track: Verify release ownership",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "track: Verify release ownership": {
+      "main": [
+        [
+          {
+            "node": "track: Release control",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "track: Release control": {
+      "main": [
+        [
+          {
+            "node": "track: Check release receipt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "track: Check release receipt": {
+      "main": [
+        [
+          {
+            "node": "track: Read released control",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "track: Read released control": {
+      "main": [
+        [
+          {
+            "node": "track: Confirm idle",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "track: Confirm idle": {
+      "main": [
+        [
+          {
+            "node": "track: Report completion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "track: Optional crash window": {
+      "main": [
+        [
+          {
+            "node": "track: Post-effect case",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "track: Post-effect case": {
+      "main": [
+        [
+          {
+            "node": "track: Insert test effect",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "track: Skeleton work boundary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "track: Insert test effect": {
+      "main": [
+        [
+          {
+            "node": "track: Skeleton work boundary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read test state": {
+      "main": [
+        [
+          {
+            "node": "Read fixture control",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read fixture control": {
+      "main": [
+        [
+          {
+            "node": "Capture fixture control",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Capture fixture control": {
+      "main": [
+        [
+          {
+            "node": "Read fixture effects",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read fixture effects": {
+      "main": [
+        [
+          {
+            "node": "Report test state",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Operator fixture request": {
+      "main": [
+        [
+          {
+            "node": "Validate fixture request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate fixture request": {
+      "main": [
+        [
+          {
+            "node": "Fixture update?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fixture update?": {
+      "main": [
+        [
+          {
+            "node": "Operator update fixture",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Fixture insert?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fixture insert?": {
+      "main": [
+        [
+          {
+            "node": "Operator insert fixture",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Operator delete fixture",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Operator update fixture": {
+      "main": [
+        [
+          {
+            "node": "Report fixture acknowledgement",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Operator insert fixture": {
+      "main": [
+        [
+          {
+            "node": "Report fixture acknowledgement",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Operator delete fixture": {
+      "main": [
+        [
+          {
+            "node": "Report fixture acknowledgement",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Copenhagen",
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all",
+    "saveManualExecutions": true
+  },
+  "pinData": {}
+}
