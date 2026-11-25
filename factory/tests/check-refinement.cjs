@@ -102,6 +102,15 @@ test('paginated collections complete, cap/partial/error fail closed',()=>{
   assert.equal(R.pages([{statusCode:200,body:hundred,headers:{link:'rel="next"'}},{statusCode:200,body:[101],headers:{}}]).length,101);
   for(const pages of [[{statusCode:200,body:hundred}], [{statusCode:403,body:[]}],[{statusCode:200,body:[],headers:{link:'rel="next"'}}],Array.from({length:100},()=>({statusCode:200,body:[]}))]) assert.throws(()=>R.pages(pages));
 });
+test('stage-event URL uses the incoming candidate without cross-node expression lookup',()=>{
+  const expression=nodes.get('Read stage events').parameters.url;
+  for(const number of [1,2,123]) {
+    const url=vm.runInNewContext(`(${expression.slice(3,-2).trim()})`,{
+      $json:{number}, $:()=>{throw Error('Unexpected cross-node URL lookup');},
+    });
+    assert.equal(url,`https://api.github.com/repos/MBroholm/software-factory/issues/${number}/events`);
+  }
+});
 test('Ideas -> Refining -> marked comment -> Ready, unrelated label retained',()=>{
   const r=run();good(r);assert.equal(R.state(r.issues[0]),'Ready for approval');assert(r.issues[0].labels.some(l=>l.name==='documentation'));
   const writes=r.calls.filter(c=>c.method!=='GET');assert.deepEqual(writes.map(w=>w.name),['Add Refining','Remove Refining source','Gemini generateContent','Post refinement','Add Ready','Remove Ready source']);

@@ -696,7 +696,7 @@
       ],
       "parameters": {
         "method": "GET",
-        "url": "={{ ('https://api.github.com/repos/MBroholm/software-factory/issues/' + $('Each candidate').first(1, -1).json.number) + '/events' }}",
+        "url": "={{ 'https://api.github.com/repos/MBroholm/software-factory/issues/' + $json.number + '/events' }}",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
         "sendHeaders": true,
@@ -763,7 +763,7 @@
         }
       },
       "retryOnFail": false,
-      "notes": "Reads all pages of the candidate's issue events. The latest Ideas/Ready label event identifies when its current discussion stage began.",
+      "notes": "Builds the URL from the incoming candidate issue number, without looking back through the loop output. Reads all event pages; the latest Ideas/Ready label event identifies when the current discussion stage began.",
       "notesInFlow": false
     },
     {

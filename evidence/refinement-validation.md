@@ -2,23 +2,27 @@
 
 **Date**: 2026-11-24. **Status**: T010/T011/T013 implemented and locally checked;
 T012 source integration prepared, saved credential/native HTTP check **UNRUN**;
-T014 owner manual import and live issue/revision/approval exercises **UNRUN**.
+T014 owner manual import/mappings reported complete; live issue/revision/approval exercises **UNRUN**.
 This document is a handoff for review, not evidence of activation or a completed real run.
 
 ## Reviewed/imported revision record
 
 Development base: `2cd4fc0ab5070a21f54eef7a78fb955a0a0326dd` on `001-basic-a-factory`.
-The US1 changes are a working-tree diff, not yet a reviewed commit. Before import, record the
-actual reviewed commit here; the base commit must not be described as the imported US1 version.
+Owner reviewed the US1 changes and authorized commit/push on 2026-11-25. Reviewed implementation
+commit: `855033ef619202e6c549833bbaba322d8ff50531`. The owner subsequently reported manual import
+into the isolated test container, a fresh `factory_control_us1` table with all seven mappings,
+and both saved/mapped credentials. These are owner-reported setup observations; imported version
+comparison remains pending. Owner-supplied native no-work execution evidence is recorded below;
+Gemini credential use and actual issue writes remain unrun.
 
 | Item | Recorded value |
 |---|---|
-| Reviewed US1 commit / PR | Pending owner review |
-| Owner manual import timestamp | UNRUN |
-| Isolated n8n workflow ID / imported version ID | UNRUN |
-| Isolated control table mapping | UNRUN; do not reuse/reset the deliberately held T008 row blindly |
-| GitHub header credential mapping | UNRUN; private credential reference only |
-| Gemini header credential mapping | UNRUN; private credential reference only |
+| Reviewed US1 commit / PR | `855033ef619202e6c549833bbaba322d8ff50531`; owner review accepted; PR not recorded |
+| Owner manual import timestamp | Owner reported import on 2026-11-25; exact time not captured |
+| Isolated n8n workflow ID / imported version ID | Pending capture/verification |
+| Isolated control table mapping | Owner reports fresh `factory_control_us1`, all seven mappings saved; execution 747 confirms no-work acquisition/release, selected-issue context path unrun |
+| GitHub header credential mapping | Owner reports saved/mapped; execution 747 completed the workflow's issue-discovery/no-work path; credential identity/write permissions not independently verified |
+| Gemini header credential mapping | Owner reports saved/mapped; actual generateContent check UNRUN |
 | Active project free tier / quota check | Pending owner verification before HTTP check |
 | Native runtime versions | Prompt v3 / template v1; verification UNRUN |
 | Production activation | Not performed; workflow JSON is inactive |
@@ -35,7 +39,7 @@ record those owner-only mapping differences separately, without credential value
 
 | Check | Observed result | Limit |
 |---|---|---|
-| `node factory/tests/check-refinement.cjs` | PASS, 21 scenario groups | Exported Code bodies/connections; HTTP/Data Table stand-ins |
+| `node factory/tests/check-refinement.cjs` | PASS, 22 scenario groups after execution-748 URL fix | Exported Code bodies/connections; HTTP/Data Table stand-ins |
 | `node factory/scripts/build-refine.cjs --check` | PASS | Offline packaging consistency only |
 | `node factory/tests/check-guard-skeletons.cjs` | PASS, 50 scenarios | Remaining reserve/track skeletons only; no new native claim |
 | Compose `config --quiet`, default and `--profile local-model-trials` | PASS with nonsecret placeholder key | Configuration only; no server rollout |
@@ -67,7 +71,8 @@ are packaged from `factory/scripts/refinement-notes.cjs` so rebuilds retain them
 refinement scenario groups and packaging consistency passed again. Comparison with the prior
 JSON confirmed execution nodes, parameters, credential references, connections and workflow
 settings are unchanged; differences are documentation, sticky notes and positions. The updated
-JSON remains inactive and unimported; native/live checks below are still UNRUN.
+At that documentation-update checkpoint JSON remained inactive and unimported. Subsequent owner
+import/mapping reports are recorded above; native/live execution checks below are still UNRUN.
 
 The constitution requires reviewed JSON and **owner manual import**, including bootstrap.
 See [constitution III](../.specify/memory/constitution.md) and
@@ -96,6 +101,58 @@ No assistant import/activation, automatic deployment or bypass through a test br
    state/guard observations and sanitized errors in the matrix below. Owner judges the output's
    fidelity/checkability. No raw execution exports, headers or keys belong in this public record.
 
+## Native observations — 2026-11-25
+
+**Execution 747, ordinary no-work: PASS (owner-reported native output).** After confirming no
+open repository issues, the owner executed the entire imported workflow in the isolated test
+container and supplied its Report completion JSON. Result: `status=released`, `outcome=no_work`.
+The singleton row had `id=1`, `key=global`, `busy=false`, `execution_id="747"`,
+`issue_number=null`, `started_at="2026-11-25T09:19:31.403Z"` and
+`updatedAt="2026-11-25T09:19:32.029Z"`. Execution context was retained after release.
+This confirms the imported workflow's normal no-work exit and receipt/reread checks from the
+reported final output. No raw native node trace or workflow/version ID has yet been collected;
+this is not a Gemini call, selected-issue context check, write-permission proof or fault-path pass.
+
+**Execution 748, first real issue attempt: FAILED before refinement.** Owner created
+[issue #1](https://github.com/MBroholm/software-factory/issues/1), open, author `MBroholm` /
+`202449424`, sole managed label `Ideas`, no comments at preflight. Native n8n 2.48.8 failed in
+Read stage events at `2026-11-25T09:29:43Z` with `URL parameter must be a string, got undefined`.
+Using the existing supported encrypted entity-export method, the assistant collected only a
+sanitized execution trace/workflow snapshot from the isolated `factory-guard-test` container.
+No credential files or instance encryption key were read and no workflow/control row was changed.
+Imported workflow ID: `LCWxAPCdWrtjrRIn`; imported version ID was absent from the execution
+snapshot and remains unverified. The trace confirms the loop emitted issue number 1, acquisition
+context had `busy=true`, execution `748`, `issue_number=null` and start time
+`2026-11-25T09:29:42.635Z`. No release, issue-write or Gemini node was reached. The owner
+subsequently confirmed the current persisted row still has `busy=true` and `execution_id=748`;
+this verifies failure retention for this run. Later held-skip behavior remains unchecked.
+
+**Targeted source repair prepared, not yet imported/retried.** Read stage events now builds
+its URL directly from incoming `$json.number`, avoiding the unnecessary loop-output lookup.
+The generator and node note are updated; a regression checks candidate numbers 1, 2 and 123
+without allowing any cross-node lookup. All 22 local scenario groups and packaging consistency
+pass. The simpler expression evaluates to the expected URL in the installed test container's
+native n8n expression engine using both fabricated data and execution 748's saved graph/data.
+The original expression also evaluates correctly in these offline diagnostics: the precise
+live-context cause is unresolved, so this is a simplification of the failing dependency, not
+a claim of a proven n8n defect or successful workflow retry. A null unused loop output caused
+a distinct error in a supplemental fabricated diagnostic; actual execution 748 had an empty
+array there, so that hypothesis was ruled out for this run.
+
+An ignored owner-import artifact, `factory/local/refine-us1-url-fix-mapped.json`, was prepared
+from execution 748's actual workflow snapshot. It preserves all seven table mappings and 20
+credential references, existing Code bodies and connections. Only the Read stage events URL
+and explanatory note change in its nodes; the file is forced inactive with no pinned data.
+This avoids repeating the owner's mapping work. It is not a replacement for the public source
+JSON or owner review/manual import, and has not been imported or executed by the assistant.
+Prepared public source SHA-256:
+`698c034772095b16a9888c8d1be1630cdcac007b0d972d5a9dd8a862de6c57fe`.
+Prepared mapped import artifact SHA-256:
+`fd1f65629872d9df93c28dd8856f760c9829e062de5df7a4427449e9394066bc`.
+Keep the failed hold until schedules are paused/drained, the issue and execution are inspected,
+and the owner deliberately records/resets it for a new whole-workflow attempt. Do not resume
+the failed execution or run individual nodes.
+
 ## Pending native/live acceptance matrix
 
 Follow [quickstart section 6](../specs/001-basic-a-factory/quickstart.md#6-end-to-end-and-edge-case-validation)
@@ -104,7 +161,8 @@ faults, not production. No fixture-only test below counts as a real owner issue/
 
 | Exercise | Required observation | Actual evidence / outcome |
 |---|---|---|
-| Owner Ideas issue + actual saved Gemini credential | Refining before exactly one HTTP call, marked valid output, Ready, idle guard; model version/usage recorded | UNRUN |
+| Empty repository, acquired no-work release | Whole-workflow poll reports released/no_work and idle row with retained context | PASS: owner-supplied execution 747 output, 2026-11-25; details above |
+| Owner Ideas issue + actual saved Gemini credential | Refining before exactly one HTTP call, marked valid output, Ready, idle guard; model version/usage recorded | FAILED execution 748 on issue #1 at Read stage events, before inference/writes; source repair prepared, owner import/retry pending |
 | Owner revision while Ready | One new output; captured source IDs and previous output preserved; guard released | UNRUN |
 | Unchanged poll + owner-authored factory marker | No inference/duplicate output/loop; idle guard | UNRUN |
 | Non-owner/PR/closed input; non-owner discussion | No processing/trigger; ordinary acquired no-work releases | UNRUN; identify native vs fixture inputs honestly |

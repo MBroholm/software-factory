@@ -28,7 +28,7 @@ module.exports = [
       ['Discover candidates', 'Excludes PR objects, closed/non-owner issues and unlabelled ordinary issues. Orders Ideas/Ready candidates by issue number. Conflicting managed labels or stranded Refining stop for inspection.'],
       ['Have candidates', 'True: inspect candidates in sequence. False: report acknowledged no-work so the acquired guard can be released.'],
       ['Each candidate', 'Loop output: inspect one issue. Done output: release as no-work. An unchanged candidate loops back here; successful refinement exits after one task per execution.'],
-      ['Read stage events', 'Reads all pages of the candidate\'s issue events. The latest Ideas/Ready label event identifies when its current discussion stage began.'],
+      ['Read stage events', 'Builds the URL from the incoming candidate issue number, without looking back through the loop output. Reads all event pages; the latest Ideas/Ready label event identifies when the current discussion stage began.'],
       ['Read source comments', 'Reads all comment pages for this candidate. Both human discussion and marked factory output are needed to detect revisions, source changes and repeats.'],
       ['Plan revision', 'Validates prior refinement markers and captured source, then computes the canonical SHA-256/source key. Retains captured discussion and includes eligible new owner comments; excludes factory markers and intervening coding/QA discussion.'],
       ['New revision', 'True: prepare this revision. False: inspect the next candidate.', true],

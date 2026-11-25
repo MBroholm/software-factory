@@ -54,7 +54,9 @@ http('Discover issues',base+'?state=open&sort=created&direction=asc',{paginated:
 code('Discover candidates',`const candidates = discover(pages($input.all().map(i=>i.json)));\nreturn candidates.length ? candidates.map(issue=>({json:issue})) : [{json:{no_candidates:true}}];`);
 gate('Have candidates','!$json.no_candidates');
 add('Each candidate','splitInBatches',{batchSize:1,options:{}});
-http('Read stage events',`={{ ${candidateURL} + '/events' }}`,{paginated:true});
+// This node receives the candidate directly from the loop. Avoid cross-node lookup
+// during HTTP parameter resolution; execution 748 resolved that lookup to undefined.
+http('Read stage events',`={{ '${base}/' + $json.number + '/events' }}`,{paginated:true});
 http('Read source comments',`={{ ${candidateURL} + '/comments' }}`,{paginated:true});
 code('Plan revision',`const comments = ${values('Read source comments')};\nconst p = analyze($('Each candidate').first(1, -1).json, comments, ${values('Read stage events')});\np.issue_comment_watermark = Math.max(0,...comments.map(c=>c.id));\nreturn [{json:p}];`);
 gate('New revision','$json.work');
