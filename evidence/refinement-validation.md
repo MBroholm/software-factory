@@ -3,9 +3,121 @@
 **Date**: 2026-11-24; observations updated 2026-11-25. **Status**: T010–T013 implemented;
 T012 native saved-credential count/inference and fixed rendering passed in execution 753.
 T014 is in progress: initial refinement, unchanged polling and revision mechanics passed;
-revision content review found a missing explicit privacy criterion. Content correction and owner
-approval remain pending. Failures/recovery are retained below. No production activation
+the privacy criterion is now explicit in execution 757’s output, and explicit owner approval
+is verified. Post-approval execution 758 correctly returned no_work and released the guard.
+Remaining native acceptance cases are pending; live 503/backoff behavior remains unexercised. Failures/recovery are retained below. No production activation
 or completed issue/PR-linked build run is claimed.
+
+## Remaining-test execution and prepared native suite — 2026-11-25
+
+The owner asked the assistant to execute remaining tests. Additional checks actually performed:
+
+- Supported encrypted execution export collected 754, 755, 757 and 758. Only execution files
+  were decrypted with a disposable export-only key; no credential/instance-key access or SQL.
+  Native traces confirm **754 and 758 each ran zero countTokens and zero generateContent nodes**.
+  755 and 757 each counted/generated exactly once. Completion records match the owner outputs.
+- Snapshots for **757/758**, workflow **zcynhzDmEAapj2dT**, match the reviewed retry artifact's
+  Code bodies and connections, all **eight table mappings/filters/update values**, all **23
+  HTTP URLs/methods/bodies/options/saved credential references**, and Wait parameters. The
+  native editor's empty pagination `webhookNotice` is ignored as UI metadata; no behavioral
+  difference was observed. Historical/current workflow IDs are deliberately distinguished.
+- Installed n8n core performed **actual 10,011 ms and 30,009 ms waits**, without durable wait
+  state. An actual AbortSignal cancelled a 30-second core wait after **502 ms**. These pass
+  helper timing/cancellation checks; they do not establish full workflow cancellation/guard
+  persistence. Reproducible helper: `factory/tests/check-refinement-native-waits.cjs`.
+- A prepared credential-free native test bridge passed **335 installed native checks** (270 VM
+  contexts including rewritten loopback URLs and fixture identity headers, pagination, prior
+  regression and Wait boundary). This executes parameter/Wait helpers, not the imported graph.
+- `check-refinement-bridge.cjs` passed graph packaging assertions, all **43 synthetic fixture
+  initializations**, selective 503 response sequences, identical count/generation body digests,
+  multi-page responses and an actual dropped HTTP connection. This validates the fixture
+  server; **zero native bridge cases have run yet**. The initial local listener attempt was
+  sandbox-blocked and rerun with approval. A too-broad assertion included sticky notes, was
+  corrected to apply to operational nodes, and final preflight passed.
+
+Prepared one manual import: `factory/local/refinement-native-bridge/workflow.json`, inactive,
+85 nodes, mapped to the existing isolated US1 table, with **no credentials or schedules**.
+The committed placeholder-mapped review JSON is `factory/tests/refinement-bridge.json`;
+builder/manifest/runner/trace collector and full boundaries are described in
+`factory/tests/refinement-bridge.md`. The suite retains source Code/connections except two
+explicit fault prefixes and replaces only external HTTP destinations/auth/fixture headers.
+It uses real native HTTP, Data Table, branch/loop and Wait nodes. No product workflow source
+or live issue content was changed to create it.
+
+Synthetic fixture service is running only on **127.0.0.1:18765 inside factory-guard-test**;
+no new Docker port, credentials, external calls or workflow import/activation was added.
+It had zero case runs at setup. Private synthetic state is retained under
+`/tmp/basic-a-us1-native/` in that container. The existing US1 row has not been reset by the
+assistant during preparation. Production and issue #1 remain untouched.
+
+Full native pilot/suite/restart/held checks are pending **owner manual import/publication** of
+this reviewed test bridge, required by constitution sections I/III. Prepared runner performs
+explicit inspected resets only between completed known isolated cases, with row-ID/execution
+comparison and logged reasons; unknown holds stop. It never resets in error/finally cleanup.
+Restart testing affects only the isolated test container. A supported UI cancellation test is
+separate; do not count the helper or hard-restart result as full workflow UI cancellation.
+T014 stays unchecked until actual required native results exist; no model/provider or product
+acceptance is inferred from synthetic fixture preflight. Existing production schedule coverage
+is not expanded by this unscheduled test bridge.
+
+## Execution 758 — post-approval no-work poll
+
+After explicit owner approval, the owner ran one fresh whole-workflow isolated test and supplied
+the completion output: status released, outcome no_work, busy=false, execution **758**,
+issue_number=null, start `2026-11-25T11:46:58.994Z`, row updated
+`2026-11-25T11:46:59.591Z`. A subsequent read-only GitHub API check confirms issue #1 remains
+open, only Approved, still six comments. No Building claim, duplicate refinement or state change
+is observed. This passes the owner-reported post-approval no-work/guard-release exercise with
+independent public state/comment-count verification. The subsequently collected native trace confirms zero countTokens/generateContent nodes for
+758, as recorded above.
+The reviewed import remains inactive; no production activation/build is claimed. T014 remains
+open for the outstanding native edge cases, including selective 503/backoff/exhaustion and
+interruption behavior. Existing local/native synthetic retry checks remain valid within their
+stated limits; successful HTTP 200 execution 757 does not exercise those retry branches.
+
+## Explicit owner approval after execution 757
+
+The owner reported reviewing/accepting the latest refinement and replacing Ready for approval
+with Approved. Read-only GitHub API verification confirmed issue #1 is open with only Approved
+and still six comments. The label event **37246567614** records Approved added at
+`2026-11-25T11:45:26Z` by owner ID **202449424**; event **37246567549** removed Ready for approval
+at the same time by that owner. This follows the latest refinement **7161366810** and the prior
+verified Ready state. No assistant label mutation or approval inference occurred.
+The explicit owner approval exercise passes. The subsequent post-approval no-work behavior
+passed in execution 758, recorded above. US2 reservation/approval validation and any build remain
+out of scope; T014 stays unchecked for the remaining native acceptance cases.
+
+## Execution 757 — imported retry revision, first-attempt success
+
+The owner reported importing/saving the bounded-retry artifact, then confirmed the global row
+was busy=true, execution 756, issue 1. While the workflow remained inactive, the owner reported
+restoring Ideas and reposting the pending privacy request after that transition, then deliberately
+cleared only busy and ran one fresh whole-workflow execution in the isolated test container.
+No assistant import, row reset, workflow run or issue write was performed.
+
+Owner-supplied completion fields identify **757**, issue 1, start
+`2026-11-25T11:41:02.932Z`, idle row updated `2026-11-25T11:41:15.512Z`.
+Counted input 663 + schema allowance 456 + output reserve 768 + overhead 256 = **2143/4096**.
+Payload SHA-256: `079ac34ad5cb84f1d12e482be82d402b03309b9c939c1bf9f00ec4771bc2624a`.
+Generation reports one attempt, HTTP 200, no provider error status and zero wait seconds.
+New refinement comment **7161366810**; busy=false. This confirms the owner-reported successful
+first-attempt path of the imported retry revision, not actual 503 retries or elapsed backoff.
+Saved workflow version/snapshot comparison and native delayed/cancellation/restart cases remain
+unrun. Earlier successful credential/guard evidence remains valid for its recorded versions.
+
+Independent read-only GitHub API inspection confirmed issue #1 open with only managed state
+Ready for approval, original title/body unchanged, six comments. The new unedited owner-authored
+marked refinement was created `2026-11-25T11:41:11Z`, prompt v3/template v1, source key
+`1:28e7e3bd5b7c188e5dce4f448ed5b947110e98d9597f23e058a8ff2f5241ffe6:7161350251:v3`,
+captured comment IDs `[7160648812,7161350251]`, content SHA-256
+`31797e093d0d62425b690ea1d6b67b2801641285cebc95d9f2f0212388b471e9`.
+Public usage records 663 input / 197 output / 860 total tokens. Content review confirms the
+SSH access section, placeholder details, documentation-only constraint, no service/credential/
+configuration changes and the explicit privacy acceptance criterion are all present.
+See [the actual refinement](https://github.com/MBroholm/software-factory/issues/1#issuecomment-7161366810).
+No questions are pending in that output. Owner semantic review/explicit approval remains the
+next acceptance step; no Approved label or build is inferred from successful generation.
+T014 remains unchecked, including the selective-retry live cases.
 
 ## Owner-approved bounded retry revision — 2026-11-25
 
@@ -507,8 +619,8 @@ faults, not production. No fixture-only test below counts as a real owner issue/
 |---|---|---|
 | Empty repository, acquired no-work release | Whole-workflow poll reports released/no_work and idle row with retained context | PASS: owner-supplied execution 747 output, 2026-11-25; details above |
 | Owner Ideas issue + actual saved Gemini credential | Refining before one count + at most one inference, marked valid output, Ready, idle guard; model version/usage recorded | PASS execution 753, native trace + owner row/output + public comment. Prior 748/750/751/752 failures retained above |
-| Owner revision while Ready | One new output; captured source IDs and previous output preserved; guard released | Mechanics PASS 755 + public history/source-key check; explicit privacy acceptance criterion missing in model content, owner feedback/correction pending |
-| Unchanged poll + owner-authored factory marker | No inference/duplicate output/loop; idle guard | PASS 754 owner no-work/idle output + public unchanged state/comment count; native reached-node omission trace still pending collection |
+| Owner revision while Ready | One new output; captured source IDs and previous output preserved; guard released | PASS revision mechanics 755; corrected privacy criterion and previous constraints verified in 757 output, subsequently accepted by owner |
+| Unchanged poll + owner-authored factory marker | No inference/duplicate output/loop; idle guard | PASS 754 owner no-work/idle output + public unchanged state/comment count; native trace now confirms zero count and generation calls |
 | Non-owner/PR/closed input; non-owner discussion | No processing/trigger; ordinary acquired no-work releases | UNRUN; identify native vs fixture inputs honestly |
 | Multiple pages; first candidate unchanged | Later eligible candidate processed once; no missed pages | UNRUN |
 | Captured edit/deletion or source change during inference | Visible failure/held guard; no stale publication or inferred approval | UNRUN |
@@ -516,8 +628,8 @@ faults, not production. No fixture-only test below counts as a real owner issue/
 | Unknown comment POST / partial label transition | Hold; later poll skips with unchanged context; owner reconciles before reset | UNRUN |
 | Unexpected exception before/after side effect | Guard remains busy; next whole-workflow poll skips; no unconditional release | UNRUN |
 | Stranded Refining / conflicting labels | No auto-resume or guessed transition; held failure | UNRUN |
-| Initial explicit approval | Before owner action: Ready only. Owner removes Ready and explicitly adds Approved; record owner event ID/time and latest refinement URL | UNRUN |
-| Poll after approval | Refine leaves Approved alone; no Building claim (US2 not implemented) | UNRUN |
+| Initial explicit approval | Before owner action: Ready only. Owner removes Ready and explicitly adds Approved; record owner event ID/time and latest refinement URL | PASS: owner event 37246567614 at 2026-11-25T11:45:26Z, actor 202449424, latest refinement 7161366810; details above |
+| Poll after approval | Refine leaves Approved alone; no Building claim (US2 not implemented) | PASS: 758 owner released/no_work/idle output; public issue remains Approved with six comments |
 
 Approval validation/reservation belongs to US2 T015+, which remains out of scope. This story
 demonstrates explicit owner approval and that refinement never grants it. Append a real posted

@@ -138,6 +138,33 @@ scenario groups and 291 native synthetic parameter/Wait checks pass. Actual dela
 retry/cancellation/restart checks remain pending owner manual import under T014. T012 remains
 complete from 753; T014 stays unchecked. Earlier no-retry statements describe prior revisions.
 
+**US1 execution 757, 2026-11-25**: Owner imported/saved the retry revision and deliberately
+recovered the 756 hold. Fresh execution succeeded on attempt 1 (HTTP 200), input count 663,
+reserved total 2143/4096, comment 7161366810 and busy=false. Read-only public review confirms
+the privacy acceptance criterion and previous constraints, Ready for approval, no Approved label.
+Owner approval and native live retry/delay/interruption coverage remain pending; T014 stays open.
+
+**US1 owner approval, 2026-11-25**: Owner accepted refinement 7161366810 and replaced Ready
+with Approved. Public label event 37246567614 at 11:45:26Z confirms actor 202449424; issue remains
+open with six comments. Explicit approval passes. Post-approval refine poll and other native
+acceptance cases remain pending; T014 stays unchecked. US2 reservation/build is out of scope.
+
+**US1 post-approval poll, 2026-11-25**: Execution 758 returned released/no_work, busy=false,
+issue_number=null. Read-only public verification confirms issue #1 remains Approved, open,
+with six comments and no Building claim. The post-approval poll passes. T014 remains unchecked
+for outstanding native edge cases, including 503/backoff/exhaustion/interruption; US2 remains
+out of scope. No production activation or completed build/PR is claimed.
+
+
+**US1 remaining-test preparation, 2026-11-25**: Owner requested assisted execution. Native
+snapshots now verify imported 757/758 Code/connections, eight table and 23 HTTP/credential
+mappings; 754/758 traces confirm no count/inference calls. Actual core 10/30-second waits and
+AbortSignal cancellation pass; full graph cancellation is not implied. Prepared credential-free
+native fault bridge and 43-case HTTP simulator pass fixture packaging plus 335 installed VM/
+Wait checks. The loopback-only synthetic server is ready inside factory-guard-test. Zero full
+bridge cases have run; owner manual import/publication remains required by constitution I/III.
+T014 stays unchecked. See `factory/tests/refinement-bridge.md` and the validation evidence.
+
 ## Phase 4: User Story 2 — Build manually with traceable decisions (P1)
 
 **Goal**: Reserve one approved task; owner launches Codex locally and records material decisions.

@@ -7,8 +7,14 @@ Execution 753 on 2026-11-25 posted the first real refinement for
 The original issue text was not shortened: provider count 576 tokens, reserved total 2056/4096,
 one successful Gemini generation with 106 output tokens, Ready for approval and idle guard.
 See `evidence/refinement-validation.md` for the source key, native evidence and prior failures.
-Execution 755 subsequently passed revision mechanics; privacy-content correction and owner
-approval remain pending. This is not a completed build/PR run.
+Execution 755 subsequently passed revision mechanics. Execution 757 posted the
+[corrected refinement](https://github.com/MBroholm/software-factory/issues/1#issuecomment-7161366810),
+including an explicit privacy acceptance criterion and the SSH access section requirement.
+Its first generation attempt succeeded (663 input / 197 output tokens), reserved total 2143/4096,
+and the owner-reported guard is idle. Owner explicitly approved this refinement at
+2026-11-25T11:45:26Z (label event 37246567614). Post-approval poll 758 returned no_work
+and an idle guard, leaving Approved and the six-comment count unchanged. Actual 503 retry/backoff
+was not exercised. This is not a completed build/PR run.
 
 ## Earlier offline rendering
 
