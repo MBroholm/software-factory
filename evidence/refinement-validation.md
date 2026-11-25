@@ -39,7 +39,8 @@ record those owner-only mapping differences separately, without credential value
 
 | Check | Observed result | Limit |
 |---|---|---|
-| `node factory/tests/check-refinement.cjs` | PASS, 22 scenario groups after execution-748 URL fix | Exported Code bodies/connections; HTTP/Data Table stand-ins |
+| `node factory/tests/check-refinement.cjs` | PASS, 23 scenario groups after execution-750 VM fix | Exported Code bodies/connections; HTTP/Data Table stand-ins |
+| `check-refinement-native-expressions.cjs` in installed test runtime | PASS, 220 VM checks | 164 synthetic parameter contexts, regression and pagination; no nodes/workflows/API calls executed |
 | `node factory/scripts/build-refine.cjs --check` | PASS | Offline packaging consistency only |
 | `node factory/tests/check-guard-skeletons.cjs` | PASS, 50 scenarios | Remaining reserve/track skeletons only; no new native claim |
 | Compose `config --quiet`, default and `--profile local-model-trials` | PASS with nonsecret placeholder key | Configuration only; no server rollout |
@@ -125,7 +126,12 @@ snapshot and remains unverified. The trace confirms the loop emitted issue numbe
 context had `busy=true`, execution `748`, `issue_number=null` and start time
 `2026-11-25T09:29:42.635Z`. No release, issue-write or Gemini node was reached. The owner
 subsequently confirmed the current persisted row still has `busy=true` and `execution_id=748`;
-this verifies failure retention for this run. Later held-skip behavior remains unchecked.
+this verifies failure retention for this run. A subsequent whole-workflow poll returned
+`status=skipped_held` with `busy=true`, execution `748`, `issue_number=null` and unchanged start
+time. Its reported row `updatedAt` remained `2026-11-25T09:29:42.650Z`; the output included
+`guard_action=held`. **Post-failure held skip: PASS (owner-supplied output)**. The new poll's own
+execution ID was not supplied; `748` in its control output identifies the original failed hold.
+No reset, fix import or successful inference retry is claimed by this observation.
 
 **Targeted source repair prepared, not yet imported/retried.** Read stage events now builds
 its URL directly from incoming `$json.number`, avoiding the unnecessary loop-output lookup.
@@ -149,11 +155,68 @@ Prepared public source SHA-256:
 `698c034772095b16a9888c8d1be1630cdcac007b0d972d5a9dd8a862de6c57fe`.
 Prepared mapped import artifact SHA-256:
 `fd1f65629872d9df93c28dd8856f760c9829e062de5df7a4427449e9394066bc`.
+The owner subsequently confirmed manual import/save of this mapped fix in the isolated test
+container as a new workflow (guided name: `Basic A refine — US1 URL fix test`). Source repair
+commit `e32a8d3` is pushed on `001-basic-a-factory`. New workflow/version IDs and imported revision
+comparison remain pending. Immediately before recovery instructions, an authenticated GitHub
+read again confirmed issue #1 open, sole state `Ideas`, zero comments. The assistant has not
+reset the guard or executed the imported workflow; the deliberate owner reset/retry is pending.
 Keep the failed hold until schedules are paused/drained, the issue and execution are inspected,
 and the owner deliberately records/resets it for a new whole-workflow attempt. Do not resume
 the failed execution or run individual nodes.
 
 ## Pending native/live acceptance matrix
+
+### Execution 750 — root cause reproduced and repaired
+
+The owner reported another failure, this time in Read source comments at
+`2026-11-25T09:51:14Z`. Supported encrypted export confirmed execution `750`, workflow
+`5SviHhy3LypzrSTl`, acquired busy with start time `2026-11-25T09:51:13.793Z`. The corrected
+Read stage events node succeeded, then Read source comments failed with
+`URL parameter must be a string, got undefined`. No issue-write, Gemini or release node was
+reached. Current persisted row/held-skip evidence for this second failure remains pending.
+
+The earlier diagnostics imported `n8n-workflow` without initializing its service expression
+engine; standalone evaluation defaults to **legacy**, while installed n8n 2.48.8 service
+configuration defaults to **VM**. This explains why those diagnostics accepted the old lookup.
+With VM explicitly initialized, the real node-parameter resolver reproduced the failure:
+`.first(1, -1)` returned undefined, including without URL parentheses. `.first(1)` returned the
+expected URL, including with parentheses. Direct `$json` and legacy `$node` alternatives also
+worked. Thus the previous unresolved-cause statement is superseded: the explicit negative
+run-index argument is the reproduced VM compatibility problem. No engine configuration change,
+service restart, relaxed sandbox, additional workflow node or provider change is required.
+
+The generator now uses `.first(1)` for the remaining candidate URL and for Plan revision.
+The node note and persistent workflow instructions document this compatibility rule. Local tests
+reject explicit negative run indices in node parameter expressions. Synthetic fixture generation
+preserves multiple loop-iteration histories and covers initial refinement, empty/unchanged polls,
+later candidates, owner revision, reused output and held skip. The new native checker explicitly
+initializes VM and calls the installed node-parameter resolver for **164 parameter contexts**,
+including later issue-label/comment writes, Gemini request body and selected-issue table fields.
+The old failing lookup is also asserted to return undefined, the corrected lookup to return the
+expected URL, and all paginated HTTP nodes' page/completion expressions are checked. **220 native
+VM expression checks passed**, alongside 23 local groups and packaging consistency. These run
+in a separate diagnostic process with synthetic data: no workflow/node execution, HTTP/model
+request, credential access, import, guard reset or change to the running service occurred.
+
+Generate the synthetic fixtures from repository root with
+`node factory/tests/check-refinement.cjs --native-fixtures`. On a host with the pinned n8n
+packages installed, run the checker with the n8n installation root as its optional argument
+and `factory/local/refinement-native-expression-fixtures.json` on stdin. This session bundled
+the checker and synthetic fixtures temporarily and ran them via SSH/stdin in the existing
+isolated container. Do not treat standalone legacy evaluation as a VM regression pass.
+
+The new ignored owner-import artifact is `factory/local/refine-us1-vm-fix-mapped.json`, prepared
+from execution 750's workflow snapshot. Only Read source comments and Plan revision parameters/
+notes change; all seven table mappings, 20 credential references and connections are preserved.
+All Code bodies match the current source after the fix. It is inactive with empty pinned data,
+not yet imported or retried. Public JSON SHA-256:
+`61d904ea12789dbfbe988bbdb0d989c9322f566ca15d7f7adb8193b37d1476f6`.
+Mapped artifact SHA-256:
+`3dc9592c6e3c02778a4ebe4ee3c52b789d9a1132db33c4c800b34a49a6587394`.
+The earlier `refine-us1-url-fix-mapped.json` is superseded and must not be used for the next
+attempt. Owner manual review/import and deliberate inspected-hold recovery still gate retry;
+actual Gemini credential use and a successful refinement remain unvalidated.
 
 Follow [quickstart section 6](../specs/001-basic-a-factory/quickstart.md#6-end-to-end-and-edge-case-validation)
 and [guard fault setup](../factory/tests/guard-scenarios.md). Use isolated test copies for deliberate
@@ -162,7 +225,7 @@ faults, not production. No fixture-only test below counts as a real owner issue/
 | Exercise | Required observation | Actual evidence / outcome |
 |---|---|---|
 | Empty repository, acquired no-work release | Whole-workflow poll reports released/no_work and idle row with retained context | PASS: owner-supplied execution 747 output, 2026-11-25; details above |
-| Owner Ideas issue + actual saved Gemini credential | Refining before exactly one HTTP call, marked valid output, Ready, idle guard; model version/usage recorded | FAILED execution 748 on issue #1 at Read stage events, before inference/writes; source repair prepared, owner import/retry pending |
+| Owner Ideas issue + actual saved Gemini credential | Refining before exactly one HTTP call, marked valid output, Ready, idle guard; model version/usage recorded | FAILED 748 at Read stage events, then 750 at Read source comments; both before inference/writes. VM cause reproduced and source repaired; manual import/retry pending |
 | Owner revision while Ready | One new output; captured source IDs and previous output preserved; guard released | UNRUN |
 | Unchanged poll + owner-authored factory marker | No inference/duplicate output/loop; idle guard | UNRUN |
 | Non-owner/PR/closed input; non-owner discussion | No processing/trigger; ordinary acquired no-work releases | UNRUN; identify native vs fixture inputs honestly |

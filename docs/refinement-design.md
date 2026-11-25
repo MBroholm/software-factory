@@ -36,6 +36,11 @@ There is no server-side file/template loader, module allowlist expansion or tool
 selected short canvas subtitles and six numbered stage summaries. The builder preserves this
 documentation when regenerating JSON and groups the node layout by stage. Notes explain each
 node's purpose, relevant branch/write behavior and failure implications; they do not alter execution.
+Native validation exposed a compatibility issue in n8n 2.48.8: `.first(1, -1)` returned
+undefined in VM parameter expressions, while standalone legacy evaluation accepted it. Candidate
+references now use `.first(1)`, whose default is the latest run. The native expression suite
+explicitly initializes VM evaluation and checks URL/body/table/branch expressions before another
+owner-import attempt; it does not execute nodes or substitute for full live workflow tests.
 HTTP Request nodes alone perform authenticated API calls, with no automatic retries/redirects.
 Non-success HTTP statuses reach explicit checks and throw; they never fall through to release.
 

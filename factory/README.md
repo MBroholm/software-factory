@@ -25,6 +25,11 @@ See [refinement validation and import handoff](../evidence/refinement-validation
 Run `node scripts/build-refine.cjs --check` from this directory to verify source packaging;
 run tests from repository root with `node factory/tests/check-refinement.cjs` and
 `node factory/tests/check-guard-skeletons.cjs`. Native checks remain required.
+For parameter-expression changes, `node factory/tests/check-refinement.cjs --native-fixtures`
+prepares synthetic contexts for `tests/check-refinement-native-expressions.cjs`. That checker
+requires installed n8n packages and explicitly uses the VM evaluator; ordinary standalone
+`n8n-workflow` evaluation uses legacy semantics and missed the explicit negative-index defect.
+It evaluates parameters only; full native workflow and credential checks remain separate.
 See [operations](../docs/operations.md) for setup and
 the exact server evaluation procedure. Future workflow JSON changes require PR review and owner
 manual import; deployment does not import workflows automatically.

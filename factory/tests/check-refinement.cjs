@@ -17,10 +17,12 @@ const final = {goal:'Document setup.',rationale:'Reason not supplied.',constrain
 const model = () => ({candidates:[{finishReason:'STOP',content:{role:'model',parts:[{text:JSON.stringify(final)}]}}],usageMetadata:{promptTokenCount:1000,candidatesTokenCount:100,totalTokenCount:1100},modelVersion:'fixture-model'});
 const template = fs.readFileSync('factory/templates/task.md','utf8');
 let count=0;
+const nativeFixtures=[];
 function test(name,fn) { fn(); count++; console.log(`PASS ${name}`); }
-function run({issues=[issue()],comments={},events={},row=idle(),fault,from='Manual isolated test',response=model()}={}) {
+function run({issues=[issue()],comments={},events={},row=idle(),fault,from='Manual isolated test',response=model(),nativeLabel}={}) {
   const outputs=new Map(), trace=[], calls=[];
-  let queue=[], current=null, name=from, input=[{json:{}}], error=null;
+  let queue=[], current=null, name=from, input=[{json:{}}], error=null, previous=null;
+  const nativeRunData={};
   const environment = json => ({$json:json,$execution:{id:'test'},$input:{all:()=>input,first:()=>input[0]},
     $:ref=>({first:()=>outputs.get(ref)?.[0],all:()=>outputs.get(ref) ?? []})});
   const evaluate = (s,json) => typeof s==='string' && s.startsWith('={{') ? vm.runInNewContext(`(${s.slice(3,-2).trim()})`,environment(json)) : s;
@@ -29,6 +31,17 @@ function run({issues=[issue()],comments={},events={},row=idle(),fault,from='Manu
       assert(step<500,'unexpected graph cycle'); trace.push(name);
       const n=nodes.get(name), p=n.parameters;
       let result=input, branch=0;
+      if(nativeLabel) {
+        const collect=(value,path=[])=>{
+          // Pagination expressions use the HTTP node's special response context, tested separately.
+          if(path.includes('pagination')) return;
+          if(typeof value==='string' && value.startsWith('={{')) {
+            nativeFixtures.push({label:nativeLabel,node:name,path:path.join('.'),runIndex:nativeRunData[name]?.length??0,expected:clone(evaluate(value,input[0]?.json)),
+              input:clone(input),runData:clone(nativeRunData),source:previous?{previousNode:previous.name,previousNodeOutput:previous.branch,previousNodeRun:previous.runIndex}:null});
+          } else if(value && typeof value==='object') for(const [key,entry] of Object.entries(value)) collect(entry,[...path,key]);
+        };
+        collect(p);
+      }
       if(fault?.at===name && fault.before) fault.before({issues,comments,events,row});
       if(fault?.at===name && fault.throw) throw Error('Injected unexpected exception');
       if(n.type.endsWith('.code')) {
@@ -69,8 +82,11 @@ function run({issues=[issue()],comments={},events={},row=idle(),fault,from='Manu
       }
       if(fault?.at===name && fault.result) result=fault.result(result);
       outputs.set(name,result);
+      const main=Array.from({length:branch+1},()=>[]);main[branch]=clone(result);
+      nativeRunData[name]??=[];
+      nativeRunData[name].push({data:{main},executionStatus:'success',startTime:0,executionTime:0,source:[]});
       const next=graph.connections[name]?.main?.[branch]??[];
-      assert(next.length<=1,'unreviewed fanout');name=next[0]?.node;input=result;
+      assert(next.length<=1,'unreviewed fanout');previous={name,branch,runIndex:nativeRunData[name].length-1};name=next[0]?.node;input=result;
     }
   } catch(e) {error=e;}
   return {row,error,issues,comments,events,trace,calls,outputs};
@@ -109,6 +125,12 @@ test('stage-event URL uses the incoming candidate without cross-node expression 
       $json:{number}, $:()=>{throw Error('Unexpected cross-node URL lookup');},
     });
     assert.equal(url,`https://api.github.com/repos/MBroholm/software-factory/issues/${number}/events`);
+  }
+});
+test('parameter expressions avoid explicit negative run indices',()=>{
+  for(const node of nodes.values()) {
+    const parameters={...node.parameters};delete parameters.jsCode;
+    assert(!/\.(?:first|last|all)\([^)]*,\s*-\d/.test(JSON.stringify(parameters)),node.name);
   }
 });
 test('Ideas -> Refining -> marked comment -> Ready, unrelated label retained',()=>{
@@ -198,3 +220,19 @@ test('HTTP failure and uncertain release cannot report completion',()=>{
   const r=run({fault:{at:'Check release receipt',throw:true}});assert(r.error);assert(!r.trace.includes('Report completion'));
 });
 console.log(`${count} local refinement scenario groups passed; native/live T012/T014 checks UNRUN.`);
+if(process.argv.includes('--native-fixtures')) {
+  // Synthetic successful/no-work/held contexts for every parameter, never live issue/model data.
+  good(run({nativeLabel:'initial-refinement'}));
+  good(run({issues:[],nativeLabel:'empty-poll'}));
+  const initial=run();good(initial);
+  good(run({issues:clone(initial.issues),comments:clone(initial.comments),events:clone(initial.events),nativeLabel:'unchanged-ready'}));
+  good(run({issues:[...clone(initial.issues),issue(2)],comments:clone(initial.comments),events:clone(initial.events),nativeLabel:'later-candidate'}));
+  const revised=clone(initial);revised.comments[1].push(comment(20000,'Also document cleanup.'));
+  good(run({issues:revised.issues,comments:revised.comments,events:revised.events,nativeLabel:'owner-revision'}));
+  initial.issues[0].labels=[{name:'Ideas'}];initial.events[1].push(event('Ideas',30000));
+  good(run({issues:initial.issues,comments:initial.comments,events:initial.events,nativeLabel:'reuse-output'}));
+  const heldPoll=run({row:{...idle(),busy:true,execution_id:'prior'},nativeLabel:'held-skip'});assert.equal(heldPoll.error,null);
+  fs.mkdirSync('factory/local',{recursive:true});
+  fs.writeFileSync('factory/local/refinement-native-expression-fixtures.json',JSON.stringify({graph,fixtures:nativeFixtures}),{mode:0o600});
+  console.log(`Prepared ${nativeFixtures.length} synthetic native parameter checks; no native evaluation or remote calls performed here.`);
+}

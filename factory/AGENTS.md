@@ -18,6 +18,12 @@ When implementing or changing n8n workflows in this directory:
 - Run the relevant generator consistency check after changes. From the repository root,
   refinement uses `node factory/scripts/build-refine.cjs --check`. Its builder rejects missing,
   duplicate, stale or empty node-note entries; human review must still check their meaning.
+- For parameter-expression changes, check compatibility with the deployed expression engine.
+  Importing `n8n-workflow` alone uses legacy evaluation; this deployment uses the VM engine.
+  `tests/check-refinement.cjs --native-fixtures` generates synthetic contexts for
+  `tests/check-refinement-native-expressions.cjs`, which explicitly initializes VM evaluation.
+  In n8n 2.48.8, omit the redundant negative run index in `.first(1)`; explicit `.first(1, -1)`
+  returns undefined in VM parameter expressions. Keep the native regression when changing this.
 
 Documentation/layout changes alone do not require new behavior tests. When intended to be
 documentation-only, verify that execution parameters and connections remain unchanged.

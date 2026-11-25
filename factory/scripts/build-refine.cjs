@@ -46,7 +46,9 @@ function http(name,url,{method='GET',body,paginated=false,gemini=false}={}) {
 }
 const base = 'https://api.github.com/repos/MBroholm/software-factory/issues';
 const issueURL = `('${base}/' + $('Plan revision').first().json.issue.number)`;
-const candidateURL = `('${base}/' + $('Each candidate').first(1, -1).json.number)`;
+// Omit runIndex: n8n's latest-run default works in its VM evaluator, while
+// an explicit -1 returned undefined in native HTTP parameter resolution.
+const candidateURL = `('${base}/' + $('Each candidate').first(1).json.number)`;
 const body = name => `$('${name}').first().json.body`;
 const values = name => `pages($('${name}').all().map(i=>i.json))`;
 const plan = `$('Plan revision').first().json`;
@@ -58,7 +60,7 @@ add('Each candidate','splitInBatches',{batchSize:1,options:{}});
 // during HTTP parameter resolution; execution 748 resolved that lookup to undefined.
 http('Read stage events',`={{ '${base}/' + $json.number + '/events' }}`,{paginated:true});
 http('Read source comments',`={{ ${candidateURL} + '/comments' }}`,{paginated:true});
-code('Plan revision',`const comments = ${values('Read source comments')};\nconst p = analyze($('Each candidate').first(1, -1).json, comments, ${values('Read stage events')});\np.issue_comment_watermark = Math.max(0,...comments.map(c=>c.id));\nreturn [{json:p}];`);
+code('Plan revision',`const comments = ${values('Read source comments')};\nconst p = analyze($('Each candidate').first(1).json, comments, ${values('Read stage events')});\np.issue_comment_watermark = Math.max(0,...comments.map(c=>c.id));\nreturn [{json:p}];`);
 gate('New revision','$json.work');
 code('No work',"return [{json:{outcome:'no_work',acknowledged:true,issue_number:null}}];");
 const context = structuredClone(workflow.nodes.find(n=>n.name==='Acquire control'));

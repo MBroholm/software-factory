@@ -29,7 +29,7 @@ module.exports = [
       ['Have candidates', 'True: inspect candidates in sequence. False: report acknowledged no-work so the acquired guard can be released.'],
       ['Each candidate', 'Loop output: inspect one issue. Done output: release as no-work. An unchanged candidate loops back here; successful refinement exits after one task per execution.'],
       ['Read stage events', 'Builds the URL from the incoming candidate issue number, without looking back through the loop output. Reads all event pages; the latest Ideas/Ready label event identifies when the current discussion stage began.'],
-      ['Read source comments', 'Reads all comment pages for this candidate. Both human discussion and marked factory output are needed to detect revisions, source changes and repeats.'],
+      ['Read source comments', 'Reads all comment pages for the latest candidate on the loop output. Uses the default latest run; explicit negative run indices fail in the deployed VM expression evaluator. Discussion and marked output identify revisions and repeats.'],
       ['Plan revision', 'Validates prior refinement markers and captured source, then computes the canonical SHA-256/source key. Retains captured discussion and includes eligible new owner comments; excludes factory markers and intervening coding/QA discussion.'],
       ['New revision', 'True: prepare this revision. False: inspect the next candidate.', true],
       ['No work', 'Acknowledges an ordinary no-work poll and follows the guard release path.', true],
