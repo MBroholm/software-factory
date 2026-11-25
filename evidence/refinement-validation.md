@@ -2,7 +2,8 @@
 
 **Date**: 2026-11-24. **Status**: T010/T011/T013 implemented and locally checked;
 T012 source integration prepared, saved credential/native HTTP check **UNRUN**;
-T014 owner manual import/mappings reported complete; live issue/revision/approval exercises **UNRUN**.
+T014 owner manual imports/mappings and failed live attempts recorded; successful refinement,
+revision and approval exercises remain **UNRUN**. Token-counting revision is prepared, not imported.
 This document is a handoff for review, not evidence of activation or a completed real run.
 
 ## Reviewed/imported revision record
@@ -13,14 +14,15 @@ commit: `855033ef619202e6c549833bbaba322d8ff50531`. The owner subsequently repor
 into the isolated test container, a fresh `factory_control_us1` table with all seven mappings,
 and both saved/mapped credentials. These are owner-reported setup observations; imported version
 comparison remains pending. Owner-supplied native no-work execution evidence is recorded below;
-Gemini credential use and actual issue writes remain unrun.
+Saved Gemini credential use remains unrun; execution 751 reached the acknowledged GitHub
+Refining transition before the old size check stopped it. Later sections supersede earlier snapshots.
 
 | Item | Recorded value |
 |---|---|
 | Reviewed US1 commit / PR | `855033ef619202e6c549833bbaba322d8ff50531`; owner review accepted; PR not recorded |
 | Owner manual import timestamp | Owner reported import on 2026-11-25; exact time not captured |
-| Isolated n8n workflow ID / imported version ID | Pending capture/verification |
-| Isolated control table mapping | Owner reports fresh `factory_control_us1`, all seven mappings saved; execution 747 confirms no-work acquisition/release, selected-issue context path unrun |
+| Isolated n8n workflow ID / imported version ID | Latest failed VM-fix workflow `MoMw34RHi9qqfEIB`, execution 751; saved version ID still pending |
+| Isolated control table mapping | Fresh `factory_control_us1`, seven mappings; 747 confirms no-work release, 751 reaches acknowledged selected-issue context and Refining transition |
 | GitHub header credential mapping | Owner reports saved/mapped; execution 747 completed the workflow's issue-discovery/no-work path; credential identity/write permissions not independently verified |
 | Gemini header credential mapping | Owner reports saved/mapped; actual generateContent check UNRUN |
 | Active project free tier / quota check | Pending owner verification before HTTP check |
@@ -39,8 +41,8 @@ record those owner-only mapping differences separately, without credential value
 
 | Check | Observed result | Limit |
 |---|---|---|
-| `node factory/tests/check-refinement.cjs` | PASS, 23 scenario groups after execution-750 VM fix | Exported Code bodies/connections; HTTP/Data Table stand-ins |
-| `check-refinement-native-expressions.cjs` in installed test runtime | PASS, 220 VM checks | 164 synthetic parameter contexts, regression and pagination; no nodes/workflows/API calls executed |
+| `node factory/tests/check-refinement.cjs` | PASS, 27 scenario groups including token preflight | Exported Code bodies/connections; HTTP/Data Table stand-ins |
+| `check-refinement-native-expressions.cjs` in installed test runtime | PASS, 223 VM checks | 167 synthetic parameter contexts, regression and pagination; no nodes/workflows/API calls executed |
 | `node factory/scripts/build-refine.cjs --check` | PASS | Offline packaging consistency only |
 | `node factory/tests/check-guard-skeletons.cjs` | PASS, 50 scenarios | Remaining reserve/track skeletons only; no new native claim |
 | Compose `config --quiet`, default and `--profile local-model-trials` | PASS with nonsecret placeholder key | Configuration only; no server rollout |
@@ -90,7 +92,8 @@ No assistant import/activation, automatic deployment or bypass through a test br
 3. Save/select two private **Header Auth** credentials: GitHub `Authorization` with the owner's
    repository-scoped token using the documented GitHub authorization scheme, and Gemini
    `x-goog-api-key` with the confirmed free-tier project key. Map GitHub's credential on every
-   GitHub HTTP node and Gemini's only on **Gemini generateContent**. Never paste values into JSON.
+   GitHub HTTP node and the same Gemini credential on **Gemini countTokens** and
+   **Gemini generateContent**. Never paste values into JSON.
    This implementation uses an owner-owned GitHub token, so marker authors/POST receipts must
    have stable ID `202449424`. Do not substitute an automation identity without reviewed policy changes.
 4. Verify the imported revision and embedded prompt/template hashes. Record n8n's workflow ID,
@@ -167,6 +170,93 @@ the failed execution or run individual nodes.
 
 ## Pending native/live acceptance matrix
 
+### Owner-approved token-counting revision — 2026-11-25
+
+After the input-screen stop, the owner explicitly approved replacing whole-input bytes-as-tokens
+with a real provider count. The prior suggestion to shorten issue #1 is withdrawn for the next
+test: its original wording is acceptable under the new token preflight. Prompt v3, template v1,
+output schema, requested model, generation payload and 4096-token application ceiling are unchanged.
+
+Subsequent sanitized export, selected by reached-node history rather than missing error-node
+metadata, identified **execution 751** in workflow `MoMw34RHi9qqfEIB`, stopped at Prepare Gemini
+with the size error. Acquisition started `2026-11-25T10:12:30.106Z`; its acquisition receipt
+was busy with execution `751`. The trace reaches Set issue context and its check, acknowledged
+add Refining/remove Ideas checks, then the source rereads and Prepare Gemini. It does not reach
+inference or release. No row reset or state repair was performed by the assistant.
+
+The new runtime sends the complete prepared payload under `generateContentRequest`, including
+`model=models/gemini-3.5-flash-lite`, to countTokens with the existing Gemini header credential.
+It requires positive safe-integer `totalTokens` and gates inference on count + 456 fixed schema
+allowance + 768 output + 256 overhead <= 4096. The fixed allowance remains conservative because
+public explanations of schema counting differ and do not establish an upper-bound guarantee;
+actual generation prompt/output usage is still checked before publishing. A separate 32 KiB
+serialized-generation-payload transport cap bounds data transfer without estimating tokens.
+Nothing is silently truncated. Count failures, invalid counts and oversized budgets retain busy;
+there is no fallback or retry. Reused output skips count and inference. Successful completion
+reports the preflight budget and counted-payload digest.
+
+**Provider format/sizing check: PASS.** One HTTPS countTokens-only request using the original
+public issue text and the existing private evaluation key returned HTTP 200 at
+`2026-11-25T10:28:00.257Z`, with **576 counted input tokens**. With schema/output/overhead
+reserves, total admission is **2056 / 4096**. No inference request, billing change, GitHub/n8n
+mutation or automatic retry occurred. The preceding sandboxed attempt failed before a response;
+it is recorded as a connectivity attempt, not a provider retry/pass. The actual saved n8n
+credential/node path remains pending owner import and execution. Only sanitized count/budget
+results are retained in this public record; private request/result files remain ignored.
+
+The new tests were first run against the old graph and failed because token preflight was
+absent. After implementation, **27 local groups pass**, including the original issue unchanged,
+exact equality of counted/generated payloads, the 4096 boundary, schema/output reserves,
+missing/invalid/oversized counts, count errors/response loss, no inference on failure, held skip,
+transport oversize and existing-output reuse. **223 native VM expression checks pass**, covering
+the new count body and existing paths. The first VM check caught object-spread syntax in an HTTP
+expression; request wrapping was moved into Prepare Gemini Code and the HTTP node now reads
+only `$json.count_payload`. No defective revision was imported. The checker now reports exact
+node/parameter context on a diagnostic error. Full native count/inference/issue exercises remain
+pending. Existing five-case semantic evidence is reused because inference inputs are unchanged.
+
+Prepared owner-import artifact: `factory/local/refine-us1-token-counting-mapped.json`.
+It uses the current public source, preserves all seven Data Table mappings and 20 existing
+credential references from execution 751, and maps the new count node to the same saved Gemini
+credential (21 references total). Owner table schemas/settings are preserved; all Code bodies
+and connections match the current source. It is inactive with empty pinned data. Public JSON
+SHA-256: `2e88e9b7d5418b97082736f35edeef1aeb2cb05a13cfcb5cc61a827261cac4d2`.
+Mapped artifact SHA-256: `7d4ea93cc0b7dad4d7195e46183e77a4fa78bd9da8248da3ecf1dc49be5339af`.
+Earlier URL/VM-only mapped files are superseded for the next attempt. Owner review/manual import,
+current held-row confirmation and deliberate recovery of stranded Refining still precede retry.
+
+API format checked against the [Google API definition](https://github.com/googleapis/googleapis/blob/master/google/ai/generativelanguage/v1beta/generative_service.proto).
+Public schema-counting caveats are discussed in the [model-specific clarification](https://discuss.ai.google.dev/t/gemini-3-5-flash-lite-counttokens-pricing-quota-schema-coverage-and-thinking-cap/189068)
+and [general clarification](https://discuss.ai.google.dev/t/gemini-api-counttokens/188451). The
+conservative schema allowance is an application choice, not a claimed provider upper bound.
+
+### Input-screen stop after the VM fix
+
+The owner reported the next execution stopped in Prepare Gemini with
+`Oversize input; owner must shorten/split, no truncation`. Execution ID/current guard context
+are not yet supplied; an attempted sanitized export filtered by error-node metadata returned no
+matching record and is not treated as a native trace. GitHub readback confirms issue #1 is open,
+sole state `Refining`, with zero comments: unlike the earlier URL failures, this attempt reached
+the Refining transition. The size exception occurs before Gemini generateContent; no model call
+or successful output is claimed. The owner is instructed to leave state/guard held for recovery.
+
+Local reproduction using the exact public issue text and unchanged runtime artifacts yields
+3,147 input bytes against the deliberately conservative 3,072-byte screen (4096 comparison
+envelope minus 768 output / 256 overhead reserve). System prompt/template account for 2,271
+bytes; schema 456; issue data/delimiter 420. The assistant-provided issue wording therefore
+exceeds this screen by 75 bytes. The guard is working as configured; do not silently raise
+limits, truncate input or misrepresent bytes as Gemini's actual input-token count.
+
+A proposed owner shortening retains the path, short SSH tunnel example, existing editor,
+privacy/placeholders and documentation-only/no service/credential/config-change constraints:
+title `n8n SSH docs`; body `factory/README.md: short SSH tunnel example for existing n8n editor. Private editor; placeholders; docs only; no service/credential/config changes.`
+The actual runtime request builder accepts it at 3,004 bytes. A bounded later owner comment,
+`Add an SSH access heading.`, also fits at 3,058 bytes with a conservative 11-digit comment ID.
+These are offline input-screen checks only; the owner has not yet edited the issue, restored
+Ideas, reset the inspected hold or retried. No workflow/code/model-limit change is needed for
+this bounded test. Larger useful inputs remain constrained by the current conservative policy;
+replacing it with provider token counting would require a separately reviewed design change.
+
 ### Execution 750 — root cause reproduced and repaired
 
 The owner reported another failure, this time in Read source comments at
@@ -174,7 +264,9 @@ The owner reported another failure, this time in Read source comments at
 `5SviHhy3LypzrSTl`, acquired busy with start time `2026-11-25T09:51:13.793Z`. The corrected
 Read stage events node succeeded, then Read source comments failed with
 `URL parameter must be a string, got undefined`. No issue-write, Gemini or release node was
-reached. Current persisted row/held-skip evidence for this second failure remains pending.
+reached. The owner subsequently confirmed the persisted row still has `busy=true` and
+`execution_id=750`, verifying retention for this second failure. Held-skip was already verified
+after execution 748; a separate held-skip poll after 750 has not been requested or claimed.
 
 The earlier diagnostics imported `n8n-workflow` without initializing its service expression
 engine; standalone evaluation defaults to **legacy**, while installed n8n 2.48.8 service
@@ -217,6 +309,14 @@ Mapped artifact SHA-256:
 The earlier `refine-us1-url-fix-mapped.json` is superseded and must not be used for the next
 attempt. Owner manual review/import and deliberate inspected-hold recovery still gate retry;
 actual Gemini credential use and a successful refinement remain unvalidated.
+
+The owner confirmed manual import/save of the VM fix in the isolated test container (guided
+name: `Basic A refine — US1 VM fix test`), then confirmed the row is held by execution 750.
+Source revision `d4db51b` is committed/pushed. New workflow/version IDs and snapshot comparison
+remain pending. A fresh GitHub read before recovery instructions confirmed issue #1 remains
+open, sole state `Ideas`, zero comments. No assistant reset or workflow execution occurred;
+the owner is being guided to reset only busy, preserve diagnostic context and start a new
+whole-workflow execution. Successful runtime inference and the rest of T012/T014 remain pending.
 
 Follow [quickstart section 6](../specs/001-basic-a-factory/quickstart.md#6-end-to-end-and-edge-case-validation)
 and [guard fault setup](../factory/tests/guard-scenarios.md). Use isolated test copies for deliberate

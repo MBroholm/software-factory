@@ -523,10 +523,18 @@ Do not remove its data or run `down -v`. No server service is changed by the sou
 The completed US1 source is inactive pending owner review/manual import and native credential/
 story checks. See [the exact handoff and evidence matrix](../evidence/refinement-validation.md).
 Map all Data Table nodes, including Set issue context, and both saved Header Auth credentials.
-The GitHub header is Authorization; Gemini's is x-goog-api-key. Every request/status/receipt is
+The GitHub header is Authorization; Gemini's is x-goog-api-key. The same Gemini credential is
+selected on both countTokens and generateContent. Every request/status/receipt is
 checked; HTTP non-success responses fail the workflow without an automatic retry or release.
 Use whole-workflow executions only while schedules are paused/drained. Preserve the deliberately
 held T008 row until reconciled, or provision a fresh isolated table. US2/US3 are not implemented.
+
+The owner-approved token preflight replaces whole-input byte estimation. One count-only call
+precedes each new inference; valid provider count + fixed schema allowance + 768 output + 256
+overhead must fit 4096 tokens. A 32 KiB request-byte cap is transport protection only. Reused
+marked output skips both calls. Count errors/over-budget results retain busy, and generation
+usage is checked again before publishing. Do not reset or retry automatically. The successful
+report includes count/reserve/payload-digest evidence; the model prompt/template are unchanged.
 
 ## Constitutional follow-up — instructor confirmation still outstanding
 

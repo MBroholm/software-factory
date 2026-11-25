@@ -44,6 +44,18 @@ owner-import attempt; it does not execute nodes or substitute for full live work
 HTTP Request nodes alone perform authenticated API calls, with no automatic retries/redirects.
 Non-success HTTP statuses reach explicit checks and throw; they never fall through to release.
 
+On 2026-11-25 the owner approved replacing the conservative byte-as-token runtime screen with
+one provider countTokens preflight. The exact unchanged generation payload is wrapped as
+`generateContentRequest` with its model resource name. Check token budget admits inference only
+when the returned positive integer count plus fixed schema allowance (456), output reserve
+(768) and overhead (256) fit within the same 4096-token total. The schema allowance is retained
+because counting coverage/framing is not a documented upper-bound guarantee; final generation
+usage is checked again before publishing. A separate 32 KiB request transport cap does not
+estimate tokens or truncate data. Count failures, exceeded budgets and inference failures hold
+the same guard. Reusing an exact output skips both count and generation. Successful completion
+includes count/reserve/payload-digest evidence. Prompt v3, template v1 and the inference payload
+remain unchanged, so prior semantic quality evidence is reused; the new control path is tested.
+
 The workflow selects open owner tasks in issue-number order, excludes PRs, and reads complete
 paginated lists (100 items/page; a 100-page cap fails closed rather than accepting partial data).
 One unchanged Ready candidate does not block a later idea; at most one revision is processed per

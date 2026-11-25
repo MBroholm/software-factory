@@ -80,7 +80,8 @@ Before activation:
 3. Assess existing v2/v3 evidence and run only missing/change-affected prompt checks; don't
    claim the four v2 outputs were tested against v3. Keep public results sanitized.
 4. After owner manual import of reviewed JSON, verify saved-credential use in the actual HTTP
-   Request node with the reviewed runtime versions (T012/T014). The earlier Node-in-container
+   Request nodes (countTokens then generateContent) with the reviewed runtime versions
+   (T012/T014). Both use the same saved Gemini Header Auth credential. The earlier Node-in-container
    smoke test did not exercise n8n's credential store or workflow engine. Keep schedules inactive.
 5. Verify API/quota errors stop and retain the shared flag, with redacted evidence and manual
    recovery; no silent retry/model fallback. Reuse the appropriate guard/story checks.
@@ -103,6 +104,11 @@ node factory/tests/check-guard-skeletons.cjs
 ```
 
 These tests cover parsing/transition guards with fixtures, not mocked proof of a real factory.
+The runtime token preflight admits provider count + fixed schema allowance + 768 output + 256
+overhead within 4096 tokens; it replaces the old whole-input byte estimate. A separate 32 KiB
+transport cap applies without truncation. Count failure/invalid/over-budget responses must hold
+and prevent inference; reused output skips both count and generation. A count-only provider
+smoke check does not prove the saved n8n credential/workflow path.
 Implementation should provide only enough tests for the risky rules and failure windows below.
 Avoid a generic integration platform. Logs/pinned data must contain no credentials. Verify any
 exported JSON before commit; remove execution data and pinned/private test payloads.

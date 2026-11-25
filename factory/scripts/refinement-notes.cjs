@@ -54,13 +54,15 @@ module.exports = [
   },
   {
     title: '4. Reuse output or ask Gemini',
-    summary: 'Recheck captured input, then reuse an exact existing revision or make one bounded Gemini request. Validate final JSON, completion and token limits; render only the trusted Markdown layout. The model supplies candidate content and cannot approve or change state.',
+    summary: 'Recheck captured input, then reuse an exact existing revision or count the prepared request with Gemini. Only a validated token budget permits one inference. Validate final JSON, completion and usage; render the trusted Markdown layout. The model cannot approve or change state.',
     color: 6,
     nodes: [
       ['Read Refining issue', 'Fetches the issue after the label transition. The next validation requires it to remain open, owner-authored and solely Refining.'],
       ['Read Refining comments', 'Fetches discussion after entering Refining to detect changed captured source or new owner input before inference/reuse.'],
-      ['Prepare Gemini', 'Revalidates source and builds the request from embedded prompt v3/template v1/schema. Rejects oversize input without truncation. An exact existing revision needs no request.'],
-      ['Reuse marked output', 'True: verify existing output. False: make one Gemini request.', true],
+      ['Prepare Gemini', 'Revalidates source and builds the unchanged prompt v3/template v1/schema request. Enforces a separate 32 KiB transport cap without truncation; actual token counting gates inference. An exact existing revision skips both provider calls.'],
+      ['Reuse marked output', 'True: verify existing output. False: count tokens before inference.', true],
+      ['Gemini countTokens', 'Sends the complete prepared generateContentRequest to the same model\'s countTokens endpoint using the saved Gemini header credential. Counts input without generating a refinement. Errors/timeouts hold the guard; no retry or fallback.'],
+      ['Check token budget', 'Requires a positive integer provider count. Reserves fixed schema allowance, 768 output tokens and 256 overhead within 4096 total. Oversize/invalid counts stop before inference. Passes the identical counted payload to generation and retains budget/digest evidence.'],
       ['Gemini generateContent', 'One bounded Gemini request using saved header auth; 120-second timeout, no automatic retry.', true],
       ['Validate and render', 'Requires one STOP candidate, valid final JSON/schema, acceptable size, actual token counts and model version. Excludes thought content and escapes model text into fixed Markdown with workflow-generated source metadata.'],
     ],
@@ -84,7 +86,7 @@ module.exports = [
       ['Check removed Ready', 'Requires the removal response to confirm Ready for approval as the only managed state. Failure leaves the guard held for inspection.'],
       ['Read final issue', 'Fetches the final issue after the Ready transition, before declaring successful work.'],
       ['Read final comments', 'Reads discussion one last time to confirm captured input and the matching output still exist before the release path.'],
-      ['Success', 'Confirms open owner-authored Ready state, unchanged source and one matching refinement. Produces acknowledged success with issue/source/comment references; does not itself release busy.'],
+      ['Success', 'Confirms open owner-authored Ready state, unchanged source and one matching refinement. Produces acknowledged success with issue/source/comment references and the preflight budget (null when reusing output); does not itself release busy.'],
     ],
   },
   {
@@ -99,7 +101,7 @@ module.exports = [
       ['Check release receipt', 'Requires the update response to show this execution\'s row with busy=false and unchanged context. An uncertain receipt cannot be reported as idle; inspect the actual row before recovery.'],
       ['Read released control', 'Reads the table after release to independently confirm persisted idle state. No new remote task work follows.'],
       ['Confirm idle', 'Requires one persisted idle row with the expected execution/start/issue context. Failure does not claim completion or assume a safe reset.'],
-      ['Report completion', 'Reports released with the acknowledged success/no-work outcome and final control context. This is reached only after both receipt and persisted idle checks pass.'],
+      ['Report completion', 'Reports released only after receipt and persisted idle checks. Includes final guard context plus issue/source/comment references and the preflight token budget for successful new output; reused output has no new count.'],
     ],
   },
 ];

@@ -83,8 +83,10 @@ function transition(prefix,target,sourceExpression,checkBody) {
 transition('Refining','Refining',`${plan}.original_state`);
 http('Read Refining issue',`={{ ${issueURL} }}`);
 http('Read Refining comments',`={{ ${issueURL} + '/comments' }}`,{paginated:true});
-code('Prepare Gemini',`demand($('Read Refining issue').first().json.statusCode===200,'Issue read failed');\nconst p=${plan}; unchanged(p,${body('Read Refining issue')},${values('Read Refining comments')},'Refining');\nconst payload=p.existing ? null : request(p,${JSON.stringify(prompt)},${JSON.stringify(template)},${JSON.stringify(schema)});\nreturn [{json:{...p,payload,artifacts:${JSON.stringify(artifacts)}}}];`);
+code('Prepare Gemini',`demand($('Read Refining issue').first().json.statusCode===200,'Issue read failed');\nconst p=${plan}; unchanged(p,${body('Read Refining issue')},${values('Read Refining comments')},'Refining');\nconst payload=p.existing ? null : request(p,${JSON.stringify(prompt)},${JSON.stringify(template)},${JSON.stringify(schema)});\nreturn [{json:{...p,payload,count_payload:payload?countRequest(payload):null,artifacts:${JSON.stringify(artifacts)}}}];`);
 gate('Reuse marked output','$json.existing !== null');
+http('Gemini countTokens','https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:countTokens',{method:'POST',body:'={{ $json.count_payload }}',gemini:true});
+code('Check token budget',`const r=$input.first().json; demand(r.statusCode===200 && !r.body?.error,'Token count request failed; no inference or retry');\nconst payload=$('Prepare Gemini').first().json.payload;\nconst budget=checkTokenBudget(r.body,payload);\nreturn [{json:{payload,budget}}];`);
 http('Gemini generateContent','https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent',{method:'POST',body:'={{ $json.payload }}',gemini:true});
 code('Validate and render',`const r=$input.first().json; demand(r.statusCode===200,'Gemini request failed; inspect private execution, no retry');\nconst result=validateOutput(r.body);\nreturn [{json:{body:render(${plan},result,${JSON.stringify(template)}),model_version:result.model_version,usage:result.usage}}];`);
 http('Read before comment',`={{ ${issueURL} }}`);
@@ -98,7 +100,8 @@ code('Validate before Ready',`demand($('Read before Ready').first().json.statusC
 transition('Ready','Ready for approval',"'Refining'");
 http('Read final issue',`={{ ${issueURL} }}`);
 http('Read final comments',`={{ ${issueURL} + '/comments' }}`,{paginated:true});
-code('Success',`demand($('Read final issue').first().json.statusCode===200,'Final issue read failed');\nconst p=${plan}, issue=${body('Read final issue')}, comments=${values('Read final comments')};\nunchanged(p,issue,comments,'Ready for approval');\nconst matches=history(comments,issue).filter(r=>r.meta.source_key===p.meta.source_key); demand(matches.length===1,'Final refinement missing');\nreturn [{json:{outcome:'success',acknowledged:true,issue_number:p.issue.number,source_key:p.meta.source_key,refinement_comment_id:matches[0].comment.id}}];`);
+code('Success',`demand($('Read final issue').first().json.statusCode===200,'Final issue read failed');\nconst p=${plan}, issue=${body('Read final issue')}, comments=${values('Read final comments')};\nunchanged(p,issue,comments,'Ready for approval');\nconst matches=history(comments,issue).filter(r=>r.meta.source_key===p.meta.source_key); demand(matches.length===1,'Final refinement missing');\nconst budget=p.existing?null:$('Check token budget').first().json.budget;\nreturn [{json:{outcome:'success',acknowledged:true,issue_number:p.issue.number,source_key:p.meta.source_key,refinement_comment_id:matches[0].comment.id,budget}}];`);
+workflow.nodes.find(n=>n.name==='Report completion').parameters.jsCode="const work=$('Require acknowledged completion').first().json;\nreturn [{json:{status:'released',outcome:work.outcome,...(work.outcome==='success'?{issue_number:work.issue_number,source_key:work.source_key,refinement_comment_id:work.refinement_comment_id,budget:work.budget}:{}),control:$input.first().json}}];";
 chain('Verify acquisition','Discover issues','Discover candidates','Have candidates');
 connect('Have candidates','Each candidate',0); connect('Have candidates','No work',1);
 connect('Each candidate','No work',0); connect('Each candidate','Read stage events',1);
@@ -106,7 +109,8 @@ chain('Read stage events','Read source comments','Plan revision','New revision')
 connect('New revision','Set issue context',0); connect('New revision','Each candidate',1);
 chain('Set issue context','Check issue context','Reread source issue','Reread stage events','Reread source comments','Validate before Refining','Add Refining');
 chain('Check removed Refining','Read Refining issue','Read Refining comments','Prepare Gemini','Reuse marked output');
-connect('Reuse marked output','Read before Ready',0); connect('Reuse marked output','Gemini generateContent',1);
+connect('Reuse marked output','Read before Ready',0); connect('Reuse marked output','Gemini countTokens',1);
+chain('Gemini countTokens','Check token budget','Gemini generateContent');
 chain('Gemini generateContent','Validate and render','Read before comment','Comments before post','Validate before comment','Post refinement','Check comment receipt','Read before Ready');
 chain('Read before Ready','Comments before Ready','Validate before Ready','Add Ready');
 chain('Check removed Ready','Read final issue','Read final comments','Success','Require acknowledged completion');

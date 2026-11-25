@@ -26,7 +26,9 @@ async function main() {
   let checks=0;
   try {
     for(const fixture of fixtureSet.fixtures) {
-      const value=NodeExecutionContext.prototype._getNodeParameter.call(context(fixture),fixture.path,0);
+      let value;
+      try { value=NodeExecutionContext.prototype._getNodeParameter.call(context(fixture),fixture.path,0); }
+      catch(error) { throw Error(`${fixture.label}: ${fixture.node}.${fixture.path}: ${error.message}`); }
       assert.deepEqual(normalize(value),fixture.expected,`${fixture.label}: ${fixture.node}.${fixture.path}`);
       checks++;
     }

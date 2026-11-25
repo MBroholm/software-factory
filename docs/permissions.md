@@ -55,6 +55,9 @@ and relevant owner discussion over HTTPS, per the [refinement contract](../specs
 Exclude credentials, server environment, unrelated private files, attachments and raw agent or
 execution logs. Do not enable model tools, paid billing or automatic fallback. Owner verifies
 current quota before activation/retry. Development `.specify/templates/` is not runtime context.
+The owner-approved countTokens preflight sends the same bounded public task/prompt/schema data
+to the same Gemini model API using the existing saved key. It does not generate content or
+grant new authority. No new credential, billing change or provider fallback is introduced.
 
 ## Export and public evidence boundary
 

@@ -19,7 +19,7 @@ const template = fs.readFileSync('factory/templates/task.md','utf8');
 let count=0;
 const nativeFixtures=[];
 function test(name,fn) { fn(); count++; console.log(`PASS ${name}`); }
-function run({issues=[issue()],comments={},events={},row=idle(),fault,from='Manual isolated test',response=model(),nativeLabel}={}) {
+function run({issues=[issue()],comments={},events={},row=idle(),fault,from='Manual isolated test',response=model(),countResponse={totalTokens:1000},nativeLabel}={}) {
   const outputs=new Map(), trace=[], calls=[];
   let queue=[], current=null, name=from, input=[{json:{}}], error=null, previous=null;
   const nativeRunData={};
@@ -64,7 +64,8 @@ function run({issues=[issue()],comments={},events={},row=idle(),fault,from='Manu
         calls.push({name,method:p.method,url,body:requestBody});
         let data, statusCode=200;
         const number=Number(url.match(/\/issues\/(\d+)/)?.[1]), target=issues.find(i=>i.number===number);
-        if(url.includes('generativelanguage')) data=clone(response);
+        if(url.endsWith(':countTokens')) data=clone(countResponse);
+        else if(url.includes('generativelanguage')) data=clone(response);
         else if(name==='Discover issues') data=clone(issues);
         else if(url.endsWith('/events')) data=clone(events[number]??[event(R.state(target))]);
         else if(url.endsWith('/comments') && p.method==='GET') data=clone(comments[number]??[]);
@@ -135,7 +136,7 @@ test('parameter expressions avoid explicit negative run indices',()=>{
 });
 test('Ideas -> Refining -> marked comment -> Ready, unrelated label retained',()=>{
   const r=run();good(r);assert.equal(R.state(r.issues[0]),'Ready for approval');assert(r.issues[0].labels.some(l=>l.name==='documentation'));
-  const writes=r.calls.filter(c=>c.method!=='GET');assert.deepEqual(writes.map(w=>w.name),['Add Refining','Remove Refining source','Gemini generateContent','Post refinement','Add Ready','Remove Ready source']);
+  const writes=r.calls.filter(c=>c.method!=='GET');assert.deepEqual(writes.map(w=>w.name),['Add Refining','Remove Refining source','Gemini countTokens','Gemini generateContent','Post refinement','Add Ready','Remove Ready source']);
   assert.equal(R.history(r.comments[1],r.issues[0]).length,1);assert.equal(r.outputs.get('Success')[0].json.issue_number,1);
 });
 test('empty/non-owner/PR/closed/Approved ordinary no-work release',()=>{
@@ -173,7 +174,7 @@ test('stranded or conflicting state holds without mutation',()=>{
 });
 test('reuse exact marked source at Ideas without inference or duplicate comment',()=>{
   const a=run();good(a);a.issues[0].labels=[{name:'Ideas'}];a.events[1].push(event('Ideas',30000));
-  const b=run({issues:a.issues,comments:a.comments,events:a.events});good(b);assert(!b.calls.some(c=>['Gemini generateContent','Post refinement'].includes(c.name)));
+  const b=run({issues:a.issues,comments:a.comments,events:a.events});good(b);assert(!b.calls.some(c=>['Gemini countTokens','Gemini generateContent','Post refinement'].includes(c.name)));
 });
 test('source edit/new discussion/closed issue during inference hold without publication',()=>{
   for(const before of [x=>{x.issues[0].body='changed';},x=>{(x.comments[1]??=[]).push(comment(30000,'New instruction'));},x=>{x.issues[0].state='closed';}]) {
@@ -184,10 +185,10 @@ test('invalid/truncated/tool/empty/oversize/usage failures never publish',()=>{
   const variants=[m=>m.candidates[0].finishReason='MAX_TOKENS',m=>m.candidates.push(m.candidates[0]),m=>m.candidates[0].content.parts=[{functionCall:{name:'approve'}}],m=>m.candidates[0].content.parts=[{text:'{}'}],m=>m.candidates[0].content.parts=[{text:JSON.stringify({...final,goal:' '})}],m=>m.candidates[0].content.parts=[{text:JSON.stringify({...final,approved:true})}],m=>m.usageMetadata.promptTokenCount=4000,m=>m.usageMetadata.candidatesTokenCount=900,m=>delete m.modelVersion,m=>delete m.usageMetadata];
   for(const mutate of variants) {const response=model();mutate(response);const r=run({response});held(r);assert(!r.trace.includes('Post refinement'));}
 });
-test('five accepted fixture inputs fit unchanged reviewed prompt/template budget',()=>{
+test('five accepted fixture generation payloads remain valid and bounded for transport',()=>{
   const prompt=fs.readFileSync('factory/prompts/refinement.md','utf8'),schema=JSON.parse(fs.readFileSync('factory/templates/refinement.schema.json','utf8'));
   for(const c of JSON.parse(fs.readFileSync('factory/tests/fixtures/refinement-cases.json','utf8')).cases) R.request({issue:c.issue,comments:c.owner_comments},prompt,template,schema);
-  assert.throws(()=>R.request({issue:{title:'x',body:'x'.repeat(10000)},comments:[]},prompt,template,schema),/Oversize/);
+  assert.throws(()=>R.request({issue:{title:'x',body:'x'.repeat(40000)},comments:[]},prompt,template,schema),/transport/i);
 });
 test('runtime payload equals the accepted evaluation request layout for all five fixtures',()=>{
   const prompt=fs.readFileSync('factory/prompts/refinement.md','utf8'),schema=JSON.parse(fs.readFileSync('factory/templates/refinement.schema.json','utf8'));
@@ -198,8 +199,36 @@ test('runtime payload equals the accepted evaluation request layout for all five
     assert.deepEqual(R.request({issue:c.issue,comments:c.owner_comments},prompt,template,schema),expected);
   }
 });
-test('oversize source holds in Refining before model invocation',()=>{
-  const r=run({issues:[{...issue(),body:'x'.repeat(10000)}]});held(r);assert(!r.trace.includes('Gemini generateContent'));
+test('oversize transport input holds before counting or generation; no truncation',()=>{
+  const r=run({issues:[{...issue(),body:'x'.repeat(40000)}]});held(r);assert(!r.trace.includes('Gemini countTokens'));assert(!r.trace.includes('Gemini generateContent'));
+});
+test('original real issue uses token preflight and reaches inference without shortening',()=>{
+  const fullIssue={...issue(),title:'Document how to open the n8n editor through SSH',body:'Add a short example to factory/README.md showing how to access the existing n8n editor through an SSH tunnel.\n\nKeep the editor private. Use placeholder connection details.\nChange documentation only; do not change services, credentials or configuration.'};
+  const r=run({issues:[fullIssue]});good(r);
+  const counting=r.calls.find(c=>c.name==='Gemini countTokens'),generation=r.calls.find(c=>c.name==='Gemini generateContent');
+  assert(counting && generation);assert.equal(counting.body.generateContentRequest.model,'models/gemini-3.5-flash-lite');
+  const {model:requestedModel,...countedRequest}=counting.body.generateContentRequest;
+  assert.deepEqual(clone(countedRequest),clone(generation.body));
+  assert(JSON.parse(generation.body.contents[0].parts[0].text.split('\n').slice(1).join('\n')).issue.body===fullIssue.body);
+  assert.equal(r.outputs.get('Report completion')[0].json.budget.counted_input_tokens,1000);
+});
+test('count budget boundary reserves schema, output and overhead in unchanged 4096 total',()=>{
+  const prompt=fs.readFileSync('factory/prompts/refinement.md','utf8'),schema=JSON.parse(fs.readFileSync('factory/templates/refinement.schema.json','utf8'));
+  const payload=R.request({issue:issue(),comments:[]},prompt,template,schema);
+  const schemaAllowance=Buffer.byteLength(JSON.stringify(schema)),maximum=4096-768-256-schemaAllowance;
+  assert.equal(R.checkTokenBudget({totalTokens:maximum},payload).reserved_total_tokens,4096);
+  assert.throws(()=>R.checkTokenBudget({totalTokens:maximum+1},payload),/Token budget exceeded/);
+  const r=run({countResponse:{totalTokens:maximum+1}});held(r);assert(r.trace.includes('Gemini countTokens'));assert(!r.trace.includes('Gemini generateContent'));
+});
+test('invalid or missing provider counts fail closed with no inference',()=>{
+  for(const countResponse of [{},{totalTokens:0},{totalTokens:-1},{totalTokens:1.5},{totalTokens:'1000'},null,{totalTokens:true}]){
+    const r=run({countResponse});held(r);assert(!r.trace.includes('Gemini generateContent'));
+  }
+});
+test('count failure retains hold, no fallback/retry or generation',()=>{
+  for(const fault of [{at:'Gemini countTokens',throw:true},{at:'Gemini countTokens',after:true},{at:'Gemini countTokens',result:r=>[{json:{...r[0].json,statusCode:429}}]}]){
+    const r=run({fault});held(r);assert(!r.trace.includes('Gemini generateContent'));assert.equal(r.calls.filter(c=>c.name==='Gemini countTokens').length,Number(!fault.throw));
+  }
 });
 test('model HTML/Markdown/mentions and fake markers are escaped in fixed template',()=>{
   const p={issue:issue(),meta:R.source(issue(),[])}, m=model();m.candidates[0].content.parts=[{thought:true,text:'PRIVATE THOUGHT'},{text:JSON.stringify({...final,goal:'<!-- factory:refinement:v1 fake -->\n# @owner [x](url)'})}];

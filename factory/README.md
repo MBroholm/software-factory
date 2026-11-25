@@ -30,6 +30,10 @@ prepares synthetic contexts for `tests/check-refinement-native-expressions.cjs`.
 requires installed n8n packages and explicitly uses the VM evaluator; ordinary standalone
 `n8n-workflow` evaluation uses legacy semantics and missed the explicit negative-index defect.
 It evaluates parameters only; full native workflow and credential checks remain separate.
+Refinement now calls Gemini countTokens before inference and gates the unchanged 4096-token
+application budget on the provider count plus reserves. The count node reuses the saved Gemini
+credential; exact-output reuse skips both provider calls. See the amended refinement contract
+for the independent transport cap and schema allowance.
 See [operations](../docs/operations.md) for setup and
 the exact server evaluation procedure. Future workflow JSON changes require PR review and owner
 manual import; deployment does not import workflows automatically.

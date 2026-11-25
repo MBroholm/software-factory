@@ -2,6 +2,9 @@
 
 **Amended 2026-11-24**: Owner selected Gemini 3.5 Flash-Lite after the local candidates failed.
 This is an owner-approved design choice, not a provider requirement from the brief/constitution.
+**Amended 2026-11-25**: Owner approved provider token counting instead of treating all input
+bytes as tokens after the short real issue exceeded that screen. Prompt/template/model,
+4096-token application envelope and output limits stay the same.
 
 ## Request
 
@@ -18,10 +21,27 @@ template; `contents` contains one user message with delimited issue/discussion d
 and `thinkingConfig:{thinkingLevel:"MINIMAL",includeThoughts:false}`. No `tools`, streaming,
 grounding, file uploads, explicit caching, conversation store or SDK/provider router is added.
 
-Retain the conservative short-input screen and inspect actual returned input tokens with the
-768 output / 256 overhead reserve against the 4096 comparison envelope. This is a deliberately
-small application budget, not Gemini's context size or an Ollama `num_ctx` parameter. Oversize
-input stops for shortening/splitting; do not silently raise limits or truncate.
+After constructing the exact generation payload, send one HTTPS POST to the same model's
+`:countTokens` endpoint using the same saved header credential. Body:
+`{"generateContentRequest":{"model":"models/gemini-3.5-flash-lite", ...generationPayload}}`.
+Do not also send top-level contents. This preflight sends the same bounded public task data;
+it does not generate task content. Native parameter expressions use a prepared body field,
+not object-spread syntax (unsupported by the deployed VM expression evaluator).
+
+Require HTTP 200 and a positive safe-integer `totalTokens`. Before inference enforce:
+`totalTokens + fixedSchemaAllowance + 768 + 256 <= 4096`.
+The schema allowance is the compact response-schema UTF-8 byte length (currently 456), retained
+conservatively because counting coverage/provider framing is not a guaranteed upper bound for
+actual generation usage; it may double-reserve schema tokens. Variable issue/discussion text
+is budgeted using the actual provider count. Inspect returned generation `promptTokenCount`
+again with the 768 output / 256 overhead reserve before publishing. Record preflight count,
+reserves and counted-payload SHA-256 in the successful workflow report. No inference follows
+a failed count, invalid response or exceeded budget; retain busy without retry/fallback.
+
+A separate 32 KiB cap on serialized generation-request bytes bounds transport/data transfer
+before counting. This is not a token estimate. Never truncate either request. The 4096-token
+envelope is a deliberately small application budget, not Gemini's context size or an Ollama
+`num_ctx` setting. Oversize requests stop for owner shortening/splitting.
 
 Input: versioned project-owned refinement prompt; issue title/body and relevant owner discussion
 as task data, not authority to execute tools. Delimit data clearly. Include only the bounded
@@ -64,7 +84,8 @@ Reject truncated, empty or malformed output. Never publish thought parts/signatu
 Schema validity alone is insufficient: the owner judges whether criteria are checkable, the
 rewrite preserves intent, and questions expose missing decisions rather than invent answers.
 
-One request per new revision; 120-second initial timeout, no automatic inference retry. Failure
+One count-only request then at most one inference per new revision; 120-second timeout for
+each, no automatic retries. An existing exact marked revision skips both provider calls. Failure
 holds the shared flag and leaves visible `Refining` plus private failure evidence. Owner recovery
 chooses retry only after inspection. A 429/quota error follows the same held-failure path;
 owner checks quota availability before an explicit retry. No automatic retry/backoff queue,

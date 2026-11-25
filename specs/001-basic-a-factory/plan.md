@@ -119,7 +119,10 @@ access passed; owner confirmed browser login. Saved n8n credential/node use rema
 lowest issue number among eligible approvals for deterministic selection. A successful eligible
 poll observes a change; no hard service SLA. Gemini request timeout: 120 seconds,
 one request at a time, temperature 0, minimal thinking, 768-token output cap and the existing
-conservative short-input budget (4096-token comparison envelope, not a hosted context setting).
+provider countTokens preflight (4096-token application envelope, not a hosted context setting),
+including a fixed schema allowance plus the 768 output / 256 overhead reserves. A separate
+32 KiB serialized-request transport cap prevents oversized transfers. Owner approved replacing
+the earlier byte-as-token screen on 2026-11-25; see the amended refinement contract.
 No automatic retries; quota/API failures hold for manual recovery. These are design choices,
 not assignment requirements or Basic B's deferred 30-minute runner timeout.
 

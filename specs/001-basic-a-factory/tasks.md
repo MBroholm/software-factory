@@ -110,6 +110,17 @@ performed. US2+ tasks remain out of scope and unchecked.
 **Checkpoint**: Smallest useful MVP is refinement/revision/approval after Phases 1–2. This is not
 claiming that the complete Basic A build/review loop or final course submission is delivered.
 
+**US1 token-budget amendment, 2026-11-25**: Owner approved actual Gemini countTokens preflight
+after execution 751 stopped on the overly conservative byte screen. Count the unchanged full
+generation request, reserve fixed schema allowance plus 768 output / 256 overhead within the
+same 4096-token application budget, and retain a separate 32 KiB transport cap. No truncation,
+automatic retry, paid/model fallback or approval behavior is added. The same saved Gemini
+credential serves both HTTP nodes; exact-output reuse skips both calls. 27 local scenario groups
+and 223 native VM expression checks pass. A standalone count-only API check on the original
+issue returned 576 tokens (2056 reserved total); it is not a native saved-credential/workflow
+pass. T012/T014 remain unchecked pending owner import, recovery and successful live validation.
+See `evidence/refinement-validation.md` for failure history, owner authorization and actual limits.
+
 ## Phase 4: User Story 2 — Build manually with traceable decisions (P1)
 
 **Goal**: Reserve one approved task; owner launches Codex locally and records material decisions.
