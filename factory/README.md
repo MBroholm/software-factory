@@ -19,7 +19,11 @@ The pinned images were observed healthy on the actual server; digests and model 
 [Gemini/server evidence](../evidence/gemini-evaluation.md) and [local trials](../evidence/ollama-evaluation.md).
 The API key is not stored in Compose or workflow JSON; runtime use will reference n8n credentials.
 `workflows/refine.json` now implements US1 and remains inactive pending owner review/manual
-import and native tests. Reserve/track remain guarded skeletons for later stories.
+import and native tests. Reserve now implements US2 approval/reservation/handoff; track remains a guarded skeleton for US3.
+US2 source packaging: `node factory/scripts/build-reserve.cjs --check` from the repository root;
+local policy/graph checks: `node factory/tests/check-reservation.cjs`.
+See [manual coding](../docs/manual-coding.md) and
+[US2 validation/import handoff](../evidence/manual-build-validation.md). Native/live T019 remains pending.
 See [refinement validation and import handoff](../evidence/refinement-validation.md),
 [runtime design](../docs/refinement-design.md) and [output example](../docs/refinement-example.md).
 Run `node scripts/build-refine.cjs --check` from this directory to verify source packaging;

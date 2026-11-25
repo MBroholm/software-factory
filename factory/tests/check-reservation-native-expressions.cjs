@@ -1,0 +1,50 @@
+// Read synthetic fixtures on stdin; resolve parameters and check Wait with a fake context.
+// Run with the installed n8n packages, e.g. in the isolated test container. No credentials,
+// HTTP/model calls, live workflows, n8n imports, database access or guard resets are performed.
+const fs = require('node:fs');
+const assert = require('node:assert/strict');
+const packageRoot = process.argv[2] || '/usr/local/lib/node_modules/n8n';
+const {Workflow,Expression} = require(`${packageRoot}/node_modules/n8n-workflow`);
+const {NodeExecutionContext} = require(`${packageRoot}/node_modules/n8n-core/dist/execution-engine/node-execution-context/node-execution-context.js`);
+const {HttpRequestV3} = require(`${packageRoot}/node_modules/n8n-nodes-base/dist/nodes/HttpRequest/V3/HttpRequestV3.node.js`);
+const fixtureSet = JSON.parse(fs.readFileSync(0,'utf8'));
+const httpType = new HttpRequestV3({name:'httpRequest',displayName:'HTTP Request',group:['transform'],version:4.2,defaults:{name:'HTTP Request'},inputs:['main'],outputs:['main']});
+const nodeTypes = {getByNameAndVersion:type=>type.endsWith('.httpRequest') ? httpType : {
+  description:{name:type.split('.').at(-1),properties:[],inputs:['main'],outputs:['main','main']},
+}};
+const workflow = new Workflow({...structuredClone(fixtureSet.graph),id:'offline-expression-check',active:false,nodeTypes});
+// Retain exact source parameters; stub descriptions for other node types must not add defaults.
+for(const node of fixtureSet.graph.nodes) workflow.getNode(node.name).parameters = structuredClone(node.parameters);
+const normalize = value => value === undefined ? undefined : JSON.parse(JSON.stringify(value));
+const context = fixture => ({workflow,node:workflow.getNode(fixture.node),nodeType:nodeTypes.getByNameAndVersion(workflow.getNode(fixture.node).type),
+  mode:'manual',runIndex:fixture.runIndex??0,runExecutionData:{resultData:{runData:fixture.runData}},
+  connectionInputData:fixture.input,additionalKeys:{$execution:{id:'reserve-test'}},executeData:{source:{main:fixture.source?[fixture.source]:[]}},
+});
+async function main() {
+  // Importing n8n-workflow alone silently uses legacy evaluation. The service defaults to VM.
+  await Expression.initExpressionEngine({engine:'vm',poolSize:1,maxCodeCacheSize:256,bridgeTimeout:5000,bridgeMemoryLimit:128,sharedCaller:true});
+  let checks=0;
+  try {
+    for(const fixture of fixtureSet.fixtures) {
+      let value;
+      try { value=NodeExecutionContext.prototype._getNodeParameter.call(context(fixture),fixture.path,0); }
+      catch(error) { throw Error(`${fixture.label}: ${fixture.node}.${fixture.path}: ${error.message}`); }
+      assert.deepEqual(normalize(value),fixture.expected,`${fixture.label}: ${fixture.node}.${fixture.path}`);
+      checks++;
+    }
+    for(const node of fixtureSet.graph.nodes.filter(n=>n.parameters.options?.pagination)) {
+      const p=node.parameters.options.pagination.pagination;
+      for(const pageCount of [0,1]) {
+        const value=workflow.expression.getParameterValue(p.parameters.parameters[0].value,null,0,0,node.name,[{json:{}}],'manual',{$pageCount:pageCount});
+        assert.equal(value,pageCount+1,`${node.name}: page number`);checks++;
+      }
+      for(const [body,statusCode,expected] of [[[],200,true],[Array(100).fill({}),200,false],[{},200,true],[[],429,true]]) {
+        const value=workflow.expression.getParameterValue(p.completeExpression,null,0,0,node.name,[{json:{}}],'manual',{$response:{body,statusCode}});
+        assert.equal(value,expected,`${node.name}: pagination completion`);checks++;
+      }
+    }
+    console.log(`PASS ${checks} native checks (${fixtureSet.fixtures.length} VM parameter contexts and pagination).`);
+    console.log('Synthetic parameter checks only; full workflow, persistence, credentials, restart and live GitHub behavior remain T019.');
+  } finally { await Expression.disposeExpressionEngine(); }
+}
+main().catch(error=>{console.error(error.message);process.exitCode=1;});
