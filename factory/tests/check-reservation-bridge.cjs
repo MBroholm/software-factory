@@ -1,0 +1,30 @@
+// Tests packaging and synthetic HTTP/persistence only, not native n8n or live tasks.
+const fs=require('node:fs'),path=require('node:path'),os=require('node:os'),assert=require('node:assert/strict'),vm=require('node:vm');
+const {spawn}=require('node:child_process');
+const read=p=>fs.readFileSync(p,'utf8'),source=JSON.parse(read('factory/workflows/reserve.json')),graph=JSON.parse(read('factory/local/us2/native-bridge/workflow.json'));
+const config=JSON.parse(read('factory/local/us2/native-bridge/fixtures.json'));
+const runtime=read('factory/scripts/refinement-runtime.cjs').split('function analyze(')[0]+read('factory/scripts/reservation-runtime.cjs').split('module.exports =')[0];
+const P=vm.runInNewContext('(()=>{'+runtime+';return {approval,handoff,reservationCandidates};})()');
+const by=new Map(graph.nodes.map(n=>[n.name,n]));assert.equal(by.size,graph.nodes.length);assert.equal(graph.active,false);
+for(const n of graph.nodes){if(!n.type.endsWith('.stickyNote'))assert(n.notes?.trim());assert(!n.credentials&&!n.retryOnFail&&!n.continueOnFail);if(n.type.endsWith('.scheduleTrigger'))assert.equal(n.disabled,true);if(n.type.endsWith('.httpRequest')){assert(n.parameters.url.includes('http://127.0.0.1:18766/'));assert(!n.parameters.url.includes('https://'));assert.equal(n.parameters.authentication,'none');assert.equal(n.executeOnce,true);}}
+for(const [name,edges]of Object.entries(source.connections))if(name!=='Manual isolated test')assert.deepEqual(graph.connections[name],edges);
+for(const n of source.nodes.filter(n=>n.type.endsWith('.code'))){const body=by.get(n.name).parameters.jsCode;assert(body.endsWith(n.parameters.jsCode));assert(['Prepare handoff','Check handoff receipt'].includes(n.name)||body===n.parameters.jsCode);}
+for(const edges of Object.values(graph.connections))for(const branch of edges.main)for(const edge of branch??[])assert(by.has(edge.node));
+const directory=fs.mkdtempSync(path.join(os.tmpdir(),'us2-fixture-check-')),state=path.join(directory,'state.json');let child,base;
+async function start(){child=spawn(process.execPath,['factory/tests/reservation-fixture-server.cjs','factory/local/us2/native-bridge/fixtures.json',state,'0'],{stdio:['ignore','pipe','pipe']});let stderr='';child.stderr.on('data',b=>stderr+=b);const ready=await new Promise((resolve,reject)=>{child.once('error',reject);child.once('exit',code=>reject(Error('Fixture exit '+code+': '+stderr)));child.stdout.once('data',b=>resolve(JSON.parse(String(b))));});assert(ready.loopback);base='http://127.0.0.1:'+ready.port;}
+async function stop(){if(child?.exitCode===null){await new Promise(resolve=>{child.once('exit',resolve);child.kill();});}}
+async function call(name,id,node,route,body,method){const r=await fetch(base+route,{method:method??(body?'POST':'GET'),headers:{'Content-Type':'application/json','X-US2-Case':name,'X-US2-Run':String(id),'X-US2-Node':node},body:body?JSON.stringify(body):undefined});return {status:r.status,body:await r.json()};}
+(async()=>{await start();let id=0;
+ for(const name of config.cases){id++;const r=await call(name,id,'Discover all issues','/github/repos/MBroholm/software-factory/issues');assert.equal(r.status,200);assert.equal(r.body.length,2);const candidates=P.reservationCandidates(r.body);if(['occupied','closed-building','nonowner-building','conflicting-building','non-owner'].includes(name))assert.equal(candidates.length,0);else assert.equal(candidates[0].number,101);}
+ for(const name of ['no-approval','wrong-approval','captured-edit']){id++;const a=await call(name,id,'Discover all issues','/github/repos/MBroholm/software-factory/issues');const b=await call(name,id,'Read approved comments','/github/repos/MBroholm/software-factory/issues/101/comments');const e=await call(name,id,'Read approval events','/github/repos/MBroholm/software-factory/issues/101/events');assert.throws(()=>P.approval(a.body[0],b.body,e.body));}
+ id++;const a=await call('success',id,'Discover all issues','/github/repos/MBroholm/software-factory/issues');const b=await call('success',id,'Read approved comments','/github/repos/MBroholm/software-factory/issues/101/comments');const e=await call('success',id,'Read approval events','/github/repos/MBroholm/software-factory/issues/101/events');const plan=P.approval(a.body[0],b.body,e.body),h=P.handoff(plan,[],new Date().toISOString());
+ assert.equal((await call('success',id,'Add Building','/github/repos/MBroholm/software-factory/issues/101/labels',{labels:['Building']})).status,200);
+ assert.equal((await call('success',id,'Remove Approved','/github/repos/MBroholm/software-factory/issues/101/labels/Approved',null,'DELETE')).status,200);
+ assert.equal((await call('success',id,'Post handoff','/github/repos/MBroholm/software-factory/issues/101/comments',{body:h.body})).status,201);
+ let all=await (await fetch(base+'/inspect')).json();const s=all[id];assert.equal(s.posts,1);assert.equal(P.approval(s.issues[0],s.comments[101],s.events[101],'Building').approval_event_id,30);assert.equal(P.reservationCandidates(s.issues).length,0);
+ id++;const partial=await call('partial-label',id,'Add Building','/github/repos/MBroholm/software-factory/issues/101/labels',{labels:['Building']});assert.equal(partial.status,500);
+ id++;await assert.rejects(call('unknown-post',id,'Post handoff','/github/repos/MBroholm/software-factory/issues/101/comments',{body:'synthetic handoff acknowledgment-loss fixture'}));
+ all=await (await fetch(base+'/inspect')).json();assert.equal(all[id].posts,1);assert(all[id-1].issues[0].labels.some(l=>l.name==='Building'));
+ await stop();await start();assert.deepEqual(await (await fetch(base+'/inspect')).json(),all);
+ console.log(`PASS ${config.cases.length} fixture initializations, source graph/code preservation, approval failure fixtures, full synthetic reservation, lost POST response, partial-label effect and persisted fixture reload. Native workflow checks remain pending.`);
+})().catch(e=>{console.error(e);process.exitCode=1;}).finally(async()=>{await stop();fs.rmSync(directory,{recursive:true,force:true});});

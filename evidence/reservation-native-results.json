@@ -1,0 +1,1454 @@
+[
+  {
+    "id": "1275",
+    "workflowId": "EIF8Urpa0tCkd2DI",
+    "workflowName": "Basic A reserve \u2014 US2 INACTIVE",
+    "mode": "manual",
+    "status": "success",
+    "startedAt": "2026-11-25 17:32:42.464",
+    "stoppedAt": "2026-11-25 17:32:52.708",
+    "case": "owner-manual",
+    "lastNode": "Report completion",
+    "errorMessage": "",
+    "reached": [
+      {
+        "name": "Manual isolated test",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795627962483,
+            "executionTime": 0
+          }
+        ]
+      },
+      {
+        "name": "Read control",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795627962502,
+            "executionTime": 3
+          }
+        ]
+      },
+      {
+        "name": "Validate entry",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795627962508,
+            "executionTime": 5
+          }
+        ]
+      },
+      {
+        "name": "Already held",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795627962520,
+            "executionTime": 2
+          }
+        ]
+      },
+      {
+        "name": "Prepare acquisition",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795627962526,
+            "executionTime": 4
+          }
+        ]
+      },
+      {
+        "name": "Acquire control",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795627962534,
+            "executionTime": 7
+          }
+        ]
+      },
+      {
+        "name": "Check acquire receipt",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795627962545,
+            "executionTime": 5
+          }
+        ]
+      },
+      {
+        "name": "Read acquired control",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795627962555,
+            "executionTime": 3
+          }
+        ]
+      },
+      {
+        "name": "Verify acquisition",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795627962563,
+            "executionTime": 4
+          }
+        ]
+      },
+      {
+        "name": "Discover all issues",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795627962571,
+            "executionTime": 512
+          }
+        ]
+      },
+      {
+        "name": "Select candidate",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795627963107,
+            "executionTime": 18
+          }
+        ]
+      },
+      {
+        "name": "Have candidate",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795627963133,
+            "executionTime": 4
+          }
+        ]
+      },
+      {
+        "name": "Read approval events",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795627963141,
+            "executionTime": 625
+          }
+        ]
+      },
+      {
+        "name": "Read approved comments",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795627963780,
+            "executionTime": 347
+          }
+        ]
+      },
+      {
+        "name": "Validate approval",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795627964136,
+            "executionTime": 19
+          }
+        ]
+      },
+      {
+        "name": "Set issue context",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795627964159,
+            "executionTime": 14
+          }
+        ]
+      },
+      {
+        "name": "Check issue context",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795627964178,
+            "executionTime": 11
+          }
+        ]
+      },
+      {
+        "name": "Read PR baseline",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795627964194,
+            "executionTime": 433
+          }
+        ]
+      },
+      {
+        "name": "Recheck slot",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795627964638,
+            "executionTime": 478
+          }
+        ]
+      },
+      {
+        "name": "Recheck issue",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795627965128,
+            "executionTime": 381
+          }
+        ]
+      },
+      {
+        "name": "Recheck events",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795627965526,
+            "executionTime": 415
+          }
+        ]
+      },
+      {
+        "name": "Recheck comments",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795627965954,
+            "executionTime": 368
+          }
+        ]
+      },
+      {
+        "name": "Prepare handoff",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795627966337,
+            "executionTime": 20
+          }
+        ]
+      },
+      {
+        "name": "Add Building",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795627966362,
+            "executionTime": 1882
+          }
+        ]
+      },
+      {
+        "name": "Check Building receipt",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795627968259,
+            "executionTime": 28
+          }
+        ]
+      },
+      {
+        "name": "Remove Approved",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795627968301,
+            "executionTime": 1022
+          }
+        ]
+      },
+      {
+        "name": "Check removal receipt",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795627969328,
+            "executionTime": 16
+          }
+        ]
+      },
+      {
+        "name": "Before post issue",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795627969348,
+            "executionTime": 360
+          }
+        ]
+      },
+      {
+        "name": "Before post events",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795627969712,
+            "executionTime": 349
+          }
+        ]
+      },
+      {
+        "name": "Before post comments",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795627970092,
+            "executionTime": 288
+          }
+        ]
+      },
+      {
+        "name": "Before post validation",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795627970395,
+            "executionTime": 29
+          }
+        ]
+      },
+      {
+        "name": "Post handoff",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795627970433,
+            "executionTime": 1060
+          }
+        ]
+      },
+      {
+        "name": "Check handoff receipt",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795627971511,
+            "executionTime": 23
+          }
+        ]
+      },
+      {
+        "name": "Final issue",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795627971542,
+            "executionTime": 308
+          }
+        ]
+      },
+      {
+        "name": "Final events",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795627971857,
+            "executionTime": 391
+          }
+        ]
+      },
+      {
+        "name": "Final comments",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795627972261,
+            "executionTime": 313
+          }
+        ]
+      },
+      {
+        "name": "Final validation",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795627972586,
+            "executionTime": 21
+          }
+        ]
+      },
+      {
+        "name": "Require acknowledged completion",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795627972612,
+            "executionTime": 11
+          }
+        ]
+      },
+      {
+        "name": "Read before release",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795627972632,
+            "executionTime": 5
+          }
+        ]
+      },
+      {
+        "name": "Verify release ownership",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795627972642,
+            "executionTime": 8
+          }
+        ]
+      },
+      {
+        "name": "Release control",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795627972654,
+            "executionTime": 6
+          }
+        ]
+      },
+      {
+        "name": "Check release receipt",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795627972664,
+            "executionTime": 8
+          }
+        ]
+      },
+      {
+        "name": "Read released control",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795627972675,
+            "executionTime": 2
+          }
+        ]
+      },
+      {
+        "name": "Confirm idle",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795627972684,
+            "executionTime": 8
+          }
+        ]
+      },
+      {
+        "name": "Report completion",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795627972696,
+            "executionTime": 8
+          }
+        ]
+      }
+    ],
+    "guard": {
+      "key": "global",
+      "busy": true,
+      "execution_id": "1275",
+      "issue_number": null,
+      "started_at": "2026-11-25T17:32:42.529Z",
+      "id": 1,
+      "createdAt": "2026-11-25T08:55:42.755Z",
+      "updatedAt": "2026-11-25T17:32:42.539Z"
+    },
+    "handoffReceipt": {
+      "comment_id": 7169659105
+    },
+    "githubWrites": [
+      {
+        "node": "Add Building",
+        "status": 200
+      },
+      {
+        "node": "Remove Approved",
+        "status": 200
+      },
+      {
+        "node": "Post handoff",
+        "status": 201
+      }
+    ],
+    "completion": {
+      "status": "released",
+      "outcome": "success",
+      "control": {
+        "key": "global",
+        "busy": false,
+        "execution_id": "1275",
+        "issue_number": 1,
+        "started_at": "2026-11-25T17:32:42.529Z",
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-25T17:32:52.658Z"
+      }
+    },
+    "codeHashes": {
+      "Validate entry": "c53a1300a3163dfc6dce7b17a9c9bcd6875102ef780ebfb5fb33f4e65d917f16",
+      "Report existing hold": "c19c21166d1b3380f24ff235a5981ef5c05c2c08b769a91feaaebdd8d9b3348a",
+      "Prepare acquisition": "1c422268550daa938517416e9310e2312969176d5392a7982d2b34736dc28b46",
+      "Check acquire receipt": "9f6681e0e027be397811157f18f1631990bfb845a1186a688a2bbe9ca00a8cca",
+      "Verify acquisition": "6a00e1ec39f0cbf011045e03c9749edeffe6131d341628e81af6a207e7241e5c",
+      "Require acknowledged completion": "7ff2f231c2ee12d992683306ae479be26a394c0dfbf6eeaff37ec3a84fd8c0fe",
+      "Verify release ownership": "8be72a3f984b9e7d157ecdc173ebb9011476954a250a87b7e05cd8ed1ebe999b",
+      "Check release receipt": "ef458c0ebf757aeb2bccb0e78236ac3baca220b9f24777fd40fd69304e2ac718",
+      "Confirm idle": "f4b16a381fe3852d77d6e91886713dfc1c54cf81b589cce1627257086c518309",
+      "Report completion": "0d7a120d7b7554c6d438c640fe21460ab67bee6191a8bb6e1cc9eff7014dd62e",
+      "Select candidate": "157d678ca77e5064591e8ddbded8016168d99da63a76a92502c419e48c83b046",
+      "No work": "dd0716d0d9eddbb988869ac0d3187154d5cfb1eda1ca43461e5b25d2746744ff",
+      "Validate approval": "a4766e5ba01c0bc3320ffe9f2aff7bf8db878928de2965ea449a25e41e70f5e1",
+      "Check issue context": "017b80a992fd6f87bf08a5dbab70691068feac9b7a3c9459aa9c0b0ba9e4ea45",
+      "Prepare handoff": "7524da3030c027410e08c6d46f16722094a1c5a724a5971333f51ad6d7de9392",
+      "Check Building receipt": "15caee006afb11d01e28614a90bf0cd5b94323d63df849f637834e39e291dd9a",
+      "Check removal receipt": "fae61101d3aff67bc536ae588e6054250e9cc76487e56498c68713c1e1a7c7d9",
+      "Before post validation": "e5f7b5229723af6ccc1a5b099b1efd7775804bb61d0b6a33c52579b5a5d76444",
+      "Check handoff receipt": "07695ef77999d861b0e7f64d3ec51b0f69a4bed54652b887e4b5f76a8d5619ae",
+      "Final validation": "d7f3dcf9c4739965b293fcc9bff00b538e33ad933815d981a07c8aa3027c1c06"
+    },
+    "connectionsHash": "9d7e73df141f65b401ec47c212da44efd6f7b2d54e1ebafb69022668e610fbd3"
+  },
+  {
+    "id": "1276",
+    "workflowId": "EIF8Urpa0tCkd2DI",
+    "workflowName": "Basic A reserve \u2014 US2 INACTIVE",
+    "mode": "manual",
+    "status": "success",
+    "startedAt": "2026-11-25 17:36:52.742",
+    "stoppedAt": "2026-11-25 17:36:53.398",
+    "case": "owner-manual",
+    "lastNode": "Report completion",
+    "errorMessage": "",
+    "reached": [
+      {
+        "name": "Manual isolated test",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795628212759,
+            "executionTime": 0
+          }
+        ]
+      },
+      {
+        "name": "Read control",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795628212765,
+            "executionTime": 4
+          }
+        ]
+      },
+      {
+        "name": "Validate entry",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795628212773,
+            "executionTime": 4
+          }
+        ]
+      },
+      {
+        "name": "Already held",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795628212783,
+            "executionTime": 2
+          }
+        ]
+      },
+      {
+        "name": "Prepare acquisition",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795628212789,
+            "executionTime": 4
+          }
+        ]
+      },
+      {
+        "name": "Acquire control",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795628212800,
+            "executionTime": 11
+          }
+        ]
+      },
+      {
+        "name": "Check acquire receipt",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795628212817,
+            "executionTime": 7
+          }
+        ]
+      },
+      {
+        "name": "Read acquired control",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795628212836,
+            "executionTime": 3
+          }
+        ]
+      },
+      {
+        "name": "Verify acquisition",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795628212846,
+            "executionTime": 13
+          }
+        ]
+      },
+      {
+        "name": "Discover all issues",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795628212863,
+            "executionTime": 441
+          }
+        ]
+      },
+      {
+        "name": "Select candidate",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795628213312,
+            "executionTime": 15
+          }
+        ]
+      },
+      {
+        "name": "Have candidate",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795628213332,
+            "executionTime": 1
+          }
+        ]
+      },
+      {
+        "name": "No work",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795628213337,
+            "executionTime": 6
+          }
+        ]
+      },
+      {
+        "name": "Require acknowledged completion",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795628213347,
+            "executionTime": 4
+          }
+        ]
+      },
+      {
+        "name": "Read before release",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795628213354,
+            "executionTime": 2
+          }
+        ]
+      },
+      {
+        "name": "Verify release ownership",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795628213359,
+            "executionTime": 4
+          }
+        ]
+      },
+      {
+        "name": "Release control",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795628213365,
+            "executionTime": 8
+          }
+        ]
+      },
+      {
+        "name": "Check release receipt",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795628213375,
+            "executionTime": 4
+          }
+        ]
+      },
+      {
+        "name": "Read released control",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795628213381,
+            "executionTime": 2
+          }
+        ]
+      },
+      {
+        "name": "Confirm idle",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795628213385,
+            "executionTime": 4
+          }
+        ]
+      },
+      {
+        "name": "Report completion",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795628213391,
+            "executionTime": 4
+          }
+        ]
+      }
+    ],
+    "guard": {
+      "key": "global",
+      "busy": true,
+      "execution_id": "1276",
+      "issue_number": null,
+      "started_at": "2026-11-25T17:36:52.793Z",
+      "id": 1,
+      "createdAt": "2026-11-25T08:55:42.755Z",
+      "updatedAt": "2026-11-25T17:36:52.809Z"
+    },
+    "githubWrites": [],
+    "completion": {
+      "status": "released",
+      "outcome": "no_work",
+      "control": {
+        "key": "global",
+        "busy": false,
+        "execution_id": "1276",
+        "issue_number": null,
+        "started_at": "2026-11-25T17:36:52.793Z",
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-25T17:36:53.370Z"
+      }
+    },
+    "codeHashes": {
+      "Validate entry": "c53a1300a3163dfc6dce7b17a9c9bcd6875102ef780ebfb5fb33f4e65d917f16",
+      "Report existing hold": "c19c21166d1b3380f24ff235a5981ef5c05c2c08b769a91feaaebdd8d9b3348a",
+      "Prepare acquisition": "1c422268550daa938517416e9310e2312969176d5392a7982d2b34736dc28b46",
+      "Check acquire receipt": "9f6681e0e027be397811157f18f1631990bfb845a1186a688a2bbe9ca00a8cca",
+      "Verify acquisition": "6a00e1ec39f0cbf011045e03c9749edeffe6131d341628e81af6a207e7241e5c",
+      "Require acknowledged completion": "7ff2f231c2ee12d992683306ae479be26a394c0dfbf6eeaff37ec3a84fd8c0fe",
+      "Verify release ownership": "8be72a3f984b9e7d157ecdc173ebb9011476954a250a87b7e05cd8ed1ebe999b",
+      "Check release receipt": "ef458c0ebf757aeb2bccb0e78236ac3baca220b9f24777fd40fd69304e2ac718",
+      "Confirm idle": "f4b16a381fe3852d77d6e91886713dfc1c54cf81b589cce1627257086c518309",
+      "Report completion": "0d7a120d7b7554c6d438c640fe21460ab67bee6191a8bb6e1cc9eff7014dd62e",
+      "Select candidate": "157d678ca77e5064591e8ddbded8016168d99da63a76a92502c419e48c83b046",
+      "No work": "dd0716d0d9eddbb988869ac0d3187154d5cfb1eda1ca43461e5b25d2746744ff",
+      "Validate approval": "a4766e5ba01c0bc3320ffe9f2aff7bf8db878928de2965ea449a25e41e70f5e1",
+      "Check issue context": "017b80a992fd6f87bf08a5dbab70691068feac9b7a3c9459aa9c0b0ba9e4ea45",
+      "Prepare handoff": "7524da3030c027410e08c6d46f16722094a1c5a724a5971333f51ad6d7de9392",
+      "Check Building receipt": "15caee006afb11d01e28614a90bf0cd5b94323d63df849f637834e39e291dd9a",
+      "Check removal receipt": "fae61101d3aff67bc536ae588e6054250e9cc76487e56498c68713c1e1a7c7d9",
+      "Before post validation": "e5f7b5229723af6ccc1a5b099b1efd7775804bb61d0b6a33c52579b5a5d76444",
+      "Check handoff receipt": "07695ef77999d861b0e7f64d3ec51b0f69a4bed54652b887e4b5f76a8d5619ae",
+      "Final validation": "d7f3dcf9c4739965b293fcc9bff00b538e33ad933815d981a07c8aa3027c1c06"
+    },
+    "connectionsHash": "9d7e73df141f65b401ec47c212da44efd6f7b2d54e1ebafb69022668e610fbd3"
+  },
+  {
+    "id": "1277",
+    "workflowId": "EIF8Urpa0tCkd2DI",
+    "workflowName": "Basic A reserve \u2014 US2 INACTIVE",
+    "mode": "manual",
+    "status": "success",
+    "startedAt": "2026-11-25 17:41:44.723",
+    "stoppedAt": "2026-11-25 17:41:45.515",
+    "case": "owner-manual",
+    "lastNode": "Report completion",
+    "errorMessage": "",
+    "reached": [
+      {
+        "name": "Manual isolated test",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795628504764,
+            "executionTime": 2
+          }
+        ]
+      },
+      {
+        "name": "Read control",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795628504771,
+            "executionTime": 5
+          }
+        ]
+      },
+      {
+        "name": "Validate entry",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795628504778,
+            "executionTime": 28
+          }
+        ]
+      },
+      {
+        "name": "Already held",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795628504809,
+            "executionTime": 15
+          }
+        ]
+      },
+      {
+        "name": "Prepare acquisition",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795628504828,
+            "executionTime": 5
+          }
+        ]
+      },
+      {
+        "name": "Acquire control",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795628504836,
+            "executionTime": 18
+          }
+        ]
+      },
+      {
+        "name": "Check acquire receipt",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795628504856,
+            "executionTime": 6
+          }
+        ]
+      },
+      {
+        "name": "Read acquired control",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795628504865,
+            "executionTime": 3
+          }
+        ]
+      },
+      {
+        "name": "Verify acquisition",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795628504871,
+            "executionTime": 6
+          }
+        ]
+      },
+      {
+        "name": "Discover all issues",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795628504879,
+            "executionTime": 533
+          }
+        ]
+      },
+      {
+        "name": "Select candidate",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795628505414,
+            "executionTime": 18
+          }
+        ]
+      },
+      {
+        "name": "Have candidate",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795628505435,
+            "executionTime": 3
+          }
+        ]
+      },
+      {
+        "name": "No work",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795628505441,
+            "executionTime": 9
+          }
+        ]
+      },
+      {
+        "name": "Require acknowledged completion",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795628505453,
+            "executionTime": 5
+          }
+        ]
+      },
+      {
+        "name": "Read before release",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795628505461,
+            "executionTime": 3
+          }
+        ]
+      },
+      {
+        "name": "Verify release ownership",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795628505466,
+            "executionTime": 6
+          }
+        ]
+      },
+      {
+        "name": "Release control",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795628505474,
+            "executionTime": 8
+          }
+        ]
+      },
+      {
+        "name": "Check release receipt",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795628505484,
+            "executionTime": 6
+          }
+        ]
+      },
+      {
+        "name": "Read released control",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795628505492,
+            "executionTime": 2
+          }
+        ]
+      },
+      {
+        "name": "Confirm idle",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795628505496,
+            "executionTime": 6
+          }
+        ]
+      },
+      {
+        "name": "Report completion",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795628505505,
+            "executionTime": 7
+          }
+        ]
+      }
+    ],
+    "guard": {
+      "key": "global",
+      "busy": true,
+      "execution_id": "1277",
+      "issue_number": null,
+      "started_at": "2026-11-25T17:41:44.833Z",
+      "id": 1,
+      "createdAt": "2026-11-25T08:55:42.755Z",
+      "updatedAt": "2026-11-25T17:41:44.850Z"
+    },
+    "githubWrites": [],
+    "completion": {
+      "status": "released",
+      "outcome": "no_work",
+      "control": {
+        "key": "global",
+        "busy": false,
+        "execution_id": "1277",
+        "issue_number": null,
+        "started_at": "2026-11-25T17:41:44.833Z",
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-25T17:41:45.479Z"
+      }
+    },
+    "codeHashes": {
+      "Validate entry": "c53a1300a3163dfc6dce7b17a9c9bcd6875102ef780ebfb5fb33f4e65d917f16",
+      "Report existing hold": "c19c21166d1b3380f24ff235a5981ef5c05c2c08b769a91feaaebdd8d9b3348a",
+      "Prepare acquisition": "1c422268550daa938517416e9310e2312969176d5392a7982d2b34736dc28b46",
+      "Check acquire receipt": "9f6681e0e027be397811157f18f1631990bfb845a1186a688a2bbe9ca00a8cca",
+      "Verify acquisition": "6a00e1ec39f0cbf011045e03c9749edeffe6131d341628e81af6a207e7241e5c",
+      "Require acknowledged completion": "7ff2f231c2ee12d992683306ae479be26a394c0dfbf6eeaff37ec3a84fd8c0fe",
+      "Verify release ownership": "8be72a3f984b9e7d157ecdc173ebb9011476954a250a87b7e05cd8ed1ebe999b",
+      "Check release receipt": "ef458c0ebf757aeb2bccb0e78236ac3baca220b9f24777fd40fd69304e2ac718",
+      "Confirm idle": "f4b16a381fe3852d77d6e91886713dfc1c54cf81b589cce1627257086c518309",
+      "Report completion": "0d7a120d7b7554c6d438c640fe21460ab67bee6191a8bb6e1cc9eff7014dd62e",
+      "Select candidate": "157d678ca77e5064591e8ddbded8016168d99da63a76a92502c419e48c83b046",
+      "No work": "dd0716d0d9eddbb988869ac0d3187154d5cfb1eda1ca43461e5b25d2746744ff",
+      "Validate approval": "a4766e5ba01c0bc3320ffe9f2aff7bf8db878928de2965ea449a25e41e70f5e1",
+      "Check issue context": "017b80a992fd6f87bf08a5dbab70691068feac9b7a3c9459aa9c0b0ba9e4ea45",
+      "Prepare handoff": "7524da3030c027410e08c6d46f16722094a1c5a724a5971333f51ad6d7de9392",
+      "Check Building receipt": "15caee006afb11d01e28614a90bf0cd5b94323d63df849f637834e39e291dd9a",
+      "Check removal receipt": "fae61101d3aff67bc536ae588e6054250e9cc76487e56498c68713c1e1a7c7d9",
+      "Before post validation": "e5f7b5229723af6ccc1a5b099b1efd7775804bb61d0b6a33c52579b5a5d76444",
+      "Check handoff receipt": "07695ef77999d861b0e7f64d3ec51b0f69a4bed54652b887e4b5f76a8d5619ae",
+      "Final validation": "d7f3dcf9c4739965b293fcc9bff00b538e33ad933815d981a07c8aa3027c1c06"
+    },
+    "connectionsHash": "9d7e73df141f65b401ec47c212da44efd6f7b2d54e1ebafb69022668e610fbd3"
+  },
+  {
+    "id": "1279",
+    "workflowId": "EIF8Urpa0tCkd2DI",
+    "workflowName": "Basic A reserve \u2014 US2 INACTIVE",
+    "mode": "manual",
+    "status": "success",
+    "startedAt": "2026-11-25 17:53:45.239",
+    "stoppedAt": "2026-11-25 17:53:45.923",
+    "case": "owner-manual",
+    "lastNode": "Report completion",
+    "errorMessage": "",
+    "reached": [
+      {
+        "name": "Poll inactive",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795629225258,
+            "executionTime": 3
+          }
+        ]
+      },
+      {
+        "name": "Read control",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795629225266,
+            "executionTime": 2
+          }
+        ]
+      },
+      {
+        "name": "Validate entry",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795629225273,
+            "executionTime": 5
+          }
+        ]
+      },
+      {
+        "name": "Already held",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795629225282,
+            "executionTime": 2
+          }
+        ]
+      },
+      {
+        "name": "Prepare acquisition",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795629225292,
+            "executionTime": 4
+          }
+        ]
+      },
+      {
+        "name": "Acquire control",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795629225300,
+            "executionTime": 23
+          }
+        ]
+      },
+      {
+        "name": "Check acquire receipt",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795629225327,
+            "executionTime": 4
+          }
+        ]
+      },
+      {
+        "name": "Read acquired control",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795629225335,
+            "executionTime": 2
+          }
+        ]
+      },
+      {
+        "name": "Verify acquisition",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795629225341,
+            "executionTime": 4
+          }
+        ]
+      },
+      {
+        "name": "Discover all issues",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795629225351,
+            "executionTime": 447
+          }
+        ]
+      },
+      {
+        "name": "Select candidate",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795629225813,
+            "executionTime": 8
+          }
+        ]
+      },
+      {
+        "name": "Have candidate",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795629225827,
+            "executionTime": 1
+          }
+        ]
+      },
+      {
+        "name": "No work",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795629225833,
+            "executionTime": 7
+          }
+        ]
+      },
+      {
+        "name": "Require acknowledged completion",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795629225846,
+            "executionTime": 6
+          }
+        ]
+      },
+      {
+        "name": "Read before release",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795629225858,
+            "executionTime": 10
+          }
+        ]
+      },
+      {
+        "name": "Verify release ownership",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795629225872,
+            "executionTime": 5
+          }
+        ]
+      },
+      {
+        "name": "Release control",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795629225881,
+            "executionTime": 7
+          }
+        ]
+      },
+      {
+        "name": "Check release receipt",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795629225892,
+            "executionTime": 4
+          }
+        ]
+      },
+      {
+        "name": "Read released control",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795629225900,
+            "executionTime": 2
+          }
+        ]
+      },
+      {
+        "name": "Confirm idle",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795629225906,
+            "executionTime": 5
+          }
+        ]
+      },
+      {
+        "name": "Report completion",
+        "runs": 1,
+        "status": "success",
+        "timings": [
+          {
+            "startTime": 1795629225915,
+            "executionTime": 4
+          }
+        ]
+      }
+    ],
+    "guard": {
+      "key": "global",
+      "busy": true,
+      "execution_id": "1279",
+      "issue_number": null,
+      "started_at": "2026-11-25T17:53:45.296Z",
+      "id": 1,
+      "createdAt": "2026-11-25T08:55:42.755Z",
+      "updatedAt": "2026-11-25T17:53:45.305Z"
+    },
+    "githubWrites": [],
+    "completion": {
+      "status": "released",
+      "outcome": "no_work",
+      "control": {
+        "key": "global",
+        "busy": false,
+        "execution_id": "1279",
+        "issue_number": null,
+        "started_at": "2026-11-25T17:53:45.296Z",
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-25T17:53:45.886Z"
+      }
+    },
+    "codeHashes": {
+      "Validate entry": "c53a1300a3163dfc6dce7b17a9c9bcd6875102ef780ebfb5fb33f4e65d917f16",
+      "Report existing hold": "c19c21166d1b3380f24ff235a5981ef5c05c2c08b769a91feaaebdd8d9b3348a",
+      "Prepare acquisition": "1c422268550daa938517416e9310e2312969176d5392a7982d2b34736dc28b46",
+      "Check acquire receipt": "9f6681e0e027be397811157f18f1631990bfb845a1186a688a2bbe9ca00a8cca",
+      "Verify acquisition": "6a00e1ec39f0cbf011045e03c9749edeffe6131d341628e81af6a207e7241e5c",
+      "Require acknowledged completion": "7ff2f231c2ee12d992683306ae479be26a394c0dfbf6eeaff37ec3a84fd8c0fe",
+      "Verify release ownership": "8be72a3f984b9e7d157ecdc173ebb9011476954a250a87b7e05cd8ed1ebe999b",
+      "Check release receipt": "ef458c0ebf757aeb2bccb0e78236ac3baca220b9f24777fd40fd69304e2ac718",
+      "Confirm idle": "f4b16a381fe3852d77d6e91886713dfc1c54cf81b589cce1627257086c518309",
+      "Report completion": "0d7a120d7b7554c6d438c640fe21460ab67bee6191a8bb6e1cc9eff7014dd62e",
+      "Select candidate": "157d678ca77e5064591e8ddbded8016168d99da63a76a92502c419e48c83b046",
+      "No work": "dd0716d0d9eddbb988869ac0d3187154d5cfb1eda1ca43461e5b25d2746744ff",
+      "Validate approval": "a4766e5ba01c0bc3320ffe9f2aff7bf8db878928de2965ea449a25e41e70f5e1",
+      "Check issue context": "017b80a992fd6f87bf08a5dbab70691068feac9b7a3c9459aa9c0b0ba9e4ea45",
+      "Prepare handoff": "7524da3030c027410e08c6d46f16722094a1c5a724a5971333f51ad6d7de9392",
+      "Check Building receipt": "15caee006afb11d01e28614a90bf0cd5b94323d63df849f637834e39e291dd9a",
+      "Check removal receipt": "fae61101d3aff67bc536ae588e6054250e9cc76487e56498c68713c1e1a7c7d9",
+      "Before post validation": "e5f7b5229723af6ccc1a5b099b1efd7775804bb61d0b6a33c52579b5a5d76444",
+      "Check handoff receipt": "07695ef77999d861b0e7f64d3ec51b0f69a4bed54652b887e4b5f76a8d5619ae",
+      "Final validation": "d7f3dcf9c4739965b293fcc9bff00b538e33ad933815d981a07c8aa3027c1c06"
+    },
+    "connectionsHash": "9d7e73df141f65b401ec47c212da44efd6f7b2d54e1ebafb69022668e610fbd3"
+  }
+]

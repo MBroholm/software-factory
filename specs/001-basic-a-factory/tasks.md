@@ -196,6 +196,17 @@ import, refine revision verification and delayed-launch/second-task/restart/inte
 real manual question/answer/build evidence. See `evidence/manual-build-validation.md`.
 US1 evidence is reused unchanged; no US3 tasks or production activation were performed.
 
+**T019 real-run progress, 2026-11-25**: Owner accepted/imported reserve revision ec5a2de;
+source-matched native executions 1275/1276/1277/1279 pass real reservation, no-work, delayed
+launch, second explicit approval waiting and idle-guard restart checks. Owner reimported the
+reviewed US1 pagination fix; native 1278 refined queued issue #4. Manually launched issue-1
+produced PR #5 and real question/answer/scope summary 7170400632, with actual checks visible.
+T019 stays unchecked: isolated unexpected-failure/interrupted-reservation/busy-restart and
+native scheduled-held checks still need owner-reviewed/imported test bridge execution.
+Prepared test-only bridge/local fixture checks and 252 native VM/pagination checks pass;
+these parameter checks do not substitute for those missing full native runs. Production source
+and US3/track remain unchanged. See `evidence/manual-build-validation.md`.
+
 **Checkpoint**: Manual execution works; no runner or automated question/restart behavior exists.
 
 ## Phase 5: User Story 3 — Review and track the result (P2)
