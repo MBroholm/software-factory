@@ -19,10 +19,12 @@ private credential reference, shared control table. All reads paginate; preserve
 5. A partial label change is not repaired automatically. Add target, then remove source; a crash
    between them leaves a visible multi-state issue and held flag. Owner normalizes it while paused.
 
-No automatic write retries, resumed failed executions, or replay from a journal. Do not use
-Wait/resume nodes, mutating error workflows or mutating subworkflows in Basic A; all production
-mutation passes through the scheduled entry guard. Read-only retries
-may be bounded. Rate limits respect server retry information and leave work pending/held on error.
+No automatic GitHub write retries, resumed failed executions, or replay from a journal.
+Do not use durable/external Wait/resume, mutating error workflows or mutating subworkflows;
+all production mutation passes through the scheduled entry guard. The owner-approved exception
+in the refinement contract permits only two short in-process interval waits (10/30 seconds)
+for explicit Gemini 503 UNAVAILABLE responses within the same guarded live execution, with
+ownership/source rechecks and no restart recovery. Read-only retries may be bounded. Rate limits respect server retry information and leave work pending/held on error.
 Normal polls that make no changes release the flag; no-op/held polls must not publish repeated
 issue comments. Retained private failures and operator inspection are part of operation.
 

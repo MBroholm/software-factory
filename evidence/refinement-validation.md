@@ -1,10 +1,52 @@
 # US1 refinement validation
 
-**Date**: 2026-11-24. **Status**: T010/T011/T013 implemented and locally checked;
-T012 source integration prepared, saved credential/native HTTP check **UNRUN**;
-T014 owner manual imports/mappings and failed live attempts recorded; successful refinement,
-revision and approval exercises remain **UNRUN**. Token-counting revision is prepared, not imported.
-This document is a handoff for review, not evidence of activation or a completed real run.
+**Date**: 2026-11-24; observations updated 2026-11-25. **Status**: T010–T013 implemented;
+T012 native saved-credential count/inference and fixed rendering passed in execution 753.
+T014 is in progress: initial refinement, unchanged polling and revision mechanics passed;
+revision content review found a missing explicit privacy criterion. Content correction and owner
+approval remain pending. Failures/recovery are retained below. No production activation
+or completed issue/PR-linked build run is claimed.
+
+## Owner-approved bounded retry revision — 2026-11-25
+
+The owner subsequently instructed implementation of the policy proposed after execution 756.
+This supersedes the proposal-only/no-retry status below for the new source revision. Only explicit
+generation HTTP 503 UNAVAILABLE retries, after 10/30 seconds, at most three attempts total.
+Count once and reuse the exact payload/budget; verify singleton guard ownership, issue/source,
+captured discussion and refinement history before each attempt. Longer/invalid Retry-After stops.
+Other HTTP statuses, count errors, network/timeout/lost responses and invalid output stop held.
+No GitHub write retry, model/prompt/template change, billing change, guard reset or replay.
+
+Validation: **35 local graph scenario groups PASS**, including one/two retries then success,
+exhaustion, noneligible failures, changed source/state/guard, interruption and Retry-After.
+**291 native synthetic checks PASS** against installed n8n 2.48.8 VM parameters and Wait helpers:
+226 parameter contexts, pagination/negative-index regressions, actual Wait.execute arguments
+for 10/30 seconds, threshold assertions, and zero-duration core in-process behavior. Timer waits
+are stubbed for Wait.execute; these checks do not prove actual elapsed delays, cancellation,
+restart or the imported workflow loop. No provider requests, live workflow execution/import,
+production changes or control resets were performed for this revision. T014 remains incomplete.
+
+The owner-import file adds Read generation guard, so **eight** table mappings must reference the
+same isolated control table. Existing saved GitHub/Gemini references are retained. Operational
+notes, stage overview, contracts and runbooks describe the bounded loop and held failure paths.
+Execution 756 remains the last acknowledged hold; confirm the current row before any recovery.
+
+Prepared inactive owner import: `factory/local/refine-us1-retry-mapped.json`. Source SHA-256
+`5f187cf3ac2fa48a1ef8f6e423495b807648d2afd1d358547326cb35d52f872f`; mapped SHA-256
+`d95779c42d1626fdd4f536f286981bc5c70ab56ef1f7787640d8232c64a35ac7`.
+Mapping basis: previous owner-imported token-counting artifact; preserves seven native table
+parameters/schema defaults and both saved credential references, adds the same singleton mapping
+to Read generation guard, and gives the two new source-read nodes the saved GitHub reference.
+All Code parameters/connections equal the new source; eight table and 23 credential references
+checked. Existing table filters/values match source; only native schema/default metadata differs.
+The file is ignored/private; owner manual import and saved-revision comparison remain pending.
+
+Recovery must preserve pending input: after inspecting markers and restoring Ideas, repost the
+still-pending privacy acceptance request as a new owner comment before a fresh execution. A
+comment posted before the new Ideas event is excluded by stage-relative source capture. Existing
+captured section-title requirements remain part of the previous refinement history. Do not
+resume execution 756 or run isolated provider nodes. Native retry coverage and owner approval
+remain pending; previous successful traces are retained below for the versions they exercised.
 
 ## Reviewed/imported revision record
 
@@ -14,19 +56,19 @@ commit: `855033ef619202e6c549833bbaba322d8ff50531`. The owner subsequently repor
 into the isolated test container, a fresh `factory_control_us1` table with all seven mappings,
 and both saved/mapped credentials. These are owner-reported setup observations; imported version
 comparison remains pending. Owner-supplied native no-work execution evidence is recorded below;
-Saved Gemini credential use remains unrun; execution 751 reached the acknowledged GitHub
+Saved Gemini countTokens/inference passed in execution 753 after the 752 provider 503. Execution 751 reached the acknowledged GitHub
 Refining transition before the old size check stopped it. Later sections supersede earlier snapshots.
 
 | Item | Recorded value |
 |---|---|
 | Reviewed US1 commit / PR | `855033ef619202e6c549833bbaba322d8ff50531`; owner review accepted; PR not recorded |
 | Owner manual import timestamp | Owner reported import on 2026-11-25; exact time not captured |
-| Isolated n8n workflow ID / imported version ID | Latest failed VM-fix workflow `MoMw34RHi9qqfEIB`, execution 751; saved version ID still pending |
+| Isolated n8n workflow ID / imported version ID | Current token-counting workflow `sPrdMHSQ1Eubs5Oh`, successful execution 753; saved version ID still pending |
 | Isolated control table mapping | Fresh `factory_control_us1`, seven mappings; 747 confirms no-work release, 751 reaches acknowledged selected-issue context and Refining transition |
 | GitHub header credential mapping | Owner reports saved/mapped; execution 747 completed the workflow's issue-discovery/no-work path; credential identity/write permissions not independently verified |
-| Gemini header credential mapping | Owner reports saved/mapped; actual generateContent check UNRUN |
+| Gemini header credential mapping | Native countTokens and generateContent both HTTP 200 in 753; one generation, requested/returned model gemini-3.5-flash-lite, 576 input / 106 output tokens |
 | Active project free tier / quota check | Pending owner verification before HTTP check |
-| Native runtime versions | Prompt v3 / template v1; verification UNRUN |
+| Native runtime versions | Successful output identifies prompt v3 / template v1; counted-payload digest matches the reviewed unchanged original-issue request |
 | Production activation | Not performed; workflow JSON is inactive |
 
 Prompt SHA-256: `23e9c6b21f3f31d4548d38addec6447390d3597e171fd739feee9e1403f89749`.
@@ -41,8 +83,8 @@ record those owner-only mapping differences separately, without credential value
 
 | Check | Observed result | Limit |
 |---|---|---|
-| `node factory/tests/check-refinement.cjs` | PASS, 27 scenario groups including token preflight | Exported Code bodies/connections; HTTP/Data Table stand-ins |
-| `check-refinement-native-expressions.cjs` in installed test runtime | PASS, 223 VM checks | 167 synthetic parameter contexts, regression and pagination; no nodes/workflows/API calls executed |
+| `node factory/tests/check-refinement.cjs` | PASS, 35 scenario groups including token preflight and selective retry | Exported Code bodies/connections; HTTP/Data Table stand-ins |
+| `check-refinement-native-expressions.cjs` in installed test runtime | PASS, 291 native synthetic checks | 226 VM contexts, regression, pagination and stubbed Wait/core checks; no live workflows/API calls |
 | `node factory/scripts/build-refine.cjs --check` | PASS | Offline packaging consistency only |
 | `node factory/tests/check-guard-skeletons.cjs` | PASS, 50 scenarios | Remaining reserve/track skeletons only; no new native claim |
 | Compose `config --quiet`, default and `--profile local-model-trials` | PASS with nonsecret placeholder key | Configuration only; no server rollout |
@@ -170,6 +212,136 @@ the failed execution or run individual nodes.
 
 ## Pending native/live acceptance matrix
 
+### Execution 756 — repeated provider 503; bounded retry proposed
+
+After owner feedback requesting an explicit privacy acceptance criterion, execution **756**
+failed at Validate and render. Sanitized native trace confirms workflow `sPrdMHSQ1Eubs5Oh`,
+start `2026-11-25T11:13:02.500Z`, stop `2026-11-25T11:13:09.186Z`, countTokens HTTP 200 with
+661 tokens and reserved total 2141/4096. Counted-payload digest:
+`fc2aba2d84a8f808058653fa4e07995aee2a557b00f0f7d817185f43e7eb19f1`.
+Exactly one generation run returned HTTP **503 UNAVAILABLE**. No comment-post or release node
+was reached; last acknowledged selected-issue context was busy, execution `756`, issue 1,
+start `2026-11-25T11:13:02.603Z`. The row has not been reset by the assistant; persisted current
+row confirmation remains owner-controlled. Privacy-content correction has not yet produced a
+successful output and T014 remains incomplete.
+
+The owner asked whether automatic wait/retry would make sense for provider unavailability.
+The proposed narrow policy is at most two additional generation attempts after short increasing
+delays, only for an explicit HTTP 503 / UNAVAILABLE response, within the same live guarded
+execution. Keep busy held, use the same counted payload, check source/state before retry, never
+retry GitHub writes or restart the entire workflow. Exhaustion/other failures retain the manual
+hold; no automatic restart recovery, quota fallback, model switch or billing change. Attempt
+counts/statuses/delays must remain visible. This is a proposal, **not an implemented or adopted
+policy**: current refinement/lifecycle contracts still specify no automatic retries. A user
+instruction to implement would require amending those contracts, node notes and failure tests
+before reviewed owner manual import. Provider guidance on transient backoff supports considering
+the change; it does not itself authorize expanding workflow behavior.
+
+### Execution 755 — revision mechanics passed; content correction requested
+
+The owner posted unmarked Ready-stage comment
+[7160648812](https://github.com/MBroholm/software-factory/issues/1#issuecomment-7160648812) at
+`2026-11-25T11:08:33Z`: `Put the example in a dedicated section titled "SSH access"`.
+Execution **755** reported released/success, issue `1`, busy false, start
+`2026-11-25T11:09:37.142Z`, updated `2026-11-25T11:09:49.136Z`; provider count 604, reserved
+total 2084/4096, counted-payload digest
+`16592684634fc98b1d473409b283e28e1c287274e7a3cf808488d67daef689eb`.
+The new [refinement 7160675431](https://github.com/MBroholm/software-factory/issues/1#issuecomment-7160675431)
+was created/updated `2026-11-25T11:09:45Z`, usage 604 input / 175 output / 779 total tokens.
+It captures exactly `[7160648812]`, last included ID 7160648812, prompt v3/template v1, source
+key `1:e600fc9925319701eb82d2c7ee42956531a43e019676e8a007933193bad07088:7160648812:v3`;
+recomputing from the exact original issue and owner comment agrees. Rendered-body digest is
+`7335f4764952548a1c86d0455e689f108d5e0639294347210612db8e7f2786ab`.
+
+GitHub readback confirms open issue, sole Ready for approval label and three comments (initial
+refinement, owner revision, new refinement). The initial refinement's body/marker and original
+created/updated time remain intact. Constraints preserve privacy, placeholders, documentation-only,
+no service/credential/configuration changes and the new SSH access section requirement. The
+revision trigger, captured input, history preservation, output and guard-release mechanics pass
+from owner native output plus independent public readback; its full reached-node trace remains
+to be collected with the final acceptance traces.
+
+Assistant content review found an explicit privacy acceptance check was lost: privacy remains
+in Constraints, but the new criteria cover the section, tunnel/placeholder example and no config
+changes without explicitly checking that the editor stays private. This is recorded as a model
+content gap, not a successful full semantic acceptance or transport/schema failure. Do not
+silently approve it or change prompt/model/budget automatically. Next owner feedback requests
+an explicit privacy acceptance criterion while retaining every existing constraint and the
+SSH access section. Successful follow-up content review/approval remain pending.
+
+### Execution 754 — unchanged poll passed
+
+The owner supplied native Report completion: `status=released`, `outcome=no_work`, row busy
+false, execution `754`, issue context null, start `2026-11-25T11:06:06.418Z`, updated
+`2026-11-25T11:06:07.843Z`. Independent GitHub readback confirms issue #1 remains open with
+sole state Ready for approval and exactly one comment. The existing marked comment was authored
+by the owner credential, so this exercises repeat suppression despite shared human/factory
+actor identity. No new issue input or output was introduced. The exported native reached-node
+trace for 754 has not yet been collected; explicit omission of count/generation nodes can be
+confirmed with the remaining acceptance traces before T014 closeout. Next: owner adds a new,
+unmarked Ready-stage revision comment; do not edit the issue body or previous refinement.
+
+### Execution 753 — initial real refinement passed
+
+After owner-directed recovery from the 503, **execution 753 succeeded** in isolated workflow
+`sPrdMHSQ1Eubs5Oh` from `2026-11-25T10:50:13.241Z` to `2026-11-25T10:50:25.254Z`. The owner
+supplied Report completion and independently observed `busy=false`, execution `753` in the row.
+Supported sanitized native trace collection confirms both provider nodes returned HTTP 200,
+**one** generation ran, all comment/label acknowledgement checks passed, and release receipt,
+persisted idle reread and Report completion were reached. Count was **576**; reserved total
+**2056 / 4096**; counted-payload digest remained
+`7a9d928a58b735097db615109efb0ac5da4bfbd6b50066413e7678b3f5f0f1fe`.
+Returned model version: `gemini-3.5-flash-lite`; usage 576 input, 106 candidate, 682 total tokens.
+
+Live output: [issue #1 refinement comment 7160240711](https://github.com/MBroholm/software-factory/issues/1#issuecomment-7160240711),
+created/updated `2026-11-25T10:50:21Z`, author `MBroholm` / `202449424`. GitHub readback confirms
+issue open, exactly one comment and sole managed state **Ready for approval**, no Approved.
+Marker source key:
+`1:42ae956a6c1578a3a61849dfdda95d95c048f08bc4569138ac2bb9c552ebabd8:0:v3`;
+captured IDs empty, last included ID 0, prompt v3/template v1; rendered-body digest
+`36ad6e8c25d7d71675579272c40ecacc5a1172c53c30eceb2b0566acb947262a`.
+Final control: key global, busy false, execution `753`, issue `1`, start
+`2026-11-25T10:50:13.292Z`, updated `2026-11-25T10:50:25.212Z`.
+
+Assistant semantic assessment: goal and all supplied privacy/placeholder/documentation-only/
+no-service-credential-config-change constraints are preserved; four acceptance criteria cover
+them, no scope or approval was invented, and no material question is evident in this bounded
+input. The owner's content review remains separate from the technical execution result.
+This completes **T012**'s actual saved-credential/HTTP/validated-rendering integration checkpoint;
+the unchanged prompt/template quality evidence and optional Ollama source configuration were
+already checked. It does not complete T014 or count as a completed manual build/PR run.
+Next exercise is a whole-workflow unchanged poll with no issue edits: expect no provider calls,
+no additional comment, unchanged Ready state and acknowledged no-work release.
+
+### Execution 752 — native count succeeded, provider generation unavailable
+
+Owner reported Validate and render stopped after Gemini generateContent returned HTTP 503 /
+`UNAVAILABLE`. Supported sanitized execution export confirms **752**, current workflow
+`sPrdMHSQ1Eubs5Oh` (`Basic A refine — US1 token counting test`), from
+`2026-11-25T10:42:55.287Z` to `2026-11-25T10:43:05.914Z`. Native countTokens returned **HTTP 200,
+576 tokens**; Check token budget passed at **2056 / 4096**, including schema 456, output 768,
+overhead 256. Its payload digest was
+`7a9d928a58b735097db615109efb0ac5da4bfbd6b50066413e7678b3f5f0f1fe`, matching the standalone
+count-only check of the original unshortened issue. This is actual saved-credential/native HTTP
+count validation, not a synthetic fixture or standalone substitution.
+
+Exactly **one** native generation node run is recorded. It returned HTTP 503 /
+`UNAVAILABLE`; Validate and render threw as designed. No comment-post or release node was
+reached. Last acknowledged selected-issue guard context was busy, execution `752`, issue `1`,
+start time `2026-11-25T10:42:55.361Z`. Current persisted row confirmation is pending owner
+inspection; no reset was performed. Fresh GitHub readback confirms issue #1 open, sole state
+`Refining`, zero comments. No false Ready, duplicate output, automatic retry, model switch,
+billing change or assistant inference call occurred.
+
+The provider [troubleshooting guide](https://aistudio.google.com/docs/troubleshooting#retry-strategy)
+treats 503 as a transient failure. No wider service incident was verified: the status page did
+not expose usable incident information through the read tool. Keep this recorded as a provider
+503 response rather than claiming a confirmed global outage or changing workflow code/credentials.
+The existing fail-stop policy still applies despite generic provider advice about automatic
+backoff. Owner may wait, inspect the hold and GitHub state, restore Ideas and explicitly reset
+only busy for one fresh whole-workflow attempt. Do not resume failed execution 752 or run an
+individual provider node. Successful inference/output and T012/T014 completion remain pending.
+
 ### Owner-approved token-counting revision — 2026-11-25
 
 After the input-screen stop, the owner explicitly approved replacing whole-input bytes-as-tokens
@@ -224,6 +396,15 @@ SHA-256: `2e88e9b7d5418b97082736f35edeef1aeb2cb05a13cfcb5cc61a827261cac4d2`.
 Mapped artifact SHA-256: `7d4ea93cc0b7dad4d7195e46183e77a4fa78bd9da8248da3ecf1dc49be5339af`.
 Earlier URL/VM-only mapped files are superseded for the next attempt. Owner review/manual import,
 current held-row confirmation and deliberate recovery of stranded Refining still precede retry.
+
+The owner subsequently confirmed manual import/save of the token-counting artifact in the
+isolated test container (guided name: `Basic A refine — US1 token counting test`) and that the
+control row still identifies execution 751. Source revision `2f64f85` is committed/pushed;
+new workflow/version IDs remain pending. Fresh readback confirms issue #1 open, sole state
+`Refining`, zero comments. The assistant has not reset the row, changed labels or executed the
+workflow. Owner recovery must first replace stranded Refining with Ideas, preserving the original
+source, then reset only busy while schedules are paused/drained and start a fresh whole-workflow
+attempt. Actual saved-credential count/inference results are not yet observed.
 
 API format checked against the [Google API definition](https://github.com/googleapis/googleapis/blob/master/google/ai/generativelanguage/v1beta/generative_service.proto).
 Public schema-counting caveats are discussed in the [model-specific clarification](https://discuss.ai.google.dev/t/gemini-3-5-flash-lite-counttokens-pricing-quota-schema-coverage-and-thinking-cap/189068)
@@ -325,13 +506,13 @@ faults, not production. No fixture-only test below counts as a real owner issue/
 | Exercise | Required observation | Actual evidence / outcome |
 |---|---|---|
 | Empty repository, acquired no-work release | Whole-workflow poll reports released/no_work and idle row with retained context | PASS: owner-supplied execution 747 output, 2026-11-25; details above |
-| Owner Ideas issue + actual saved Gemini credential | Refining before exactly one HTTP call, marked valid output, Ready, idle guard; model version/usage recorded | FAILED 748 at Read stage events, then 750 at Read source comments; both before inference/writes. VM cause reproduced and source repaired; manual import/retry pending |
-| Owner revision while Ready | One new output; captured source IDs and previous output preserved; guard released | UNRUN |
-| Unchanged poll + owner-authored factory marker | No inference/duplicate output/loop; idle guard | UNRUN |
+| Owner Ideas issue + actual saved Gemini credential | Refining before one count + at most one inference, marked valid output, Ready, idle guard; model version/usage recorded | PASS execution 753, native trace + owner row/output + public comment. Prior 748/750/751/752 failures retained above |
+| Owner revision while Ready | One new output; captured source IDs and previous output preserved; guard released | Mechanics PASS 755 + public history/source-key check; explicit privacy acceptance criterion missing in model content, owner feedback/correction pending |
+| Unchanged poll + owner-authored factory marker | No inference/duplicate output/loop; idle guard | PASS 754 owner no-work/idle output + public unchanged state/comment count; native reached-node omission trace still pending collection |
 | Non-owner/PR/closed input; non-owner discussion | No processing/trigger; ordinary acquired no-work releases | UNRUN; identify native vs fixture inputs honestly |
 | Multiple pages; first candidate unchanged | Later eligible candidate processed once; no missed pages | UNRUN |
 | Captured edit/deletion or source change during inference | Visible failure/held guard; no stale publication or inferred approval | UNRUN |
-| Malformed output / quota/API failure | Failed execution and held flag, no Ready success or retry | UNRUN |
+| Malformed output / quota/API failure | Failed execution and held flag, no Ready success or retry | Native 752 API-503 stop with no post/release reached; current persisted hold confirmation pending. Malformed output and quota variants remain unrun |
 | Unknown comment POST / partial label transition | Hold; later poll skips with unchanged context; owner reconciles before reset | UNRUN |
 | Unexpected exception before/after side effect | Guard remains busy; next whole-workflow poll skips; no unconditional release | UNRUN |
 | Stranded Refining / conflicting labels | No auto-resume or guessed transition; held failure | UNRUN |

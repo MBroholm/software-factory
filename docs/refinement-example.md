@@ -1,5 +1,17 @@
 # Refinement output example
 
+## Live workflow example
+
+Execution 753 on 2026-11-25 posted the first real refinement for
+[issue #1](https://github.com/MBroholm/software-factory/issues/1#issuecomment-7160240711).
+The original issue text was not shortened: provider count 576 tokens, reserved total 2056/4096,
+one successful Gemini generation with 106 output tokens, Ready for approval and idle guard.
+See `evidence/refinement-validation.md` for the source key, native evidence and prior failures.
+Execution 755 subsequently passed revision mechanics; privacy-content correction and owner
+approval remain pending. This is not a completed build/PR run.
+
+## Earlier offline rendering
+
 Offline rendering of the actual, owner-accepted v3 `owner-revision` evaluation output from
 2026-11-24. See [quality evidence](../evidence/gemini-v3-review.md). Issue 103 and comment 1001
 are synthetic fixture identifiers; this is not a posted GitHub comment or a native workflow pass.

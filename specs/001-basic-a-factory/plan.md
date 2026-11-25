@@ -123,7 +123,11 @@ provider countTokens preflight (4096-token application envelope, not a hosted co
 including a fixed schema allowance plus the 768 output / 256 overhead reserves. A separate
 32 KiB serialized-request transport cap prevents oversized transfers. Owner approved replacing
 the earlier byte-as-token screen on 2026-11-25; see the amended refinement contract.
-No automatic retries; quota/API failures hold for manual recovery. These are design choices,
+Owner-approved generation-only HTTP 503 UNAVAILABLE retries wait 10/30 seconds in-process,
+with three attempts maximum, identical counted payload and guard/source checks before each.
+The serialized slot remains occupied for up to three 120-second provider timeouts plus 40 seconds
+of waits and GitHub reads. Other failures/exhaustion hold for manual recovery; no replay or
+durable resume. See the amended refinement contract. These are design choices,
 not assignment requirements or Basic B's deferred 30-minute runner timeout.
 
 **Constraints**: One production instance; `N8N_CONCURRENCY_PRODUCTION_LIMIT=1`; no manual mutating

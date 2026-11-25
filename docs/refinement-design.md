@@ -41,8 +41,16 @@ undefined in VM parameter expressions, while standalone legacy evaluation accept
 references now use `.first(1)`, whose default is the latest run. The native expression suite
 explicitly initializes VM evaluation and checks URL/body/table/branch expressions before another
 owner-import attempt; it does not execute nodes or substitute for full live workflow tests.
-HTTP Request nodes alone perform authenticated API calls, with no automatic retries/redirects.
-Non-success HTTP statuses reach explicit checks and throw; they never fall through to release.
+HTTP Request nodes alone perform authenticated API calls, with generic retry/redirects disabled.
+The owner-approved generation-only exception handles explicit 503 UNAVAILABLE with at most two
+additional attempts after 10/30-second in-process waits. It preserves counted payload/budget and
+rechecks guard ownership and captured source before every attempt. Other failures and exhaustion
+hold; malformed successful output is never retried. Retry-After longer than the bounded delay or
+invalid stops for manual recovery. This is a loop within the same live guarded execution, with
+no durable/external resume, failed-execution replay or GitHub write retry. Successful completion
+includes sanitized attempt statuses/delays. The native checker verifies VM parameters, installed
+Wait arguments and the zero-duration core in-process path; actual delayed live execution,
+cancellation and restart remain owner-import acceptance work.
 
 On 2026-11-25 the owner approved replacing the conservative byte-as-token runtime screen with
 one provider countTokens preflight. The exact unchanged generation payload is wrapped as

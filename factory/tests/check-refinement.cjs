@@ -19,8 +19,8 @@ const template = fs.readFileSync('factory/templates/task.md','utf8');
 let count=0;
 const nativeFixtures=[];
 function test(name,fn) { fn(); count++; console.log(`PASS ${name}`); }
-function run({issues=[issue()],comments={},events={},row=idle(),fault,from='Manual isolated test',response=model(),countResponse={totalTokens:1000},nativeLabel}={}) {
-  const outputs=new Map(), trace=[], calls=[];
+function run({issues=[issue()],comments={},events={},row=idle(),fault,from='Manual isolated test',response=model(),generationResponses,countResponse={totalTokens:1000},nativeLabel}={}) {
+  const outputs=new Map(), trace=[], calls=[], waits=[];
   let queue=[], current=null, name=from, input=[{json:{}}], error=null, previous=null;
   const nativeRunData={};
   const environment = json => ({$json:json,$execution:{id:'test'},$input:{all:()=>input,first:()=>input[0]},
@@ -48,6 +48,10 @@ function run({issues=[issue()],comments={},events={},row=idle(),fault,from='Manu
         result=vm.runInNewContext(`(function(){${p.jsCode}\n})()`,environment(input[0]?.json),{timeout:1000});
       } else if(n.type.endsWith('.if')) {
         branch=evaluate(p.conditions.conditions[0].leftValue,input[0].json)?0:1;
+      } else if(n.type.endsWith('.wait')) {
+        assert.equal(p.resume,'timeInterval');assert.equal(p.unit,'seconds');
+        const seconds=evaluate(p.amount,input[0]?.json);assert([10,30].includes(seconds));
+        waits.push({seconds,busy:row?.busy,execution_id:row?.execution_id,issue_number:row?.issue_number});
       } else if(n.type.endsWith('.splitInBatches')) {
         if(!queue.length && current===null) queue=input.map(i=>i.json);
         current=queue.shift();
@@ -62,10 +66,15 @@ function run({issues=[issue()],comments={},events={},row=idle(),fault,from='Manu
       } else if(n.type.endsWith('.httpRequest')) {
         const url=evaluate(p.url,input[0]?.json), requestBody=p.sendBody?evaluate(p.jsonBody,input[0]?.json):null;
         calls.push({name,method:p.method,url,body:requestBody});
-        let data, statusCode=200;
+        let data, statusCode=200, headers={};
         const number=Number(url.match(/\/issues\/(\d+)/)?.[1]), target=issues.find(i=>i.number===number);
         if(url.endsWith(':countTokens')) data=clone(countResponse);
-        else if(url.includes('generativelanguage')) data=clone(response);
+        else if(url.includes('generativelanguage')) {
+          const index=calls.filter(c=>c.name==='Gemini generateContent').length-1;
+          const supplied=generationResponses?.[index];
+          if(supplied){statusCode=supplied.statusCode;headers=clone(supplied.headers??{});data=clone(supplied.body);}
+          else data=clone(response);
+        }
         else if(name==='Discover issues') data=clone(issues);
         else if(url.endsWith('/events')) data=clone(events[number]??[event(R.state(target))]);
         else if(url.endsWith('/comments') && p.method==='GET') data=clone(comments[number]??[]);
@@ -78,7 +87,7 @@ function run({issues=[issue()],comments={},events={},row=idle(),fault,from='Manu
           (events[number]??=[]).push(event(requestBody.labels[0],Math.max(1,...Object.values(events).flat().map(e=>e.id))+1));
         } else if(p.method==='DELETE') { target.labels=target.labels.filter(l=>l.name!==decodeURIComponent(url.split('/').at(-1)));data=clone(target.labels); }
         else data=clone(target);
-        result=[{json:{statusCode,body:data,headers:{}}}];
+        result=[{json:{statusCode,body:data,headers}}];
         if(fault?.at===name && fault.after) throw Error('Acknowledgement lost after side effect');
       }
       if(fault?.at===name && fault.result) result=fault.result(result);
@@ -90,7 +99,7 @@ function run({issues=[issue()],comments={},events={},row=idle(),fault,from='Manu
       assert(next.length<=1,'unreviewed fanout');previous={name,branch,runIndex:nativeRunData[name].length-1};name=next[0]?.node;input=result;
     }
   } catch(e) {error=e;}
-  return {row,error,issues,comments,events,trace,calls,outputs};
+  return {row,error,issues,comments,events,trace,calls,waits,outputs};
 }
 function good(r) { assert.equal(r.error,null,r.error?.stack);assert.equal(r.row.busy,false);assert(r.trace.includes('Confirm idle')); }
 function held(r) {
@@ -101,7 +110,7 @@ test('SHA-256 UTF-8/LF known and multiblock vectors',()=>{
   for(const s of ['', 'abc','æ 😀\n','x'.repeat(5000)]) assert.equal(R.sha256(s),crypto.createHash('sha256').update(s).digest('hex'));
   assert.equal(R.source(issue(),[comment(2,'a\r\nb')]).source_digest,R.source(issue(),[comment(2,'a\nb')]).source_digest);
 });
-test('inactive graph, saved credentials, pagination, no retry or approval path',()=>{
+test('inactive graph, saved credentials, pagination, no generic retry or approval path',()=>{
   assert.equal(graph.active,false);assert.equal(nodes.size,graph.nodes.length);assert.deepEqual(graph.pinData,{});
   for(const n of nodes.values()) {
     assert(!n.continueOnFail && !n.retryOnFail && !n.disabled);
@@ -248,10 +257,60 @@ test('HTTP failure and uncertain release cannot report completion',()=>{
   }
   const r=run({fault:{at:'Check release receipt',throw:true}});assert(r.error);assert(!r.trace.includes('Report completion'));
 });
+const unavailable=(headers={})=>({statusCode:503,body:{error:{status:'UNAVAILABLE'}},headers});
+const accepted=()=>({statusCode:200,body:model()});
+test('503 then success waits 10s under the same guard, counts once and posts once',()=>{
+  const r=run({generationResponses:[unavailable(),accepted()]});good(r);
+  assert.deepEqual(r.waits.map(w=>w.seconds),[10]);assert(r.waits.every(w=>w.busy===true&&w.execution_id==='test'&&w.issue_number===1));
+  assert.equal(r.calls.filter(c=>c.name==='Gemini countTokens').length,1);
+  assert.equal(r.calls.filter(c=>c.name==='Gemini generateContent').length,2);
+  assert.equal(r.calls.filter(c=>c.name==='Post refinement').length,1);
+  assert.equal(r.outputs.get('Report completion')[0].json.generation.attempt_count,2);
+});
+test('two explicit 503 responses wait 10s/30s, third success reuses identical payload',()=>{
+  const r=run({generationResponses:[unavailable(),unavailable(),accepted()]});good(r);
+  assert.deepEqual(r.waits.map(w=>w.seconds),[10,30]);
+  const requests=r.calls.filter(c=>c.name==='Gemini generateContent');assert.equal(requests.length,3);
+  assert(requests.every(c=>JSON.stringify(c.body)===JSON.stringify(requests[0].body)));
+  assert.equal(r.calls.filter(c=>c.name==='Gemini countTokens').length,1);
+  assert.equal(r.comments[1].length,1);assert.equal(r.outputs.get('Report completion')[0].json.generation.attempt_count,3);
+});
+test('three unavailable responses exhaust exactly three attempts and retain hold',()=>{
+  const r=run({generationResponses:[unavailable(),unavailable(),unavailable()]});held(r);
+  assert.deepEqual(r.waits.map(w=>w.seconds),[10,30]);assert.equal(r.calls.filter(c=>c.name==='Gemini generateContent').length,3);
+  assert(!r.trace.includes('Post refinement'));assert.equal(R.state(r.issues[0]),'Refining');
+});
+test('other statuses, non-UNAVAILABLE 503s, and malformed output are never retried',()=>{
+  for(const response of [{statusCode:503,body:{error:{status:'OTHER'}}},{statusCode:429,body:{error:{status:'RESOURCE_EXHAUSTED'}}},{statusCode:400,body:{}},{statusCode:401,body:{}},{statusCode:500,body:{}},{statusCode:200,body:{}}]) {
+    const r=run({generationResponses:[response]});held(r);assert.equal(r.waits.length,0);assert.equal(r.calls.filter(c=>c.name==='Gemini generateContent').length,1);
+  }
+});
+test('network failure or lost generation response never triggers an automatic retry',()=>{
+  for(const fault of [{at:'Gemini generateContent',throw:true},{at:'Gemini generateContent',after:true}]) {
+    const r=run({fault});held(r);assert.equal(r.waits.length,0);assert(r.calls.filter(c=>c.name==='Gemini generateContent').length<=1);
+  }
+});
+test('source edit, new discussion, or changed state during backoff prevents another call',()=>{
+  for(const before of [x=>{x.issues[0].body='changed';},x=>{(x.comments[1]??=[]).push(comment(20000,'new input'));},x=>{x.issues[0].labels=[{name:'Approved'}];}]) {
+    const r=run({generationResponses:[unavailable(),accepted()],fault:{at:'Retry backoff',before}});held(r);
+    assert.equal(r.calls.filter(c=>c.name==='Gemini generateContent').length,1);assert(!r.trace.includes('Post refinement'));
+  }
+});
+test('backoff interruption and changed guard ownership never resume or release',()=>{
+  const interrupted=run({generationResponses:[unavailable()],fault:{at:'Retry backoff',throw:true}});held(interrupted);
+  const changed=run({generationResponses:[unavailable()],fault:{at:'Retry backoff',before:x=>{x.row.execution_id='other';}}});
+  assert(changed.error);assert.equal(changed.row.busy,true);assert.equal(changed.row.execution_id,'other');assert(!changed.trace.includes('Release control'));
+  assert.equal(changed.calls.filter(c=>c.name==='Gemini generateContent').length,1);
+});
+test('server Retry-After is respected within the bounded waits or stops for manual recovery',()=>{
+  const ok=run({generationResponses:[unavailable({'retry-after':'5'}),accepted()]});good(ok);assert.deepEqual(ok.waits.map(w=>w.seconds),[10]);
+  for(const value of ['60','invalid']){const r=run({generationResponses:[unavailable({'retry-after':value})]});held(r);assert.equal(r.waits.length,0);assert.equal(r.calls.filter(c=>c.name==='Gemini generateContent').length,1);}
+});
 console.log(`${count} local refinement scenario groups passed; native/live T012/T014 checks UNRUN.`);
 if(process.argv.includes('--native-fixtures')) {
   // Synthetic successful/no-work/held contexts for every parameter, never live issue/model data.
   good(run({nativeLabel:'initial-refinement'}));
+  good(run({generationResponses:[unavailable(),unavailable(),accepted()],nativeLabel:'retry-twice'}));
   good(run({issues:[],nativeLabel:'empty-poll'}));
   const initial=run();good(initial);
   good(run({issues:clone(initial.issues),comments:clone(initial.comments),events:clone(initial.events),nativeLabel:'unchanged-ready'}));

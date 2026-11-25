@@ -71,7 +71,8 @@ full benchmark tests merely to reconfirm the verified network path.
 Runtime inputs remain `factory/templates/task.md` and `factory/prompts/refinement.md`;
 `.specify/templates/` guides development artifacts only. Use the exact
 [Gemini request/output contract](contracts/refinement.md), including bounded input/output,
-JSON schema, pending decisions, 120-second timeout and no automatic retries or paid fallback.
+JSON schema, pending decisions, 120-second timeout and only the owner-approved bounded
+503 UNAVAILABLE generation retries (10/30-second waits, three attempts maximum); no paid fallback.
 Before activation:
 
 1. Verify n8n owner login through SSH. Save the free-tier API key privately as a dedicated
@@ -84,7 +85,9 @@ Before activation:
    (T012/T014). Both use the same saved Gemini Header Auth credential. The earlier Node-in-container
    smoke test did not exercise n8n's credential store or workflow engine. Keep schedules inactive.
 5. Verify API/quota errors stop and retain the shared flag, with redacted evidence and manual
-   recovery; no silent retry/model fallback. Reuse the appropriate guard/story checks.
+   recovery. Verify selective 503 retries, identical counted payload, guard/source rechecks,
+   exhaustion and interruption holds after the retry revision is manually imported. No replay
+   or model fallback. Reuse the appropriate guard/story checks.
 
 In the n8n Data Tables UI, create `factory_control` with the exact columns in
 [data-model.md](data-model.md), and one `global` row with `busy=false`. This is not a task ledger.

@@ -19,7 +19,7 @@ for (const name of ['Verify release ownership','Check release receipt','Confirm 
   n.parameters.jsCode = n.parameters.jsCode.replace('row.issue_number !== expected.issue_number', "row.issue_number !== $('Require acknowledged completion').first().json.issue_number");
 }
 function add(name,type,parameters,extra={}) {
-  const n = {id:hash('refine:'+name).slice(0,32),name,type:`n8n-nodes-base.${type}`,typeVersion:{code:2,if:2.2,httpRequest:4.2,splitInBatches:3,stickyNote:1,dataTable:1.1}[type],position:[2000+workflow.nodes.length*200,0],parameters,...extra};
+  const n = {id:hash('refine:'+name).slice(0,32),name,type:`n8n-nodes-base.${type}`,typeVersion:{code:2,if:2.2,httpRequest:4.2,splitInBatches:3,stickyNote:1,dataTable:1.1,wait:1.1}[type],position:[2000+workflow.nodes.length*200,0],parameters,...extra};
   workflow.nodes.push(n); return n;
 }
 function code(name,body) { return add(name,'code',{mode:'runOnceForAllItems',jsCode:runtime+'\nreturn (() => {\n'+body+'\n})();'}); }
@@ -87,8 +87,19 @@ code('Prepare Gemini',`demand($('Read Refining issue').first().json.statusCode==
 gate('Reuse marked output','$json.existing !== null');
 http('Gemini countTokens','https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:countTokens',{method:'POST',body:'={{ $json.count_payload }}',gemini:true});
 code('Check token budget',`const r=$input.first().json; demand(r.statusCode===200 && !r.body?.error,'Token count request failed; no inference or retry');\nconst payload=$('Prepare Gemini').first().json.payload;\nconst budget=checkTokenBudget(r.body,payload);\nreturn [{json:{payload,budget}}];`);
+code('Initialize generation attempts',`const {payload,budget}=$input.first().json;\nreturn [{json:generationState({payload,budget,attempt:1,attempts:[],wait_before_seconds:0})}];`);
+code('Generation state',`const current=generationState($input.first().json);\ndemand(current.budget.payload_sha256===$('Check token budget').first().json.budget.payload_sha256,'Generation payload changed from counted revision');\nreturn [{json:current}];`);
+const generationGuard=structuredClone(workflow.nodes.find(n=>n.name==='Read acquired control'));
+generationGuard.name='Read generation guard';generationGuard.id=hash(generationGuard.name).slice(0,32);workflow.nodes.push(generationGuard);
+code('Verify generation guard',`const rows=$input.all().map(i=>i.json), expected=$('Prepare acquisition').first().json;\ndemand(rows.length===1,'Generation guard must be a singleton');\nconst row=rows[0]; demand(row.id===expected.id && row.key==='global' && row.busy===true && row.execution_id===expected.execution_id && row.started_at===expected.started_at && row.issue_number===${plan}.issue.number,'Generation guard ownership changed; retain hold');\nreturn [{json:$('Generation state').first().json}];`);
+http('Read before generation',`={{ ${issueURL} }}`);
+http('Comments before generation',`={{ ${issueURL} + '/comments' }}`,{paginated:true});
+code('Prepare generation attempt',`demand($('Read before generation').first().json.statusCode===200,'Generation source read failed; retain guard');\nconst p=${plan}, issue=${body('Read before generation')}, comments=${values('Comments before generation')};\nunchanged(p,issue,comments,'Refining');\ndemand(JSON.stringify(history(comments,issue).map(r=>({id:r.comment.id,body:r.comment.body,updated_at:r.comment.updated_at})))===p.history_snapshot,'Refinement history changed before generation');\nreturn [{json:generationState($('Generation state').first().json)}];`);
 http('Gemini generateContent','https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent',{method:'POST',body:'={{ $json.payload }}',gemini:true});
-code('Validate and render',`const r=$input.first().json; demand(r.statusCode===200,'Gemini request failed; inspect private execution, no retry');\nconst result=validateOutput(r.body);\nreturn [{json:{body:render(${plan},result,${JSON.stringify(template)}),model_version:result.model_version,usage:result.usage}}];`);
+code('Evaluate generation attempt',`return [{json:generationResult($input.first().json,$('Generation state').first().json)}];`);
+gate('Retry unavailable','$json.retry');
+add('Retry backoff','wait',{resume:'timeInterval',amount:'={{ $json.retry_delay_seconds }}',unit:'seconds'});
+code('Validate and render',`const r=$input.first().json; demand(r.statusCode===200,'Generation response not successful; retain guard');\nconst result=validateOutput(r.body);\nreturn [{json:{body:render(${plan},result,${JSON.stringify(template)}),model_version:result.model_version,usage:result.usage}}];`);
 http('Read before comment',`={{ ${issueURL} }}`);
 http('Comments before post',`={{ ${issueURL} + '/comments' }}`,{paginated:true});
 code('Validate before comment',`demand($('Read before comment').first().json.statusCode===200,'Issue read failed');\nconst comments=${values('Comments before post')}; unchanged(${plan},${body('Read before comment')},comments,'Refining');\ndemand(JSON.stringify(history(comments,${body('Read before comment')}).map(r=>({id:r.comment.id,body:r.comment.body,updated_at:r.comment.updated_at})))===${plan}.history_snapshot,'Refinement history changed');\nreturn [{json:$('Validate and render').first().json}];`);
@@ -100,8 +111,8 @@ code('Validate before Ready',`demand($('Read before Ready').first().json.statusC
 transition('Ready','Ready for approval',"'Refining'");
 http('Read final issue',`={{ ${issueURL} }}`);
 http('Read final comments',`={{ ${issueURL} + '/comments' }}`,{paginated:true});
-code('Success',`demand($('Read final issue').first().json.statusCode===200,'Final issue read failed');\nconst p=${plan}, issue=${body('Read final issue')}, comments=${values('Read final comments')};\nunchanged(p,issue,comments,'Ready for approval');\nconst matches=history(comments,issue).filter(r=>r.meta.source_key===p.meta.source_key); demand(matches.length===1,'Final refinement missing');\nconst budget=p.existing?null:$('Check token budget').first().json.budget;\nreturn [{json:{outcome:'success',acknowledged:true,issue_number:p.issue.number,source_key:p.meta.source_key,refinement_comment_id:matches[0].comment.id,budget}}];`);
-workflow.nodes.find(n=>n.name==='Report completion').parameters.jsCode="const work=$('Require acknowledged completion').first().json;\nreturn [{json:{status:'released',outcome:work.outcome,...(work.outcome==='success'?{issue_number:work.issue_number,source_key:work.source_key,refinement_comment_id:work.refinement_comment_id,budget:work.budget}:{}),control:$input.first().json}}];";
+code('Success',`demand($('Read final issue').first().json.statusCode===200,'Final issue read failed');\nconst p=${plan}, issue=${body('Read final issue')}, comments=${values('Read final comments')};\nunchanged(p,issue,comments,'Ready for approval');\nconst matches=history(comments,issue).filter(r=>r.meta.source_key===p.meta.source_key); demand(matches.length===1,'Final refinement missing');\nconst budget=p.existing?null:$('Check token budget').first().json.budget;\nconst generation=p.existing?null:$('Evaluate generation attempt').first().json.generation;\nreturn [{json:{outcome:'success',acknowledged:true,issue_number:p.issue.number,source_key:p.meta.source_key,refinement_comment_id:matches[0].comment.id,budget,generation}}];`);
+workflow.nodes.find(n=>n.name==='Report completion').parameters.jsCode="const work=$('Require acknowledged completion').first().json;\nreturn [{json:{status:'released',outcome:work.outcome,...(work.outcome==='success'?{issue_number:work.issue_number,source_key:work.source_key,refinement_comment_id:work.refinement_comment_id,budget:work.budget,generation:work.generation}:{}),control:$input.first().json}}];";
 chain('Verify acquisition','Discover issues','Discover candidates','Have candidates');
 connect('Have candidates','Each candidate',0); connect('Have candidates','No work',1);
 connect('Each candidate','No work',0); connect('Each candidate','Read stage events',1);
@@ -110,8 +121,10 @@ connect('New revision','Set issue context',0); connect('New revision','Each cand
 chain('Set issue context','Check issue context','Reread source issue','Reread stage events','Reread source comments','Validate before Refining','Add Refining');
 chain('Check removed Refining','Read Refining issue','Read Refining comments','Prepare Gemini','Reuse marked output');
 connect('Reuse marked output','Read before Ready',0); connect('Reuse marked output','Gemini countTokens',1);
-chain('Gemini countTokens','Check token budget','Gemini generateContent');
-chain('Gemini generateContent','Validate and render','Read before comment','Comments before post','Validate before comment','Post refinement','Check comment receipt','Read before Ready');
+chain('Gemini countTokens','Check token budget','Initialize generation attempts','Generation state','Read generation guard','Verify generation guard','Read before generation','Comments before generation','Prepare generation attempt','Gemini generateContent','Evaluate generation attempt','Retry unavailable');
+connect('Retry unavailable','Retry backoff',0);connect('Retry unavailable','Validate and render',1);
+connect('Retry backoff','Generation state');
+chain('Validate and render','Read before comment','Comments before post','Validate before comment','Post refinement','Check comment receipt','Read before Ready');
 chain('Read before Ready','Comments before Ready','Validate before Ready','Add Ready');
 chain('Check removed Ready','Read final issue','Read final comments','Success','Require acknowledged completion');
 connect('No work','Require acknowledged completion');

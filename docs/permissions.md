@@ -57,7 +57,9 @@ execution logs. Do not enable model tools, paid billing or automatic fallback. O
 current quota before activation/retry. Development `.specify/templates/` is not runtime context.
 The owner-approved countTokens preflight sends the same bounded public task/prompt/schema data
 to the same Gemini model API using the existing saved key. It does not generate content or
-grant new authority. No new credential, billing change or provider fallback is introduced.
+grant new authority. No new credential, billing change or provider fallback is introduced. Owner-approved explicit
+generation 503 UNAVAILABLE retries reuse that same payload/key at most twice after 10/30 seconds.
+They add no tools, permissions, GitHub write retry or external resume endpoint.
 
 ## Export and public evidence boundary
 

@@ -1,15 +1,18 @@
-// Read synthetic fixtures on stdin; evaluate parameters only, never execute nodes/workflows.
+// Read synthetic fixtures on stdin; resolve parameters and check Wait with a fake context.
 // Run with the installed n8n packages, e.g. in the isolated test container. No credentials,
-// HTTP/model calls, n8n imports, database access or guard resets are performed.
+// HTTP/model calls, live workflows, n8n imports, database access or guard resets are performed.
 const fs = require('node:fs');
 const assert = require('node:assert/strict');
 const packageRoot = process.argv[2] || '/usr/local/lib/node_modules/n8n';
-const {Workflow,Expression} = require(`${packageRoot}/node_modules/n8n-workflow`);
+const {Workflow,Expression,MAX_IN_PROCESS_WAIT_MS} = require(`${packageRoot}/node_modules/n8n-workflow`);
 const {NodeExecutionContext} = require(`${packageRoot}/node_modules/n8n-core/dist/execution-engine/node-execution-context/node-execution-context.js`);
 const {HttpRequestV3} = require(`${packageRoot}/node_modules/n8n-nodes-base/dist/nodes/HttpRequest/V3/HttpRequestV3.node.js`);
+const {Wait} = require(`${packageRoot}/node_modules/n8n-nodes-base/dist/nodes/Wait/Wait.node.js`);
+const {BaseExecuteContext} = require(`${packageRoot}/node_modules/n8n-core/dist/execution-engine/node-execution-context/base-execute-context.js`);
 const fixtureSet = JSON.parse(fs.readFileSync(0,'utf8'));
 const httpType = new HttpRequestV3({name:'httpRequest',displayName:'HTTP Request',group:['transform'],version:4.2,defaults:{name:'HTTP Request'},inputs:['main'],outputs:['main']});
-const nodeTypes = {getByNameAndVersion:type=>type.endsWith('.httpRequest') ? httpType : {
+const waitType = new Wait();
+const nodeTypes = {getByNameAndVersion:type=>type.endsWith('.httpRequest') ? httpType : type.endsWith('.wait') ? waitType : {
   description:{name:type.split('.').at(-1),properties:[],inputs:['main'],outputs:['main','main']},
 }};
 const workflow = new Workflow({...structuredClone(fixtureSet.graph),id:'offline-expression-check',active:false,nodeTypes});
@@ -51,8 +54,26 @@ async function main() {
         assert.equal(value,expected,`${node.name}: pagination completion`);checks++;
       }
     }
-    console.log(`PASS ${checks} native VM expression checks (${fixtureSet.fixtures.length} parameter contexts, explicit -1 regression and pagination).`);
-    console.log('Parameter resolution only; full workflow, credentials, GitHub writes and Gemini use remain separately gated.');
+    assert(MAX_IN_PROCESS_WAIT_MS > 30000,'Retry delays must remain below native in-process wait threshold');
+    for(const seconds of [10,30]) {
+      const fixture=fixtureSet.fixtures.find(f=>f.node==='Retry backoff' && f.expected===seconds);
+      assert(fixture,`Missing ${seconds}s retry fixture`);
+      const base=context(fixture), input=fixture.input;
+      let requested=false;
+      const fake={getNodeParameter:(name,index)=>NodeExecutionContext.prototype._getNodeParameter.call(base,name,index),
+        getInputData:()=>input,putExecutionToWait:async(until,options)=>{
+          assert.equal(options.acceptsResumeRequest,false);
+          const milliseconds=until.getTime()-Date.now();
+          assert(Math.abs(milliseconds-seconds*1000)<1000);assert(milliseconds<MAX_IN_PROCESS_WAIT_MS);
+          requested=true;
+        }};
+      const result=await waitType.execute(fake);assert(requested);assert.deepEqual(result,[input]);checks++;
+    }
+    const coreContext={runExecutionData:{},additionalData:{setExecutionStatus:()=>{throw Error('Unexpected durable wait');}}};
+    await BaseExecuteContext.prototype.putExecutionToWait.call(coreContext,new Date(Date.now()),{acceptsResumeRequest:false});
+    assert.equal(coreContext.runExecutionData.waitTill,undefined);checks++;
+    console.log(`PASS ${checks} native checks (${fixtureSet.fixtures.length} VM parameter contexts, regression, pagination and in-process Wait boundary).`);
+    console.log('Synthetic parameter/timer checks only; full workflow, actual delay/cancellation, credentials and provider retries remain separately gated.');
   } finally { await Expression.disposeExpressionEngine(); }
 }
 main().catch(error=>{console.error(error.message);process.exitCode=1;});

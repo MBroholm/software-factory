@@ -170,6 +170,51 @@ function checkTokenBudget(response, payload) {
     `Token budget exceeded (${budget.reserved_total_tokens}/4096); owner must shorten/split, no truncation`);
   return budget;
 }
+function generationState(state) {
+  demand(state && Number.isInteger(state.attempt) && state.attempt >= 1 && state.attempt <= 3
+    && Array.isArray(state.attempts) && state.attempts.length === state.attempt-1,
+  'Invalid generation attempt state; retain guard');
+  demand(state.wait_before_seconds === [0,10,30][state.attempt-1]
+    && state.attempts.every((entry,i) => entry.attempt === i+1 && entry.http_status === 503
+      && entry.provider_status === 'UNAVAILABLE' && entry.wait_before_seconds === [0,10,30][i]),
+  'Invalid generation retry history; retain guard');
+  const expected = checkTokenBudget({totalTokens:state.budget?.counted_input_tokens},state.payload);
+  demand(Object.keys(expected).length === Object.keys(state.budget).length
+    && Object.entries(expected).every(([key,value]) => state.budget[key] === value), 'Counted payload/budget changed before generation');
+  return state;
+}
+function retryAfterSeconds(headers, now) {
+  const entries = Object.entries(headers ?? {}).filter(([key]) => key.toLowerCase() === 'retry-after');
+  demand(entries.length <= 1,'Ambiguous Retry-After; manual recovery required');
+  if (!entries.length) return 0;
+  const value = String(entries[0][1]).trim();
+  demand(value.length > 0 && value.length <= 128,'Invalid Retry-After; manual recovery required');
+  if (/^\d+$/.test(value)) {
+    demand(Number.isSafeInteger(Number(value)),'Invalid Retry-After; manual recovery required');
+    return Number(value);
+  }
+  demand(/^[A-Za-z]{3}, \d{2} [A-Za-z]{3} \d{4} \d{2}:\d{2}:\d{2} GMT$/.test(value),
+    'Invalid Retry-After; manual recovery required');
+  const timestamp = Date.parse(value);
+  demand(Number.isFinite(timestamp),'Invalid Retry-After; manual recovery required');
+  return Math.max(0,Math.ceil((timestamp-now)/1000));
+}
+function generationResult(response, original, now=Date.now()) {
+  const state = generationState(original);
+  demand(Number.isInteger(response?.statusCode) && response.statusCode >= 100 && response.statusCode <= 599,
+    'Missing/invalid generation HTTP status; no automatic retry');
+  const unavailable = response.statusCode === 503 && response.body?.error?.status === 'UNAVAILABLE';
+  const entry = {attempt:state.attempt,http_status:response.statusCode,provider_status:unavailable?'UNAVAILABLE':null,
+    wait_before_seconds:state.wait_before_seconds};
+  const attempts = [...state.attempts,entry];
+  if (response.statusCode === 200) return {...response,retry:false,generation:{attempt_count:state.attempt,attempts}};
+  demand(unavailable,`Gemini HTTP ${response.statusCode}; no automatic retry; retain guard`);
+  demand(state.attempt < 3,'Gemini HTTP 503 UNAVAILABLE after 3 attempts; retries exhausted; retain guard');
+  const delay = [10,30][state.attempt-1];
+  demand(retryAfterSeconds(response.headers,now) <= delay,'Retry-After exceeds bounded retry delay; manual recovery required');
+  return {retry:true,payload:state.payload,budget:state.budget,attempt:state.attempt+1,
+    attempts,wait_before_seconds:delay,retry_delay_seconds:delay};
+}
 function validateOutput(response) {
   demand(Array.isArray(response.candidates) && response.candidates.length === 1, 'Expected one candidate');
   const c = response.candidates[0], parts = c.content?.parts;
@@ -226,4 +271,4 @@ function pages(items) {
   demand(!/rel="next"/.test(last.headers?.link ?? '') && last.body.length < 100, 'Incomplete pagination');
   return result;
 }
-module.exports = {OWNER_ID,REPOSITORY,STATES,PROMPT_VERSION,TEMPLATE_VERSION,lf,bytes,sha256,demand,state,eligible,discover,factoryComment,canonical,source,history,analyze,unchanged,request,countRequest,checkTokenBudget,validateOutput,render,pages};
+module.exports = {OWNER_ID,REPOSITORY,STATES,PROMPT_VERSION,TEMPLATE_VERSION,lf,bytes,sha256,demand,state,eligible,discover,factoryComment,canonical,source,history,analyze,unchanged,request,countRequest,checkTokenBudget,generationState,retryAfterSeconds,generationResult,validateOutput,render,pages};

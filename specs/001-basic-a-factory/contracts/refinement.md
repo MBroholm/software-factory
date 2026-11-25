@@ -84,13 +84,25 @@ Reject truncated, empty or malformed output. Never publish thought parts/signatu
 Schema validity alone is insufficient: the owner judges whether criteria are checkable, the
 rewrite preserves intent, and questions expose missing decisions rather than invent answers.
 
-One count-only request then at most one inference per new revision; 120-second timeout for
-each, no automatic retries. An existing exact marked revision skips both provider calls. Failure
-holds the shared flag and leaves visible `Refining` plus private failure evidence. Owner recovery
-chooses retry only after inspection. A 429/quota error follows the same held-failure path;
-owner checks quota availability before an explicit retry. No automatic retry/backoff queue,
-quota ledger, local-model fallback or paid request is added. Inactive workflows cannot claim
-these guard paths pass until their actual execution tests run.
+One count-only request per new revision, with a 120-second timeout on each provider call.
+On 2026-11-25 the owner approved a narrow generation retry exception: only an explicit HTTP
+503 with `body.error.status=UNAVAILABLE` permits two additional attempts, after 10 seconds and
+then 30 seconds (three total). Reuse the identical counted payload and budget; do not recount.
+Keep the same live execution and busy ownership. Before every generation attempt, reread and
+verify the singleton guard, issue state/owner/source, captured discussion and refinement history.
+An intervening change stops before another provider call. Respect Retry-After: if invalid or
+longer than the next bounded delay, stop for manual recovery rather than retrying early.
+
+Use only short interval waits below the deployed n8n in-process threshold, with no external
+resume endpoint or durable waiting execution. Cancellation/restart does not resume the attempt;
+the guard remains held. Maximum configured provider timeouts total 360 seconds plus 40 seconds
+of backoff, with additional GitHub reads. The serialized execution slot stays occupied.
+Record attempt count, statuses and delays in private node output and successful completion.
+No count, GitHub write, network/timeout/lost-response, authentication/quota/429, other API status,
+or malformed/truncated output retry is authorized. Exhaustion or any such failure retains busy
+and visible `Refining` for inspected owner recovery. An exact marked revision skips both provider
+calls. No queue, failed-execution replay, quota ledger, model switch or paid fallback is added.
+Native live retry/cancellation behavior remains unverified until owner manual import and testing.
 
 ## Data transfer and credential boundary
 

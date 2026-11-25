@@ -91,7 +91,7 @@ no coding agent is needed to demonstrate this story.
 
 - [X] T010 [US1] Complete owner-only paginated discovery, PR-object exclusion and source-state validation in `factory/workflows/refine.json`, citing `Task issue.author ID`, `Task issue.current labels`, `Task issue.open/closed status` and preserved unrelated labels in [data-model.md — Task issue](data-model.md#task-issue); ordinary no-work/non-owner/already-processed paths release an acquired guard.
 - [X] T011 [US1] Implement canonical source capture, marker filtering and repeat suppression in `factory/workflows/refine.json` using `Refinement comment.source body SHA-256`, `Refinement comment.captured source comment IDs`, `Refinement comment.last included unmarked owner comment ID`, `Refinement comment.prompt version`, `Refinement comment.source key` and its marker definition in [data-model.md — Refinement comment](data-model.md#refinement-comment); retain prior revisions and detect captured edits/deletions rather than including every later session/rework comment.
-- [ ] T012 [US1] Finalize `factory/templates/task.md` and `factory/prompts/refinement.md` from the early trial, assessing material changes and running only missing/change-affected checks, then wire their reviewed versions into `factory/workflows/refine.json` with bounded Gemini generateContent request using a saved header-auth credential, strict final-output validation and fixed Markdown rendering per `contracts/refinement.md`; verify the actual credential/HTTP node after owner manual import before activation. Make Ollama startup optional in Compose without deleting the existing cache/data or changing the server without a reviewed rollout; do not load `.specify/templates/` or give the model state-changing tools.
+- [X] T012 [US1] Finalize `factory/templates/task.md` and `factory/prompts/refinement.md` from the early trial, assessing material changes and running only missing/change-affected checks, then wire their reviewed versions into `factory/workflows/refine.json` with bounded Gemini generateContent request using a saved header-auth credential, strict final-output validation and fixed Markdown rendering per `contracts/refinement.md`; verify the actual credential/HTTP node after owner manual import before activation. Make Ollama startup optional in Compose without deleting the existing cache/data or changing the server without a reviewed rollout; do not load `.specify/templates/` or give the model state-changing tools.
 - [X] T013 [US1] Implement `Ideas`/owner Ready-stage discussion -> `Refining` -> validated marked comment -> `Ready for approval` in `factory/workflows/refine.json` per [data-model.md — State transitions](data-model.md#state-transitions); failed/stranded Refining and unknown writes hold for manual recovery, never infer approval or auto-resume.
 - [ ] T014 [US1] Before live exercises, have the owner manually import the reviewed `factory/workflows/refine.json` with the reviewed runtime prompt/template versions; record the reviewed commit and imported revision in `evidence/refinement-validation.md`, then run refinement/revision/unchanged-poll and approval exercises in `specs/001-basic-a-factory/quickstart.md`, extending `factory/tests/fixtures/refinement-cases.json` only for necessary edge inputs, and record outcomes/example output in `evidence/refinement-validation.md`; verify no non-owner processing or factory-comment loop, no duplicate unchanged output, no initial AI approval, and no unexpected-failure release.
 
@@ -107,6 +107,15 @@ handoff; `docs/refinement-example.md` renders accepted evaluation content offlin
 workflow output. No server rollout, import, activation, model call or GitHub mutation was
 performed. US2+ tasks remain out of scope and unchecked.
 
+**T012 integration closeout, 2026-11-25**: Native execution 753 on the owner-imported
+reviewed token-counting workflow passed: countTokens and generateContent HTTP 200, 576 input /
+106 output tokens, one generation, validated marked comment 7160240711 on issue #1, Ready for
+approval and verified guard release. Prompt v3/template v1/schema remain unchanged; local tests,
+native VM checks, prior quality evidence and optional Ollama source configuration are retained.
+See `evidence/refinement-validation.md` for source/budget/output evidence and the preceding
+failures/recovery. T012 is complete. T014 remains in progress for unchanged-poll, owner revision,
+approval and remaining acceptance evidence; no production activation or completed build is claimed.
+
 **Checkpoint**: Smallest useful MVP is refinement/revision/approval after Phases 1–2. This is not
 claiming that the complete Basic A build/review loop or final course submission is delivered.
 
@@ -120,6 +129,14 @@ and 223 native VM expression checks pass. A standalone count-only API check on t
 issue returned 576 tokens (2056 reserved total); it is not a native saved-credential/workflow
 pass. T012/T014 remain unchecked pending owner import, recovery and successful live validation.
 See `evidence/refinement-validation.md` for failure history, owner authorization and actual limits.
+
+**US1 retry amendment, 2026-11-25**: After execution 756 returned another 503, owner authorized
+selective generation retries: at most three attempts, 10/30-second in-process waits, explicit
+503 UNAVAILABLE only, same counted payload and guard/source rechecks before each attempt.
+Contracts/notes/tests updated. Other failures/exhaustion/interruption retain busy. Local 35
+scenario groups and 291 native synthetic parameter/Wait checks pass. Actual delayed workflow
+retry/cancellation/restart checks remain pending owner manual import under T014. T012 remains
+complete from 753; T014 stays unchecked. Earlier no-retry statements describe prior revisions.
 
 ## Phase 4: User Story 2 — Build manually with traceable decisions (P1)
 

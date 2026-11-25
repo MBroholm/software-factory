@@ -29,8 +29,10 @@ private execution data before publishing. Do not put the key in Compose, workflo
 Before activation check active project quotas (owner-reported 15 RPM / 250,000 input TPM / 500 RPD,
 subject to change/shared usage). Infer only for new revisions. HTTP 429, transport/API errors,
 timeouts and invalid output retain the shared busy flag for pause/drain/inspect/manual recovery;
-no automatic retries, quota ledger, paid upgrade or alternate-model fallback. These are planned
-workflow behaviors, not checks already passed by the standalone smoke test.
+only explicit generation HTTP 503 UNAVAILABLE has bounded 10/30-second retries (three total
+attempts), with the same counted payload and guard/source rechecks. Exhaustion retains busy.
+No quota ledger, paid upgrade or alternate-model fallback. Retry live checks remain pending;
+the standalone smoke test did not validate this workflow behavior.
 
 The original Ollama instructions below are **historical trial procedures**, retained for evidence
 reproduction. They are not the adopted provider's deployment instructions. The current activation
@@ -416,7 +418,15 @@ remain paused and investigate; do not retry a whole execution to discover what h
 
 For a Gemini timeout/quota/invalid-output failure, inspect request completion/returned metadata
 privately, the issue's `Refining` state and any published output. Check quota availability before
-choosing a fresh attempt. No automatic inference retry, billing change or model fallback.
+choosing a fresh attempt. Only explicit generation 503 UNAVAILABLE is retried in the same live
+execution, at most twice after 10/30 seconds, per the refinement contract. Failure/exhaustion,
+interruption and restart retain the hold; no automatic reset, billing change or model fallback.
+
+When manually recovering stranded Refining, inspect output markers before normalizing state.
+Owner discussion is captured relative to the new Ideas/Ready stage: a comment posted before
+restoring Ideas is not automatically captured by that new stage. Repost any still-pending request
+as a new owner comment after restoring Ideas, before a fresh whole-workflow execution. Preserve
+the previous discussion and record the deliberate recovery; never silently lose the pending input.
 
 ### 3. Record before repair, including GitHub outages
 
@@ -499,7 +509,7 @@ Before export/commit, apply [the export checklist](permissions.md#export-and-pub
 Keep private source exports separate from publishable JSON. The owner imports reviewed files
 through the private editor while paused/drained, saves them inactive and maps every control node
 to the same intended table ID and each credential to its role-specific saved reference. Verify
-node code/connections, no retry/continue-on-error release path, runtime prompt/template/schema
+node code/connections, selective bounded 503 retry loop with no failure-release path, runtime prompt/template/schema
 versions and hashes, schedule settings and serialization. Never import the isolated guard bridge
 or its fixture mutators into production.
 
@@ -525,7 +535,11 @@ story checks. See [the exact handoff and evidence matrix](../evidence/refinement
 Map all Data Table nodes, including Set issue context, and both saved Header Auth credentials.
 The GitHub header is Authorization; Gemini's is x-goog-api-key. The same Gemini credential is
 selected on both countTokens and generateContent. Every request/status/receipt is
-checked; HTTP non-success responses fail the workflow without an automatic retry or release.
+checked; only explicit generation 503 UNAVAILABLE permits two retries (10/30-second waits),
+with unchanged counted payload and guard/source checks before each attempt. Other failures and
+exhaustion stop without release. Map the new Read generation guard node too: eight table nodes
+now share the same intended singleton table. Short waits stay in-process with no resume webhook;
+interruption/restart leaves busy held for manual inspection.
 Use whole-workflow executions only while schedules are paused/drained. Preserve the deliberately
 held T008 row until reconciled, or provision a fresh isolated table. US2/US3 are not implemented.
 
@@ -533,7 +547,7 @@ The owner-approved token preflight replaces whole-input byte estimation. One cou
 precedes each new inference; valid provider count + fixed schema allowance + 768 output + 256
 overhead must fit 4096 tokens. A 32 KiB request-byte cap is transport protection only. Reused
 marked output skips both calls. Count errors/over-budget results retain busy, and generation
-usage is checked again before publishing. Do not reset or retry automatically. The successful
+usage is checked again before publishing. Never automatically reset or replay a failed execution. The successful
 report includes count/reserve/payload-digest evidence; the model prompt/template are unchanged.
 
 ## Constitutional follow-up — instructor confirmation still outstanding
