@@ -13,8 +13,8 @@ including an explicit privacy acceptance criterion and the SSH access section re
 Its first generation attempt succeeded (663 input / 197 output tokens), reserved total 2143/4096,
 and the owner-reported guard is idle. Owner explicitly approved this refinement at
 2026-11-25T11:45:26Z (label event 37246567614). Post-approval poll 758 returned no_work
-and an idle guard, leaving Approved and the six-comment count unchanged. Actual 503 retry/backoff
-was not exercised. This is not a completed build/PR run.
+and an idle guard, leaving Approved and the six-comment count unchanged. This real API run did not exercise 503 retry/backoff; separate native synthetic cases
+766/770/774 subsequently verified retries and exhaustion. This is not a completed build/PR run.
 
 ## Earlier offline rendering
 

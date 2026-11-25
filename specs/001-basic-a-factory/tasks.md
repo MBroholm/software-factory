@@ -93,7 +93,7 @@ no coding agent is needed to demonstrate this story.
 - [X] T011 [US1] Implement canonical source capture, marker filtering and repeat suppression in `factory/workflows/refine.json` using `Refinement comment.source body SHA-256`, `Refinement comment.captured source comment IDs`, `Refinement comment.last included unmarked owner comment ID`, `Refinement comment.prompt version`, `Refinement comment.source key` and its marker definition in [data-model.md — Refinement comment](data-model.md#refinement-comment); retain prior revisions and detect captured edits/deletions rather than including every later session/rework comment.
 - [X] T012 [US1] Finalize `factory/templates/task.md` and `factory/prompts/refinement.md` from the early trial, assessing material changes and running only missing/change-affected checks, then wire their reviewed versions into `factory/workflows/refine.json` with bounded Gemini generateContent request using a saved header-auth credential, strict final-output validation and fixed Markdown rendering per `contracts/refinement.md`; verify the actual credential/HTTP node after owner manual import before activation. Make Ollama startup optional in Compose without deleting the existing cache/data or changing the server without a reviewed rollout; do not load `.specify/templates/` or give the model state-changing tools.
 - [X] T013 [US1] Implement `Ideas`/owner Ready-stage discussion -> `Refining` -> validated marked comment -> `Ready for approval` in `factory/workflows/refine.json` per [data-model.md — State transitions](data-model.md#state-transitions); failed/stranded Refining and unknown writes hold for manual recovery, never infer approval or auto-resume.
-- [ ] T014 [US1] Before live exercises, have the owner manually import the reviewed `factory/workflows/refine.json` with the reviewed runtime prompt/template versions; record the reviewed commit and imported revision in `evidence/refinement-validation.md`, then run refinement/revision/unchanged-poll and approval exercises in `specs/001-basic-a-factory/quickstart.md`, extending `factory/tests/fixtures/refinement-cases.json` only for necessary edge inputs, and record outcomes/example output in `evidence/refinement-validation.md`; verify no non-owner processing or factory-comment loop, no duplicate unchanged output, no initial AI approval, and no unexpected-failure release.
+- [X] T014 [US1] Before live exercises, have the owner manually import the reviewed `factory/workflows/refine.json` with the reviewed runtime prompt/template versions; record the reviewed commit and imported revision in `evidence/refinement-validation.md`, then run refinement/revision/unchanged-poll and approval exercises in `specs/001-basic-a-factory/quickstart.md`, extending `factory/tests/fixtures/refinement-cases.json` only for necessary edge inputs, and record outcomes/example output in `evidence/refinement-validation.md`; verify no non-owner processing or factory-comment loop, no duplicate unchanged output, no initial AI approval, and no unexpected-failure release.
 
 **US1 implementation update, 2026-11-24**: T010/T011/T013 are implemented in inactive
 `factory/workflows/refine.json`; 21 local exported-code/graph scenario groups pass. Runtime
@@ -164,6 +164,16 @@ native fault bridge and 43-case HTTP simulator pass fixture packaging plus 335 i
 Wait checks. The loopback-only synthetic server is ready inside factory-guard-test. Zero full
 bridge cases have run; owner manual import/publication remains required by constitution I/III.
 T014 stays unchecked. See `factory/tests/refinement-bridge.md` and the validation evidence.
+
+
+**T014 reconciled closeout, 2026-11-25**: Required real refinement/revision/unchanged/explicit
+owner approval exercises pass; 41 native synthetic cases, restart hold and full UI cancellation
+are verified within the recorded evidence limits. Acceptance matrix now cites actual execution
+IDs, retains pagination failure 1132 and fixed success 1140, and distinguishes real API runs
+from synthetic HTTP effects. T010–T014 are complete. Historical pending statements above refer
+to earlier checkpoints. No US2+ task is changed, no production activation/merge/build is claimed.
+Final test hold is execution 1218 / issue 101; bridge unpublished and fixture stopped. See the
+closeout/provenance/limits in `evidence/refinement-validation.md`. PR #2 awaits owner review.
 
 ## Phase 4: User Story 2 — Build manually with traceable decisions (P1)
 

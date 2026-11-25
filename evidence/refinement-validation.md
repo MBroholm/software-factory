@@ -1,12 +1,50 @@
 # US1 refinement validation
 
-**Date**: 2026-11-24; observations updated 2026-11-25. **Status**: T010–T013 implemented;
-T012 native saved-credential count/inference and fixed rendering passed in execution 753.
-T014 is in progress: initial refinement, unchanged polling and revision mechanics passed;
-the privacy criterion is now explicit in execution 757’s output, and explicit owner approval
-is verified. Post-approval execution 758 correctly returned no_work and released the guard.
-Remaining native acceptance cases are pending; live 503/backoff behavior remains unexercised. Failures/recovery are retained below. No production activation
-or completed issue/PR-linked build run is claimed.
+**Date**: 2026-11-24; reconciled 2026-11-25. **Status: T010–T014 complete for US1.**
+The required real refinement/revision/unchanged-poll/owner-approval exercises passed, as did
+41 native synthetic fault cases, restart hold verification and full UI cancellation.
+The reconciled acceptance matrix below is authoritative. Earlier dated observations are
+retained as historical records; their pending/unrun statements describe those earlier stages.
+No production activation, US2+ completion or completed issue/PR-linked build run is claimed.
+
+## T014 closeout and evidence boundaries
+
+T014's required owner import, prompt/template identity, live output example, owner revision,
+unchanged suppression, explicit approval, owner-only processing and failure retention are
+supported by the matrix. Real saved-credential runs are 753/755/757; unchanged polls 754/758;
+explicit owner approval event 37246567614 follows corrected refinement 7161366810. Native
+snapshots identify source workflow zcynhzDmEAapj2dT and match the reviewed retry revision's
+Code/connections, eight table mappings and 23 saved HTTP credential references.
+
+Source review revisions: original US1 855033e; token preflight 2f64f85; bounded retries 81008dd;
+native test harness 0639f14; pagination fix **eb1ccb8**. Owner manually imported/published the
+original test bridge and reimported the pagination fix before execution 1140. Bridge ID
+p3E27rtBxAB8zvxL. Latest production-source file SHA-256:
+`ee3f6e782f72ec409d6e9a6cb02ca0f8b9a4b43eccbfad4dff0a9003ffe1ec38`.
+The final test bridge preserves source Code/connections apart from documented synthetic I/O,
+entry/fixture nodes and two explicit exception prefixes. Results are trace-matched in
+`refinement-native-results.json`; operator logs/export snapshots remain private and ignored.
+
+The 35 cases preceding pagination are retained on their tested revision. The executeOnce fix
+changes handling of multiple upstream page items; pagination and later-candidate paths were
+then exercised on the owner-reimported fix. Single-page cases retain their earlier evidence;
+no blanket rerun or claim that every case ran on the same saved version is made. Exact n8n
+saved-version UUIDs were not captured; execution snapshots, source fingerprints, workflow IDs,
+owner import reports and native traces supply revision provenance instead.
+
+Synthetic HTTP/native engine tests exercise real Data Table persistence and HTTP/loop/Wait
+routing, but do not represent additional real provider calls or task/build runs. Retry responses
+were injected; actual provider 503s occurred on older revisions 752/756. Restart hold/no-resume
+uses operator row/HTTP/fixture evidence because the collector has no completed crash trace for
+1204. Native cancellation status for 1218 is confirmed, with empty node runData; its one attempt,
+zero posts and no subsequent calls come from persisted synthetic HTTP logs and the held poll.
+Production activation, final PR acceptance/merge and US2 approval validation remain separate.
+
+Final isolated state: bridge unpublished (404 verified after the main suite; unpublished again
+after cancellation), fixture process stopped, row deliberately **busy=true, execution 1218,
+issue 101**. No automatic reset. This closeout edits evidence/task status only; it neither
+imports nor activates the latest production-source workflow. That still requires owner review
+and manual import before future use. PR #2 is ready for owner review; no merge is inferred.
 
 ## Native suite executed — pagination defect found and fixed in source
 
@@ -349,7 +387,7 @@ Keep the failed hold until schedules are paused/drained, the issue and execution
 and the owner deliberately records/resets it for a new whole-workflow attempt. Do not resume
 the failed execution or run individual nodes.
 
-## Pending native/live acceptance matrix
+## Historical native/live investigation log
 
 ### Execution 756 — repeated provider 503; bounded retry proposed
 
@@ -648,15 +686,19 @@ faults, not production. No fixture-only test below counts as a real owner issue/
 | Owner Ideas issue + actual saved Gemini credential | Refining before one count + at most one inference, marked valid output, Ready, idle guard; model version/usage recorded | PASS execution 753, native trace + owner row/output + public comment. Prior 748/750/751/752 failures retained above |
 | Owner revision while Ready | One new output; captured source IDs and previous output preserved; guard released | PASS revision mechanics 755; corrected privacy criterion and previous constraints verified in 757 output, subsequently accepted by owner |
 | Unchanged poll + owner-authored factory marker | No inference/duplicate output/loop; idle guard | PASS 754 owner no-work/idle output + public unchanged state/comment count; native trace now confirms zero count and generation calls |
-| Non-owner/PR/closed input; non-owner discussion | No processing/trigger; ordinary acquired no-work releases | UNRUN; identify native vs fixture inputs honestly |
-| Multiple pages; first candidate unchanged | Later eligible candidate processed once; no missed pages | UNRUN |
-| Captured edit/deletion or source change during inference | Visible failure/held guard; no stale publication or inferred approval | UNRUN |
-| Malformed output / quota/API failure | Failed execution and held flag, no Ready success or retry | Native 752 API-503 stop with no post/release reached; current persisted hold confirmation pending. Malformed output and quota variants remain unrun |
-| Unknown comment POST / partial label transition | Hold; later poll skips with unchanged context; owner reconciles before reset | UNRUN |
-| Unexpected exception before/after side effect | Guard remains busy; next whole-workflow poll skips; no unconditional release | UNRUN |
-| Stranded Refining / conflicting labels | No auto-resume or guessed transition; held failure | UNRUN |
+| Non-owner/PR/closed input; non-owner discussion | No processing/trigger; ordinary acquired no-work releases | PASS native synthetic 1026/1030/1034/1046; ordinary acquired no-work releases. No second real identity was required or impersonated. |
+| Multiple pages; first candidate unchanged | Later eligible candidate processed once; no missed pages | PASS native synthetic pagination 1140 and later-candidate 1144 on reimported fix; historical 1132 failure retained. |
+| Captured edit/deletion or source change during inference | Visible failure/held guard; no stale publication or inferred approval | PASS native synthetic 1062/1076 and source-during-call 1012; zero publication, held guard and verified later skip. |
+| Malformed output / quota/API failure | Failed execution and held flag, no Ready success; only explicit 503 UNAVAILABLE may retry | PASS native synthetic 886/900/914 (output), 830 (quota), 844/858/872 (other API/transport), 928/942/956 (counts). No publication; guard held. Historical provider 752/756 failures retained. |
+| Unknown comment POST / partial label transition | Hold; later poll skips with unchanged context; owner reconciles before reset | PASS native synthetic 1148/1162: one accepted post before response loss / partial label set retained; held skips preserve effects; explicit inspected fixture resets only between completed cases. |
+| Unexpected exception before/after side effect | Guard remains busy; next whole-workflow poll skips; no unconditional release | PASS native synthetic 1176/1190 and held skips; no failure release. Post-effect case retains exactly one synthetic posted comment. |
+| Stranded Refining / conflicting labels | No auto-resume or guessed transition; held failure | PASS native synthetic 1104/1118; zero count/inference/publication, guard held, later polls skip. |
 | Initial explicit approval | Before owner action: Ready only. Owner removes Ready and explicitly adds Approved; record owner event ID/time and latest refinement URL | PASS: owner event 37246567614 at 2026-11-25T11:45:26Z, actor 202449424, latest refinement 7161366810; details above |
 | Poll after approval | Refine leaves Approved alone; no Building claim (US2 not implemented) | PASS: 758 owner released/no_work/idle output; public issue remains Approved with six comments |
+| Selective 503 retry / exhaustion | Same counted payload, bounded 10/30-second waits, three attempts max; exhaustion held | PASS native synthetic 766/770/774; counts once, posts once on success, zero posts on exhaustion; held skip verified |
+| Source changes during backoff | Recheck and stop before next provider attempt | PASS native synthetic 970/984/998; source/discussion/state changes each stop held |
+| Restart during backoff | Persistent hold, no resumed provider work | PASS operator checks at 1204 and later held poll; no completed native crash trace claimed |
+| Full UI cancellation | Stop live backoff; retain hold, no later call or release | PASS 1218 native canceled status, one synthetic attempt/zero posts, subsequent held skip; cancelled node runData unavailable |
 
 Approval validation/reservation belongs to US2 T015+, which remains out of scope. This story
 demonstrates explicit owner approval and that refinement never grants it. Append a real posted
