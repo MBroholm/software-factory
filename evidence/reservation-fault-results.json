@@ -1,0 +1,526 @@
+{
+  "source_sha256": "ea6760fb5787dd216418596d93c37be981079aca8cc20f9a7f5ec2cab88930b6",
+  "reviewed_bridge_commit": "030c7d1",
+  "workflow_id": "bHUN2AuZtUysarZI",
+  "published_version": "ae08106e-6b30-4f3b-8310-c0cfe593c890",
+  "synthetic_only": true,
+  "regular_cases": [
+    {
+      "case": "success",
+      "execution_id": "1283",
+      "status": "PASS",
+      "native_status": "success",
+      "error_node": null,
+      "guard_after": {
+        "key": "global",
+        "busy": false,
+        "execution_id": "1283",
+        "issue_number": 101,
+        "started_at": "2026-11-25T18:26:39.337Z",
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-25T18:26:39.582Z"
+      },
+      "synthetic_labels_after": [
+        "documentation",
+        "Building"
+      ],
+      "synthetic_posts": 1,
+      "source_named_http_write_nodes": [
+        {
+          "node": "Add Building",
+          "status": 200
+        },
+        {
+          "node": "Remove Approved",
+          "status": 200
+        },
+        {
+          "node": "Post handoff",
+          "status": 201
+        }
+      ],
+      "held_skip_execution_id": null,
+      "fingerprints_match": true
+    },
+    {
+      "case": "occupied",
+      "execution_id": "1287",
+      "status": "PASS",
+      "native_status": "success",
+      "error_node": null,
+      "guard_after": {
+        "key": "global",
+        "busy": false,
+        "execution_id": "1287",
+        "issue_number": null,
+        "started_at": "2026-11-25T18:26:39.821Z",
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-25T18:26:39.872Z"
+      },
+      "synthetic_labels_after": [
+        "Approved",
+        "documentation"
+      ],
+      "synthetic_posts": 0,
+      "source_named_http_write_nodes": [],
+      "held_skip_execution_id": null,
+      "fingerprints_match": true
+    },
+    {
+      "case": "closed-building",
+      "execution_id": "1291",
+      "status": "PASS",
+      "native_status": "success",
+      "error_node": null,
+      "guard_after": {
+        "key": "global",
+        "busy": false,
+        "execution_id": "1291",
+        "issue_number": null,
+        "started_at": "2026-11-25T18:26:40.165Z",
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-25T18:26:40.232Z"
+      },
+      "synthetic_labels_after": [
+        "Approved",
+        "documentation"
+      ],
+      "synthetic_posts": 0,
+      "source_named_http_write_nodes": [],
+      "held_skip_execution_id": null,
+      "fingerprints_match": true
+    },
+    {
+      "case": "nonowner-building",
+      "execution_id": "1295",
+      "status": "PASS",
+      "native_status": "success",
+      "error_node": null,
+      "guard_after": {
+        "key": "global",
+        "busy": false,
+        "execution_id": "1295",
+        "issue_number": null,
+        "started_at": "2026-11-25T18:26:40.474Z",
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-25T18:26:40.523Z"
+      },
+      "synthetic_labels_after": [
+        "Approved",
+        "documentation"
+      ],
+      "synthetic_posts": 0,
+      "source_named_http_write_nodes": [],
+      "held_skip_execution_id": null,
+      "fingerprints_match": true
+    },
+    {
+      "case": "conflicting-building",
+      "execution_id": "1299",
+      "status": "PASS",
+      "native_status": "success",
+      "error_node": null,
+      "guard_after": {
+        "key": "global",
+        "busy": false,
+        "execution_id": "1299",
+        "issue_number": null,
+        "started_at": "2026-11-25T18:26:40.753Z",
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-25T18:26:40.803Z"
+      },
+      "synthetic_labels_after": [
+        "Approved",
+        "documentation"
+      ],
+      "synthetic_posts": 0,
+      "source_named_http_write_nodes": [],
+      "held_skip_execution_id": null,
+      "fingerprints_match": true
+    },
+    {
+      "case": "non-owner",
+      "execution_id": "1303",
+      "status": "PASS",
+      "native_status": "success",
+      "error_node": null,
+      "guard_after": {
+        "key": "global",
+        "busy": false,
+        "execution_id": "1303",
+        "issue_number": null,
+        "started_at": "2026-11-25T18:26:41.080Z",
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-25T18:26:41.136Z"
+      },
+      "synthetic_labels_after": [
+        "Approved",
+        "documentation"
+      ],
+      "synthetic_posts": 0,
+      "source_named_http_write_nodes": [],
+      "held_skip_execution_id": null,
+      "fingerprints_match": true
+    },
+    {
+      "case": "no-approval",
+      "execution_id": "1307",
+      "status": "PASS",
+      "native_status": "error",
+      "error_node": "Validate approval",
+      "guard_after": {
+        "key": "global",
+        "busy": true,
+        "execution_id": "1307",
+        "issue_number": null,
+        "started_at": "2026-11-25T18:26:41.384Z",
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-25T18:26:41.389Z"
+      },
+      "synthetic_labels_after": [
+        "Approved",
+        "documentation"
+      ],
+      "synthetic_posts": 0,
+      "source_named_http_write_nodes": [],
+      "held_skip_execution_id": "1310",
+      "fingerprints_match": true
+    },
+    {
+      "case": "wrong-approval",
+      "execution_id": "1315",
+      "status": "PASS",
+      "native_status": "error",
+      "error_node": "Validate approval",
+      "guard_after": {
+        "key": "global",
+        "busy": true,
+        "execution_id": "1315",
+        "issue_number": null,
+        "started_at": "2026-11-25T18:26:42.112Z",
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-25T18:26:42.118Z"
+      },
+      "synthetic_labels_after": [
+        "Approved",
+        "documentation"
+      ],
+      "synthetic_posts": 0,
+      "source_named_http_write_nodes": [],
+      "held_skip_execution_id": "1318",
+      "fingerprints_match": true
+    },
+    {
+      "case": "captured-edit",
+      "execution_id": "1323",
+      "status": "PASS",
+      "native_status": "error",
+      "error_node": "Validate approval",
+      "guard_after": {
+        "key": "global",
+        "busy": true,
+        "execution_id": "1323",
+        "issue_number": null,
+        "started_at": "2026-11-25T18:26:42.739Z",
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-25T18:26:42.747Z"
+      },
+      "synthetic_labels_after": [
+        "Approved",
+        "documentation"
+      ],
+      "synthetic_posts": 0,
+      "source_named_http_write_nodes": [],
+      "held_skip_execution_id": "1326",
+      "fingerprints_match": true
+    },
+    {
+      "case": "unexpected-before",
+      "execution_id": "1331",
+      "status": "PASS",
+      "native_status": "error",
+      "error_node": "Prepare handoff",
+      "guard_after": {
+        "key": "global",
+        "busy": true,
+        "execution_id": "1331",
+        "issue_number": 101,
+        "started_at": "2026-11-25T18:26:43.425Z",
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-25T18:26:43.490Z"
+      },
+      "synthetic_labels_after": [
+        "Approved",
+        "documentation"
+      ],
+      "synthetic_posts": 0,
+      "source_named_http_write_nodes": [],
+      "held_skip_execution_id": "1334",
+      "fingerprints_match": true
+    },
+    {
+      "case": "unexpected-after",
+      "execution_id": "1339",
+      "status": "PASS",
+      "native_status": "error",
+      "error_node": "Check handoff receipt",
+      "guard_after": {
+        "key": "global",
+        "busy": true,
+        "execution_id": "1339",
+        "issue_number": 101,
+        "started_at": "2026-11-25T18:26:44.209Z",
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-25T18:26:44.258Z"
+      },
+      "synthetic_labels_after": [
+        "documentation",
+        "Building"
+      ],
+      "synthetic_posts": 1,
+      "source_named_http_write_nodes": [
+        {
+          "node": "Add Building",
+          "status": 200
+        },
+        {
+          "node": "Remove Approved",
+          "status": 200
+        },
+        {
+          "node": "Post handoff",
+          "status": 201
+        }
+      ],
+      "held_skip_execution_id": "1342",
+      "fingerprints_match": true
+    },
+    {
+      "case": "partial-label",
+      "execution_id": "1347",
+      "status": "PASS",
+      "native_status": "error",
+      "error_node": "Check Building receipt",
+      "guard_after": {
+        "key": "global",
+        "busy": true,
+        "execution_id": "1347",
+        "issue_number": 101,
+        "started_at": "2026-11-25T18:26:44.944Z",
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-25T18:26:44.990Z"
+      },
+      "synthetic_labels_after": [
+        "Approved",
+        "documentation",
+        "Building"
+      ],
+      "synthetic_posts": 0,
+      "source_named_http_write_nodes": [
+        {
+          "node": "Add Building",
+          "status": 500
+        }
+      ],
+      "held_skip_execution_id": "1350",
+      "fingerprints_match": true
+    },
+    {
+      "case": "unknown-post",
+      "execution_id": "1355",
+      "status": "PASS",
+      "native_status": "error",
+      "error_node": "Post handoff",
+      "guard_after": {
+        "key": "global",
+        "busy": true,
+        "execution_id": "1355",
+        "issue_number": 101,
+        "started_at": "2026-11-25T18:26:45.659Z",
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-25T18:26:45.710Z"
+      },
+      "synthetic_labels_after": [
+        "documentation",
+        "Building"
+      ],
+      "synthetic_posts": 1,
+      "source_named_http_write_nodes": [
+        {
+          "node": "Add Building",
+          "status": 200
+        },
+        {
+          "node": "Remove Approved",
+          "status": 200
+        },
+        {
+          "node": "Post handoff",
+          "status": null
+        }
+      ],
+      "held_skip_execution_id": "1358",
+      "fingerprints_match": true
+    }
+  ],
+  "regular_case_count": 13,
+  "regular_held_skip_count": 7,
+  "explicit_inspected_fixture_resets": 7,
+  "restart": {
+    "status": "PASS",
+    "execution_id": "1369",
+    "native_status": "crashed",
+    "native_trace_kind": "recovered node-event metadata with artificial placeholder outputs; not original node payloads",
+    "crashed_node": "Add Building",
+    "synthetic_labels_after": [
+      "Approved",
+      "documentation",
+      "Building"
+    ],
+    "synthetic_posts": 0,
+    "guard_after": {
+      "key": "global",
+      "busy": true,
+      "execution_id": "1369",
+      "issue_number": 101,
+      "started_at": "2026-11-25T18:30:27.005Z",
+      "id": 1,
+      "createdAt": "2026-11-25T08:55:42.755Z",
+      "updatedAt": "2026-11-25T18:30:27.104Z"
+    },
+    "held_skip_execution_id": "1372",
+    "fixture_effects_unchanged": true,
+    "no_replay": true
+  },
+  "monitoring_failures_retained": [
+    {
+      "execution_id": "1363",
+      "description": "State webhook queued behind serialized execution; synthetic delayed reservation completed normally and no restart occurred; not counted as restart PASS."
+    },
+    {
+      "execution_id": "1369",
+      "description": "Controlled restart succeeded; operator readback hit startup ConnectionResetError; subsequent read-only verification completed without another restart or reset."
+    }
+  ],
+  "real_issues_unchanged": {
+    "1": "Building",
+    "4": "Approved",
+    "comments_unchanged": true
+  },
+  "scheduled_held_skip": {
+    "status": "PASS",
+    "published_version_readback": "770bb2b7-3285-4a52-b074-3b867f2aac9b",
+    "execution_snapshot_version_limit": "Snapshots omit version UUID; source provenance uses saved/active version readback, matching Code/connection hashes and enabled 60-second schedule snapshot.",
+    "runs": [
+      {
+        "execution_id": "1376",
+        "mode": "trigger",
+        "status": "success",
+        "started_at": "2026-11-25 18:40:13.554",
+        "stopped_at": "2026-11-25 18:40:13.582",
+        "execution_snapshot_version_uuid": null,
+        "published_version_readback": "770bb2b7-3285-4a52-b074-3b867f2aac9b",
+        "reached": [
+          "Poll inactive",
+          "Read control",
+          "Validate entry",
+          "Already held",
+          "Report existing hold"
+        ],
+        "outcome": "skipped_held",
+        "guard_unchanged": true,
+        "http_writes": 0,
+        "schedule_seconds": 60
+      },
+      {
+        "execution_id": "1378",
+        "mode": "trigger",
+        "status": "success",
+        "started_at": "2026-11-25 18:41:13.565",
+        "stopped_at": "2026-11-25 18:41:13.591",
+        "execution_snapshot_version_uuid": null,
+        "published_version_readback": "770bb2b7-3285-4a52-b074-3b867f2aac9b",
+        "reached": [
+          "Poll inactive",
+          "Read control",
+          "Validate entry",
+          "Already held",
+          "Report existing hold"
+        ],
+        "outcome": "skipped_held",
+        "guard_unchanged": true,
+        "http_writes": 0,
+        "schedule_seconds": 60
+      }
+    ],
+    "guard_after": {
+      "key": "global",
+      "busy": true,
+      "execution_id": "1369",
+      "issue_number": 101,
+      "started_at": "2026-11-25T18:30:27.005Z",
+      "id": 1,
+      "createdAt": "2026-11-25T08:55:42.755Z",
+      "updatedAt": "2026-11-25T18:30:27.104Z"
+    },
+    "fixture_effects_unchanged": true,
+    "fixture_server_stopped": true
+  },
+  "cleanup": {
+    "status": "PASS",
+    "owner_unpublished": true,
+    "workflow_id": "bHUN2AuZtUysarZI",
+    "saved_version": "770bb2b7-3285-4a52-b074-3b867f2aac9b",
+    "active": false,
+    "activeVersionId": null,
+    "all_isolated_workflows_inactive": true,
+    "isolated_workflow_count": 20,
+    "test_webhook_status": 404,
+    "control_row_source": "supported encrypted Data Table export; only Data Table files decrypted with disposable export key; no direct SQL or instance key",
+    "physical_busy_value": 1,
+    "physical_busy_column_type": "boolean",
+    "final_guard": {
+      "id": 1,
+      "key": "global",
+      "busy": true,
+      "execution_id": "1369",
+      "issue_number": 101,
+      "started_at": "2026-11-25T18:30:27.005Z",
+      "createdAt": "2026-11-25T08:55:42.755Z",
+      "updatedAt": "2026-11-25T18:30:27.104Z"
+    },
+    "fixture_effects_unchanged": true,
+    "fixture_effects_sha256": "0a8d9e2931c118e10cc5f5544cba523929dc15b145af85088824b5ad8c8ea1c6",
+    "guard_reset": false,
+    "real_tasks": {
+      "1": "Building",
+      "4": "Approved",
+      "comments_unchanged": true,
+      "pr5": "open/unmerged"
+    }
+  },
+  "final_guard": {
+    "key": "global",
+    "busy": true,
+    "execution_id": "1369",
+    "issue_number": 101,
+    "started_at": "2026-11-25T18:30:27.005Z",
+    "id": 1,
+    "createdAt": "2026-11-25T08:55:42.755Z",
+    "updatedAt": "2026-11-25T18:30:27.104Z"
+  },
+  "overall_status": "PASS"
+}

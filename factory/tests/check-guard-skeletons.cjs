@@ -5,8 +5,8 @@ const fs = require('node:fs');
 const vm = require('node:vm');
 const idle = () => ({id:1,key:'global',busy:false,execution_id:'',issue_number:null,started_at:''});
 let checks = 0;
-// Refine is now US1; its actual exported graph is covered by check-refinement.cjs.
-for (const workflow of ['reserve','track']) {
+// Refine/reserve are now stories; their exported graphs have dedicated checkers.
+for (const workflow of ['track']) {
   const graph = JSON.parse(fs.readFileSync(`factory/workflows/${workflow}.json`, 'utf8'));
   const nodes = new Map(graph.nodes.map(n => [n.name,n]));
   assert.equal(graph.active,false);

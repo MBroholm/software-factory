@@ -1,0 +1,80 @@
+# Manual coding on Fedora — Basic A
+
+A `Building` label reserves the single build slot, including while the laptop is idle.
+It does not mean Codex started. Only the owner launches Codex. Follow the marked handoff
+on the issue; absent, duplicate, edited or inconsistent evidence requires
+[pause/drain/inspection and recovery](operations.md), never an invented approval or retry.
+
+Before launch, open the issue, its latest refinement and its `factory:handoff:v1` comment.
+Verify the issue is open and owner-authored, its sole factory state is `Building`, and no
+other issue (including closed/non-owner issues) has `Building`. Compare the handoff's issue
+number, owner approval event ID/actor/timestamp, exact refinement ID/URL and created/updated
+times, content/body SHA-256 and source digest with the current evidence. Confirm that the
+refinement predates the explicit owner approval, remains unedited and still describes the
+intended work. Captured source comments and current title/body must be unchanged; later
+in-scope session summaries alone do not invalidate captured source. Check the recorded PR
+baseline so an old result is not mistaken for this attempt. If evidence differs, stop and
+inspect while paused; request fresh refinement/explicit approval for changed scope.
+
+See [approval and handoff fields](../specs/001-basic-a-factory/data-model.md#approval-event)
+and the [manual handoff contract](../specs/001-basic-a-factory/contracts/manual-handoff.md).
+No timeout releases a reservation. Do not start another factory build while one is reserved.
+Unrelated interactive bootstrap work follows the constitution's separate bootstrap boundary.
+
+From the repository on Fedora, inspect the local working tree first. Keep any existing work
+intact, fetch `origin/main` and create a separate worktree on the exact handoff branch. For
+issue 123, for example:
+
+```bash
+git status --short
+git fetch origin main
+git worktree list
+git branch --list issue-123
+git worktree add ../software-factory-issue-123 -b issue-123 origin/main
+cd ../software-factory-issue-123
+codex
+```
+
+Replace 123 with the actual issue number. If the branch/worktree already exists, inspect it
+and the baseline before reusing it for owner-authorized rework. Do not force-reset or overwrite
+it. Start Codex yourself in the worktree and supply the issue URL, exact approved refinement
+URL/body, handoff comment and scope constraints. Ask it to check repository instructions,
+implement only approved scope on `issue-N`, preserve changes, run relevant checks and return
+a linked pull request to `main`. SpecKit is available where useful; small tasks do not require
+a full new specification pipeline. No n8n runner, auto-launch or automatic resume is involved.
+
+When an unresolved choice would change the result, Codex asks in its session before implementing
+that choice. An in-scope answer permits continuation within existing approval. An expanded
+scope stops the changed work: record the proposed revision, obtain fresh refinement/explicit
+owner approval and follow controlled state recovery for a new handoff. A session answer alone
+is not initial or expanded-scope approval. Do not remove Building merely to start a second task.
+
+Before completion/review, the owner or explicitly authorized agent posts a concise issue summary
+of each material question, owner answer and resulting choice, identifying whether scope changed.
+For expanded scope include the exact renewed approval reference, not a claim that an answer
+implicitly approved it. Use this suggested comment format:
+
+```text
+Decision from manual coding session
+Question: <result-changing choice>
+Owner answer: <sanitized answer>
+Resulting choice: <what will be implemented>
+Scope changed: no / yes
+Renewed explicit approval: not required for unchanged scope / <event and refinement link>
+Checks, failure or intervention: <what actually occurred>
+```
+
+This records the [Decision record fields](../specs/001-basic-a-factory/data-model.md#decision-record).
+Keep secrets, tokens and private session logs out of comments; summarize only the relevant
+reasoning. If posting through an assistant, explicitly authorize that issue comment. An interrupted
+session leaves Building reserved: inspect agent/worktree/remote writes and record failure or
+intervention before owner-directed recovery. No blind POST retries, automatic state repair or
+agent restart. The instructor-confirmation follow-up remains outstanding.
+
+Return changes on `issue-N` in the same repository with base `main`. Owner or authorized agent
+may push/open the PR. Include an explicit `Refs #N` or full issue URL in its body, the approval
+and handoff references, change summary, actual checks and outcomes, failures/retries/intervention,
+and unchecked acceptance criteria. Distinguish new commits from the handoff's existing PR/head
+baseline. Never mark unrun tests passed. Owner reviews and decides merge/close; workflow JSON
+still needs owner manual import after review. Result tracking/review automation is US3 work,
+not proof of US2 completion.
