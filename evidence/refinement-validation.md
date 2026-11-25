@@ -670,3 +670,21 @@ HTTP pagination/full-response and loop-output configuration were checked against
 [loop source](https://github.com/n8n-io/n8n/blob/master/packages/nodes-base/nodes/SplitInBatches/v3/SplitInBatchesV3.node.ts)
 and [GitHub label API](https://docs.github.com/en/rest/issues/labels).
 These source checks are not execution proof for the pinned deployment.
+
+## Native suite continuation after owner reimport
+
+41 regular native synthetic cases now PASS, matched by execution ID/status to supported-export
+node traces; sanitized results are in `refinement-native-results.json`. Pagination failed at
+1132 on the old revision, then passed at 1140 after the owner reimported the executeOnce fix.
+Later-candidate selection, unknown comment POST, partial label write and unexpected exceptions
+before/after effects also passed, each retained failure followed by a verified held skip.
+No real GitHub or Gemini calls occurred in these synthetic cases.
+
+Controlled isolated restart during backoff passed persistent-hold inspection and subsequent
+held-skip/no-further-provider-call verification. Final guard is busy=true, execution 1204,
+issue 101; it was deliberately preserved. The collector lacks a completed crash trace for
+1204, so this restart observation is based on operator HTTP/row/fixture evidence, not a claimed
+completed native crash trace. Full UI cancellation remains UNRUN; helper cancellation passed.
+The bridge was unpublished and only the synthetic fixture process stopped after inspection.
+Production and real issue #1 remain unchanged. T014 stays unchecked pending the explicit
+remaining cancellation/closeout limits and final owner review; no automatic production activation.

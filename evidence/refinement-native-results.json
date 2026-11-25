@@ -1,0 +1,346 @@
+{
+  "cases": [
+    {
+      "case": "success",
+      "execution": "762",
+      "status": "success",
+      "generation": 1,
+      "posts": 1,
+      "elapsedSeconds": 0.57
+    },
+    {
+      "case": "retry-once",
+      "execution": "766",
+      "status": "success",
+      "generation": 2,
+      "posts": 1,
+      "elapsedSeconds": 10.505
+    },
+    {
+      "case": "retry-twice",
+      "execution": "770",
+      "status": "success",
+      "generation": 3,
+      "posts": 1,
+      "elapsedSeconds": 40.672
+    },
+    {
+      "case": "exhaust",
+      "execution": "774",
+      "status": "error",
+      "generation": 3,
+      "posts": 0,
+      "elapsedSeconds": 40.475
+    },
+    {
+      "case": "retry-after-long",
+      "execution": "788",
+      "status": "error",
+      "generation": 1,
+      "posts": 0,
+      "elapsedSeconds": 0.274
+    },
+    {
+      "case": "retry-after-invalid",
+      "execution": "802",
+      "status": "error",
+      "generation": 1,
+      "posts": 0,
+      "elapsedSeconds": 0.264
+    },
+    {
+      "case": "other-503",
+      "execution": "816",
+      "status": "error",
+      "generation": 1,
+      "posts": 0,
+      "elapsedSeconds": 0.248
+    },
+    {
+      "case": "quota",
+      "execution": "830",
+      "status": "error",
+      "generation": 1,
+      "posts": 0,
+      "elapsedSeconds": 0.265
+    },
+    {
+      "case": "auth",
+      "execution": "844",
+      "status": "error",
+      "generation": 1,
+      "posts": 0,
+      "elapsedSeconds": 0.27
+    },
+    {
+      "case": "server-500",
+      "execution": "858",
+      "status": "error",
+      "generation": 1,
+      "posts": 0,
+      "elapsedSeconds": 0.258
+    },
+    {
+      "case": "transport",
+      "execution": "872",
+      "status": "error",
+      "generation": 1,
+      "posts": 0,
+      "elapsedSeconds": 0.247
+    },
+    {
+      "case": "invalid-output",
+      "execution": "886",
+      "status": "error",
+      "generation": 1,
+      "posts": 0,
+      "elapsedSeconds": 0.282
+    },
+    {
+      "case": "truncated",
+      "execution": "900",
+      "status": "error",
+      "generation": 1,
+      "posts": 0,
+      "elapsedSeconds": 0.253
+    },
+    {
+      "case": "missing-usage",
+      "execution": "914",
+      "status": "error",
+      "generation": 1,
+      "posts": 0,
+      "elapsedSeconds": 0.251
+    },
+    {
+      "case": "count-error",
+      "execution": "928",
+      "status": "error",
+      "generation": 0,
+      "posts": 0,
+      "elapsedSeconds": 0.223
+    },
+    {
+      "case": "count-invalid",
+      "execution": "942",
+      "status": "error",
+      "generation": 0,
+      "posts": 0,
+      "elapsedSeconds": 0.204
+    },
+    {
+      "case": "over-budget",
+      "execution": "956",
+      "status": "error",
+      "generation": 0,
+      "posts": 0,
+      "elapsedSeconds": 0.187
+    },
+    {
+      "case": "source-in-backoff",
+      "execution": "970",
+      "status": "error",
+      "generation": 1,
+      "posts": 0,
+      "elapsedSeconds": 10.328
+    },
+    {
+      "case": "discussion-in-backoff",
+      "execution": "984",
+      "status": "error",
+      "generation": 1,
+      "posts": 0,
+      "elapsedSeconds": 10.394
+    },
+    {
+      "case": "state-in-backoff",
+      "execution": "998",
+      "status": "error",
+      "generation": 1,
+      "posts": 0,
+      "elapsedSeconds": 10.315
+    },
+    {
+      "case": "source-during-call",
+      "execution": "1012",
+      "status": "error",
+      "generation": 1,
+      "posts": 0,
+      "elapsedSeconds": 0.325
+    },
+    {
+      "case": "non-owner",
+      "execution": "1026",
+      "status": "success",
+      "generation": 0,
+      "posts": 0,
+      "elapsedSeconds": 0.129
+    },
+    {
+      "case": "pr",
+      "execution": "1030",
+      "status": "success",
+      "generation": 0,
+      "posts": 0,
+      "elapsedSeconds": 0.136
+    },
+    {
+      "case": "closed",
+      "execution": "1034",
+      "status": "success",
+      "generation": 0,
+      "posts": 0,
+      "elapsedSeconds": 0.139
+    },
+    {
+      "case": "approved",
+      "execution": "1038",
+      "status": "success",
+      "generation": 0,
+      "posts": 0,
+      "elapsedSeconds": 0.158
+    },
+    {
+      "case": "ready-unchanged",
+      "execution": "1042",
+      "status": "success",
+      "generation": 0,
+      "posts": 0,
+      "elapsedSeconds": 0.143
+    },
+    {
+      "case": "non-owner-discussion",
+      "execution": "1046",
+      "status": "success",
+      "generation": 0,
+      "posts": 0,
+      "elapsedSeconds": 0.172
+    },
+    {
+      "case": "factory-marker",
+      "execution": "1050",
+      "status": "success",
+      "generation": 0,
+      "posts": 0,
+      "elapsedSeconds": 0.14
+    },
+    {
+      "case": "reuse",
+      "execution": "1054",
+      "status": "success",
+      "generation": 0,
+      "posts": 0,
+      "elapsedSeconds": 0.286
+    },
+    {
+      "case": "revision",
+      "execution": "1058",
+      "status": "success",
+      "generation": 1,
+      "posts": 1,
+      "elapsedSeconds": 0.385
+    },
+    {
+      "case": "captured-edit",
+      "execution": "1062",
+      "status": "error",
+      "generation": 0,
+      "posts": 0,
+      "elapsedSeconds": 0.121
+    },
+    {
+      "case": "captured-delete",
+      "execution": "1076",
+      "status": "error",
+      "generation": 0,
+      "posts": 0,
+      "elapsedSeconds": 0.116
+    },
+    {
+      "case": "edited-marker",
+      "execution": "1090",
+      "status": "error",
+      "generation": 0,
+      "posts": 0,
+      "elapsedSeconds": 0.101
+    },
+    {
+      "case": "stranded",
+      "execution": "1104",
+      "status": "error",
+      "generation": 0,
+      "posts": 0,
+      "elapsedSeconds": 0.125
+    },
+    {
+      "case": "conflicting",
+      "execution": "1118",
+      "status": "error",
+      "generation": 0,
+      "posts": 0,
+      "elapsedSeconds": 0.083
+    },
+    {
+      "case": "pagination",
+      "execution": "1140",
+      "status": "success",
+      "generation": 1,
+      "posts": 1,
+      "elapsedSeconds": 3.085
+    },
+    {
+      "case": "later-candidate",
+      "execution": "1144",
+      "status": "success",
+      "generation": 1,
+      "posts": 1,
+      "elapsedSeconds": 0.624
+    },
+    {
+      "case": "unknown-post",
+      "execution": "1148",
+      "status": "error",
+      "generation": 1,
+      "posts": 1,
+      "elapsedSeconds": 0.347
+    },
+    {
+      "case": "partial-label",
+      "execution": "1162",
+      "status": "error",
+      "generation": 0,
+      "posts": 0,
+      "elapsedSeconds": 0.221
+    },
+    {
+      "case": "unexpected-before",
+      "execution": "1176",
+      "status": "error",
+      "generation": 0,
+      "posts": 0,
+      "elapsedSeconds": 0.173
+    },
+    {
+      "case": "unexpected-after",
+      "execution": "1190",
+      "status": "error",
+      "generation": 1,
+      "posts": 1,
+      "elapsedSeconds": 0.395
+    }
+  ],
+  "passed": 41,
+  "restartHold": {
+    "execution": "1204",
+    "busy": true,
+    "issue_number": 101,
+    "operatorVerified": true,
+    "nativeCrashTrace": "not present in collector output"
+  },
+  "historicalFailure": {
+    "case": "pagination",
+    "execution": "1132",
+    "fixedSuccess": "1140"
+  },
+  "fullUICancellation": "UNRUN"
+}
