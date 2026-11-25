@@ -68,7 +68,7 @@ module.exports = [
       ['Read generation guard', 'Rereads the singleton control table before every generation attempt, including retries. This node must map to the same control table as all other guard nodes.'],
       ['Verify generation guard', 'Requires busy and this execution\'s row/start/selected-issue context. Stops if ownership changed while waiting; never releases a changed or foreign hold.'],
       ['Read before generation', 'Fetches current issue content/status/labels before each model attempt. Together with the next comment read, detects owner changes during backoff.'],
-      ['Comments before generation', 'Reads all current discussion before each model attempt, so captured edits/deletions, new owner instructions and changed refinement history stop a retry.'],
+      ['Comments before generation', 'Runs once per activation despite upstream page items, then reads all current discussion before each model attempt, so captured edits/deletions, new owner instructions and changed refinement history stop a retry.'],
       ['Prepare generation attempt', 'Requires the original source, intact revision history and an open owner-authored Refining issue. Revalidates the exact counted request before sending it; changed source during backoff stops before another model call.'],
       ['Gemini generateContent', 'One HTTP attempt; selective 503 retry is controlled by the following nodes.', true],
       ['Evaluate generation attempt', 'Records status/attempt/delay. Only explicit HTTP 503 with UNAVAILABLE can retry, at most twice. Honors Retry-After within the bounded delay or stops for manual recovery. HTTP 200 goes to schema validation; other errors or exhaustion hold the guard.'],

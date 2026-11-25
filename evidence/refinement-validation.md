@@ -8,6 +8,33 @@ is verified. Post-approval execution 758 correctly returned no_work and released
 Remaining native acceptance cases are pending; live 503/backoff behavior remains unexercised. Failures/recovery are retained below. No production activation
 or completed issue/PR-linked build run is claimed.
 
+## Native suite executed — pagination defect found and fixed in source
+
+After owner publication, pilot success and retry-once passed; the suite passed 33 more cases
+through conflicting states. **35 native cases passed**, including 10/30-second two-retry success,
+three-attempt exhaustion, held-skip checks after each retained failure, Retry-After refusal,
+HTTP/auth/quota/transport/output/count failures, source changes, exclusions, reuse and revision.
+Private operator records: `factory/local/refinement-native-bridge/{pilot,suite}.jsonl`;
+supported-export native traces: `traces.json`. These are synthetic remote effects through the
+real native n8n graph and persisted isolated Data Table, not real provider/task runs.
+
+The runner stopped at pagination, execution **1132**, at Plan revision with
+`Invalid/duplicate discussion entries`. Synthetic request logs prove events paginated once,
+but Read source comments requested pages 1 and 2 twice: upstream HTTP emits one item per page,
+so the next HTTP node executes its own pagination per incoming item. This is a workflow defect,
+not duplicate fixture IDs. The guard remains held by 1132; no reset or later test was attempted.
+
+Fix: all refinement HTTP nodes now use n8n's `executeOnce=true`, so each activation sends one
+logical request/pagination sequence regardless of upstream page items. Internal pagination is
+preserved. 35 local groups and generator consistency pass; source/bridge rebuilt. Native rerun
+is pending owner reviewed reimport. New source SHA-256
+`ee3f6e782f72ec409d6e9a6cb02ca0f8b9a4b43eccbfad4dff0a9003ffe1ec38`.
+Ready-mapped test bridge: `factory/local/refinement-native-bridge/workflow.json`.
+Production-source mapped import: `factory/local/refine-us1-retry-mapped.json` (do not execute
+or activate it for these synthetic tests). Keep all prior failure evidence. T014 remains open;
+pagination, later-candidate, unknown POST, partial label, unexpected exceptions and restart
+remain pending. Full UI cancellation remains separate from the helper cancellation pass.
+
 ## Remaining-test execution and prepared native suite — 2026-11-25
 
 The owner asked the assistant to execute remaining tests. Additional checks actually performed:

@@ -614,6 +614,7 @@
         }
       },
       "retryOnFail": false,
+      "executeOnce": true,
       "notes": "Reads all pages of open repository issues. No GitHub write occurs. A pagination cap, API error or incomplete list is rejected downstream rather than treated as an empty queue.",
       "notesInFlow": false
     },
@@ -763,6 +764,7 @@
         }
       },
       "retryOnFail": false,
+      "executeOnce": true,
       "notes": "Builds the URL from the incoming candidate issue number, without looking back through the loop output. Reads all event pages; the latest Ideas/Ready label event identifies when the current discussion stage began.",
       "notesInFlow": false
     },
@@ -844,6 +846,7 @@
         }
       },
       "retryOnFail": false,
+      "executeOnce": true,
       "notes": "Reads all comment pages for the latest candidate on the loop output. Uses the default latest run; explicit negative run indices fail in the deployed VM expression evaluator. Discussion and marked output identify revisions and repeats.",
       "notesInFlow": false
     },
@@ -1070,6 +1073,7 @@
         }
       },
       "retryOnFail": false,
+      "executeOnce": true,
       "notes": "Fetches current issue content, author, open/closed state and labels immediately before the first transition.",
       "notesInFlow": false
     },
@@ -1151,6 +1155,7 @@
         }
       },
       "retryOnFail": false,
+      "executeOnce": true,
       "notes": "Fetches current issue events again to detect a changed source-stage label event since planning.",
       "notesInFlow": false
     },
@@ -1232,6 +1237,7 @@
         }
       },
       "retryOnFail": false,
+      "executeOnce": true,
       "notes": "Fetches current discussion again so new comments, edits/deletions and changed refinement history can be detected before mutation.",
       "notesInFlow": false
     },
@@ -1304,6 +1310,7 @@
         }
       },
       "retryOnFail": false,
+      "executeOnce": true,
       "notes": "GitHub write: adds Refining while preserving existing labels. The source label remains temporarily; if interrupted here, the owner must reconcile the two-state issue.",
       "notesInFlow": false
     },
@@ -1373,6 +1380,7 @@
         }
       },
       "retryOnFail": false,
+      "executeOnce": true,
       "notes": "GitHub write: removes only the previous Ideas/Ready label after Refining was acknowledged. Unrelated labels are preserved.",
       "notesInFlow": false
     },
@@ -1442,6 +1450,7 @@
         }
       },
       "retryOnFail": false,
+      "executeOnce": true,
       "notes": "Fetches the issue after the label transition. The next validation requires it to remain open, owner-authored and solely Refining.",
       "notesInFlow": false
     },
@@ -1523,6 +1532,7 @@
         }
       },
       "retryOnFail": false,
+      "executeOnce": true,
       "notes": "Fetches discussion after entering Refining to detect changed captured source or new owner input before inference/reuse.",
       "notesInFlow": false
     },
@@ -1627,6 +1637,7 @@
         }
       },
       "retryOnFail": false,
+      "executeOnce": true,
       "notes": "Sends the complete prepared generateContentRequest to the same model's countTokens endpoint using the saved Gemini header credential. Counts input without generating a refinement. Errors/timeouts hold the guard; no retry or fallback.",
       "notesInFlow": false
     },
@@ -1772,6 +1783,7 @@
         }
       },
       "retryOnFail": false,
+      "executeOnce": true,
       "notes": "Fetches current issue content/status/labels before each model attempt. Together with the next comment read, detects owner changes during backoff.",
       "notesInFlow": false
     },
@@ -1853,7 +1865,8 @@
         }
       },
       "retryOnFail": false,
-      "notes": "Reads all current discussion before each model attempt, so captured edits/deletions, new owner instructions and changed refinement history stop a retry.",
+      "executeOnce": true,
+      "notes": "Runs once per activation despite upstream page items, then reads all current discussion before each model attempt, so captured edits/deletions, new owner instructions and changed refinement history stop a retry.",
       "notesInFlow": false
     },
     {
@@ -1921,6 +1934,7 @@
         }
       },
       "retryOnFail": false,
+      "executeOnce": true,
       "notes": "One HTTP attempt; selective 503 retry is controlled by the following nodes.",
       "notesInFlow": true
     },
@@ -2059,6 +2073,7 @@
         }
       },
       "retryOnFail": false,
+      "executeOnce": true,
       "notes": "Fetches current issue status/content after inference and before publishing. Helps detect edits, closure or state changes while Gemini was working.",
       "notesInFlow": false
     },
@@ -2140,6 +2155,7 @@
         }
       },
       "retryOnFail": false,
+      "executeOnce": true,
       "notes": "Reads all discussion again before publication to detect source edits/deletions, new owner instructions or changed refinement history during inference.",
       "notesInFlow": false
     },
@@ -2212,6 +2228,7 @@
         }
       },
       "retryOnFail": false,
+      "executeOnce": true,
       "notes": "GitHub write: posts the validated, marked Markdown as a new comment; prior revisions remain intact. A lost response is uncertain even if GitHub accepted the comment: never retry blindly.",
       "notesInFlow": false
     },
@@ -2281,6 +2298,7 @@
         }
       },
       "retryOnFail": false,
+      "executeOnce": true,
       "notes": "Fetches the current issue before the Ready transition. Both newly posted and reused-output paths converge here.",
       "notesInFlow": false
     },
@@ -2362,6 +2380,7 @@
         }
       },
       "retryOnFail": false,
+      "executeOnce": true,
       "notes": "Reads all discussion to verify that exactly one matching, intact refinement is current before leaving Refining.",
       "notesInFlow": false
     },
@@ -2434,6 +2453,7 @@
         }
       },
       "retryOnFail": false,
+      "executeOnce": true,
       "notes": "GitHub write: adds Ready for approval after output is verified. This requests owner review; it does not grant Approved. Refining remains until the next acknowledged removal.",
       "notesInFlow": false
     },
@@ -2503,6 +2523,7 @@
         }
       },
       "retryOnFail": false,
+      "executeOnce": true,
       "notes": "GitHub write: removes only Refining after Ready for approval was acknowledged. Preserves unrelated labels; never adds Approved.",
       "notesInFlow": false
     },
@@ -2572,6 +2593,7 @@
         }
       },
       "retryOnFail": false,
+      "executeOnce": true,
       "notes": "Fetches the final issue after the Ready transition, before declaring successful work.",
       "notesInFlow": false
     },
@@ -2653,6 +2675,7 @@
         }
       },
       "retryOnFail": false,
+      "executeOnce": true,
       "notes": "Reads discussion one last time to confirm captured input and the matching output still exist before the release path.",
       "notesInFlow": false
     },

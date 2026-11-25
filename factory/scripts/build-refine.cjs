@@ -42,7 +42,7 @@ function http(name,url,{method='GET',body,paginated=false,gemini=false}={}) {
     parameters.options.pagination = {pagination:{paginationMode:'updateAParameterInEachRequest',parameters:{parameters:[{type:'qs',name:'page',value:'={{ $pageCount + 1 }}'}]},
       paginationCompleteWhen:'other',completeExpression:'={{ $response.statusCode !== 200 || !Array.isArray($response.body) || $response.body.length < 100 }}',limitPagesFetched:true,maxRequests:100,requestInterval:200}};
   }
-  return add(name,'httpRequest',parameters,{credentials:{httpHeaderAuth:{id:gemini?'OWNER_SELECT_GEMINI_HEADER_CREDENTIAL':'OWNER_SELECT_GITHUB_HEADER_CREDENTIAL',name:gemini?'Basic A Gemini x-goog-api-key':'Basic A GitHub Authorization'}},retryOnFail:false});
+  return add(name,'httpRequest',parameters,{credentials:{httpHeaderAuth:{id:gemini?'OWNER_SELECT_GEMINI_HEADER_CREDENTIAL':'OWNER_SELECT_GITHUB_HEADER_CREDENTIAL',name:gemini?'Basic A Gemini x-goog-api-key':'Basic A GitHub Authorization'}},retryOnFail:false,executeOnce:true});
 }
 const base = 'https://api.github.com/repos/MBroholm/software-factory/issues';
 const issueURL = `('${base}/' + $('Plan revision').first().json.issue.number)`;

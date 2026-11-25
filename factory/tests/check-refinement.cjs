@@ -116,6 +116,7 @@ test('inactive graph, saved credentials, pagination, no generic retry or approva
     assert(!n.continueOnFail && !n.retryOnFail && !n.disabled);
     for(const output of graph.connections[n.name]?.main??[]) for(const edge of output??[]) assert(nodes.has(edge.node));
     if(n.type.endsWith('.httpRequest')) {
+      assert.equal(n.executeOnce,true,'HTTP pagination must not fan out downstream requests');
       assert.equal(n.parameters.genericAuthType,'httpHeaderAuth');assert(n.credentials.httpHeaderAuth.id.startsWith('OWNER_SELECT_'));
       assert.equal(n.parameters.options.response.response.fullResponse,true);
       if(n.parameters.method!=='GET') assert(!n.parameters.jsonBody?.includes('Approved'));

@@ -1,5 +1,5 @@
 {
-  "sourceSHA256": "5f187cf3ac2fa48a1ef8f6e423495b807648d2afd1d358547326cb35d52f872f",
+  "sourceSHA256": "ee3f6e782f72ec409d6e9a6cb02ca0f8b9a4b43eccbfad4dff0a9003ffe1ec38",
   "cases": [
     "success",
     "retry-once",
@@ -66,5 +66,5 @@
   ],
   "noSchedules": true,
   "active": false,
-  "publicBridgeSHA256": "7f5b4a0a565bfd0aadc6ee27884814394cb34a957ceae4db6550daadc7c668d2"
+  "publicBridgeSHA256": "9aa7eda5ea90d3b74422895eb3d16f9d03a4253626d76db90580d6f55b6364d2"
 }

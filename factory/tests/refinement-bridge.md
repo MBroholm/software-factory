@@ -21,6 +21,8 @@ Verify generated files with `node factory/tests/build-refinement-bridge.cjs --ch
 Review the builder, committed JSON, fixture server, runner and manifest. All source connections are retained
 except removed original trigger edges; all source Code bodies are exact except named prefixes
 at Validate before Refining and Check comment receipt, gated to explicit exception cases.
+HTTP nodes use executeOnce=true to prevent one upstream item per page from repeating
+the following HTTP node. Each activation still internally fetches all its own pages.
 HTTP calls keep request bodies, status handling, timeouts, pagination and expressions, with
 only URL bases switched to an internal loopback fixture, authentication removed, and three
 fixture identity headers added. Eight source Data Table nodes retain the same isolated US1
