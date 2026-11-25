@@ -44,7 +44,7 @@ docker compose --env-file factory/.env -f factory/compose.yaml ps
 Record the n8n image digest, requested Gemini model ID, returned model version and runtime
 prompt/template hashes. The hosted alias is not an immutable model digest. n8n requires outbound
 HTTPS to GitHub and Google; no additional inbound port is required. The existing Compose file
-still includes unused Ollama from the trials; T012 will make startup optional. Starting only n8n
+retains unused Ollama from the trials behind optional profile `local-model-trials`. Starting only n8n
 does not stop an already-running Ollama service. Do not delete caches/volumes or use `down -v`.
 
 ## 3. Access the private editor
@@ -91,13 +91,15 @@ Map the table and credential references in the three reviewed workflow JSONs dur
 import. Keep schedules inactive until isolation, credentials and model checks pass. The owner
 imports JSON by hand after review; CLI/deployment automation must not replace this quality gate.
 
-If small automated fixture checks are implemented, run them as follows; otherwise report them
-as unrun/not implemented and execute the required workflow-level matrix below. An empty test
-discovery result is not evidence that the guard works.
+US1's local checks execute exported Code bodies/connections with stand-ins. Run them from the
+repository root; execute the required native/live matrix separately. The
+[US1 evidence/import handoff](../../evidence/refinement-validation.md) records the current gate.
 
 ```bash
-# Fedora/repository root, only after implementation provides actual test cases
-python3 -m unittest discover -s factory/tests -p 'test_*.py'
+# Fedora/repository root; these commands do not import or execute n8n workflows
+node factory/scripts/build-refine.cjs --check
+node factory/tests/check-refinement.cjs
+node factory/tests/check-guard-skeletons.cjs
 ```
 
 These tests cover parsing/transition guards with fixtures, not mocked proof of a real factory.

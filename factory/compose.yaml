@@ -50,6 +50,7 @@ services:
         max-file: "3"
 
   ollama:
+    profiles: ["local-model-trials"]
     image: ${OLLAMA_IMAGE:-ollama/ollama:0.40.17}
     restart: unless-stopped
     environment:

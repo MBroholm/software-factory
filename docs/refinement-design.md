@@ -1,4 +1,4 @@
-# Runtime refinement design — template/schema v1, prompt v3 trial
+# Runtime refinement design — template/schema v1, prompt v3
 
 ## Ownership and scope
 
@@ -19,6 +19,57 @@ injection case retains v2 evidence. See the versioned results in
 on 2026-11-24; provider choice is now resolved, with deployment integration still pending.
 This is a design choice rather than a course requirement. The unchanged runtime fields and
 human review boundary apply equally to hosted refinement; no provider framework is added.
+
+## US1 runtime integration (2026-11-24)
+
+T012 retains the accepted v3 prompt, v1 template and schema byte-for-byte. All five fixture
+requests match the evaluation layout/configuration; no additional model benchmark was needed.
+Native saved-credential/node verification and live owner review remain pending in
+[refinement validation](../evidence/refinement-validation.md). The
+[example](refinement-example.md) renders an actual accepted evaluation result offline.
+
+`factory/scripts/refinement-runtime.cjs` contains deterministic transforms;
+`factory/scripts/build-refine.cjs` embeds them and the reviewed runtime artifacts in inactive
+`factory/workflows/refine.json`. `--check` detects stale packaged sources without changing them.
+There is no server-side file/template loader, module allowlist expansion or tool-enabled model.
+`factory/scripts/refinement-notes.cjs` supplies owner-facing notes for every operational node,
+selected short canvas subtitles and six numbered stage summaries. The builder preserves this
+documentation when regenerating JSON and groups the node layout by stage. Notes explain each
+node's purpose, relevant branch/write behavior and failure implications; they do not alter execution.
+HTTP Request nodes alone perform authenticated API calls, with no automatic retries/redirects.
+Non-success HTTP statuses reach explicit checks and throw; they never fall through to release.
+
+The workflow selects open owner tasks in issue-number order, excludes PRs, and reads complete
+paginated lists (100 items/page; a 100-page cap fails closed rather than accepting partial data).
+One unchanged Ready candidate does not block a later idea; at most one revision is processed per
+execution. No-work releases the acquired short-lived guard. A selected issue number is written
+to its guard context and validated on release. A stranded Refining or conflicting task state
+holds rather than resuming. Unlabelled ordinary issues are outside labelled factory intake.
+
+Canonical JSON has field order `title`, `body`, `owner_comments`; comments sort numerically by
+ID and have field order `id`, `body`. Text uses LF and UTF-8 SHA-256. A first Ideas revision
+includes unmarked owner comments since its current Ideas label event. Further revisions retain
+the previous captured set and add only newer owner comments posted during the current
+Ideas/Ready label stage. Comments from intervening coding/QA stages do not automatically become
+source. Missing stage history, changed/deleted captured source or malformed/edited output
+evidence requires owner recovery. Title/body edits to captured scope also stop conservatively.
+
+The first comment line is `<!-- factory:refinement:v1 {JSON metadata} -->`. Metadata records
+issue number, canonical source digest, sorted captured IDs, last captured ID (0 if none),
+prompt/template versions, key `issue:digest:last-id:prompt-version`, and SHA-256 of the remaining
+rendered body. These are evidence fields, not a ledger or cryptographic owner authorization.
+Factory-prefixed v1 comments are excluded even when authored by the owner's PAT. Old revisions
+remain intact. An exact source match can be reused after deliberate owner return to Ideas;
+Refining never auto-resumes. No path adds Approved or executes model-supplied instructions.
+
+Before mutation/inference/publication the workflow re-reads source and state; edits or new
+discussion during the call hold for inspection. It validates one STOP candidate, final JSON,
+schema keys/types/size, actual tokens and model version. Only the trusted template renders
+headings/checkboxes; model text is escaped to prevent injected markers, headings and mentions.
+Returned thought parts are excluded. Comment/label receipts and final source/state are checked
+before guard release. Unknown writes and partial add-before-remove label transitions hold;
+the existing manual recovery protocol applies. This follows the supported single-writer/manual
+operator discipline and does not promise atomic GitHub updates against concurrent human clients.
 
 ## Why these fields
 

@@ -294,7 +294,13 @@ replacement on failure or clearing another execution's context. Missing rows may
 this is fail-closed rather than a newly created hold. A pre-held valid row is reported unchanged.
 An invalid pre-held row errors without mutating it.
 
-After reviewing the JSON, the owner manually imports `factory/workflows/{refine,reserve,track}.json`
+**Historical T007/T008 instructions below describe the original guard-only exports.** Current
+`refine.json` is the inactive US1 implementation with real GitHub/model calls; use the
+[US1 import/validation handoff](../evidence/refinement-validation.md) for it. Reserve/track
+remain skeletons. Do not rebuild/reimport the old guard bridge against the current refine graph
+or treat the earlier native skeleton passes as US1 validation.
+
+After reviewing the original skeleton JSON, the owner manually imports `factory/workflows/{refine,reserve,track}.json`
 into isolation, leaves them inactive, and selects the **same table ID in every Data Table node**.
 The placeholder `OWNER_SELECT_ISOLATED_CONTROL_TABLE` intentionally fails closed until mapped.
 Do not use table-name lookup, which could select the wrong similarly named table. Updates match
@@ -503,6 +509,24 @@ instance IDs/mappings to differ. A workflow name or current revision is not hist
 an earlier execution. Keep inactive if comparison or required story/credential checks are incomplete.
 No credential value belongs in Git, workflow parameters, issue comments or evidence. Full
 backup/restore and retention procedures remain T024.
+
+## US1 — optional Ollama startup and refinement import
+
+`factory/compose.yaml` now puts the retained trial Ollama service behind profile
+`local-model-trials`. Normal startup needs only n8n; opting in uses
+`docker compose --env-file factory/.env -f factory/compose.yaml --profile local-model-trials up -d`.
+The existing named cache volume remains declared. A profile does not stop an already-running
+service. After reviewing the rollout, the owner can stop only the unused Ollama service with
+`docker compose --env-file factory/.env -f factory/compose.yaml --profile local-model-trials stop ollama`.
+Do not remove its data or run `down -v`. No server service is changed by the source patch.
+
+The completed US1 source is inactive pending owner review/manual import and native credential/
+story checks. See [the exact handoff and evidence matrix](../evidence/refinement-validation.md).
+Map all Data Table nodes, including Set issue context, and both saved Header Auth credentials.
+The GitHub header is Authorization; Gemini's is x-goog-api-key. Every request/status/receipt is
+checked; HTTP non-success responses fail the workflow without an automatic retry or release.
+Use whole-workflow executions only while schedules are paused/drained. Preserve the deliberately
+held T008 row until reconciled, or provision a fresh isolated table. US2/US3 are not implemented.
 
 ## Constitutional follow-up — instructor confirmation still outstanding
 
