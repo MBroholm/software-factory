@@ -688,3 +688,21 @@ completed native crash trace. Full UI cancellation remains UNRUN; helper cancell
 The bridge was unpublished and only the synthetic fixture process stopped after inspection.
 Production and real issue #1 remain unchanged. T014 stays unchecked pending the explicit
 remaining cancellation/closeout limits and final owner review; no automatic production activation.
+
+## Full workflow UI cancellation — PASS
+
+Owner was ready in the test editor. Assistant inspected the known 1204 restart hold and
+deliberately reset only busy through the fixture endpoint with a recorded reason, then started
+cancel-backoff. Native entity export confirms execution **1218**, workflow p3E27rtBxAB8zvxL,
+started 2026-11-25T15:52:16.259Z, stopped 15:52:23.298Z, status **canceled**, error
+“The execution was cancelled manually”. Its cancelled snapshot matches the reviewed bridge
+Code/connection fingerprints, but native node runData is empty; do not claim a reached-node
+trace for this cancellation. Persisted synthetic HTTP logs independently show one token count,
+one generation attempt, zero comment posts and no later source reads/attempts. The execution
+was cancelled within the first configured 10-second backoff interval.
+
+A fresh whole-workflow held-skip check left row/context and all synthetic calls/effects
+unchanged. Final row: busy=true, execution_id=1218, issue_number=101. The assistant unpublished
+the bridge and stopped only its synthetic fixture process, preserving evidence and hold.
+No real GitHub/provider calls or production changes. Cancellation behavior now passes; T014
+closeout still requires reconciling the acceptance matrix and final review, not new blind reruns.

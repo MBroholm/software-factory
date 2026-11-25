@@ -342,5 +342,17 @@
     "execution": "1132",
     "fixedSuccess": "1140"
   },
-  "fullUICancellation": "UNRUN"
+  "fullUICancellation": {
+    "status": "PASS",
+    "execution": "1218",
+    "nativeStatus": "canceled",
+    "nativeMessage": "The execution was cancelled manually",
+    "countCalls": 1,
+    "generationCalls": 1,
+    "posts": 0,
+    "heldSkipVerified": true,
+    "busy": true,
+    "issue_number": 101,
+    "limit": "Cancelled native execution omits node runData; provider counts from persisted synthetic HTTP log."
+  }
 }
