@@ -40,3 +40,18 @@ counted payload and guard/source rechecks. Other failures/exhaustion retain busy
 See [operations](../docs/operations.md) for setup and
 the exact server evaluation procedure. Future workflow JSON changes require PR review and owner
 manual import; deployment does not import workflows automatically.
+
+## SSH access
+
+To open the existing Basic A n8n editor on the Ubuntu host, keep its server binding
+at `127.0.0.1:5678` and start a tunnel from your local computer using placeholder
+SSH connection details (`user@server`):
+
+```sh
+ssh -N -L 5678:127.0.0.1:5678 user@server
+```
+
+Keep the SSH session running, then open <http://localhost:5678> locally. Stop the
+tunnel with Ctrl+C when finished. This uses the existing loopback-only server
+binding to keep the editor private; do not expose port 5678 publicly or change
+services, credentials, configuration, or workflows.
