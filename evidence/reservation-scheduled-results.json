@@ -1,0 +1,2291 @@
+{
+  "status": "PASS",
+  "workflow_id": "RByomITdtfRHZ74Z",
+  "active_version": "06387d3e-9ca6-40ec-bf43-3b990ee8ebad",
+  "source_sha256": "ea6760fb5787dd216418596d93c37be981079aca8cc20f9a7f5ec2cab88930b6",
+  "synthetic_only": true,
+  "native_traces": [
+    {
+      "id": "1382",
+      "workflowId": "RByomITdtfRHZ74Z",
+      "workflowName": "TEST ONLY \u2014 US2 scheduled reservation",
+      "workflowVersion": null,
+      "schedule": [
+        {
+          "name": "Poll inactive",
+          "parameters": {
+            "notice": "",
+            "rule": {
+              "interval": [
+                {
+                  "field": "seconds",
+                  "secondsInterval": 60
+                }
+              ]
+            }
+          },
+          "disabled": false
+        }
+      ],
+      "mode": "trigger",
+      "status": "success",
+      "startedAt": "2026-11-25 20:37:23.559",
+      "stoppedAt": "2026-11-25 20:37:23.637",
+      "case": "scheduled-held",
+      "lastNode": "Report existing hold",
+      "errorMessage": "",
+      "reached": [
+        {
+          "name": "Poll inactive",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639043568,
+              "executionTime": 1
+            }
+          ]
+        },
+        {
+          "name": "Read control",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639043569,
+              "executionTime": 4
+            }
+          ]
+        },
+        {
+          "name": "Validate entry",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639043573,
+              "executionTime": 6
+            }
+          ]
+        },
+        {
+          "name": "Already held",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639043579,
+              "executionTime": 6
+            }
+          ]
+        },
+        {
+          "name": "Report existing hold",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639043585,
+              "executionTime": 52
+            }
+          ]
+        }
+      ],
+      "recoveredEventMetadata": false,
+      "crashedNode": null,
+      "githubWrites": [],
+      "completion": {
+        "status": "skipped_held",
+        "control": {
+          "key": "global",
+          "busy": true,
+          "execution_id": "1369",
+          "issue_number": 101,
+          "started_at": "2026-11-25T18:30:27.005Z",
+          "id": 1,
+          "createdAt": "2026-11-25T08:55:42.755Z",
+          "updatedAt": "2026-11-25T18:30:27.104Z",
+          "guard_action": "held"
+        }
+      },
+      "codeHashes": {
+        "Validate entry": "c53a1300a3163dfc6dce7b17a9c9bcd6875102ef780ebfb5fb33f4e65d917f16",
+        "Report existing hold": "c19c21166d1b3380f24ff235a5981ef5c05c2c08b769a91feaaebdd8d9b3348a",
+        "Prepare acquisition": "1c422268550daa938517416e9310e2312969176d5392a7982d2b34736dc28b46",
+        "Check acquire receipt": "9f6681e0e027be397811157f18f1631990bfb845a1186a688a2bbe9ca00a8cca",
+        "Verify acquisition": "6a00e1ec39f0cbf011045e03c9749edeffe6131d341628e81af6a207e7241e5c",
+        "Require acknowledged completion": "7ff2f231c2ee12d992683306ae479be26a394c0dfbf6eeaff37ec3a84fd8c0fe",
+        "Verify release ownership": "8be72a3f984b9e7d157ecdc173ebb9011476954a250a87b7e05cd8ed1ebe999b",
+        "Check release receipt": "ef458c0ebf757aeb2bccb0e78236ac3baca220b9f24777fd40fd69304e2ac718",
+        "Confirm idle": "f4b16a381fe3852d77d6e91886713dfc1c54cf81b589cce1627257086c518309",
+        "Report completion": "0d7a120d7b7554c6d438c640fe21460ab67bee6191a8bb6e1cc9eff7014dd62e",
+        "Select candidate": "157d678ca77e5064591e8ddbded8016168d99da63a76a92502c419e48c83b046",
+        "No work": "dd0716d0d9eddbb988869ac0d3187154d5cfb1eda1ca43461e5b25d2746744ff",
+        "Validate approval": "a4766e5ba01c0bc3320ffe9f2aff7bf8db878928de2965ea449a25e41e70f5e1",
+        "Check issue context": "017b80a992fd6f87bf08a5dbab70691068feac9b7a3c9459aa9c0b0ba9e4ea45",
+        "Prepare handoff": "7524da3030c027410e08c6d46f16722094a1c5a724a5971333f51ad6d7de9392",
+        "Check Building receipt": "15caee006afb11d01e28614a90bf0cd5b94323d63df849f637834e39e291dd9a",
+        "Check removal receipt": "fae61101d3aff67bc536ae588e6054250e9cc76487e56498c68713c1e1a7c7d9",
+        "Before post validation": "e5f7b5229723af6ccc1a5b099b1efd7775804bb61d0b6a33c52579b5a5d76444",
+        "Check handoff receipt": "07695ef77999d861b0e7f64d3ec51b0f69a4bed54652b887e4b5f76a8d5619ae",
+        "Final validation": "d7f3dcf9c4739965b293fcc9bff00b538e33ad933815d981a07c8aa3027c1c06",
+        "Report US2 isolated state": "368912e93bd28ca6c6d4241608d550f06054bc7af13ae53bbf866bc77d317487",
+        "Validate US2 inspected reset": "5de9e35547bb9d5a72331ba429e7e1bf3be1c468649ff56eb5748cef8b69c7fb"
+      },
+      "connectionsHash": "a0a1dc9cce7e6ca535adc94af5dbd8755f0d3d2b10ab1e73fcb89eaad16db7c9"
+    },
+    {
+      "id": "1411",
+      "workflowId": "RByomITdtfRHZ74Z",
+      "workflowName": "TEST ONLY \u2014 US2 scheduled reservation",
+      "workflowVersion": null,
+      "schedule": [
+        {
+          "name": "Poll inactive",
+          "parameters": {
+            "notice": "",
+            "rule": {
+              "interval": [
+                {
+                  "field": "seconds",
+                  "secondsInterval": 60
+                }
+              ]
+            }
+          },
+          "disabled": false
+        }
+      ],
+      "mode": "trigger",
+      "status": "success",
+      "startedAt": "2026-11-25 20:38:23.551",
+      "stoppedAt": "2026-11-25 20:38:23.816",
+      "case": "scheduled-held",
+      "lastNode": "Report completion",
+      "errorMessage": "",
+      "reached": [
+        {
+          "name": "Poll inactive",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639103558,
+              "executionTime": 0
+            }
+          ]
+        },
+        {
+          "name": "Read control",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639103558,
+              "executionTime": 3
+            }
+          ]
+        },
+        {
+          "name": "Validate entry",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639103561,
+              "executionTime": 5
+            }
+          ]
+        },
+        {
+          "name": "Already held",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639103566,
+              "executionTime": 1
+            }
+          ]
+        },
+        {
+          "name": "Prepare acquisition",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639103568,
+              "executionTime": 6
+            }
+          ]
+        },
+        {
+          "name": "Acquire control",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639103574,
+              "executionTime": 17
+            }
+          ]
+        },
+        {
+          "name": "Check acquire receipt",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639103591,
+              "executionTime": 5
+            }
+          ]
+        },
+        {
+          "name": "Read acquired control",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639103596,
+              "executionTime": 3
+            }
+          ]
+        },
+        {
+          "name": "Verify acquisition",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639103599,
+              "executionTime": 4
+            }
+          ]
+        },
+        {
+          "name": "Discover all issues",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639103603,
+              "executionTime": 21
+            }
+          ]
+        },
+        {
+          "name": "Select candidate",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639103624,
+              "executionTime": 18
+            }
+          ]
+        },
+        {
+          "name": "Have candidate",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639103642,
+              "executionTime": 2
+            }
+          ]
+        },
+        {
+          "name": "Read approval events",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639103644,
+              "executionTime": 9
+            }
+          ]
+        },
+        {
+          "name": "Read approved comments",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639103653,
+              "executionTime": 6
+            }
+          ]
+        },
+        {
+          "name": "Validate approval",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639103659,
+              "executionTime": 10
+            }
+          ]
+        },
+        {
+          "name": "Set issue context",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639103669,
+              "executionTime": 14
+            }
+          ]
+        },
+        {
+          "name": "Check issue context",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639103683,
+              "executionTime": 7
+            }
+          ]
+        },
+        {
+          "name": "Read PR baseline",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639103690,
+              "executionTime": 3
+            }
+          ]
+        },
+        {
+          "name": "Recheck slot",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639103693,
+              "executionTime": 3
+            }
+          ]
+        },
+        {
+          "name": "Recheck issue",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639103696,
+              "executionTime": 5
+            }
+          ]
+        },
+        {
+          "name": "Recheck events",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639103701,
+              "executionTime": 2
+            }
+          ]
+        },
+        {
+          "name": "Recheck comments",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639103703,
+              "executionTime": 3
+            }
+          ]
+        },
+        {
+          "name": "Prepare handoff",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639103706,
+              "executionTime": 10
+            }
+          ]
+        },
+        {
+          "name": "Add Building",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639103716,
+              "executionTime": 7
+            }
+          ]
+        },
+        {
+          "name": "Check Building receipt",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639103723,
+              "executionTime": 6
+            }
+          ]
+        },
+        {
+          "name": "Remove Approved",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639103729,
+              "executionTime": 6
+            }
+          ]
+        },
+        {
+          "name": "Check removal receipt",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639103735,
+              "executionTime": 6
+            }
+          ]
+        },
+        {
+          "name": "Before post issue",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639103741,
+              "executionTime": 2
+            }
+          ]
+        },
+        {
+          "name": "Before post events",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639103743,
+              "executionTime": 3
+            }
+          ]
+        },
+        {
+          "name": "Before post comments",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639103746,
+              "executionTime": 3
+            }
+          ]
+        },
+        {
+          "name": "Before post validation",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639103749,
+              "executionTime": 9
+            }
+          ]
+        },
+        {
+          "name": "Post handoff",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639103758,
+              "executionTime": 7
+            }
+          ]
+        },
+        {
+          "name": "Check handoff receipt",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639103765,
+              "executionTime": 6
+            }
+          ]
+        },
+        {
+          "name": "Final issue",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639103771,
+              "executionTime": 2
+            }
+          ]
+        },
+        {
+          "name": "Final events",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639103773,
+              "executionTime": 3
+            }
+          ]
+        },
+        {
+          "name": "Final comments",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639103776,
+              "executionTime": 3
+            }
+          ]
+        },
+        {
+          "name": "Final validation",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639103779,
+              "executionTime": 8
+            }
+          ]
+        },
+        {
+          "name": "Require acknowledged completion",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639103787,
+              "executionTime": 4
+            }
+          ]
+        },
+        {
+          "name": "Read before release",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639103791,
+              "executionTime": 2
+            }
+          ]
+        },
+        {
+          "name": "Verify release ownership",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639103793,
+              "executionTime": 4
+            }
+          ]
+        },
+        {
+          "name": "Release control",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639103797,
+              "executionTime": 6
+            }
+          ]
+        },
+        {
+          "name": "Check release receipt",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639103803,
+              "executionTime": 4
+            }
+          ]
+        },
+        {
+          "name": "Read released control",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639103807,
+              "executionTime": 2
+            }
+          ]
+        },
+        {
+          "name": "Confirm idle",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639103809,
+              "executionTime": 4
+            }
+          ]
+        },
+        {
+          "name": "Report completion",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639103813,
+              "executionTime": 3
+            }
+          ]
+        }
+      ],
+      "recoveredEventMetadata": false,
+      "crashedNode": null,
+      "guard": {
+        "key": "global",
+        "busy": true,
+        "execution_id": "1411",
+        "issue_number": null,
+        "started_at": "2026-11-25T20:38:23.571Z",
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-25T20:38:23.589Z"
+      },
+      "handoffReceipt": {
+        "comment_id": 101
+      },
+      "githubWrites": [
+        {
+          "node": "Add Building",
+          "status": 200
+        },
+        {
+          "node": "Remove Approved",
+          "status": 200
+        },
+        {
+          "node": "Post handoff",
+          "status": 201
+        }
+      ],
+      "completion": {
+        "status": "released",
+        "outcome": "success",
+        "control": {
+          "key": "global",
+          "busy": false,
+          "execution_id": "1411",
+          "issue_number": 101,
+          "started_at": "2026-11-25T20:38:23.571Z",
+          "id": 1,
+          "createdAt": "2026-11-25T08:55:42.755Z",
+          "updatedAt": "2026-11-25T20:38:23.801Z"
+        }
+      },
+      "codeHashes": {
+        "Validate entry": "c53a1300a3163dfc6dce7b17a9c9bcd6875102ef780ebfb5fb33f4e65d917f16",
+        "Report existing hold": "c19c21166d1b3380f24ff235a5981ef5c05c2c08b769a91feaaebdd8d9b3348a",
+        "Prepare acquisition": "1c422268550daa938517416e9310e2312969176d5392a7982d2b34736dc28b46",
+        "Check acquire receipt": "9f6681e0e027be397811157f18f1631990bfb845a1186a688a2bbe9ca00a8cca",
+        "Verify acquisition": "6a00e1ec39f0cbf011045e03c9749edeffe6131d341628e81af6a207e7241e5c",
+        "Require acknowledged completion": "7ff2f231c2ee12d992683306ae479be26a394c0dfbf6eeaff37ec3a84fd8c0fe",
+        "Verify release ownership": "8be72a3f984b9e7d157ecdc173ebb9011476954a250a87b7e05cd8ed1ebe999b",
+        "Check release receipt": "ef458c0ebf757aeb2bccb0e78236ac3baca220b9f24777fd40fd69304e2ac718",
+        "Confirm idle": "f4b16a381fe3852d77d6e91886713dfc1c54cf81b589cce1627257086c518309",
+        "Report completion": "0d7a120d7b7554c6d438c640fe21460ab67bee6191a8bb6e1cc9eff7014dd62e",
+        "Select candidate": "157d678ca77e5064591e8ddbded8016168d99da63a76a92502c419e48c83b046",
+        "No work": "dd0716d0d9eddbb988869ac0d3187154d5cfb1eda1ca43461e5b25d2746744ff",
+        "Validate approval": "a4766e5ba01c0bc3320ffe9f2aff7bf8db878928de2965ea449a25e41e70f5e1",
+        "Check issue context": "017b80a992fd6f87bf08a5dbab70691068feac9b7a3c9459aa9c0b0ba9e4ea45",
+        "Prepare handoff": "7524da3030c027410e08c6d46f16722094a1c5a724a5971333f51ad6d7de9392",
+        "Check Building receipt": "15caee006afb11d01e28614a90bf0cd5b94323d63df849f637834e39e291dd9a",
+        "Check removal receipt": "fae61101d3aff67bc536ae588e6054250e9cc76487e56498c68713c1e1a7c7d9",
+        "Before post validation": "e5f7b5229723af6ccc1a5b099b1efd7775804bb61d0b6a33c52579b5a5d76444",
+        "Check handoff receipt": "07695ef77999d861b0e7f64d3ec51b0f69a4bed54652b887e4b5f76a8d5619ae",
+        "Final validation": "d7f3dcf9c4739965b293fcc9bff00b538e33ad933815d981a07c8aa3027c1c06",
+        "Report US2 isolated state": "368912e93bd28ca6c6d4241608d550f06054bc7af13ae53bbf866bc77d317487",
+        "Validate US2 inspected reset": "5de9e35547bb9d5a72331ba429e7e1bf3be1c468649ff56eb5748cef8b69c7fb"
+      },
+      "connectionsHash": "a0a1dc9cce7e6ca535adc94af5dbd8755f0d3d2b10ab1e73fcb89eaad16db7c9"
+    },
+    {
+      "id": "1439",
+      "workflowId": "RByomITdtfRHZ74Z",
+      "workflowName": "TEST ONLY \u2014 US2 scheduled reservation",
+      "workflowVersion": null,
+      "schedule": [
+        {
+          "name": "Poll inactive",
+          "parameters": {
+            "notice": "",
+            "rule": {
+              "interval": [
+                {
+                  "field": "seconds",
+                  "secondsInterval": 60
+                }
+              ]
+            }
+          },
+          "disabled": false
+        }
+      ],
+      "mode": "trigger",
+      "status": "success",
+      "startedAt": "2026-11-25 20:39:23.554",
+      "stoppedAt": "2026-11-25 20:39:23.646",
+      "case": "scheduled-held",
+      "lastNode": "Report completion",
+      "errorMessage": "",
+      "reached": [
+        {
+          "name": "Poll inactive",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639163561,
+              "executionTime": 0
+            }
+          ]
+        },
+        {
+          "name": "Read control",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639163561,
+              "executionTime": 4
+            }
+          ]
+        },
+        {
+          "name": "Validate entry",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639163565,
+              "executionTime": 5
+            }
+          ]
+        },
+        {
+          "name": "Already held",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639163570,
+              "executionTime": 1
+            }
+          ]
+        },
+        {
+          "name": "Prepare acquisition",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639163571,
+              "executionTime": 4
+            }
+          ]
+        },
+        {
+          "name": "Acquire control",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639163575,
+              "executionTime": 6
+            }
+          ]
+        },
+        {
+          "name": "Check acquire receipt",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639163581,
+              "executionTime": 5
+            }
+          ]
+        },
+        {
+          "name": "Read acquired control",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639163586,
+              "executionTime": 1
+            }
+          ]
+        },
+        {
+          "name": "Verify acquisition",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639163587,
+              "executionTime": 4
+            }
+          ]
+        },
+        {
+          "name": "Discover all issues",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639163591,
+              "executionTime": 4
+            }
+          ]
+        },
+        {
+          "name": "Select candidate",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639163595,
+              "executionTime": 5
+            }
+          ]
+        },
+        {
+          "name": "Have candidate",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639163600,
+              "executionTime": 1
+            }
+          ]
+        },
+        {
+          "name": "No work",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639163601,
+              "executionTime": 5
+            }
+          ]
+        },
+        {
+          "name": "Require acknowledged completion",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639163606,
+              "executionTime": 6
+            }
+          ]
+        },
+        {
+          "name": "Read before release",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639163612,
+              "executionTime": 6
+            }
+          ]
+        },
+        {
+          "name": "Verify release ownership",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639163618,
+              "executionTime": 7
+            }
+          ]
+        },
+        {
+          "name": "Release control",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639163625,
+              "executionTime": 7
+            }
+          ]
+        },
+        {
+          "name": "Check release receipt",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639163632,
+              "executionTime": 4
+            }
+          ]
+        },
+        {
+          "name": "Read released control",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639163636,
+              "executionTime": 2
+            }
+          ]
+        },
+        {
+          "name": "Confirm idle",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639163639,
+              "executionTime": 3
+            }
+          ]
+        },
+        {
+          "name": "Report completion",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639163643,
+              "executionTime": 3
+            }
+          ]
+        }
+      ],
+      "recoveredEventMetadata": false,
+      "crashedNode": null,
+      "guard": {
+        "key": "global",
+        "busy": true,
+        "execution_id": "1439",
+        "issue_number": null,
+        "started_at": "2026-11-25T20:39:23.574Z",
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-25T20:39:23.580Z"
+      },
+      "githubWrites": [],
+      "completion": {
+        "status": "released",
+        "outcome": "no_work",
+        "control": {
+          "key": "global",
+          "busy": false,
+          "execution_id": "1439",
+          "issue_number": null,
+          "started_at": "2026-11-25T20:39:23.574Z",
+          "id": 1,
+          "createdAt": "2026-11-25T08:55:42.755Z",
+          "updatedAt": "2026-11-25T20:39:23.630Z"
+        }
+      },
+      "codeHashes": {
+        "Validate entry": "c53a1300a3163dfc6dce7b17a9c9bcd6875102ef780ebfb5fb33f4e65d917f16",
+        "Report existing hold": "c19c21166d1b3380f24ff235a5981ef5c05c2c08b769a91feaaebdd8d9b3348a",
+        "Prepare acquisition": "1c422268550daa938517416e9310e2312969176d5392a7982d2b34736dc28b46",
+        "Check acquire receipt": "9f6681e0e027be397811157f18f1631990bfb845a1186a688a2bbe9ca00a8cca",
+        "Verify acquisition": "6a00e1ec39f0cbf011045e03c9749edeffe6131d341628e81af6a207e7241e5c",
+        "Require acknowledged completion": "7ff2f231c2ee12d992683306ae479be26a394c0dfbf6eeaff37ec3a84fd8c0fe",
+        "Verify release ownership": "8be72a3f984b9e7d157ecdc173ebb9011476954a250a87b7e05cd8ed1ebe999b",
+        "Check release receipt": "ef458c0ebf757aeb2bccb0e78236ac3baca220b9f24777fd40fd69304e2ac718",
+        "Confirm idle": "f4b16a381fe3852d77d6e91886713dfc1c54cf81b589cce1627257086c518309",
+        "Report completion": "0d7a120d7b7554c6d438c640fe21460ab67bee6191a8bb6e1cc9eff7014dd62e",
+        "Select candidate": "157d678ca77e5064591e8ddbded8016168d99da63a76a92502c419e48c83b046",
+        "No work": "dd0716d0d9eddbb988869ac0d3187154d5cfb1eda1ca43461e5b25d2746744ff",
+        "Validate approval": "a4766e5ba01c0bc3320ffe9f2aff7bf8db878928de2965ea449a25e41e70f5e1",
+        "Check issue context": "017b80a992fd6f87bf08a5dbab70691068feac9b7a3c9459aa9c0b0ba9e4ea45",
+        "Prepare handoff": "7524da3030c027410e08c6d46f16722094a1c5a724a5971333f51ad6d7de9392",
+        "Check Building receipt": "15caee006afb11d01e28614a90bf0cd5b94323d63df849f637834e39e291dd9a",
+        "Check removal receipt": "fae61101d3aff67bc536ae588e6054250e9cc76487e56498c68713c1e1a7c7d9",
+        "Before post validation": "e5f7b5229723af6ccc1a5b099b1efd7775804bb61d0b6a33c52579b5a5d76444",
+        "Check handoff receipt": "07695ef77999d861b0e7f64d3ec51b0f69a4bed54652b887e4b5f76a8d5619ae",
+        "Final validation": "d7f3dcf9c4739965b293fcc9bff00b538e33ad933815d981a07c8aa3027c1c06",
+        "Report US2 isolated state": "368912e93bd28ca6c6d4241608d550f06054bc7af13ae53bbf866bc77d317487",
+        "Validate US2 inspected reset": "5de9e35547bb9d5a72331ba429e7e1bf3be1c468649ff56eb5748cef8b69c7fb"
+      },
+      "connectionsHash": "a0a1dc9cce7e6ca535adc94af5dbd8755f0d3d2b10ab1e73fcb89eaad16db7c9"
+    },
+    {
+      "id": "1441",
+      "workflowId": "RByomITdtfRHZ74Z",
+      "workflowName": "TEST ONLY \u2014 US2 scheduled reservation",
+      "workflowVersion": null,
+      "schedule": [
+        {
+          "name": "Poll inactive",
+          "parameters": {
+            "notice": "",
+            "rule": {
+              "interval": [
+                {
+                  "field": "seconds",
+                  "secondsInterval": 60
+                }
+              ]
+            }
+          },
+          "disabled": false
+        }
+      ],
+      "mode": "trigger",
+      "status": "success",
+      "startedAt": "2026-11-25 20:40:23.537",
+      "stoppedAt": "2026-11-25 20:40:23.621",
+      "case": "scheduled-held",
+      "lastNode": "Report completion",
+      "errorMessage": "",
+      "reached": [
+        {
+          "name": "Poll inactive",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639223543,
+              "executionTime": 0
+            }
+          ]
+        },
+        {
+          "name": "Read control",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639223543,
+              "executionTime": 3
+            }
+          ]
+        },
+        {
+          "name": "Validate entry",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639223546,
+              "executionTime": 5
+            }
+          ]
+        },
+        {
+          "name": "Already held",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639223551,
+              "executionTime": 1
+            }
+          ]
+        },
+        {
+          "name": "Prepare acquisition",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639223553,
+              "executionTime": 3
+            }
+          ]
+        },
+        {
+          "name": "Acquire control",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639223556,
+              "executionTime": 7
+            }
+          ]
+        },
+        {
+          "name": "Check acquire receipt",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639223563,
+              "executionTime": 4
+            }
+          ]
+        },
+        {
+          "name": "Read acquired control",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639223567,
+              "executionTime": 2
+            }
+          ]
+        },
+        {
+          "name": "Verify acquisition",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639223569,
+              "executionTime": 4
+            }
+          ]
+        },
+        {
+          "name": "Discover all issues",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639223573,
+              "executionTime": 4
+            }
+          ]
+        },
+        {
+          "name": "Select candidate",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639223577,
+              "executionTime": 5
+            }
+          ]
+        },
+        {
+          "name": "Have candidate",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639223583,
+              "executionTime": 0
+            }
+          ]
+        },
+        {
+          "name": "No work",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639223583,
+              "executionTime": 6
+            }
+          ]
+        },
+        {
+          "name": "Require acknowledged completion",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639223589,
+              "executionTime": 6
+            }
+          ]
+        },
+        {
+          "name": "Read before release",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639223595,
+              "executionTime": 2
+            }
+          ]
+        },
+        {
+          "name": "Verify release ownership",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639223598,
+              "executionTime": 3
+            }
+          ]
+        },
+        {
+          "name": "Release control",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639223601,
+              "executionTime": 6
+            }
+          ]
+        },
+        {
+          "name": "Check release receipt",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639223608,
+              "executionTime": 3
+            }
+          ]
+        },
+        {
+          "name": "Read released control",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639223611,
+              "executionTime": 2
+            }
+          ]
+        },
+        {
+          "name": "Confirm idle",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639223613,
+              "executionTime": 4
+            }
+          ]
+        },
+        {
+          "name": "Report completion",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639223617,
+              "executionTime": 4
+            }
+          ]
+        }
+      ],
+      "recoveredEventMetadata": false,
+      "crashedNode": null,
+      "guard": {
+        "key": "global",
+        "busy": true,
+        "execution_id": "1441",
+        "issue_number": null,
+        "started_at": "2026-11-25T20:40:23.556Z",
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-25T20:40:23.561Z"
+      },
+      "githubWrites": [],
+      "completion": {
+        "status": "released",
+        "outcome": "no_work",
+        "control": {
+          "key": "global",
+          "busy": false,
+          "execution_id": "1441",
+          "issue_number": null,
+          "started_at": "2026-11-25T20:40:23.556Z",
+          "id": 1,
+          "createdAt": "2026-11-25T08:55:42.755Z",
+          "updatedAt": "2026-11-25T20:40:23.606Z"
+        }
+      },
+      "codeHashes": {
+        "Validate entry": "c53a1300a3163dfc6dce7b17a9c9bcd6875102ef780ebfb5fb33f4e65d917f16",
+        "Report existing hold": "c19c21166d1b3380f24ff235a5981ef5c05c2c08b769a91feaaebdd8d9b3348a",
+        "Prepare acquisition": "1c422268550daa938517416e9310e2312969176d5392a7982d2b34736dc28b46",
+        "Check acquire receipt": "9f6681e0e027be397811157f18f1631990bfb845a1186a688a2bbe9ca00a8cca",
+        "Verify acquisition": "6a00e1ec39f0cbf011045e03c9749edeffe6131d341628e81af6a207e7241e5c",
+        "Require acknowledged completion": "7ff2f231c2ee12d992683306ae479be26a394c0dfbf6eeaff37ec3a84fd8c0fe",
+        "Verify release ownership": "8be72a3f984b9e7d157ecdc173ebb9011476954a250a87b7e05cd8ed1ebe999b",
+        "Check release receipt": "ef458c0ebf757aeb2bccb0e78236ac3baca220b9f24777fd40fd69304e2ac718",
+        "Confirm idle": "f4b16a381fe3852d77d6e91886713dfc1c54cf81b589cce1627257086c518309",
+        "Report completion": "0d7a120d7b7554c6d438c640fe21460ab67bee6191a8bb6e1cc9eff7014dd62e",
+        "Select candidate": "157d678ca77e5064591e8ddbded8016168d99da63a76a92502c419e48c83b046",
+        "No work": "dd0716d0d9eddbb988869ac0d3187154d5cfb1eda1ca43461e5b25d2746744ff",
+        "Validate approval": "a4766e5ba01c0bc3320ffe9f2aff7bf8db878928de2965ea449a25e41e70f5e1",
+        "Check issue context": "017b80a992fd6f87bf08a5dbab70691068feac9b7a3c9459aa9c0b0ba9e4ea45",
+        "Prepare handoff": "7524da3030c027410e08c6d46f16722094a1c5a724a5971333f51ad6d7de9392",
+        "Check Building receipt": "15caee006afb11d01e28614a90bf0cd5b94323d63df849f637834e39e291dd9a",
+        "Check removal receipt": "fae61101d3aff67bc536ae588e6054250e9cc76487e56498c68713c1e1a7c7d9",
+        "Before post validation": "e5f7b5229723af6ccc1a5b099b1efd7775804bb61d0b6a33c52579b5a5d76444",
+        "Check handoff receipt": "07695ef77999d861b0e7f64d3ec51b0f69a4bed54652b887e4b5f76a8d5619ae",
+        "Final validation": "d7f3dcf9c4739965b293fcc9bff00b538e33ad933815d981a07c8aa3027c1c06",
+        "Report US2 isolated state": "368912e93bd28ca6c6d4241608d550f06054bc7af13ae53bbf866bc77d317487",
+        "Validate US2 inspected reset": "5de9e35547bb9d5a72331ba429e7e1bf3be1c468649ff56eb5748cef8b69c7fb"
+      },
+      "connectionsHash": "a0a1dc9cce7e6ca535adc94af5dbd8755f0d3d2b10ab1e73fcb89eaad16db7c9"
+    },
+    {
+      "id": "1442",
+      "workflowId": "RByomITdtfRHZ74Z",
+      "workflowName": "TEST ONLY \u2014 US2 scheduled reservation",
+      "workflowVersion": null,
+      "schedule": [
+        {
+          "name": "Poll inactive",
+          "parameters": {
+            "notice": "",
+            "rule": {
+              "interval": [
+                {
+                  "field": "seconds",
+                  "secondsInterval": 60
+                }
+              ]
+            }
+          },
+          "disabled": false
+        }
+      ],
+      "mode": "trigger",
+      "status": "success",
+      "startedAt": "2026-11-25 20:41:23.552",
+      "stoppedAt": "2026-11-25 20:41:23.640",
+      "case": "scheduled-held",
+      "lastNode": "Report completion",
+      "errorMessage": "",
+      "reached": [
+        {
+          "name": "Poll inactive",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639283559,
+              "executionTime": 0
+            }
+          ]
+        },
+        {
+          "name": "Read control",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639283559,
+              "executionTime": 3
+            }
+          ]
+        },
+        {
+          "name": "Validate entry",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639283563,
+              "executionTime": 4
+            }
+          ]
+        },
+        {
+          "name": "Already held",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639283568,
+              "executionTime": 1
+            }
+          ]
+        },
+        {
+          "name": "Prepare acquisition",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639283569,
+              "executionTime": 4
+            }
+          ]
+        },
+        {
+          "name": "Acquire control",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639283573,
+              "executionTime": 10
+            }
+          ]
+        },
+        {
+          "name": "Check acquire receipt",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639283583,
+              "executionTime": 5
+            }
+          ]
+        },
+        {
+          "name": "Read acquired control",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639283588,
+              "executionTime": 3
+            }
+          ]
+        },
+        {
+          "name": "Verify acquisition",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639283591,
+              "executionTime": 5
+            }
+          ]
+        },
+        {
+          "name": "Discover all issues",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639283596,
+              "executionTime": 3
+            }
+          ]
+        },
+        {
+          "name": "Select candidate",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639283600,
+              "executionTime": 5
+            }
+          ]
+        },
+        {
+          "name": "Have candidate",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639283605,
+              "executionTime": 0
+            }
+          ]
+        },
+        {
+          "name": "No work",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639283605,
+              "executionTime": 5
+            }
+          ]
+        },
+        {
+          "name": "Require acknowledged completion",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639283611,
+              "executionTime": 3
+            }
+          ]
+        },
+        {
+          "name": "Read before release",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639283614,
+              "executionTime": 2
+            }
+          ]
+        },
+        {
+          "name": "Verify release ownership",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639283616,
+              "executionTime": 4
+            }
+          ]
+        },
+        {
+          "name": "Release control",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639283620,
+              "executionTime": 6
+            }
+          ]
+        },
+        {
+          "name": "Check release receipt",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639283626,
+              "executionTime": 4
+            }
+          ]
+        },
+        {
+          "name": "Read released control",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639283630,
+              "executionTime": 3
+            }
+          ]
+        },
+        {
+          "name": "Confirm idle",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639283633,
+              "executionTime": 3
+            }
+          ]
+        },
+        {
+          "name": "Report completion",
+          "runs": 1,
+          "status": "success",
+          "timings": [
+            {
+              "startTime": 1795639283636,
+              "executionTime": 4
+            }
+          ]
+        }
+      ],
+      "recoveredEventMetadata": false,
+      "crashedNode": null,
+      "guard": {
+        "key": "global",
+        "busy": true,
+        "execution_id": "1442",
+        "issue_number": null,
+        "started_at": "2026-11-25T20:41:23.573Z",
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-25T20:41:23.581Z"
+      },
+      "githubWrites": [],
+      "completion": {
+        "status": "released",
+        "outcome": "no_work",
+        "control": {
+          "key": "global",
+          "busy": false,
+          "execution_id": "1442",
+          "issue_number": null,
+          "started_at": "2026-11-25T20:41:23.573Z",
+          "id": 1,
+          "createdAt": "2026-11-25T08:55:42.755Z",
+          "updatedAt": "2026-11-25T20:41:23.625Z"
+        }
+      },
+      "codeHashes": {
+        "Validate entry": "c53a1300a3163dfc6dce7b17a9c9bcd6875102ef780ebfb5fb33f4e65d917f16",
+        "Report existing hold": "c19c21166d1b3380f24ff235a5981ef5c05c2c08b769a91feaaebdd8d9b3348a",
+        "Prepare acquisition": "1c422268550daa938517416e9310e2312969176d5392a7982d2b34736dc28b46",
+        "Check acquire receipt": "9f6681e0e027be397811157f18f1631990bfb845a1186a688a2bbe9ca00a8cca",
+        "Verify acquisition": "6a00e1ec39f0cbf011045e03c9749edeffe6131d341628e81af6a207e7241e5c",
+        "Require acknowledged completion": "7ff2f231c2ee12d992683306ae479be26a394c0dfbf6eeaff37ec3a84fd8c0fe",
+        "Verify release ownership": "8be72a3f984b9e7d157ecdc173ebb9011476954a250a87b7e05cd8ed1ebe999b",
+        "Check release receipt": "ef458c0ebf757aeb2bccb0e78236ac3baca220b9f24777fd40fd69304e2ac718",
+        "Confirm idle": "f4b16a381fe3852d77d6e91886713dfc1c54cf81b589cce1627257086c518309",
+        "Report completion": "0d7a120d7b7554c6d438c640fe21460ab67bee6191a8bb6e1cc9eff7014dd62e",
+        "Select candidate": "157d678ca77e5064591e8ddbded8016168d99da63a76a92502c419e48c83b046",
+        "No work": "dd0716d0d9eddbb988869ac0d3187154d5cfb1eda1ca43461e5b25d2746744ff",
+        "Validate approval": "a4766e5ba01c0bc3320ffe9f2aff7bf8db878928de2965ea449a25e41e70f5e1",
+        "Check issue context": "017b80a992fd6f87bf08a5dbab70691068feac9b7a3c9459aa9c0b0ba9e4ea45",
+        "Prepare handoff": "7524da3030c027410e08c6d46f16722094a1c5a724a5971333f51ad6d7de9392",
+        "Check Building receipt": "15caee006afb11d01e28614a90bf0cd5b94323d63df849f637834e39e291dd9a",
+        "Check removal receipt": "fae61101d3aff67bc536ae588e6054250e9cc76487e56498c68713c1e1a7c7d9",
+        "Before post validation": "e5f7b5229723af6ccc1a5b099b1efd7775804bb61d0b6a33c52579b5a5d76444",
+        "Check handoff receipt": "07695ef77999d861b0e7f64d3ec51b0f69a4bed54652b887e4b5f76a8d5619ae",
+        "Final validation": "d7f3dcf9c4739965b293fcc9bff00b538e33ad933815d981a07c8aa3027c1c06",
+        "Report US2 isolated state": "368912e93bd28ca6c6d4241608d550f06054bc7af13ae53bbf866bc77d317487",
+        "Validate US2 inspected reset": "5de9e35547bb9d5a72331ba429e7e1bf3be1c468649ff56eb5748cef8b69c7fb"
+      },
+      "connectionsHash": "a0a1dc9cce7e6ca535adc94af5dbd8755f0d3d2b10ab1e73fcb89eaad16db7c9"
+    }
+  ],
+  "observations": [
+    {
+      "event": "initial_observation",
+      "at": 1795639053.3371894,
+      "row": {
+        "key": "global",
+        "busy": false,
+        "execution_id": "1369",
+        "issue_number": 101,
+        "started_at": "2026-11-25T18:30:27.005Z",
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-25T20:37:23.899Z"
+      },
+      "session": null
+    },
+    {
+      "event": "observed_reservation",
+      "at": 1795639105.4460413,
+      "row": {
+        "key": "global",
+        "busy": false,
+        "execution_id": "1411",
+        "issue_number": 101,
+        "started_at": "2026-11-25T20:38:23.571Z",
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-25T20:38:23.801Z"
+      },
+      "session": {
+        "case": "success",
+        "issues": [
+          {
+            "number": 101,
+            "title": "Synthetic documentation task",
+            "body": "Only document setup.",
+            "user": {
+              "id": 202449424
+            },
+            "state": "open",
+            "labels": [
+              {
+                "name": "documentation"
+              },
+              {
+                "name": "Building"
+              }
+            ]
+          },
+          {
+            "number": 102,
+            "title": "Synthetic documentation task",
+            "body": "Only document setup.",
+            "user": {
+              "id": 202449424
+            },
+            "state": "open",
+            "labels": [
+              {
+                "name": "Approved"
+              },
+              {
+                "name": "documentation"
+              }
+            ]
+          }
+        ],
+        "comments": {
+          "101": [
+            {
+              "id": 10,
+              "body": "Keep the example short.",
+              "user": {
+                "id": 202449424
+              },
+              "created_at": "2026-11-25T10:00:00Z",
+              "updated_at": "2026-11-25T10:00:00Z"
+            },
+            {
+              "id": 20,
+              "body": "<!-- factory:refinement:v1 {\"issue_number\":101,\"source_digest\":\"29c2a22e170d85e7721cec240c1d9ab1f19f47831ac429f0e220f37ec49fd0de\",\"captured_comment_ids\":[10],\"last_included_owner_comment_id\":10,\"prompt_version\":\"v3\",\"template_version\":\"v1\",\"source_key\":\"101:29c2a22e170d85e7721cec240c1d9ab1f19f47831ac429f0e220f37ec49fd0de:10:v3\",\"content_sha256\":\"7f85dd4dfc9218911f051537f4a1f44e02b62d552023a1c214f7316b8ccfbdaf\"} -->\nSynthetic goal, constraints and checkable acceptance criteria.",
+              "html_url": "https://github.com/MBroholm/software-factory/issues/101#issuecomment-20",
+              "user": {
+                "id": 202449424
+              },
+              "created_at": "2026-11-25T10:00:00Z",
+              "updated_at": "2026-11-25T10:00:00Z"
+            },
+            {
+              "id": 101,
+              "body": "<!-- factory:handoff:v1 {\"issue_number\":101,\"approval_event_id\":30,\"approval_actor_id\":202449424,\"approval_timestamp\":\"2026-11-25T11:00:00Z\",\"refinement_comment_id\":20,\"refinement_url\":\"https://github.com/MBroholm/software-factory/issues/101#issuecomment-20\",\"refinement_created_at\":\"2026-11-25T10:00:00Z\",\"refinement_updated_at\":\"2026-11-25T10:00:00Z\",\"refinement_content_sha256\":\"7f85dd4dfc9218911f051537f4a1f44e02b62d552023a1c214f7316b8ccfbdaf\",\"refinement_body_sha256\":\"9ff2181e6976c1364856d3b1f69eace9fe4af79d073dfeaffd8ef640e7abfaef\",\"source_digest\":\"29c2a22e170d85e7721cec240c1d9ab1f19f47831ac429f0e220f37ec49fd0de\",\"branch\":\"issue-101\",\"baseline_prs\":[],\"timestamp\":\"2026-11-25T20:38:23.715Z\"} -->\n## Manual build reservation\n\nIssue: https://github.com/MBroholm/software-factory/issues/101\nApproved refinement: https://github.com/MBroholm/software-factory/issues/101#issuecomment-20\nApproval event: 30 (2026-11-25T11:00:00Z); owner actor 202449424.\nRefinement content SHA-256: 7f85dd4dfc9218911f051537f4a1f44e02b62d552023a1c214f7316b8ccfbdaf\nSource SHA-256: 29c2a22e170d85e7721cec240c1d9ab1f19f47831ac429f0e220f37ec49fd0de\nBranch: `issue-101`; base: `main`.\n\nBuilding reserves the single slot; it does not confirm Codex has started. The owner must verify this approved input and launch Codex manually on Fedora using docs/manual-coding.md. Ask result-changing questions in the session and summarize answers/decisions on this issue. Expanded scope requires fresh explicit approval. Return changes in a linked pull request with actual checks and unchecked criteria. No agent was launched by this workflow.\n",
+              "user": {
+                "id": 202449424
+              },
+              "created_at": "2026-11-25T20:38:23.764Z",
+              "updated_at": "2026-11-25T20:38:23.764Z"
+            }
+          ],
+          "102": [
+            {
+              "id": 10,
+              "body": "Keep the example short.",
+              "user": {
+                "id": 202449424
+              },
+              "created_at": "2026-11-25T10:00:00Z",
+              "updated_at": "2026-11-25T10:00:00Z"
+            },
+            {
+              "id": 20,
+              "body": "<!-- factory:refinement:v1 {\"issue_number\":102,\"source_digest\":\"29c2a22e170d85e7721cec240c1d9ab1f19f47831ac429f0e220f37ec49fd0de\",\"captured_comment_ids\":[10],\"last_included_owner_comment_id\":10,\"prompt_version\":\"v3\",\"template_version\":\"v1\",\"source_key\":\"102:29c2a22e170d85e7721cec240c1d9ab1f19f47831ac429f0e220f37ec49fd0de:10:v3\",\"content_sha256\":\"7f85dd4dfc9218911f051537f4a1f44e02b62d552023a1c214f7316b8ccfbdaf\"} -->\nSynthetic goal, constraints and checkable acceptance criteria.",
+              "html_url": "https://github.com/MBroholm/software-factory/issues/102#issuecomment-20",
+              "user": {
+                "id": 202449424
+              },
+              "created_at": "2026-11-25T10:00:00Z",
+              "updated_at": "2026-11-25T10:00:00Z"
+            }
+          ]
+        },
+        "events": {
+          "101": [
+            {
+              "id": 30,
+              "event": "labeled",
+              "label": {
+                "name": "Approved"
+              },
+              "actor": {
+                "id": 202449424
+              },
+              "created_at": "2026-11-25T11:00:00Z"
+            },
+            {
+              "id": 31,
+              "event": "labeled",
+              "label": {
+                "name": "Building"
+              },
+              "actor": {
+                "id": 202449424
+              },
+              "created_at": "2026-11-25T20:38:23.723Z"
+            },
+            {
+              "id": 32,
+              "event": "unlabeled",
+              "label": {
+                "name": "Approved"
+              },
+              "actor": {
+                "id": 202449424
+              },
+              "created_at": "2026-11-25T20:38:23.734Z"
+            }
+          ],
+          "102": [
+            {
+              "id": 30,
+              "event": "labeled",
+              "label": {
+                "name": "Approved"
+              },
+              "actor": {
+                "id": 202449424
+              },
+              "created_at": "2026-11-25T11:00:00Z"
+            }
+          ]
+        },
+        "calls": [
+          {
+            "node": "Discover all issues",
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues",
+            "page": "1",
+            "at": 1795639103619
+          },
+          {
+            "node": "Read approval events",
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/101/events",
+            "page": "1",
+            "at": 1795639103652
+          },
+          {
+            "node": "Read approved comments",
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/101/comments",
+            "page": "1",
+            "at": 1795639103658
+          },
+          {
+            "node": "Read PR baseline",
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/pulls",
+            "page": "1",
+            "at": 1795639103692
+          },
+          {
+            "node": "Recheck slot",
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues",
+            "page": "1",
+            "at": 1795639103695
+          },
+          {
+            "node": "Recheck issue",
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/101",
+            "page": null,
+            "at": 1795639103700
+          },
+          {
+            "node": "Recheck events",
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/101/events",
+            "page": "1",
+            "at": 1795639103703
+          },
+          {
+            "node": "Recheck comments",
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/101/comments",
+            "page": "1",
+            "at": 1795639103705
+          },
+          {
+            "node": "Add Building",
+            "method": "POST",
+            "path": "/github/repos/MBroholm/software-factory/issues/101/labels",
+            "page": null,
+            "at": 1795639103723
+          },
+          {
+            "node": "Remove Approved",
+            "method": "DELETE",
+            "path": "/github/repos/MBroholm/software-factory/issues/101/labels/Approved",
+            "page": null,
+            "at": 1795639103734
+          },
+          {
+            "node": "Before post issue",
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/101",
+            "page": null,
+            "at": 1795639103743
+          },
+          {
+            "node": "Before post events",
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/101/events",
+            "page": "1",
+            "at": 1795639103745
+          },
+          {
+            "node": "Before post comments",
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/101/comments",
+            "page": "1",
+            "at": 1795639103748
+          },
+          {
+            "node": "Post handoff",
+            "method": "POST",
+            "path": "/github/repos/MBroholm/software-factory/issues/101/comments",
+            "page": null,
+            "at": 1795639103764
+          },
+          {
+            "node": "Final issue",
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/101",
+            "page": null,
+            "at": 1795639103772
+          },
+          {
+            "node": "Final events",
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/101/events",
+            "page": "1",
+            "at": 1795639103775
+          },
+          {
+            "node": "Final comments",
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/101/comments",
+            "page": "1",
+            "at": 1795639103778
+          }
+        ],
+        "posts": 1,
+        "waitingAt": null
+      }
+    },
+    {
+      "event": "PASS_occupied_poll",
+      "at": 1795639164.229686,
+      "row": {
+        "key": "global",
+        "busy": false,
+        "execution_id": "1439",
+        "issue_number": null,
+        "started_at": "2026-11-25T20:39:23.574Z",
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-25T20:39:23.630Z"
+      },
+      "session": {
+        "case": "success",
+        "issues": [
+          {
+            "number": 101,
+            "title": "Synthetic documentation task",
+            "body": "Only document setup.",
+            "user": {
+              "id": 202449424
+            },
+            "state": "open",
+            "labels": [
+              {
+                "name": "documentation"
+              },
+              {
+                "name": "Building"
+              }
+            ]
+          },
+          {
+            "number": 102,
+            "title": "Synthetic documentation task",
+            "body": "Only document setup.",
+            "user": {
+              "id": 202449424
+            },
+            "state": "open",
+            "labels": [
+              {
+                "name": "Approved"
+              },
+              {
+                "name": "documentation"
+              }
+            ]
+          }
+        ],
+        "comments": {
+          "101": [
+            {
+              "id": 10,
+              "body": "Keep the example short.",
+              "user": {
+                "id": 202449424
+              },
+              "created_at": "2026-11-25T10:00:00Z",
+              "updated_at": "2026-11-25T10:00:00Z"
+            },
+            {
+              "id": 20,
+              "body": "<!-- factory:refinement:v1 {\"issue_number\":101,\"source_digest\":\"29c2a22e170d85e7721cec240c1d9ab1f19f47831ac429f0e220f37ec49fd0de\",\"captured_comment_ids\":[10],\"last_included_owner_comment_id\":10,\"prompt_version\":\"v3\",\"template_version\":\"v1\",\"source_key\":\"101:29c2a22e170d85e7721cec240c1d9ab1f19f47831ac429f0e220f37ec49fd0de:10:v3\",\"content_sha256\":\"7f85dd4dfc9218911f051537f4a1f44e02b62d552023a1c214f7316b8ccfbdaf\"} -->\nSynthetic goal, constraints and checkable acceptance criteria.",
+              "html_url": "https://github.com/MBroholm/software-factory/issues/101#issuecomment-20",
+              "user": {
+                "id": 202449424
+              },
+              "created_at": "2026-11-25T10:00:00Z",
+              "updated_at": "2026-11-25T10:00:00Z"
+            },
+            {
+              "id": 101,
+              "body": "<!-- factory:handoff:v1 {\"issue_number\":101,\"approval_event_id\":30,\"approval_actor_id\":202449424,\"approval_timestamp\":\"2026-11-25T11:00:00Z\",\"refinement_comment_id\":20,\"refinement_url\":\"https://github.com/MBroholm/software-factory/issues/101#issuecomment-20\",\"refinement_created_at\":\"2026-11-25T10:00:00Z\",\"refinement_updated_at\":\"2026-11-25T10:00:00Z\",\"refinement_content_sha256\":\"7f85dd4dfc9218911f051537f4a1f44e02b62d552023a1c214f7316b8ccfbdaf\",\"refinement_body_sha256\":\"9ff2181e6976c1364856d3b1f69eace9fe4af79d073dfeaffd8ef640e7abfaef\",\"source_digest\":\"29c2a22e170d85e7721cec240c1d9ab1f19f47831ac429f0e220f37ec49fd0de\",\"branch\":\"issue-101\",\"baseline_prs\":[],\"timestamp\":\"2026-11-25T20:38:23.715Z\"} -->\n## Manual build reservation\n\nIssue: https://github.com/MBroholm/software-factory/issues/101\nApproved refinement: https://github.com/MBroholm/software-factory/issues/101#issuecomment-20\nApproval event: 30 (2026-11-25T11:00:00Z); owner actor 202449424.\nRefinement content SHA-256: 7f85dd4dfc9218911f051537f4a1f44e02b62d552023a1c214f7316b8ccfbdaf\nSource SHA-256: 29c2a22e170d85e7721cec240c1d9ab1f19f47831ac429f0e220f37ec49fd0de\nBranch: `issue-101`; base: `main`.\n\nBuilding reserves the single slot; it does not confirm Codex has started. The owner must verify this approved input and launch Codex manually on Fedora using docs/manual-coding.md. Ask result-changing questions in the session and summarize answers/decisions on this issue. Expanded scope requires fresh explicit approval. Return changes in a linked pull request with actual checks and unchecked criteria. No agent was launched by this workflow.\n",
+              "user": {
+                "id": 202449424
+              },
+              "created_at": "2026-11-25T20:38:23.764Z",
+              "updated_at": "2026-11-25T20:38:23.764Z"
+            }
+          ],
+          "102": [
+            {
+              "id": 10,
+              "body": "Keep the example short.",
+              "user": {
+                "id": 202449424
+              },
+              "created_at": "2026-11-25T10:00:00Z",
+              "updated_at": "2026-11-25T10:00:00Z"
+            },
+            {
+              "id": 20,
+              "body": "<!-- factory:refinement:v1 {\"issue_number\":102,\"source_digest\":\"29c2a22e170d85e7721cec240c1d9ab1f19f47831ac429f0e220f37ec49fd0de\",\"captured_comment_ids\":[10],\"last_included_owner_comment_id\":10,\"prompt_version\":\"v3\",\"template_version\":\"v1\",\"source_key\":\"102:29c2a22e170d85e7721cec240c1d9ab1f19f47831ac429f0e220f37ec49fd0de:10:v3\",\"content_sha256\":\"7f85dd4dfc9218911f051537f4a1f44e02b62d552023a1c214f7316b8ccfbdaf\"} -->\nSynthetic goal, constraints and checkable acceptance criteria.",
+              "html_url": "https://github.com/MBroholm/software-factory/issues/102#issuecomment-20",
+              "user": {
+                "id": 202449424
+              },
+              "created_at": "2026-11-25T10:00:00Z",
+              "updated_at": "2026-11-25T10:00:00Z"
+            }
+          ]
+        },
+        "events": {
+          "101": [
+            {
+              "id": 30,
+              "event": "labeled",
+              "label": {
+                "name": "Approved"
+              },
+              "actor": {
+                "id": 202449424
+              },
+              "created_at": "2026-11-25T11:00:00Z"
+            },
+            {
+              "id": 31,
+              "event": "labeled",
+              "label": {
+                "name": "Building"
+              },
+              "actor": {
+                "id": 202449424
+              },
+              "created_at": "2026-11-25T20:38:23.723Z"
+            },
+            {
+              "id": 32,
+              "event": "unlabeled",
+              "label": {
+                "name": "Approved"
+              },
+              "actor": {
+                "id": 202449424
+              },
+              "created_at": "2026-11-25T20:38:23.734Z"
+            }
+          ],
+          "102": [
+            {
+              "id": 30,
+              "event": "labeled",
+              "label": {
+                "name": "Approved"
+              },
+              "actor": {
+                "id": 202449424
+              },
+              "created_at": "2026-11-25T11:00:00Z"
+            }
+          ]
+        },
+        "calls": [
+          {
+            "node": "Discover all issues",
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues",
+            "page": "1",
+            "at": 1795639103619
+          },
+          {
+            "node": "Read approval events",
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/101/events",
+            "page": "1",
+            "at": 1795639103652
+          },
+          {
+            "node": "Read approved comments",
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/101/comments",
+            "page": "1",
+            "at": 1795639103658
+          },
+          {
+            "node": "Read PR baseline",
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/pulls",
+            "page": "1",
+            "at": 1795639103692
+          },
+          {
+            "node": "Recheck slot",
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues",
+            "page": "1",
+            "at": 1795639103695
+          },
+          {
+            "node": "Recheck issue",
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/101",
+            "page": null,
+            "at": 1795639103700
+          },
+          {
+            "node": "Recheck events",
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/101/events",
+            "page": "1",
+            "at": 1795639103703
+          },
+          {
+            "node": "Recheck comments",
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/101/comments",
+            "page": "1",
+            "at": 1795639103705
+          },
+          {
+            "node": "Add Building",
+            "method": "POST",
+            "path": "/github/repos/MBroholm/software-factory/issues/101/labels",
+            "page": null,
+            "at": 1795639103723
+          },
+          {
+            "node": "Remove Approved",
+            "method": "DELETE",
+            "path": "/github/repos/MBroholm/software-factory/issues/101/labels/Approved",
+            "page": null,
+            "at": 1795639103734
+          },
+          {
+            "node": "Before post issue",
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/101",
+            "page": null,
+            "at": 1795639103743
+          },
+          {
+            "node": "Before post events",
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/101/events",
+            "page": "1",
+            "at": 1795639103745
+          },
+          {
+            "node": "Before post comments",
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/101/comments",
+            "page": "1",
+            "at": 1795639103748
+          },
+          {
+            "node": "Post handoff",
+            "method": "POST",
+            "path": "/github/repos/MBroholm/software-factory/issues/101/comments",
+            "page": null,
+            "at": 1795639103764
+          },
+          {
+            "node": "Final issue",
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/101",
+            "page": null,
+            "at": 1795639103772
+          },
+          {
+            "node": "Final events",
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/101/events",
+            "page": "1",
+            "at": 1795639103775
+          },
+          {
+            "node": "Final comments",
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/101/comments",
+            "page": "1",
+            "at": 1795639103778
+          },
+          {
+            "node": "Discover all issues",
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues",
+            "page": "1",
+            "at": 1795639163594
+          }
+        ],
+        "posts": 1,
+        "waitingAt": null
+      }
+    },
+    {
+      "event": "observation_complete",
+      "at": 1795639164.229746,
+      "next": "Verify native mode=trigger traces/fingerprints, then owner unpublishes/drains; inspect final row and fixture effects. No automatic reset."
+    }
+  ],
+  "all_code_and_connection_hashes_match": true,
+  "schedule_default_normalization": "Native snapshot adds empty notice; rule and enabled 60-second interval match source.",
+  "shutdown_verified": true,
+  "shutdown": {
+    "all_21_inactive": true,
+    "workflow_id": "RByomITdtfRHZ74Z",
+    "activeVersionId": null,
+    "saved_version": "06387d3e-9ca6-40ec-bf43-3b990ee8ebad",
+    "fixture_stopped": true,
+    "one_handoff_effects_unchanged": true,
+    "historical_fixture_hash_unchanged": "0a8d9e2931c118e10cc5f5544cba523929dc15b145af85088824b5ad8c8ea1c6",
+    "extra_read_only_polls": 2,
+    "state_webhook_status": 404,
+    "final_guard": {
+      "id": 1,
+      "key": "global",
+      "busy": 0,
+      "execution_id": "1442",
+      "issue_number": null,
+      "started_at": "2026-11-25T20:41:23.573Z",
+      "createdAt": "2026-11-25 08:55:42.755",
+      "updatedAt": "2026-11-25 20:41:23.625"
+    },
+    "physical_busy_boolean_normalization": "SQLite 0 means false; exported column type boolean verified",
+    "fixture_state_sha256": "009ef65cc480fdaa5dc9f119d901ead785c351c46d440a7fba5996874d968a0c"
+  }
+}

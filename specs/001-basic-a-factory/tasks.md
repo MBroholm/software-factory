@@ -338,3 +338,32 @@ and the reconciled matrix, explicitly mapped to real issue #1 exercises. Known 1
 inspected and deliberately reset for this independent isolated test; final observed row is idle
 at 1274. Schedule unpublished, route 404, fixture stopped; production untouched. No other task
 status changed. Owner PR review/merge and any production import remain separate.
+
+
+## Phase 9: Convergence
+
+US2-only assessment (T015–T019), 2026-11-25. Existing completion markers and real/native
+observations are retained; this finding concerns the successful scheduled reservation path.
+
+- [X] T032 [US2] Close the HIGH scheduled-reservation validation gap per FR-001, US2/AC1, US2/AC5 and T019 (partial): after owner review/manual import, exercise the current reserve Schedule Trigger in isolation at its reviewed 60-second interval with an idle guard and eligible approved synthetic tasks; verify the lowest eligible task transitions Approved -> Building before any manual agent launch, posts exactly one matching handoff and releases busy while Building persists. Observe a subsequent native scheduled poll with another approved task waiting; require no second reservation or duplicate handoff and acknowledged no-work release. Reuse existing real issue #1/manual build/decision/PR #5 and unaffected native approval/fault/restart evidence; explicitly distinguish synthetic HTTP effects from real GitHub observations and map the scheduled-path results to the real manual-entry exercises. Record reviewed/imported fingerprints, mode=trigger execution IDs, reached nodes, before/after guard and fixture state, failures and owner interventions in `evidence/manual-build-validation.md` and linked sanitized results. Manual/webhook runs, local scheduled-entry stand-ins and scheduled held skips alone do not establish this acceptance condition. Inspect retained busy=1369/issue101 before any owner-directed reset; preserve its evidence. Keep production and real Building/Approved issues untouched, enable only one isolated test schedule at a time, and have the owner unpublish/drain it afterward with final state verification; no automatic agent launch or US3 work.
+
+
+**T032 preparation checkpoint, 2026-11-25**: Prepared a separate credential-free scheduled
+reservation copy, persistent synthetic session 32001 and read-only tick observer. All 20
+source Code bodies/connections and exact 60-second schedule are preserved by packaging
+assertions. Build/consistency, Python syntax and whitespace checks pass. No native scheduled
+reservation is claimed. Owner reviewed manual import is required before execution; retained
+1369 hold is unchanged by this checkpoint. T032 remains unchecked. See
+`factory/tests/reservation-schedule.md` and `evidence/manual-build-validation.md`.
+
+
+**T032 complete, 2026-11-25**: Owner imported/published the isolated schedule copy
+RByomITdtfRHZ74Z, version 06387d3e-9ca6-40ec-bf43-3b990ee8ebad. Native trigger-mode
+1411 reserved synthetic 101 with one exact handoff and busy release; 1439 left 102 waiting
+with no writes/duplicate. All 20 source Code hashes/connections and exact 60-second schedule
+match. Known 1369 hold was inspected and deliberately reset for this independent test;
+historical fixture evidence remains unchanged. Owner unpublished; all 21 workflows inactive,
+state route 404, final row idle at 1442, one handoff and queued Approved fixture preserved.
+Disposable fixture process stopped. See evidence/reservation-scheduled-results.json and
+manual-build-validation.md; synthetic scheduled effects supplement real #1/PR #5 evidence.
+No production runtime change, merge, agent auto-launch or US3 work is claimed.

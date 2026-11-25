@@ -503,3 +503,106 @@ the reviewed reserve runtime or production JSON. Final generator/syntax/JSON/lin
 US1 source/evidence remain unchanged; US3+ tasks and full Basic A/course acceptance remain pending.
 Production activation, owner PR acceptance/merge and any later recovery are separate owner actions.
 No SpecKit extension registry exists; no post-implementation hooks are registered.
+
+
+## T032 scheduled-reservation checkpoint — prepared, native execution unrun
+
+Convergence identified one US2 validation gap: real reservation 1275 and occupied polls
+1276/1277/1279 used manual entry; native trigger-mode 1376/1378 prove held skips only.
+Existing real/native observations remain valid within those limits.
+
+Prepared `factory/tests/build-reservation-schedule.cjs`, its public schedule JSON/manifest,
+`run-reservation-schedule.py` and the review/import protocol in
+`factory/tests/reservation-schedule.md`. Source reserve SHA-256 remains
+`ea6760fb5787dd216418596d93c37be981079aca8cc20f9a7f5ec2cab88930b6`.
+Packaging assertions verify all 20 source Code bodies and existing non-manual connections,
+exact 60-second trigger, no credentials, loopback-only HTTP and inactive export.
+Session 32001 persists across ticks using the existing success fixture; its separate state
+file must preserve the historical fault fixture. The read-only observer never starts a
+workflow or resets the guard.
+
+Actual checks: schedule build and --check PASS; unchanged reserve generator --check PASS;
+Python observer compilation PASS; git diff --check PASS. These are offline checks, not
+native n8n execution or scheduled acceptance evidence. No remote runtime action, import,
+publication, guard reset or real issue change was performed for this checkpoint.
+
+Next gate: owner reviews and manually imports
+`factory/local/us2/native-bridge/schedule-mapped.json` as a new isolated workflow, initially
+unpublished. Verify the saved source/mappings and inspect the retained busy=1369/issue101
+hold before any deliberate isolated recovery. Then prepare the fixture, publish only this
+schedule, observe successful reservation plus occupied-slot waiting, collect native trigger
+traces and verify owner unpublication/drain/final state. T032 remains unchecked.
+No extension registry exists; no implementation hooks are registered.
+
+
+### T032 owner import verified; fixture ready, publication pending
+
+Owner reported manual import. Supported workflow export identifies schedule copy
+`RByomITdtfRHZ74Z`, saved version `06387d3e-9ca6-40ec-bf43-3b990ee8ebad`, inactive;
+all 21 isolated workflows are inactive. Full node parameter comparison passes after restoring
+omitted n8n defaults (Code mode, Data Table resource/filter defaults, HTTP GET/no-auth and
+pagination defaults). All source Code bodies and connections match; nine table mappings and
+17 loopback HTTP nodes have no credentials. The initial overly strict comparison stopped at
+omitted Code mode; normalization resolved it without workflow changes or execution.
+
+Supported encrypted Data Table export verifies the exact historical busy=1369/issue101 row,
+including timestamps, still retained in factory_control_us1. Old bridge state route is 404;
+historical fixture canonical hash remains
+`0a8d9e2931c118e10cc5f5544cba523929dc15b145af85088824b5ad8c8ea1c6`.
+Only Data Table files were decrypted with a disposable export key; temporary export/key removed.
+The initial sandbox SSH attempt failed on local system SSH configuration permissions; the
+approved external SSH invocation succeeded.
+
+Prepared/started a separate loopback-only schedule fixture on container port 18766 with
+`/tmp/basic-a-us2-schedule-state.json`; readiness/source hash pass and inspect returns empty.
+Historical fixture file and busy row were not changed. No scheduled exercise has run.
+Owner publication of this copy alone is next; held ticks may skip safely before the deliberate
+inspected reset. Native success/occupied observations and shutdown remain pending; T032 unchecked.
+
+
+### T032 native scheduled paths PASS — owner shutdown pending
+
+Owner published RByomITdtfRHZ74Z, active/saved version
+06387d3e-9ca6-40ec-bf43-3b990ee8ebad; supported export verifies it is the sole active
+isolated workflow with matching source Code/connections and credential-free loopback HTTP.
+Initial trigger 1382 skipped the retained 1369 hold unchanged. Operator then rechecked the
+exact known row and empty new fixture, recorded the recovery reason, and deliberately reset
+only busy through the separate inspected fixture endpoint. Historical fault state was preserved.
+
+Native mode=trigger **1411**, 2026-11-25T20:38:23Z, succeeded: synthetic 101 Approved ->
+Building, one handoff, all three writes acknowledged, final busy=false while Building persists.
+Native mode=trigger **1439**, 20:39:23Z, succeeded with released/no_work: synthetic 102 remains
+Approved, zero writes, unchanged comments/events/labels and exactly one handoff overall.
+Read-only observer recorded both actual row snapshots and persisted synthetic effects.
+All 20 source Code hashes and complete connection hashes match the reviewed test artifact;
+both enabled schedules retain the exact 60-second rule. Native snapshots add empty notice to
+Schedule parameters; the verifier initially rejected that harmless default, then normalized it.
+No workflow fix or rerun was needed. Snapshot version UUID remains unavailable; saved/active
+version readback plus complete Code/connection hashes provide provenance.
+
+See `reservation-scheduled-results.json`. These HTTP effects are synthetic, not a second real
+run. They close the scheduled-entry gap when combined with real manual-entry reservation 1275,
+real occupied polls 1276/1277/1279 and owner-launched issue #1 / decision 7170400632 / PR #5.
+No actual agent launch, GitHub write, production action or US3 behavior occurred in this test.
+Owner must now unpublish/drain the schedule; final inactive/404/idle/fixture verification and
+fixture-service shutdown are pending. T032 remains unchecked until those are observed.
+
+
+### T032 owner shutdown verified — complete
+
+Owner reported unpublication. Supported export verifies all 21 isolated workflows inactive;
+RByomITdtfRHZ74Z activeVersionId=null, saved version unchanged. State webhook returns 404.
+Supported encrypted Data Table export verifies one mapped global row, busy=false (typed SQLite
+0), execution 1442, issue_number=null, started_at=2026-11-25T20:41:23.573Z,
+updatedAt=2026-11-25 20:41:23.625. Two additional read-only fixture polls occurred after the
+required occupied poll; no additional reservation, label/event change or comment was produced.
+Exactly one handoff persists, synthetic 101 remains Building and 102 Approved. Historical
+fault fixture hash still matches the retained 1369 evidence. Only the exact disposable T032
+fixture process was stopped; both old and new persisted fixture files remain.
+
+Schedule build --check, unchanged reserve generator --check, observer Python syntax and
+whitespace checks pass. No runtime fix was required. T032 is complete: native scheduled
+success/occupied observations augment, rather than replace, the real issue #1/manual-build
+and PR #5 evidence. This does not claim owner PR acceptance, a complete Basic A loop or a
+new real task run. No production activation, agent auto-launch, merge or US3 work occurred.
+No .specify/extensions.yml exists; no post-implementation hooks are registered.

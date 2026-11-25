@@ -1,0 +1,19 @@
+{
+  "sourceSHA256": "ea6760fb5787dd216418596d93c37be981079aca8cc20f9a7f5ec2cab88930b6",
+  "sourceCodeBodiesUnchanged": 20,
+  "sourceConnectionsPreserved": true,
+  "scheduleParameters": {
+    "rule": {
+      "interval": [
+        {
+          "field": "seconds",
+          "secondsInterval": 60
+        }
+      ]
+    }
+  },
+  "session": "32001",
+  "syntheticOnly": true,
+  "active": false,
+  "publicGraphSHA256": "242f44a598981ce5c42ec3103052903529380a763c356d52d21d284f7016692e"
+}
