@@ -1,6 +1,8 @@
-[Projects](https://vogelsang.github.io/AI-Agenter-E2026-public/projects/two-week-project.html) > [Final project](https://vogelsang.github.io/AI-Agenter-E2026-public/projects/factory-project.html)
-
 # Final project
+
+> **Note**
+>
+> Version 2, 25 November 2026. New: the advanced part, a chess game as an example case, and diagrams of what happens in basic A, basic B and advanced. [Version 1](https://vogelsang.github.io/AI-Agenter-E2026-public/projects/factory-project-v1.html) from 18 November is deprecated.
 
 In the final project you will design, build and evaluate your own small software factory: a system where you write a specification, a coding agent builds it, and you stay in control of what gets accepted.
 
@@ -20,7 +22,25 @@ You use one repository. It holds the factory itself (your n8n workflows and your
 
 It is recommended that you also build the factory with the factory. Start by building it with your coding agent in the usual way, for example Claude Code or Codex in VS Code. As parts of the factory start working, let the factory take over its own tasks, e.g. when you start extending or fixing the factory. Keep your n8n workflows as JSON files in the repository: the agent changes the JSON in a pull request, and you import it into n8n by hand after your review. That manual step is part of your quality check.
 
-Use the coding agent you already have access to (for example Claude Code or Codex CLI). No particular provider is required. You may also run the coding agent on a local model through Ollama, but it might be hard to do.
+Use the coding agent you already have access to (for example Claude Code or Codex CLI). No particular provider is required. You may also run the coding agent on a local model through Ollama, but it might be hard to do. Claude Code and Codex can both use an Ollama model, so the command stays the same.
+
+### Example: a chess game
+
+If you do not have a case of your own, let your factory build a chess game. These are rough ideas, written the way you would put them in `Ideas`:
+
+1. Make the chessboard: show the board and the pieces, for two players on one machine
+2. Rules for the basic moves: legal moves for each piece, check, checkmate and stalemate
+3. Rules for the special moves: castling, en passant and promotion
+4. Choose a style or colour for the board
+5. Save a game and load it again
+6. Timing on games
+7. Computer opponent: easy
+8. Computer opponent: medium
+9. Computer opponent: hard
+10. Statistics
+11. ELO or another chess rating
+
+Some tasks need others first: the opponents need the rules, and the rating needs the statistics. Write that in the issue. What “easy”, “medium” and “hard” mean is up to you. If you choose your own case, keep it about this size.
 
 ## How the factory works
 
@@ -28,33 +48,37 @@ Each task is an issue, and its label is its state. This is how a task moves thro
 
 ```mermaid
 flowchart TD
-    I["Ideas<br/>you write a rough task"]:::human
-    R["Refining<br/>the AI rewrites it into a plain task"]:::ai
-    RA["Ready for approval<br/>you read the AI's version"]:::human
-    AP["Approved<br/>waits for the factory"]:::n8n
-    B["Building<br/>the coding agent works on branch issue-N"]:::ai
-    W["Waiting for you<br/>you answer in a comment"]:::human
-    S["Stuck<br/>you retry or drop"]:::human
-    QA["Your QA<br/>you check the pull request"]:::human
-    D["Done"]:::n8n
-
-    I -->|n8n picks it up| R
+    I["Ideas<br/>you write a rough task"]
+    R["Refining<br/>the AI rewrites it into a plain task"]
+    RA["Ready for approval<br/>you read the AI's version"]
+    AP["Approved<br/>waits for the factory"]
+    B["Building<br/>the coding agent works on branch issue-N"]
+    W["Waiting for you<br/>you answer in a comment"]
+    S["Stuck<br/>you retry or drop"]
+    D["Done"]
+    QA["Your QA<br/>you check the pull request"]
+    I -->|"n8n picks it up"| R
     R --> RA
-    RA -->|you comment| R
-    RA -->|you approve| AP
-    AP -->|one at a time| B
-    B -->|the agent asks| W
-    W -->|n8n sees your answer| AP
-    B -->|fails or over 30 min| S
-    S -->|retry| AP
-    S -->|drop| D
-    B -->|pull request opened| QA
-    QA -->|merge or close| D
-    QA -->|send back with a comment| AP
-
-    classDef human fill:#FDE7C8,stroke:#D9822B,color:#1a1a1a
-    classDef ai fill:#E9DDFB,stroke:#7E57C2,color:#1a1a1a
-    classDef n8n fill:#FCE1E8,stroke:#EA4B71,color:#1a1a1a
+    RA -->|"you comment"| R
+    RA -->|"you approve"| AP
+    AP -->|"one at a time"| B
+    B -->|"the agent asks"| W
+    W -->|"n8n sees your answer"| AP
+    B -->|"fails or over 30 min"| S
+    S -->|"retry"| AP
+    S -->|"drop"| D
+    B -->|"pull request opened"| QA
+    QA -->|"merge or close"| D
+    QA -->|"send back with a comment"| AP
+    class I human
+    class R ai
+    class RA human
+    class AP n8n
+    class B ai
+    class W human
+    class S human
+    class D n8n
+    class QA human
 ```
 
 Orange: you act. Purple: the AI works. Pink: n8n moves the task on.
@@ -80,16 +104,16 @@ Your rough task in `Ideas` can be short. Your AI step rewrites it into a plain t
 The states are labels on the issue. Who sets each one:
 
 | Label | Set by | Basic A | Basic B |
-| :--- | :--- | :--- | :--- |
-| `Ideas` | you | | |
+| --- | --- | --- | --- |
+| `Ideas` | you |  |  |
 | `Refining` | n8n | your AI step runs | same |
-| `Ready for approval` | n8n | | |
-| `Approved` | **only you** | | |
+| `Ready for approval` | n8n |  |  |
+| `Approved` | **only you** |  |  |
 | `Building` | n8n | you start the coding agent by hand | the runner starts the coding agent |
 | `Waiting for you` | n8n | not used: you answer the agent in its session | the question is posted on the issue |
 | `Stuck` | n8n | not used | the agent failed or ran over 30 minutes |
 | `Your QA` | n8n, when it sees the pull request | you or the agent open the pull request | the factory opens the pull request |
-| `Done` | n8n, when the pull request is merged or the issue closed | | |
+| `Done` | n8n, when the pull request is merged or the issue closed |  |  |
 
 Only you move a task to `Approved`. The AI advises, it never approves.
 
@@ -109,6 +133,10 @@ The project has two steps: basic and advanced. Basic has two parts, A and B. Bui
 - the result is a pull request with a summary, and test results if the agent wrote tests
 - nothing is merged into `main` without your review
 
+What goes where, and when, in basic A:
+
+![Basic A sequence diagram](docs/project-brief/diagrams/basic-a.svg)
+
 ### Basic B: automated factory
 
 - the factory marks an `Approved` task as `Building` and starts the coding agent itself, through a runner: a small program or container that runs the agent without you. You build the runner yourself, from the architecture below
@@ -117,29 +145,50 @@ The project has two steps: basic and advanced. Basic has two parts, A and B. Bui
 - the factory opens the pull request
 - a task moves to `Stuck` if the agent fails or runs for more than 30 minutes
 
+What goes where, and when, in basic B. Refining works as in basic A. The new part is the runner:
+
+![Basic B sequence diagram](docs/project-brief/diagrams/basic-b.svg)
+
 ### Advanced: safe and extended
 
-The advanced part comes later. It makes the factory safer and extends it, for example with a memory of past tasks in Neo4j and an MCP server.
+Advanced builds on basic B. Do the first two parts, then choose the extensions you like.
+
+**Check the agent’s work.** Do not trust the agent when it says it is done. When the agent stops, the runner checks for itself: is there a change in the code, and do the tests pass when the runner runs them? If not, the task goes to `Stuck`. The real test result goes into the pull request. If the pull request changes existing tests or `.github/`, the factory adds the label `Flagged` and a warning: the agent may have made the tests pass by changing the tests.
+
+**A safe agent.** In basic B the agent runs on your machine with your rights. It can read your files, your SSH keys and your GitHub token, and it can reach the internet. In advanced, the agent runs in its own container on a closed Docker network, where it can reach the model and nothing else. Only the runner holds the GitHub token and pushes the branch.
+
+**Extensions**
+
+- **Memory in Neo4j.** n8n does the work: it reads from and writes to Neo4j. Store each finished task, the files it changed, the questions that were asked, and why a task was rejected. Use vector search to find similar tasks, and the graph to follow the links between tasks and files. Your AI step uses the memory when it refines a new task.
+- **An MCP tool for the agent.** An MCP Server Trigger in n8n with a tool such as `search_past_tasks`, which searches the memory. Give the coding agent the tool, so it can look up earlier tasks while it builds. Protect the MCP server with authentication.
+- **An AI review.** A second AI step in n8n that reviews each new pull request against the task’s acceptance criteria and posts the review as a comment. Use a different model from the coding agent if you can. It advises, and you still decide.
+- **Review comments back to the agent.** When you send a task back from `Your QA`, the agent gets your comments and continues on the same branch.
+- **Metrics.** Count what your factory does: tasks done on the first run, questions, stuck tasks, and time per task. Use the numbers in your evaluation.
+
+**Going further** (not expected): choose a model per task, keep track of token use per subscription, or run several agents at once.
+
+What goes where, and when, in advanced, with all the extensions. The new parts are the memory, the container, the runner’s own checks and the AI review:
+
+![Advanced sequence diagram](docs/project-brief/diagrams/advanced.svg)
 
 ## Architecture
 
 The factory has four parts:
 
 ```mermaid
-flowchart LR
-    GH[("GitHub<br/>issues, labels,<br/>comments, PRs")]
+flowchart TD
+    GH["GitHub<br/>issues, labels,<br/>comments, PRs"]
     N8N["n8n<br/>orchestrator, AI step"]
     R["Runner<br/>(you, in basic A)"]
     AG["Coding agent<br/>Claude Code, Codex, ..."]
-
-    GH <-->|"reads issues,<br/>sets labels, comments"| N8N
-    N8N <-->|HTTP: task / result| R
-    R -->|"starts with<br/>the specification"| AG
+    GH <-->|"reads issues, sets labels, comments"| N8N
+    N8N <-->|"HTTP: task / result"| R
+    R -->|"starts with the specification"| AG
 ```
 
 - **GitHub** (or a similar service) holds everything the factory knows. An issue is a specification, its label is the state, the comments are questions and answers, and the pull request is the result.
 - **n8n** is the orchestrator. It asks GitHub for changes on a schedule, runs your AI step, changes labels, writes comments and opens pull requests.
-- **The runner** (basic B) is a small program, for example in Python, that n8n calls over HTTP. It does only what n8n cannot do: it checks out the repository on a new branch, starts the coding agent with the specification as its prompt, pushes the branch, and reports back: done, question or stuck. It stops the agent after 30 minutes. A run can take many minutes, so the runner answers n8n at once and works in the background, and n8n asks for finished results on a schedule. In basic A you do this part yourself.
+- **The runner** (basic B) is a small program, for example in Python, that n8n calls over HTTP. It does only what n8n cannot do: it checks out the repository on a new branch, starts the coding agent with the specification as its prompt, pushes the branch, and reports back: done, question or stuck. It starts the agent as a command-line call, for example `claude -p "…"` or `codex exec "…"`. It stops the agent after 30 minutes. A run can take many minutes, so the runner answers n8n at once and works in the background, and n8n asks for finished results on a schedule. In basic A you do this part yourself.
 - **The coding agent** does the work. Tell it to end every run by stating whether it is done, has a question or is stuck.
 
 ### n8n workflows
