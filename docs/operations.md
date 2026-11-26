@@ -5,9 +5,8 @@
 All three finished workflow artifacts are implemented and locally/native validated through US3;
 see [refinement](../evidence/refinement-validation.md), [manual build](../evidence/manual-build-validation.md)
 and [review](../evidence/review-validation.md). Their dated checkpoints remain historical.
-The current source uses Gemini, optional Ollama trials and inactive exports. Operational adoption
-requires owner PR review and manual import of the matching revision; testing does not establish
-operational deployment. US4 completes the runbook, architecture, guard/recovery validation and
+The current source uses Gemini, optional Ollama trials and inactive exports. The owner reports manual import and publication of all three workflows on 2026-11-26;
+the version ledger below records this operational adoption separately from isolated testing. US4 completes the runbook, architecture, guard/recovery validation and
 [evidence index](../evidence/index.md). Consult its actual results before treating a check as passed.
 
 Use [current deployment and backup procedures](#current-deployment-backup-and-restore--t024)
@@ -26,20 +25,28 @@ source history; it does not establish manual operational import or activation.
 
 | Workflow / owner import artifact | Reviewed source and test evidence | Current operational saved/published version / manual import evidence |
 |---|---|---|
-| Refine: `factory/workflows/refine.json` | PR #2; T014/T031 and T026 fingerprints; prompt v3/template v1 | NOT RECORDED for current artifact. Historical zcynhzDmEAapj2dT and its real-API executions establish story tests, not current operational adoption |
-| Reserve: `factory/workflows/reserve.json` | PR #3; ec5a2de, T019/T032 and T026 fingerprints | NOT RECORDED for operational adoption. EIF8Urpa0tCkd2DI version 6c5cfd0e-8a3a-435b-9cf5-1ff1585fd410 is the historical mapped isolated copy |
-| Track: `factory/workflows/track.json` | PR #6; db20bc67ff459e69abe3a02ab57581f667fc23b2, T023/T026 fingerprints | NOT RECORDED; credential-free isolated imports do not establish operational import |
+| Refine: `factory/workflows/refine.json` | PR #2; T014/T031 and T026 fingerprints; prompt v3/template v1 | Owner reports manually imported and published version `67fcc2fa` on 2026-11-26 |
+| Reserve: `factory/workflows/reserve.json` | PR #3; ec5a2de, T019/T032 and T026 fingerprints | Owner reports manually imported and published version `399ebb5e` on 2026-11-26 |
+| Track: `factory/workflows/track.json` | PR #6; db20bc67ff459e69abe3a02ab57581f667fc23b2, T023/T026 fingerprints | Owner reports manually imported and published version `943b51b9` on 2026-11-26 |
 
-No current active operational workflow version is asserted. T030 remains unchecked until the
-owner reviews the current JSON in its PR and manually imports the matching artifacts into the
-intended operational instance, recording operator/time, instance/version, source commit/hash,
-workflow ID, saved/published version, credential/table mapping verification and activation state.
-Keep imports inactive until all three match and the single-instance/concurrency/guard preflight
-is confirmed. This ledger must then contain actual values rather than planned steps. Existing
-isolated package IDs/version hashes remain in T026 results; do not import test adapters or bridges.
-Use the mapping procedure below; never publish credential values. Owner review and merge remain
-owner decisions. The accepted policy below requires explicit initial approval, permits session
-continuation within unchanged scope and requires renewed approval for expanded scope.
+**T030 complete on owner-reported adoption evidence.** Following the [PR #8](https://github.com/MBroholm/software-factory/pull/8)
+review handoff at commit `0c13c6e`, the owner confirmed: “I have imported and published the three
+workflows”, supplying the version prefixes above. This records the owner-performed import and
+publication of the artifacts supplied for review. Source workflow hashes remain those in the
+acceptance ledger, unchanged since T026. No agent import, publication or merge was performed.
+
+Evidence precision: these are owner-supplied eight-character version prefixes, not independently
+read full n8n version UUIDs. Exact publication times, operational workflow IDs, current n8n version,
+credential/table mapping readback and post-publication executions were not supplied or independently
+inspected in this closeout. Imported-byte equality and current credential scopes are therefore
+not independently verified; the source-to-import association rests on the owner's handoff
+confirmation. Historical isolated workflow IDs must not be substituted for operational IDs.
+This adoption record does not claim a successful operational poll or real QA/Done transition.
+
+Subsequent workflow changes still require renewed owner review and manual matching-revision
+import, with mappings checked using the procedure below. The accepted policy requires explicit
+initial approval, permits session continuation within unchanged scope and requires renewed
+approval for expanded scope. Owner review and merge authority remain unchanged.
 
 ## Provider decision snapshot — 2026-11-24
 
@@ -53,7 +60,7 @@ editor/owner-account access and accepted the refinements on 2026-11-24 after the
 v3 cases passed technical/assistant semantic checks. See [the accepted outputs](../evidence/gemini-v3-review.md).
 Browser checks need not repeat. Before activating refinement, configure a dedicated Gemini
 header-auth credential in n8n. T012/T014 subsequently passed saved-credential HTTP checks in isolation;
-see the current acceptance ledger. Current operational mapping/import remains a separate gate.
+see the current acceptance ledger. Current owner-reported import/publication is recorded in the T030 ledger; mapping readback is not independently verified.
 
 At this historical provider-decision checkpoint, the server was at commit `f4a8427` with
 prompt v2 modified locally; the v3 server smoke test passed its payload/key in memory. No
@@ -826,5 +833,4 @@ executions, singleton idle at execution 1699/issue 1. US4 loopback fixture stopp
 refused. Historical 1542/1369 holds above are superseded only as current-state descriptions;
 their original evidence remains valid. Real issue #1 remains open/Building and #4 open/Approved.
 Owner merge of real PR #5 is recorded; a real automated QA/Done transition is not claimed.
-T029 acceptance consolidation is recorded in the acceptance ledger. T030 operational owner
-review/manual matching-revision import evidence remains outstanding. The evidence index counts one real task, not five.
+T029 acceptance consolidation is recorded in the acceptance ledger. T030 owner-reported manual import/publication is recorded in the version ledger above. The evidence index counts one real task, not five.

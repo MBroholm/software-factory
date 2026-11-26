@@ -259,7 +259,7 @@ trace a real task's input, decisions, PR and review entirely from sanitized repo
 ## Phase 7: Polish and cross-cutting review
 
 - [X] T029 Summarize existing acceptance evidence against `specs/001-basic-a-factory/quickstart.md` in `evidence/acceptance.md`, linking T004/T014/T019/T023/T026/T027/T028 results and their tested revisions with passed/failed/unrun status; use T026 as the completed-workflow guard evidence, not a second guard test pass. Run only checks missing from the evidence or affected by subsequent changes (including any missing or change-affected secret/export/permission checks), recording why each additional check is needed; changed test JSON may be imported automatically after T033; any operational adoption requires owner PR review and manual import of the matching reviewed revision. Do not blanket-rerun the acceptance matrix or checks already valid for unchanged artifacts.
-- [ ] T030 Review all Basic A artifacts on an appropriate PR/branch, update `docs/operations.md` with reviewed active workflow versions and owner-manual import evidence, and accepted initial-approval/unchanged-scope-resumption policy; no auto-merge, automatic operational workflow adoption, Basic B implementation or advanced work is authorized by this checklist.
+- [X] T030 Review all Basic A artifacts on an appropriate PR/branch, update `docs/operations.md` with reviewed active workflow versions and owner-manual import evidence, and accepted initial-approval/unchanged-scope-resumption policy; no auto-merge, automatic operational workflow adoption, Basic B implementation or advanced work is authorized by this checklist.
 
 ## Dependencies and execution order
 
@@ -483,3 +483,12 @@ history and an explicit operational adoption ledger. Current owner manual operat
 mapping and saved/published version evidence is absent, so T030 remains unchecked. No adoption,
 activation, auto-merge, Basic B or advanced work occurred. One real task is counted; real QA/Done
 tracking and four additional final-project task runs remain unrun.
+
+
+**T030 owner adoption closeout, 2026-11-26**: Following the PR #8 handoff at `0c13c6e`,
+owner confirmed manual import and publication of refine `67fcc2fa`, reserve `399ebb5e`,
+track `943b51b9`. Operations and acceptance record the owner-supplied version prefixes and
+limits: no independent imported-byte/mapping readback or operational execution is claimed.
+T030 is complete on this owner report. No agent import/publication/merge occurred; source
+workflows remain unchanged. Real QA/Done evidence and four additional final-project runs
+remain outstanding. Prior pending statuses above describe the earlier review checkpoint.

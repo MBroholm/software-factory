@@ -1,10 +1,10 @@
 # Basic A acceptance — T029
 
-**2026-11-26. T029 complete; T030 awaits owner operational review/import evidence.**
+**2026-11-26. T029 complete; T030 complete on owner-reported manual import/publication evidence.**
 Assessment base: `c359fbde6a1b15335d596bc44f4792f9c4994234` (merged US4 PR #7).
 This consolidation changes documentation only. It reuses valid unchanged-artifact evidence;
 no new native workflow execution, provider call, import, activation or recovery was performed.
-PASS below names the demonstrated environment; it does not imply operational adoption.
+PASS below names the demonstrated environment; owner-reported operational adoption is recorded separately below.
 Historical failures remain in the linked records. The real task has owner acceptance, while
 its real automated QA/Done transition is **UNRUN**. One genuine run counts toward five.
 
@@ -48,7 +48,7 @@ Rows map [quickstart sections 1–8](../specs/001-basic-a-factory/quickstart.md)
 | Rejected attempt | PASS fixture | T023 closed-unmerged/open issue stays QA without duplicate result comment; real rejection UNRUN |
 | Rework | PASS fixture | T023 fresh approval/baseline/new head and ambiguity cases; real rework run UNRUN |
 | Completion | PASS fixture; UNRUN real tracking | T023 merge/closed-issue Done; real PR #5 merged but last real issue observation remains Building |
-| Workflow change / operational adoption | UNRUN current operational import | PRs #2/#3/#6/#7 merged; test imports recorded, no matching current operational import/active-version evidence; T030 gate below |
+| Workflow change / operational adoption | PASS owner-reported import/publication | Owner confirmed manual import/publication after PR #8 handoff: refine 67fcc2fa, reserve 399ebb5e, track 943b51b9; independent imported-byte/mapping readback not performed |
 | Successful flag release | PASS | T026 completed-graph G02, reuses acknowledged real/story results |
 | Every no-work flag release | PASS | T026 G01, including unchanged/occupied/no-result exits |
 | Existing hold | PASS | T026 G03/G15 cross-workflow skips preserve context/effects |
@@ -61,7 +61,7 @@ Rows map [quickstart sections 1–8](../specs/001-basic-a-factory/quickstart.md)
 | Restart/restore (§7–8) | PASS isolated | T026 three crash traces, T019 persistent Building; T027 stopped-volume restore and encrypted disposable credential check |
 | SC-002 real run/question/PR/owner decision | PASS | T028/T034 issue #1 / PR #5; fixture tracking supplements rather than inflates this run |
 | Final-project five real runs | UNRUN remaining four | T028 index counts one; Basic B runner, report and submission remain outside Basic A scope |
-| Deliberate operational activation (§5) | UNRUN | Requires current owner review/manual import, mapping and active-version record; test publication is not adoption |
+| Deliberate operational activation (§5) | PASS owner-reported publication; UNRUN independent preflight/readback | Same three published version prefixes; no post-publication execution or fresh concurrency/guard/mapping inspection claimed |
 
 ## Failures and retained limitations
 
@@ -98,8 +98,8 @@ documentation review branch. No parameters, code, connections or workflow JSON w
   `git diff --check` passed and `git diff -- factory/` is empty. No extension registry exists,
   so no before/after implementation hooks are registered.
 
-Current saved operational credential scopes, active versions and owner manual import remain
-UNRUN, rather than inferred from public source review or isolated native results. No runtime
+Current saved operational credential scopes and independent imported-version/mapping verification
+remain UNRUN. The owner subsequently supplied manual import/publication evidence below. No runtime
 retest is needed for unchanged artifacts; future changes require only affected checks.
 
 ## T033 isolated boundary verification — 2026-11-26
@@ -134,3 +134,16 @@ observer corrections are in [native results](review-native-results.json). All 22
 workflows are inactive/drained; final row idle at 1542, private route 404, fixture service
 stopped. No operational adoption, real GitHub/model call or extra genuine task run occurred.
 This historical US3 closeout reuses unaffected US1/US2 results; T026 and T029 are assessed above.
+
+
+## T030 owner operational adoption closeout — 2026-11-26
+
+After the PR #8 review handoff at `0c13c6e`, the owner confirmed manual import and publication:
+refine **67fcc2fa**, reserve **399ebb5e**, track **943b51b9**. The
+[operations ledger](../docs/operations.md#t030-reviewed-artifacts-and-operational-adoption-ledger--2026-11-26)
+records the owner report and its precision limits. T030 is complete on that owner-reported
+basis; no full version UUID, operational workflow ID, exact timestamp, independent imported-byte
+comparison, mapping readback or successful operational execution is inferred. No runtime change
+or check was performed by the agent. This does not add a genuine task run or demonstrate real
+QA/Done processing. Four more final-project runs remain required. Subsequent source changes
+still renew owner review/manual import. PR #8 remains for the owner's merge decision.
