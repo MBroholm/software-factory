@@ -13,6 +13,34 @@ operational deployment. US4 completes the runbook, architecture, guard/recovery 
 Use [current deployment and backup procedures](#current-deployment-backup-and-restore--t024)
 below rather than the retained T004 trial commands. No Basic B runner is implemented.
 
+## T030 reviewed artifacts and operational adoption ledger — 2026-11-26
+
+Review branch: `001-basic-a-factory-final-review`, based on merged US4
+`c359fbde6a1b15335d596bc44f4792f9c4994234` / PR #7. Previous artifact PRs
+[#2](https://github.com/MBroholm/software-factory/pull/2),
+[#3](https://github.com/MBroholm/software-factory/pull/3),
+[#6](https://github.com/MBroholm/software-factory/pull/6) and
+[#7](https://github.com/MBroholm/software-factory/pull/7) are merged. Merge evidence establishes
+source history; it does not establish manual operational import or activation.
+[Acceptance](../evidence/acceptance.md) records the final matrix and unchanged source SHA-256s.
+
+| Workflow / owner import artifact | Reviewed source and test evidence | Current operational saved/published version / manual import evidence |
+|---|---|---|
+| Refine: `factory/workflows/refine.json` | PR #2; T014/T031 and T026 fingerprints; prompt v3/template v1 | NOT RECORDED for current artifact. Historical zcynhzDmEAapj2dT and its real-API executions establish story tests, not current operational adoption |
+| Reserve: `factory/workflows/reserve.json` | PR #3; ec5a2de, T019/T032 and T026 fingerprints | NOT RECORDED for operational adoption. EIF8Urpa0tCkd2DI version 6c5cfd0e-8a3a-435b-9cf5-1ff1585fd410 is the historical mapped isolated copy |
+| Track: `factory/workflows/track.json` | PR #6; db20bc67ff459e69abe3a02ab57581f667fc23b2, T023/T026 fingerprints | NOT RECORDED; credential-free isolated imports do not establish operational import |
+
+No current active operational workflow version is asserted. T030 remains unchecked until the
+owner reviews the current JSON in its PR and manually imports the matching artifacts into the
+intended operational instance, recording operator/time, instance/version, source commit/hash,
+workflow ID, saved/published version, credential/table mapping verification and activation state.
+Keep imports inactive until all three match and the single-instance/concurrency/guard preflight
+is confirmed. This ledger must then contain actual values rather than planned steps. Existing
+isolated package IDs/version hashes remain in T026 results; do not import test adapters or bridges.
+Use the mapping procedure below; never publish credential values. Owner review and merge remain
+owner decisions. The accepted policy below requires explicit initial approval, permits session
+continuation within unchanged scope and requires renewed approval for expanded scope.
+
 ## Provider decision snapshot — 2026-11-24
 
 The project owner adopted **Gemini 3.5 Flash-Lite**, free tier only, replacing the failed local
@@ -24,14 +52,15 @@ The model-choice checkpoint and T004 evidence/review closeout are complete. The 
 editor/owner-account access and accepted the refinements on 2026-11-24 after the three affected
 v3 cases passed technical/assistant semantic checks. See [the accepted outputs](../evidence/gemini-v3-review.md).
 Browser checks need not repeat. Before activating refinement, configure a dedicated Gemini
-header-auth credential in n8n and exercise the actual HTTP Request node after owner manual import
-of reviewed JSON (T012/T014); run only checks affected by subsequent changes. Those checks remain unrun.
+header-auth credential in n8n. T012/T014 subsequently passed saved-credential HTTP checks in isolation;
+see the current acceptance ledger. Current operational mapping/import remains a separate gate.
 
-The server remains at commit `f4a8427` with prompt v2 modified locally; the v3 server smoke test
-passed its payload/key in memory. No Gemini credential is installed remotely yet. Do not overwrite
-server-local prompt work during a later reviewed rollout. The Compose file still starts Ollama
-by default; T012 will make it optional while preserving the cache. No service is stopped or volume
-deleted by this decision. For n8n-only startup, explicitly select the `n8n` service.
+At this historical provider-decision checkpoint, the server was at commit `f4a8427` with
+prompt v2 modified locally; the v3 server smoke test passed its payload/key in memory. No
+Gemini credential had yet been installed remotely and Compose still started Ollama by default.
+T012 subsequently made Ollama optional in source and verified saved Gemini credentials in
+isolation. Preserve server-local work and cache during any reviewed rollout. For n8n-only
+startup, explicitly select the `n8n` service.
 
 Only bounded public issue/discussion content plus reviewed runtime prompt/template/schema goes to
 Google over HTTPS. No GitHub credentials, server environment or unrelated private data is sent.
@@ -44,7 +73,8 @@ subject to change/shared usage). Infer only for new revisions. HTTP 429, transpo
 timeouts and invalid output retain the shared busy flag for pause/drain/inspect/manual recovery;
 only explicit generation HTTP 503 UNAVAILABLE has bounded 10/30-second retries (three total
 attempts), with the same counted payload and guard/source rechecks. Exhaustion retains busy.
-No quota ledger, paid upgrade or alternate-model fallback. Retry live checks remain pending;
+No quota ledger, paid upgrade or alternate-model fallback. Historical retry checks were pending
+at this checkpoint; current native outcomes are in US1 evidence;
 the standalone smoke test did not validate this workflow behavior.
 
 The original Ollama instructions below are **historical trial procedures**, retained for evidence
@@ -312,8 +342,8 @@ An invalid pre-held row errors without mutating it.
 
 **Historical T007/T008 instructions below describe the original guard-only exports.** Current
 `refine.json` is the inactive US1 implementation with real GitHub/model calls; use the
-[US1 import/validation handoff](../evidence/refinement-validation.md) for it. Reserve/track
-remain skeletons. Do not rebuild/reimport the old guard bridge against the current refine graph
+[US1 import/validation handoff](../evidence/refinement-validation.md) for it. Reserve/track were skeletons at that checkpoint; both are now implemented and validated.
+Do not rebuild/reimport the old guard bridge against the current refine graph
 or treat the earlier native skeleton passes as US1 validation.
 
 For isolated skeleton checks, inspect the source and import (automation permitted after T033) `factory/workflows/{refine,reserve,track}.json`
@@ -378,10 +408,9 @@ the long-lived `Building` reservation are separate: releasing one never releases
 An old timestamp, a healthy container or a successful skipped poll is not proof of completion.
 There is no automatic expiry, replay, resumed failed execution or repair workflow.
 
-The latest recorded isolated state is the deliberate hold owned by execution 714 and four
-retained effects described above. These instructions do not clear it. Story-specific recovery
-below describes the approved contracts for T010+; those behaviors are not yet implemented or
-validated. Keep production activation gated on the corresponding later tasks.
+The execution 714 hold above is historical. The US4 validated-state section records the latest
+isolated shutdown observation; inspect fresh state before any recovery. Story recovery and
+restore exercises now pass in isolation; operational activation still requires owner adoption.
 
 ### 1. Pause and drain
 
@@ -584,7 +613,7 @@ exhaustion stop without release. Map the new Read generation guard node too: eig
 now share the same intended singleton table. Short waits stay in-process with no resume webhook;
 interruption/restart leaves busy held for manual inspection.
 Use whole-workflow executions only while schedules are paused/drained. Preserve the deliberately
-held T008 row until reconciled, or provision a fresh isolated table. US2 is implemented and validated; US3 remains incomplete.
+held T008 row until reconciled, or provision a fresh isolated table. US2 and US3 are implemented and validated; consult the current acceptance ledger.
 
 The owner-approved token preflight replaces whole-input byte estimation. One count-only call
 precedes each new inference; valid provider count + fixed schema allowance + 768 output + 256
@@ -797,5 +826,5 @@ executions, singleton idle at execution 1699/issue 1. US4 loopback fixture stopp
 refused. Historical 1542/1369 holds above are superseded only as current-state descriptions;
 their original evidence remains valid. Real issue #1 remains open/Building and #4 open/Approved.
 Owner merge of real PR #5 is recorded; a real automated QA/Done transition is not claimed.
-T029/T030 acceptance consolidation and operational owner review/manual matching-revision import
-remain outstanding. The evidence index counts one real task, not five.
+T029 acceptance consolidation is recorded in the acceptance ledger. T030 operational owner
+review/manual matching-revision import evidence remains outstanding. The evidence index counts one real task, not five.

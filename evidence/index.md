@@ -4,7 +4,7 @@
 story/guard/recovery validation are recorded below. The final-project minimum is **five** real
 runs: at least **four more** genuine issue/PR-linked tasks remain. Synthetic fixtures, isolated
 fault injections, repeated polls and bootstrap PRs do not increase that count. Basic B, final
-report/submission, operational adoption and final acceptance are not claimed complete.
+report/submission, operational adoption and full real tracking acceptance are not claimed complete.
 
 ## Genuine task 1 — document SSH editor access
 
@@ -38,7 +38,7 @@ not factory-task runs.
 | [Review validation](review-validation.md), [native results](review-native-results.json) | Synthetic open/merged/closed-unmerged/closed-issue/rework/ambiguous cases and original 60-second scheduled QA/unchanged polls; T034 real owner decision recorded separately. |
 | [Guard coverage](guard-validation.md), [US4 results](us4-guard-results.json) | All three finished graphs: valid/no-work release, invalid/unconfirmed acquisition, failure holds, unknown release, ownership loss, three crashes and cross-workflow held polls. Earlier skeleton evidence retained with clear scope. |
 | [Recovery validation](recovery-validation.md), [actual results](us4-recovery-results.json) | Explicit pause/drain/inspect/repair/reset/resume for simulated outage, partial label and unknown POST; stopped-volume restore into network-disabled clone, exact hashes/state and disposable encrypted-credential round trip. |
-| [Acceptance ledger](acceptance.md) | Existing partial acceptance ledger; final consolidation remains T029. This index does not silently promote failed/unrun criteria or operational adoption. |
+| [Acceptance ledger](acceptance.md) | T029 consolidated quickstart matrix, tested fingerprints, retained failures and unrun operational/real-tracking gates. This index does not silently promote failed/unrun criteria or operational adoption. |
 
 ## Reproduction and boundaries
 

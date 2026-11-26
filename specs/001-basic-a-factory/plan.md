@@ -10,8 +10,8 @@ decision on 2026-11-24 to adopt Gemini 3.5 Flash-Lite refinement on the free tie
 revision/environment limits. US4 adds operations/architecture, finished-workflow guard coverage,
 inspected recovery and a network-disabled stopped-volume restore rehearsal; see
 `evidence/index.md`, `evidence/guard-validation.md` and `evidence/recovery-validation.md`.
-T029/T030 final acceptance and operational owner review/manual matching-revision import remain
-incomplete. One genuine issue/PR task has an owner acceptance decision; the final-project five-run
+T029 evidence consolidation is complete; T030 operational owner review/manual matching-revision
+import evidence remains incomplete. One genuine issue/PR task has an owner acceptance decision; the final-project five-run
 minimum is still outstanding. No source workflow behavior changed in US4.
 
 ## Summary

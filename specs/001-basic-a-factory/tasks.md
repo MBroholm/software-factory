@@ -258,7 +258,7 @@ trace a real task's input, decisions, PR and review entirely from sanitized repo
 
 ## Phase 7: Polish and cross-cutting review
 
-- [ ] T029 Summarize existing acceptance evidence against `specs/001-basic-a-factory/quickstart.md` in `evidence/acceptance.md`, linking T004/T014/T019/T023/T026/T027/T028 results and their tested revisions with passed/failed/unrun status; use T026 as the completed-workflow guard evidence, not a second guard test pass. Run only checks missing from the evidence or affected by subsequent changes (including any missing or change-affected secret/export/permission checks), recording why each additional check is needed; changed test JSON may be imported automatically after T033; any operational adoption requires owner PR review and manual import of the matching reviewed revision. Do not blanket-rerun the acceptance matrix or checks already valid for unchanged artifacts.
+- [X] T029 Summarize existing acceptance evidence against `specs/001-basic-a-factory/quickstart.md` in `evidence/acceptance.md`, linking T004/T014/T019/T023/T026/T027/T028 results and their tested revisions with passed/failed/unrun status; use T026 as the completed-workflow guard evidence, not a second guard test pass. Run only checks missing from the evidence or affected by subsequent changes (including any missing or change-affected secret/export/permission checks), recording why each additional check is needed; changed test JSON may be imported automatically after T033; any operational adoption requires owner PR review and manual import of the matching reviewed revision. Do not blanket-rerun the acceptance matrix or checks already valid for unchanged artifacts.
 - [ ] T030 Review all Basic A artifacts on an appropriate PR/branch, update `docs/operations.md` with reviewed active workflow versions and owner-manual import evidence, and accepted initial-approval/unchanged-scope-resumption policy; no auto-merge, automatic operational workflow adoption, Basic B implementation or advanced work is authorized by this checklist.
 
 ## Dependencies and execution order
@@ -471,3 +471,15 @@ JavaScript helper syntax checks and Python backup-helper compilation pass. Affec
 local link destinations/fences, public result JSON/targeted secret-pattern screen and
 `git diff --check` pass. Operational workflow hashes are unchanged. No extension hooks are
 registered (`.specify/extensions.yml` absent). No blanket story/native suite rerun was needed.
+
+
+**T029 / T030 review checkpoint, 2026-11-26**: T029 consolidated the quickstart acceptance
+matrix and T004/T014/T019/T023/T026/T027/T028 evidence with tested revision/import fingerprints,
+passed/failed/unrun distinctions and real-versus-synthetic limits. Current workflow hashes match
+T026; generator/export/credential-signature/ignore and public permission review checks passed.
+No behavioral suite rerun or runtime change was needed. See `evidence/acceptance.md`.
+T030 review work is on `001-basic-a-factory-final-review`; operations records reviewed source
+history and an explicit operational adoption ledger. Current owner manual operational import,
+mapping and saved/published version evidence is absent, so T030 remains unchecked. No adoption,
+activation, auto-merge, Basic B or advanced work occurred. One real task is counted; real QA/Done
+tracking and four additional final-project task runs remain unrun.
