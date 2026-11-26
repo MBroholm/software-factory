@@ -1,10 +1,11 @@
 # Basic A evidence index
 
-**2026-11-26: one genuine issue/PR-linked task demonstrated.** US1–US4 implementation and
+**2026-11-26: two genuine issue/PR-linked tasks demonstrated.** US1–US4 implementation and
 story/guard/recovery validation are recorded below. The final-project minimum is **five** real
-runs: at least **four more** genuine issue/PR-linked tasks remain. Synthetic fixtures, isolated
+runs: at least **three more** genuine issue/PR-linked tasks remain. Synthetic fixtures, isolated
 fault injections, repeated polls and bootstrap PRs do not increase that count. Basic B, final
-report/submission, operational adoption and final acceptance are not claimed complete.
+report/submission and full final-project acceptance are not claimed complete. Current operational
+tracking adoption and real QA/Done are recorded below; the earlier failure/recovery is retained.
 
 ## Genuine task 1 — document SSH editor access
 
@@ -27,6 +28,25 @@ transcript or credential is required to follow the documented decision.
 Issue #4 was refined/approved and demonstrated waiting behind #1; it has no completed linked
 result in this evidence and is **not** counted as a second run. Bootstrap development PRs are
 not factory-task runs.
+
+## Genuine task 2 — daily health checklist
+
+| Step | Durable reference / actual observation |
+|---|---|
+| Idea and refinement | [Issue #9](https://github.com/MBroholm/software-factory/issues/9), [refinement 7196784571](https://github.com/MBroholm/software-factory/issues/9#issuecomment-7196784571), prompt v3/template v1; documentation-only checklist and root README link |
+| Approval and reservation | Owner approval event 37386569261, 15:53:24 UTC; [handoff 7196897416](https://github.com/MBroholm/software-factory/issues/9#issuecomment-7196897416), issue-9; Building before manual coding |
+| Material decision | [Session summary 7197318202](https://github.com/MBroholm/software-factory/issues/9#issuecomment-7197318202): owner clarifies missing README contents within approved documentation scope |
+| Result and actual checks | [PR #10](https://github.com/MBroholm/software-factory/pull/10), head b84bfef4d438f7631f51045521ca59c207490d2f; two documentation files, ten relative links/anchors and whitespace/scope checks reported in PR; live health checks were not run for the documentation task |
+| Failure and intervention | Tracking 133 safely held when PR appeared during no-work reads; owner paused, manually imported reviewed fix, recovered and resumed. [Race validation](tracking-race-validation.md) and [PR #11](https://github.com/MBroholm/software-factory/pull/11) retain failure, synthetic regression checks, exact version/mapping verification and limits |
+| Real QA | Exactly one [result marker 7198327427](https://github.com/MBroholm/software-factory/issues/9#issuecomment-7198327427), 16:58:22 UTC; QA label at 16:58:23, Building removed at 16:58:24 |
+| Owner acceptance and real Done | MBroholm merged PR #10 at 17:01:15 UTC, merge 59977d3c13e991af1cb3416cbba8b788de41f846; Done at 17:01:22 while issue remains open. Successful production trigger execution 191/version 6dcd3b8e overlaps this transition; later observed singleton idle |
+
+This is a real approved task and owner-accepted result, with a demonstrated operational
+Building -> Your QA -> Done path. It includes a failure and manual recovery; it is not described
+as an uninterrupted run. Successful per-node QA/Done traces were not captured by the filtered
+collector; owner observations, public events and retained Done execution metadata establish the
+recorded outcome. Three additional genuine runs remain required. Bootstrap fix PR #11 is not
+counted as an extra factory-task run.
 
 ## Supporting validation — fixtures and component evidence
 

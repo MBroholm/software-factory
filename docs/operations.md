@@ -13,7 +13,7 @@ operational deployment. US4 completes the runbook, architecture, guard/recovery 
 Use [current deployment and backup procedures](#current-deployment-backup-and-restore--t024)
 below rather than the retained T004 trial commands. No Basic B runner is implemented.
 
-## Tracking no-work race fix — import verified, recovery pending
+## Tracking no-work race fix — adopted and real transitions verified
 
 Production execution 133 found no PR, then found newly created PR #10 at final readback and
 held safely without any writes. [The incident and tested fix](../evidence/tracking-race-validation.md)
@@ -23,11 +23,13 @@ readback. Source track SHA-256 is
 `3d4e5883f4af1e7028c89dbe384217327cae4d330ee6e02d92f8cab1ac24d23c`.
 The owner manually imported this source; read-only verification at 2026-11-26T16:53:53.644Z
 confirmed saved track version `6dcd3b8e-b018-4e4a-8f4e-25f26bdb0615`, with matching Code,
-connections, IF conditions and credential/table references. All workflows remain unpublished;
-the 133/issue 9 hold is unchanged. Owner recovery/publication and real QA/Done observation
-remain pending. No refine/reserve reimport is required.
-Keep production paused/drained until the owner reconciles the actual 133 hold using the linked
-recovery steps. No agent production reset, retry or publication was performed.
+connections, IF conditions and credential/table references. At that checkpoint all workflows remained unpublished and the 133/issue 9 hold was unchanged.
+The owner subsequently recovered/resumed; QA at 16:58:23, owner merge at 17:01:15 and Done
+at 17:01:22 are verified. At 17:03:50.259 UTC all three workflows are published, the singleton
+is idle and no executions are running/waiting. Track trigger execution 191 succeeded on the
+new version. The linked evidence records per-node trace limits and retains failure 133. No refine/reserve reimport is required.
+The linked recovery steps remain the procedure for future incidents. No agent production
+reset, retry or publication was performed.
 
 ## Provider decision snapshot — 2026-11-24
 

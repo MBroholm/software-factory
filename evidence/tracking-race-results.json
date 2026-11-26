@@ -368,5 +368,53 @@
       "head": "b84bfef4d438f7631f51045521ca59c207490d2f"
     },
     "recovery_pending": true
+  },
+  "operational_completion": {
+    "verified_at": "2026-11-26T17:03:50.259Z",
+    "published_versions": {
+      "Basic A refine": "67fcc2fa-8027-4191-b6a4-c42649a0e32b",
+      "Basic A reserve": "399ebb5e-de11-4a74-a99f-291e2f8d5f0f",
+      "Basic A track": "6dcd3b8e-b018-4e4a-8f4e-25f26bdb0615"
+    },
+    "qa": {
+      "result_comment_id": 7198327427,
+      "result_comment_at": "2026-11-26T16:58:22Z",
+      "label_event_id": 37392400679,
+      "label_added_at": "2026-11-26T16:58:23Z",
+      "building_removed_at": "2026-11-26T16:58:24Z"
+    },
+    "merge": {
+      "pr": 10,
+      "owner": "MBroholm",
+      "at": "2026-11-26T17:01:15Z",
+      "head": "b84bfef4d438f7631f51045521ca59c207490d2f",
+      "merge_commit": "59977d3c13e991af1cb3416cbba8b788de41f846"
+    },
+    "done": {
+      "issue": 9,
+      "issue_still_open": true,
+      "label_event_id": 37392650172,
+      "label_added_at": "2026-11-26T17:01:22Z",
+      "qa_removed_at": "2026-11-26T17:01:23Z",
+      "execution": {
+        "id": 191,
+        "status": "success",
+        "mode": "trigger",
+        "startedAt": "2026-11-26 17:01:16.991",
+        "stoppedAt": "2026-11-26 17:01:25.798",
+        "workflowVersionId": "6dcd3b8e-b018-4e4a-8f4e-25f26bdb0615"
+      }
+    },
+    "final_guard": {
+      "id": 1,
+      "key": "global",
+      "busy": false,
+      "execution_id": "199",
+      "issue_number": null,
+      "started_at": "2026-11-26T17:03:23.089Z"
+    },
+    "running_waiting_new": 0,
+    "result_marker_count": 1,
+    "evidence_limit": "QA is established by owner observation, result marker and public label events; Done additionally has retained successful trigger execution 191/version metadata. Filtered success trace collection returned no per-node records; no per-node QA/Done receipt assertion is made. Original failed execution 133 is retained."
   }
 }

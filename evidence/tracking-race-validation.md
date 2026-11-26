@@ -129,3 +129,40 @@ The owner still needs to confirm the coding agent is finished/stopped, record re
 fields and Building label, publish the reviewed workflows, and observe a fresh scheduled poll.
 No production reset/publication, failed-execution retry or real QA/Done transition was performed
 or inferred by this read-only verification.
+
+
+## Real QA and merged-result Done verified — 2026-11-26
+
+The owner reported #9 moving to Your QA after recovery/resumption, then merging PR #10 and
+observing Done. Fresh public GitHub reads independently confirm the durable sequence:
+
+| Event | UTC / durable evidence |
+|---|---|
+| One result marker | [7198327427](https://github.com/MBroholm/software-factory/issues/9#issuecomment-7198327427), 16:58:22; approval 37386569261, PR #10, unchanged b84bfef4d438f7631f51045521ca59c207490d2f head; unedited, exactly one marker |
+| Building -> Your QA | QA label event 37392400679 at 16:58:23; Building removed at 16:58:24 |
+| Owner accepts result | MBroholm merged [PR #10](https://github.com/MBroholm/software-factory/pull/10) at 17:01:15; merge commit 59977d3c13e991af1cb3416cbba8b788de41f846 |
+| Your QA -> Done | Done label event 37392650172 at 17:01:22; QA removed at 17:01:23; issue #9 remains open, so issue closure did not cause completion |
+
+Supported read-only production export at **17:03:50.259 UTC** confirms all three workflows
+published at their reviewed versions, track activeVersionId
+`6dcd3b8e-b018-4e4a-8f4e-25f26bdb0615`, with unchanged verified Code/connections/IF/mappings.
+Retained execution **191** is successful native **trigger** mode, 17:01:16.991–17:01:25.798,
+workflowVersionId matching that published version. Successful later trigger polls 194/197 are
+also retained. Original failed 133 remains error at the old 943b51b9 version. Filtered success
+trace collection did not return per-node records; QA relies on owner observation plus public
+marker/label history, and Done additionally has the successful scheduled execution metadata.
+No unseen native receipt or exact QA execution ID is asserted.
+
+The singleton is idle (busy=false), execution_id=199, issue_number=null,
+started_at=2026-11-26T17:03:23.089Z, with no running/waiting/new executions at that observation.
+This is current observed idle state, not a substitute for per-node historical guard receipts.
+The agent performed only read-only verification; reset/publication/resumption were owner actions.
+No separate recovery comment is present in the inspected issue history; the incident and owner
+intervention are preserved here and in PR #11 rather than inventing that comment.
+
+Operational import/publication/recovery and real QA/Done outcomes for this fix are now **PASS**
+within these evidence limits. Earlier pending statements above describe their dated checkpoints.
+This adds genuine task **2** (#9 / PR #10) to [the index](index.md), leaving **three** more
+issue/PR-linked tasks toward the final-project five-run minimum. It is not a claim that the
+race itself reoccurred in production after the fix; deterministic reproduction remains local
+and isolated native evidence. PR #11 still requires the owner's merge decision.
