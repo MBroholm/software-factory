@@ -6,12 +6,13 @@
 Fedora/Ubuntu/Compose preferences, SSH availability, completed model trials and explicit owner
 decision on 2026-11-24 to adopt Gemini 3.5 Flash-Lite refinement on the free tier.
 
-**Status (2026-11-26)**: T001–T028 and T031–T034 are complete within their recorded
+**Status (2026-11-26)**: T001–T034 are complete within their recorded
 revision/environment limits. US4 adds operations/architecture, finished-workflow guard coverage,
 inspected recovery and a network-disabled stopped-volume restore rehearsal; see
 `evidence/index.md`, `evidence/guard-validation.md` and `evidence/recovery-validation.md`.
-T029/T030 final acceptance and operational owner review/manual matching-revision import remain
-incomplete. One genuine issue/PR task has an owner acceptance decision; the final-project five-run
+T029 evidence consolidation and T030 owner-reported operational manual import/publication are
+complete; version prefixes and verification limits are recorded in operations and acceptance. Two genuine issue/PR tasks have owner acceptance; #9 additionally demonstrates real QA/Done
+through the manually adopted PR #11 fix. Current operational versions are verified in the ledgers. The final-project five-run
 minimum is still outstanding. No source workflow behavior changed in US4.
 
 ## Summary

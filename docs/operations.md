@@ -5,13 +5,49 @@
 All three finished workflow artifacts are implemented and locally/native validated through US3;
 see [refinement](../evidence/refinement-validation.md), [manual build](../evidence/manual-build-validation.md)
 and [review](../evidence/review-validation.md). Their dated checkpoints remain historical.
-The current source uses Gemini, optional Ollama trials and inactive exports. Operational adoption
-requires owner PR review and manual import of the matching revision; testing does not establish
-operational deployment. US4 completes the runbook, architecture, guard/recovery validation and
+The current source uses Gemini, optional Ollama trials and inactive exports. The owner reports manual import and publication of all three workflows on 2026-11-26;
+the version ledger below records this operational adoption separately from isolated testing. US4 completes the runbook, architecture, guard/recovery validation and
 [evidence index](../evidence/index.md). Consult its actual results before treating a check as passed.
 
 Use [current deployment and backup procedures](#current-deployment-backup-and-restore--t024)
 below rather than the retained T004 trial commands. No Basic B runner is implemented.
+
+## T030 reviewed artifacts and operational adoption ledger — 2026-11-26
+
+Review branch: `001-basic-a-factory-final-review`, based on merged US4
+`c359fbde6a1b15335d596bc44f4792f9c4994234` / PR #7. Previous artifact PRs
+[#2](https://github.com/MBroholm/software-factory/pull/2),
+[#3](https://github.com/MBroholm/software-factory/pull/3),
+[#6](https://github.com/MBroholm/software-factory/pull/6) and
+[#7](https://github.com/MBroholm/software-factory/pull/7) are merged. Merge evidence establishes
+source history; it does not establish manual operational import or activation.
+[Acceptance](../evidence/acceptance.md) records the final matrix and historical/current source SHA-256s.
+
+| Workflow / owner import artifact | Reviewed source and test evidence | Current operational saved/published version / manual import evidence |
+|---|---|---|
+| Refine: `factory/workflows/refine.json` | PR #2; T014/T031 and T026 fingerprints; prompt v3/template v1 | Owner manual import; active version `67fcc2fa-8027-4191-b6a4-c42649a0e32b`, independently observed 17:03:50 UTC |
+| Reserve: `factory/workflows/reserve.json` | PR #3; ec5a2de, T019/T032 and T026 fingerprints | Owner manual import; active version `399ebb5e-de11-4a74-a99f-291e2f8d5f0f`, independently observed 17:03:50 UTC |
+| Track: `factory/workflows/track.json` | PR #6 then PR #11; T023/T026 plus race-fix fingerprints | Owner reimported fix; active version `6dcd3b8e-b018-4e4a-8f4e-25f26bdb0615`, independently verified 17:03:50 UTC |
+
+**T030 complete.** Following the [PR #8](https://github.com/MBroholm/software-factory/pull/8)
+review handoff at commit `0c13c6e`, the owner confirmed manual import/publication of the initial
+three version prefixes (track then 943b51b9). The owner subsequently manually imported and
+published the tracking fix reviewed in merged [PR #11](https://github.com/MBroholm/software-factory/pull/11).
+Read-only export at 17:03:50.259 UTC confirmed the current full active versions above. Track
+Code, connections, IF conditions and credential/control-table references match the reviewed
+mapped artifact. Refine/reserve source was unchanged by that fix. Credential scopes are not
+independently audited; historical isolated IDs are not used as operational IDs.
+
+Real issue #9 reached QA, owner merge and Done, with successful trigger 191 at the current
+track version and later idle singleton observed. [Race validation](../evidence/tracking-race-validation.md)
+preserves incident 133, manual recovery, exact observations and per-node trace limits. This
+ledger distinguishes initial adoption from the later fix; it claims no agent production import,
+publication, reset or merge. No new workflow change is introduced by this documentation merge.
+
+Subsequent workflow changes still require renewed owner review and manual matching-revision
+import, with mappings checked using the procedure below. The accepted policy requires explicit
+initial approval, permits session continuation within unchanged scope and requires renewed
+approval for expanded scope. Owner review and merge authority remain unchanged.
 
 ## Tracking no-work race fix — adopted and real transitions verified
 
@@ -42,14 +78,15 @@ The model-choice checkpoint and T004 evidence/review closeout are complete. The 
 editor/owner-account access and accepted the refinements on 2026-11-24 after the three affected
 v3 cases passed technical/assistant semantic checks. See [the accepted outputs](../evidence/gemini-v3-review.md).
 Browser checks need not repeat. Before activating refinement, configure a dedicated Gemini
-header-auth credential in n8n and exercise the actual HTTP Request node after owner manual import
-of reviewed JSON (T012/T014); run only checks affected by subsequent changes. Those checks remain unrun.
+header-auth credential in n8n. T012/T014 subsequently passed saved-credential HTTP checks in isolation;
+see the current acceptance ledger. Current versions and the later tracking mapping verification are recorded in the T030 ledger.
 
-The server remains at commit `f4a8427` with prompt v2 modified locally; the v3 server smoke test
-passed its payload/key in memory. No Gemini credential is installed remotely yet. Do not overwrite
-server-local prompt work during a later reviewed rollout. The Compose file still starts Ollama
-by default; T012 will make it optional while preserving the cache. No service is stopped or volume
-deleted by this decision. For n8n-only startup, explicitly select the `n8n` service.
+At this historical provider-decision checkpoint, the server was at commit `f4a8427` with
+prompt v2 modified locally; the v3 server smoke test passed its payload/key in memory. No
+Gemini credential had yet been installed remotely and Compose still started Ollama by default.
+T012 subsequently made Ollama optional in source and verified saved Gemini credentials in
+isolation. Preserve server-local work and cache during any reviewed rollout. For n8n-only
+startup, explicitly select the `n8n` service.
 
 Only bounded public issue/discussion content plus reviewed runtime prompt/template/schema goes to
 Google over HTTPS. No GitHub credentials, server environment or unrelated private data is sent.
@@ -62,7 +99,8 @@ subject to change/shared usage). Infer only for new revisions. HTTP 429, transpo
 timeouts and invalid output retain the shared busy flag for pause/drain/inspect/manual recovery;
 only explicit generation HTTP 503 UNAVAILABLE has bounded 10/30-second retries (three total
 attempts), with the same counted payload and guard/source rechecks. Exhaustion retains busy.
-No quota ledger, paid upgrade or alternate-model fallback. Retry live checks remain pending;
+No quota ledger, paid upgrade or alternate-model fallback. Historical retry checks were pending
+at this checkpoint; current native outcomes are in US1 evidence;
 the standalone smoke test did not validate this workflow behavior.
 
 The original Ollama instructions below are **historical trial procedures**, retained for evidence
@@ -330,8 +368,8 @@ An invalid pre-held row errors without mutating it.
 
 **Historical T007/T008 instructions below describe the original guard-only exports.** Current
 `refine.json` is the inactive US1 implementation with real GitHub/model calls; use the
-[US1 import/validation handoff](../evidence/refinement-validation.md) for it. Reserve/track
-remain skeletons. Do not rebuild/reimport the old guard bridge against the current refine graph
+[US1 import/validation handoff](../evidence/refinement-validation.md) for it. Reserve/track were skeletons at that checkpoint; both are now implemented and validated.
+Do not rebuild/reimport the old guard bridge against the current refine graph
 or treat the earlier native skeleton passes as US1 validation.
 
 For isolated skeleton checks, inspect the source and import (automation permitted after T033) `factory/workflows/{refine,reserve,track}.json`
@@ -396,10 +434,9 @@ the long-lived `Building` reservation are separate: releasing one never releases
 An old timestamp, a healthy container or a successful skipped poll is not proof of completion.
 There is no automatic expiry, replay, resumed failed execution or repair workflow.
 
-The latest recorded isolated state is the deliberate hold owned by execution 714 and four
-retained effects described above. These instructions do not clear it. Story-specific recovery
-below describes the approved contracts for T010+; those behaviors are not yet implemented or
-validated. Keep production activation gated on the corresponding later tasks.
+The execution 714 hold above is historical. The US4 validated-state section records the latest
+isolated shutdown observation; inspect fresh state before any recovery. Story recovery and
+restore exercises now pass in isolation; operational activation still requires owner adoption.
 
 ### 1. Pause and drain
 
@@ -602,7 +639,7 @@ exhaustion stop without release. Map the new Read generation guard node too: eig
 now share the same intended singleton table. Short waits stay in-process with no resume webhook;
 interruption/restart leaves busy held for manual inspection.
 Use whole-workflow executions only while schedules are paused/drained. Preserve the deliberately
-held T008 row until reconciled, or provision a fresh isolated table. US2 is implemented and validated; US3 remains incomplete.
+held T008 row until reconciled, or provision a fresh isolated table. US2 and US3 are implemented and validated; consult the current acceptance ledger.
 
 The owner-approved token preflight replaces whole-input byte estimation. One count-only call
 precedes each new inference; valid provider count + fixed schema allowance + 768 output + 256
@@ -815,5 +852,4 @@ executions, singleton idle at execution 1699/issue 1. US4 loopback fixture stopp
 refused. Historical 1542/1369 holds above are superseded only as current-state descriptions;
 their original evidence remains valid. Real issue #1 remains open/Building and #4 open/Approved.
 Owner merge of real PR #5 is recorded; a real automated QA/Done transition is not claimed.
-T029/T030 acceptance consolidation and operational owner review/manual matching-revision import
-remain outstanding. The evidence index counts one real task, not five.
+T029 acceptance consolidation is recorded in the acceptance ledger. T030 owner-reported manual import/publication is recorded in the version ledger above. That US4 checkpoint counted one real task; the current index counts two, leaving three toward five.

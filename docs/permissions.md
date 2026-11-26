@@ -1,8 +1,8 @@
 # Basic A permissions and publication boundaries
 
 This documents the Basic A design and operating boundaries under constitution v2.0.0 and
-brief version 2 (2026-11-25). US1/refine and US2/reserve have recorded isolated validation;
-US3/track remains a guarded skeleton. See the story evidence for tested revisions and limits;
+brief version 2 (2026-11-25). All three completed workflows have recorded story and guard/recovery validation;
+see the consolidated [acceptance ledger](../evidence/acceptance.md). See the story evidence for tested revisions and limits;
 this policy update claims no new runtime checks or operational adoption. Use [manual recovery](operations.md#t009--manual-failure-recovery)
 for changes while paused/drained.
 
