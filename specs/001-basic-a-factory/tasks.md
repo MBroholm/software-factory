@@ -235,9 +235,9 @@ owner review; this closeout does not claim a merged result, complete Basic A loo
 **Independent test**: Supply an approved handoff and linked PR, exercise QA/rework/merge and issue
 closure, including a closed-unmerged PR with the issue still open.
 
-- [ ] T020 [US3] Implement paginated result matching in `factory/workflows/track.json`, citing `Result pull request.head repository/branch/SHA`, `Result pull request.base branch`, `Result pull request.body issue link`, `Result pull request.state`, `Result pull request.merged status/time` and `Result pull request.activity times` in [data-model.md — Result pull request](data-model.md#result-pull-request); require an unambiguous current result and compare the handoff PR baseline/new approval so stale PRs cannot overwrite rework.
-- [ ] T021 [US3] Implement result markers and `Your QA`/`Done` tracking in `factory/workflows/track.json`, citing `Result pull request.current approval event ID`, `Result pull request.PR number`, `Result pull request.head SHA` and result-marker constraints in [data-model.md](data-model.md#result-pull-request), plus [State transitions](data-model.md#state-transitions); merged current result/closed issue completes, while unmerged closure with open issue stays QA; unchanged/no-result paths release acquired busy and unexpected failures retain it.
-- [ ] T022 [P] [US3] Document issue-linked PR summary/actual checks, owner review, explicit rework approval, isolated automated testing and manual operational workflow JSON import in `docs/review.md` per `contracts/manual-handoff.md`; distinguish universal review gates from additional factory-task approval/linkage gates and show failed/unrun acceptance criteria honestly.
+- [X] T020 [US3] Implement paginated result matching in `factory/workflows/track.json`, citing `Result pull request.head repository/branch/SHA`, `Result pull request.base branch`, `Result pull request.body issue link`, `Result pull request.state`, `Result pull request.merged status/time` and `Result pull request.activity times` in [data-model.md — Result pull request](data-model.md#result-pull-request); require an unambiguous current result and compare the handoff PR baseline/new approval so stale PRs cannot overwrite rework.
+- [X] T021 [US3] Implement result markers and `Your QA`/`Done` tracking in `factory/workflows/track.json`, citing `Result pull request.current approval event ID`, `Result pull request.PR number`, `Result pull request.head SHA` and result-marker constraints in [data-model.md](data-model.md#result-pull-request), plus [State transitions](data-model.md#state-transitions); merged current result/closed issue completes, while unmerged closure with open issue stays QA; unchanged/no-result paths release acquired busy and unexpected failures retain it.
+- [X] T022 [P] [US3] Document issue-linked PR summary/actual checks, owner review, explicit rework approval, isolated automated testing and manual operational workflow JSON import in `docs/review.md` per `contracts/manual-handoff.md`; distinguish universal review gates from additional factory-task approval/linkage gates and show failed/unrun acceptance criteria honestly.
 - [ ] T023 [US3] After T033, import `factory/workflows/track.json` into designated isolated test n8n (automation permitted); verify imported source and test-only mappings, while operational workflows remain untouched. Record tested commits/environment/imported revisions in `evidence/review-validation.md`, then exercise open-result QA, merge, issue close, closed-unmerged/open-issue, fresh rework/new head and ambiguous stale PR cases, recording results in `evidence/review-validation.md`; verify ordinary session summaries/in-scope rework comments do not invalidate captured source, repeated polls do not duplicate QA markers, and no autonomous merge or operational import occurs. Operational adoption separately requires owner PR review and manual import of the matching reviewed JSON revision, before or after merge.
 
 **Checkpoint**: The complete normal Basic A loop is available, subject to cross-workflow validation.
@@ -392,3 +392,18 @@ state route 404, final row idle at 1442, one handoff and queued Approved fixture
 Disposable fixture process stopped. See evidence/reservation-scheduled-results.json and
 manual-build-validation.md; synthetic scheduled effects supplement real #1/PR #5 evidence.
 No production runtime change, merge, agent auto-launch or US3 work is claimed.
+
+
+**US3 source checkpoint, 2026-11-26**: T020/T021/T022 implemented in inactive generated
+`factory/workflows/track.json`, source `factory/scripts/build-track.cjs` and
+`factory/scripts/tracking-runtime.cjs`, with owner review runbook `docs/review.md`.
+22 local exported-graph/policy groups pass; unchanged reserve output and 36 US2 groups pass.
+The guard template is now independent of track output; reserve.json remains byte-for-byte
+unchanged. Tracking rotates sorted candidates by UTC minute to avoid unchanged QA starving
+other tasks; repeated checks use detailed PR merge evidence and current approval/source.
+Test-only packaging retains all Code/connections with fixed credential-free loopback HTTP,
+isolated table mapping and disabled schedule. No workflow was imported or executed natively.
+T023 and T033 remain unchecked: separate server containers/volumes/loopback ports and 21
+inactive isolated workflows were verified, but authenticated native access/current table/drain
+checks remain pending (browser host unavailable; CLI Data Table context is unsuitable).
+See `evidence/review-validation.md`. No operational changes or real GitHub writes occurred.

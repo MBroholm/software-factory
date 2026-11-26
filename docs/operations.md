@@ -597,3 +597,14 @@ explicitly approved scope. Only the owner grants initial approval; answers never
 initial approval, and expanded scope requires renewed explicit owner approval. No instructor
 confirmation is required. Basic A retains in-session continuation and owner-controlled recovery;
 this policy adds no automated question handling or state repair.
+
+## US3 isolated test boundary checkpoint — 2026-11-26
+
+Read-only inspection confirmed factory-guard-test (n8n 2.48.8), loopback port 5679 and separate
+`factory_guard_test_data` volume; operational n8n uses loopback 5678 and
+`software-factory-basic-a_n8n_data`. All 21 test workflows were inactive. New US3 test packaging
+maps only `IgWCIu94ieyHQRHS` and credential-free container-loopback HTTP port 18767; historical
+credential-bearing test workflows must remain inactive. No test import/execution is authorized
+until T033 finishes fresh row/drain/access and destination verification. See
+[US3 evidence](../evidence/review-validation.md) for observed versus pending checks.
+The tracking source stays inactive pending native validation and owner operational adoption.

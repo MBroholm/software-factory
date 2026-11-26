@@ -1,0 +1,746 @@
+{
+  "name": "Basic A track — INACTIVE guard skeleton",
+  "active": false,
+  "nodes": [
+    {
+      "id": "a7d03f86-2074-5680-b476-57de951ebffb",
+      "name": "Manual isolated test",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "9a8be9a7-acd9-5d89-9629-e8a253ff6b6a",
+      "name": "Poll inactive",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        220
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "seconds",
+              "secondsInterval": 60
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "515b2fdd-520f-5a46-b36b-49f8d9f6f63c",
+      "name": "Read control",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        240,
+        0
+      ],
+      "parameters": {
+        "resource": "row",
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "OWNER_SELECT_ISOLATED_CONTROL_TABLE"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": []
+        },
+        "returnAll": false,
+        "limit": 2
+      },
+      "alwaysOutputData": true
+    },
+    {
+      "id": "5626e88d-49b2-5253-9e41-6b370caff161",
+      "name": "Validate entry",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        460,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const rows = $input.all().map(item => item.json);\nif (rows.length !== 1) throw new Error('Guard requires exactly one control row');\nconst row = rows[0];\nif (!Number.isInteger(row.id) || row.key !== 'global' || typeof row.busy !== 'boolean' ||\n    typeof row.execution_id !== 'string' || typeof row.started_at !== 'string' ||\n    !(row.issue_number === null || (Number.isInteger(row.issue_number) && row.issue_number > 0))) {\n  throw new Error('Invalid control row; no remote work or automatic repair');\n}\nreturn [{json: {...row, guard_action: row.busy ? 'held' : 'acquire'}}];"
+      }
+    },
+    {
+      "id": "9b4258eb-b1f4-5cad-bf4b-9d6138164420",
+      "name": "Already held",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        680,
+        0
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "held",
+              "leftValue": "={{ $json.busy }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "be7b10b8-eb15-5840-80ad-a612a7fe4fab",
+      "name": "Report existing hold",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        900,
+        -220
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "return [{json: {status:'skipped_held', control:$input.first().json}}];"
+      }
+    },
+    {
+      "id": "8852fbe6-38d7-521d-9dca-07c3633c3c9a",
+      "name": "Prepare acquisition",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        900,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const row = $input.first().json;\nreturn [{json: {id:row.id, key:'global', busy:true, execution_id:String($execution.id),\n  issue_number:null, started_at:new Date().toISOString()}}];"
+      }
+    },
+    {
+      "id": "4c293539-4160-5818-af10-3b7bf36e364b",
+      "name": "Acquire control",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        1120,
+        0
+      ],
+      "parameters": {
+        "resource": "row",
+        "operation": "update",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "OWNER_SELECT_ISOLATED_CONTROL_TABLE"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $json.id }}"
+            },
+            {
+              "keyName": "key",
+              "condition": "eq",
+              "keyValue": "global"
+            },
+            {
+              "keyName": "busy",
+              "condition": "isFalse"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "busy": true,
+            "execution_id": "={{ $json.execution_id }}",
+            "issue_number": "={{ null }}",
+            "started_at": "={{ $json.started_at }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "busy",
+              "displayName": "busy",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "execution_id",
+              "displayName": "execution_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "issue_number",
+              "displayName": "issue_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "started_at",
+              "displayName": "started_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "alwaysOutputData": true
+    },
+    {
+      "id": "7479ae78-2575-5a39-9826-bb9d65ffb7ea",
+      "name": "Check acquire receipt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1340,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const rows = $input.all().map(item => item.json);\nif (rows.length !== 1) throw new Error('Guard requires exactly one control row');\nconst row = rows[0];\nif (!Number.isInteger(row.id) || row.key !== 'global' || typeof row.busy !== 'boolean' ||\n    typeof row.execution_id !== 'string' || typeof row.started_at !== 'string' ||\n    !(row.issue_number === null || (Number.isInteger(row.issue_number) && row.issue_number > 0))) {\n  throw new Error('Invalid control row; no remote work or automatic repair');\n}\nconst expected = $('Prepare acquisition').first().json;\nif (row.id !== expected.id || row.busy !== true ||\n    row.execution_id !== expected.execution_id || row.started_at !== expected.started_at ||\n    row.issue_number !== expected.issue_number) {\n  throw new Error('Guard acquisition receipt not confirmed; stop and inspect, never assume idle');\n}\nreturn [{json:row}];"
+      }
+    },
+    {
+      "id": "0ac5f4d6-21ed-5bce-a171-8c0f8ce391d5",
+      "name": "Read acquired control",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        1560,
+        0
+      ],
+      "parameters": {
+        "resource": "row",
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "OWNER_SELECT_ISOLATED_CONTROL_TABLE"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": []
+        },
+        "returnAll": false,
+        "limit": 2
+      },
+      "alwaysOutputData": true
+    },
+    {
+      "id": "ddfd9eac-a865-52a8-a28f-b94158eaf39d",
+      "name": "Verify acquisition",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1780,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const rows = $input.all().map(item => item.json);\nif (rows.length !== 1) throw new Error('Guard requires exactly one control row');\nconst row = rows[0];\nif (!Number.isInteger(row.id) || row.key !== 'global' || typeof row.busy !== 'boolean' ||\n    typeof row.execution_id !== 'string' || typeof row.started_at !== 'string' ||\n    !(row.issue_number === null || (Number.isInteger(row.issue_number) && row.issue_number > 0))) {\n  throw new Error('Invalid control row; no remote work or automatic repair');\n}\nconst expected = $('Prepare acquisition').first().json;\nif (row.id !== expected.id || row.busy !== true ||\n    row.execution_id !== expected.execution_id || row.started_at !== expected.started_at ||\n    row.issue_number !== expected.issue_number) {\n  throw new Error('Guard acquisition reread not confirmed; stop and inspect, never assume idle');\n}\nreturn [{json:row}];"
+      }
+    },
+    {
+      "id": "e82f279f-0bad-5b58-9f7c-72a395f1fd6d",
+      "name": "Skeleton work boundary",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2000,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// T007 only. Replace this boundary in the corresponding user story.\n// No GitHub/model call, issue selection or external side effect is implemented.\nreturn [{json: {outcome:'no_work', acknowledged:true, workflow:'track'}}];"
+      }
+    },
+    {
+      "id": "84fed54d-5b44-530d-92b5-b65f9a2ff0cd",
+      "name": "Require acknowledged completion",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2220,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const items = $input.all();\nif (items.length !== 1 || items[0].json.acknowledged !== true ||\n    !['success','no_work'].includes(items[0].json.outcome)) {\n  throw new Error('Work incomplete or uncertain; retain guard');\n}\nreturn items;"
+      }
+    },
+    {
+      "id": "bd28ba79-ff4f-5c06-8db6-a1cfa9b881a3",
+      "name": "Read before release",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        2440,
+        0
+      ],
+      "parameters": {
+        "resource": "row",
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "OWNER_SELECT_ISOLATED_CONTROL_TABLE"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": []
+        },
+        "returnAll": false,
+        "limit": 2
+      },
+      "alwaysOutputData": true
+    },
+    {
+      "id": "67f4903d-007a-5d96-a8b2-aaa11134d067",
+      "name": "Verify release ownership",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2660,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const rows = $input.all().map(item => item.json);\nif (rows.length !== 1) throw new Error('Guard requires exactly one control row');\nconst row = rows[0];\nif (!Number.isInteger(row.id) || row.key !== 'global' || typeof row.busy !== 'boolean' ||\n    typeof row.execution_id !== 'string' || typeof row.started_at !== 'string' ||\n    !(row.issue_number === null || (Number.isInteger(row.issue_number) && row.issue_number > 0))) {\n  throw new Error('Invalid control row; no remote work or automatic repair');\n}\nconst expected = $('Prepare acquisition').first().json;\nif (row.id !== expected.id || row.busy !== true ||\n    row.execution_id !== expected.execution_id || row.started_at !== expected.started_at ||\n    row.issue_number !== expected.issue_number) {\n  throw new Error('Guard release ownership not confirmed; stop and inspect, never assume idle');\n}\nreturn [{json:row}];"
+      }
+    },
+    {
+      "id": "abb0e2cf-7a67-5c0d-8685-fad98ac9a7b9",
+      "name": "Release control",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        2880,
+        0
+      ],
+      "parameters": {
+        "resource": "row",
+        "operation": "update",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "OWNER_SELECT_ISOLATED_CONTROL_TABLE"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $json.id }}"
+            },
+            {
+              "keyName": "key",
+              "condition": "eq",
+              "keyValue": "global"
+            },
+            {
+              "keyName": "busy",
+              "condition": "isTrue"
+            },
+            {
+              "keyName": "execution_id",
+              "condition": "eq",
+              "keyValue": "={{ $json.execution_id }}"
+            },
+            {
+              "keyName": "started_at",
+              "condition": "eq",
+              "keyValue": "={{ $json.started_at }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "busy": false
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "busy",
+              "displayName": "busy",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "execution_id",
+              "displayName": "execution_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "issue_number",
+              "displayName": "issue_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "started_at",
+              "displayName": "started_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "alwaysOutputData": true
+    },
+    {
+      "id": "5ffaa7dc-21d7-5ad0-bf3d-6158b3aab958",
+      "name": "Check release receipt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3100,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const rows = $input.all().map(item => item.json);\nif (rows.length !== 1) throw new Error('Guard requires exactly one control row');\nconst row = rows[0];\nif (!Number.isInteger(row.id) || row.key !== 'global' || typeof row.busy !== 'boolean' ||\n    typeof row.execution_id !== 'string' || typeof row.started_at !== 'string' ||\n    !(row.issue_number === null || (Number.isInteger(row.issue_number) && row.issue_number > 0))) {\n  throw new Error('Invalid control row; no remote work or automatic repair');\n}\nconst expected = $('Prepare acquisition').first().json;\nif (row.id !== expected.id || row.busy !== false ||\n    row.execution_id !== expected.execution_id || row.started_at !== expected.started_at ||\n    row.issue_number !== expected.issue_number) {\n  throw new Error('Guard release receipt not confirmed; stop and inspect, never assume idle');\n}\nreturn [{json:row}];"
+      }
+    },
+    {
+      "id": "d5d8affb-a5e6-5800-a355-f65fa1c928cc",
+      "name": "Read released control",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        3320,
+        0
+      ],
+      "parameters": {
+        "resource": "row",
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "OWNER_SELECT_ISOLATED_CONTROL_TABLE"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": []
+        },
+        "returnAll": false,
+        "limit": 2
+      },
+      "alwaysOutputData": true
+    },
+    {
+      "id": "186ec7da-8aeb-5414-a76a-868a10ea29eb",
+      "name": "Confirm idle",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3540,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const rows = $input.all().map(item => item.json);\nif (rows.length !== 1) throw new Error('Guard requires exactly one control row');\nconst row = rows[0];\nif (!Number.isInteger(row.id) || row.key !== 'global' || typeof row.busy !== 'boolean' ||\n    typeof row.execution_id !== 'string' || typeof row.started_at !== 'string' ||\n    !(row.issue_number === null || (Number.isInteger(row.issue_number) && row.issue_number > 0))) {\n  throw new Error('Invalid control row; no remote work or automatic repair');\n}\nconst expected = $('Prepare acquisition').first().json;\nif (row.id !== expected.id || row.busy !== false ||\n    row.execution_id !== expected.execution_id || row.started_at !== expected.started_at ||\n    row.issue_number !== expected.issue_number) {\n  throw new Error('Guard release reread not confirmed; stop and inspect, never assume idle');\n}\nreturn [{json:row}];"
+      }
+    },
+    {
+      "id": "618bbd76-e23c-5cc7-9d45-ec71b4818593",
+      "name": "Report completion",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3760,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "return [{json: {status:'released', outcome:$('Require acknowledged completion').first().json.outcome, control:$input.first().json}}];"
+      }
+    },
+    {
+      "id": "20b681b6-3ff8-5cb6-915a-e125ecdf448f",
+      "name": "Review and isolated testing only",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -520
+      ],
+      "parameters": {
+        "content": "## INACTIVE T007 guard skeleton\nOwner manually imports reviewed JSON into isolation. Select the SAME test factory_control table ID in EVERY Data Table node. No credentials needed. Execute entire workflow; never individual mutation nodes. No remote work implemented. See factory/tests/guard-scenarios.md. Production activation is not authorized.",
+        "height": 240,
+        "width": 620
+      }
+    }
+  ],
+  "connections": {
+    "Read control": {
+      "main": [
+        [
+          {
+            "node": "Validate entry",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate entry": {
+      "main": [
+        [
+          {
+            "node": "Already held",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Manual isolated test": {
+      "main": [
+        [
+          {
+            "node": "Read control",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Poll inactive": {
+      "main": [
+        [
+          {
+            "node": "Read control",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Already held": {
+      "main": [
+        [
+          {
+            "node": "Report existing hold",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Prepare acquisition",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare acquisition": {
+      "main": [
+        [
+          {
+            "node": "Acquire control",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Acquire control": {
+      "main": [
+        [
+          {
+            "node": "Check acquire receipt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check acquire receipt": {
+      "main": [
+        [
+          {
+            "node": "Read acquired control",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read acquired control": {
+      "main": [
+        [
+          {
+            "node": "Verify acquisition",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verify acquisition": {
+      "main": [
+        [
+          {
+            "node": "Skeleton work boundary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Skeleton work boundary": {
+      "main": [
+        [
+          {
+            "node": "Require acknowledged completion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Require acknowledged completion": {
+      "main": [
+        [
+          {
+            "node": "Read before release",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read before release": {
+      "main": [
+        [
+          {
+            "node": "Verify release ownership",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verify release ownership": {
+      "main": [
+        [
+          {
+            "node": "Release control",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Release control": {
+      "main": [
+        [
+          {
+            "node": "Check release receipt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check release receipt": {
+      "main": [
+        [
+          {
+            "node": "Read released control",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read released control": {
+      "main": [
+        [
+          {
+            "node": "Confirm idle",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Confirm idle": {
+      "main": [
+        [
+          {
+            "node": "Report completion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Copenhagen",
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all",
+    "saveManualExecutions": true
+  },
+  "pinData": {}
+}
