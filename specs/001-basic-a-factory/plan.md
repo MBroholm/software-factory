@@ -7,10 +7,12 @@ Fedora/Ubuntu/Compose preferences, SSH availability, completed model trials and 
 decision on 2026-11-24 to adopt Gemini 3.5 Flash-Lite refinement on the free tier.
 
 **Status (2026-11-26)**: T001–T019 and scheduled-path T031/T032 are complete, with the
-recorded limits in their evidence. US3 tracking (T020 onward) and final Basic A acceptance remain
-incomplete. T033 verifies existing isolated-test boundaries before future automated imports or
-native isolated tests. This governance alignment changes no workflow or deployment, resets no
-tasks and does not claim new checks. Historical planning observations below retain their dates.
+recorded limits in their evidence. US3 T020–T023 and T033 are now complete: credential-free
+native fixture cases and original scheduled QA/unchanged polls passed in the isolated instance;
+see review-validation.md and review-native-results.json under evidence/. Final Basic A
+acceptance and US4 remain incomplete; operational owner review/manual import is separate.
+Future tests recheck the existing isolation boundaries. Historical planning observations below
+retain their dates; no operational deployment or source behavior changed in this validation.
 
 ## Summary
 
@@ -108,7 +110,8 @@ approval journal, reservation table, operation journal or autonomous recovery st
 workflow exercises; one real manual run with a session question and PR. Use the acceptance matrix
 and commands in [quickstart.md](quickstart.md). Actual model/server observations are in
 [Gemini evidence](../../evidence/gemini-evaluation.md). US1/US2 workflow results are recorded in
-their validation evidence; US3 and completed-workflow acceptance checks remain pending.
+their validation evidence; US3 native validation is complete, while the broader completed-workflow
+guard matrix and final acceptance remain pending.
 
 **Target Platform**: Ubuntu server for n8n; Fedora laptop for Codex, Git and SSH tunnel.
 Existing Ollama deployment remains unused until made optional. Server preflight and API smoke
@@ -329,7 +332,8 @@ only missing or change-affected checks. Basic B and advanced implementation rema
 | Approval/resumption policy | PASS | Accepted owner policy; unchanged-scope continuation allowed, expanded scope reapproved; no instructor confirmation or Basic A automated resumption required |
 
 The isolated-testing permission is constitutional policy, not an exception request. The model choice is resolved by the owner's Gemini
-decision; remaining work is US3 tracking and final Basic A validation/evidence, not local sizing.
+decision; US3 tracking is now validated in isolation. Remaining work is US4 and final Basic A
+validation/evidence, with operational adoption still requiring owner review/manual import.
 Do not activate refinement if the benchmark fails. No unresolved scope decision is hidden by a
 default, and no implementation readiness is claimed before the operational checks pass.
 

@@ -238,7 +238,7 @@ closure, including a closed-unmerged PR with the issue still open.
 - [X] T020 [US3] Implement paginated result matching in `factory/workflows/track.json`, citing `Result pull request.head repository/branch/SHA`, `Result pull request.base branch`, `Result pull request.body issue link`, `Result pull request.state`, `Result pull request.merged status/time` and `Result pull request.activity times` in [data-model.md — Result pull request](data-model.md#result-pull-request); require an unambiguous current result and compare the handoff PR baseline/new approval so stale PRs cannot overwrite rework.
 - [X] T021 [US3] Implement result markers and `Your QA`/`Done` tracking in `factory/workflows/track.json`, citing `Result pull request.current approval event ID`, `Result pull request.PR number`, `Result pull request.head SHA` and result-marker constraints in [data-model.md](data-model.md#result-pull-request), plus [State transitions](data-model.md#state-transitions); merged current result/closed issue completes, while unmerged closure with open issue stays QA; unchanged/no-result paths release acquired busy and unexpected failures retain it.
 - [X] T022 [P] [US3] Document issue-linked PR summary/actual checks, owner review, explicit rework approval, isolated automated testing and manual operational workflow JSON import in `docs/review.md` per `contracts/manual-handoff.md`; distinguish universal review gates from additional factory-task approval/linkage gates and show failed/unrun acceptance criteria honestly.
-- [ ] T023 [US3] After T033, import `factory/workflows/track.json` into designated isolated test n8n (automation permitted); verify imported source and test-only mappings, while operational workflows remain untouched. Record tested commits/environment/imported revisions in `evidence/review-validation.md`, then exercise open-result QA, merge, issue close, closed-unmerged/open-issue, fresh rework/new head and ambiguous stale PR cases, recording results in `evidence/review-validation.md`; verify ordinary session summaries/in-scope rework comments do not invalidate captured source, repeated polls do not duplicate QA markers, and no autonomous merge or operational import occurs. Operational adoption separately requires owner PR review and manual import of the matching reviewed JSON revision, before or after merge.
+- [X] T023 [US3] After T033, import `factory/workflows/track.json` into designated isolated test n8n (automation permitted); verify imported source and test-only mappings, while operational workflows remain untouched. Record tested commits/environment/imported revisions in `evidence/review-validation.md`, then exercise open-result QA, merge, issue close, closed-unmerged/open-issue, fresh rework/new head and ambiguous stale PR cases, recording results in `evidence/review-validation.md`; verify ordinary session summaries/in-scope rework comments do not invalidate captured source, repeated polls do not duplicate QA markers, and no autonomous merge or operational import occurs. Operational adoption separately requires owner PR review and manual import of the matching reviewed JSON revision, before or after merge.
 
 **Checkpoint**: The complete normal Basic A loop is available, subject to cross-workflow validation.
 
@@ -336,7 +336,7 @@ weakening FR-016 or implementing a new orchestration platform.
 
 ## Isolated-test boundary verification (before future automated testing)
 
-- [ ] T033 [US4] Verify the existing isolated development/test n8n environment before any future automated import/update/native execution (FR-012/013, SC-003/006). Record instance identity/version, separate volume/control tables, test credential scopes, designated fixture or external test resources, and all HTTP destinations/mappings in `docs/operations.md` and `evidence/acceptance.md`. Verify it cannot target operational workflows or ordinary factory tasks; stop on unknown boundaries. Reuse existing `factory-guard-test` setup/evidence where valid rather than create another deployment or rerun completed suites. Record tested source/imported revisions and environment for subsequent tests; keep owner PR review/manual matching-revision import as the separate operational adoption gate. This task does not authorize operational deployment or a new test framework.
+- [X] T033 [US4] Verify the existing isolated development/test n8n environment before any future automated import/update/native execution (FR-012/013, SC-003/006). Record instance identity/version, separate volume/control tables, test credential scopes, designated fixture or external test resources, and all HTTP destinations/mappings in `docs/operations.md` and `evidence/acceptance.md`. Verify it cannot target operational workflows or ordinary factory tasks; stop on unknown boundaries. Reuse existing `factory-guard-test` setup/evidence where valid rather than create another deployment or rerun completed suites. Record tested source/imported revisions and environment for subsequent tests; keep owner PR review/manual matching-revision import as the separate operational adoption gate. This task does not authorize operational deployment or a new test framework.
 
 ## Phase 8: Convergence
 
@@ -407,3 +407,22 @@ T023 and T033 remain unchecked: separate server containers/volumes/loopback port
 inactive isolated workflows were verified, but authenticated native access/current table/drain
 checks remain pending (browser host unavailable; CLI Data Table context is unsuitable).
 See `evidence/review-validation.md`. No operational changes or real GitHub writes occurred.
+
+
+**US3/T033 native closeout, 2026-11-26**: T033 verified the existing n8n 2.48.8 test instance,
+separate volume/loopback port, typed idle story row, all 21 prior workflows inactive and no
+running/waiting executions before automated import. The new credential-free fixture workflow
+`3SmlqLqhRDB5S5e9`, version `84c351e0-0e3e-41dc-a58b-81da72721b3c`, passed 19 main-engine
+executions (18 distinct scenarios plus repeated QA) and six held-skip polls. Actual source
+Code/connection fingerprints and per-execution versions match; all four paginated resource
+kinds traversed two native pages. Six known completed synthetic failures were separately
+inspected/reset between independent cases, never on an error path. Native scheduled 1538/1542
+passed QA transition/unchanged no-write poll at the original 60-second interval, scheduled
+version `53ab3ae8-7cb7-488f-abe4-cbbae7164f62`. A harmless engine-added empty trigger notice
+caused an observer mismatch; pause/correction and a 404 inspection sequencing error are
+preserved in evidence. No operational source fix or real GitHub/model calls were needed.
+All 22 isolated workflows are inactive/drained, private route 404, final row idle at 1542;
+only the US3 loopback fixture process was stopped. T023/T033 are complete. See
+`evidence/review-validation.md`, `evidence/review-native-results.json` and the partial T033
+record in `evidence/acceptance.md`. T026+/final acceptance/five real runs and owner operational
+review/manual import remain separate and incomplete.

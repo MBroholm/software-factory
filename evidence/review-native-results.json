@@ -1,0 +1,2383 @@
+{
+  "source_commit": "db20bc67ff459e69abe3a02ab57581f667fc23b2",
+  "test_helpers": "Uncommitted US3 test-only changes on that base; exact artifact hashes below.",
+  "source_sha256": "d739916089873846b8f7a61aee71edfd0b7bee411cb727f3aefec54ff63b64b8",
+  "public_test_sha256": "9afa6cc984ae97d04fb19baed8183d7e447dcba22377cdb97a8fe3ba2463715e",
+  "mapped_test_sha256": "426d85d6ce0af0bd440902647dd76c10094c21b7cf058f06d937bbfff3d2972c",
+  "environment": {
+    "container": "factory-guard-test",
+    "image": "docker.n8n.io/n8nio/n8n:2.48.8",
+    "volume": "factory_guard_test_data",
+    "port": "127.0.0.1:5679",
+    "table": "IgWCIu94ieyHQRHS",
+    "http": "container 127.0.0.1:18767 only",
+    "saved_credentials_used": false
+  },
+  "imported": {
+    "id": "3SmlqLqhRDB5S5e9",
+    "versionId": "84c351e0-0e3e-41dc-a58b-81da72721b3c",
+    "source_sha256": "d739916089873846b8f7a61aee71edfd0b7bee411cb727f3aefec54ff63b64b8",
+    "mapped_sha256": "426d85d6ce0af0bd440902647dd76c10094c21b7cf058f06d937bbfff3d2972c"
+  },
+  "cases": [
+    {
+      "scenario": "open-result",
+      "repeat": false,
+      "execution_id": "1445",
+      "mode": "webhook",
+      "status": "success",
+      "http": 200,
+      "before": {
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-25T20:41:23.625Z",
+        "key": "global",
+        "busy": false,
+        "execution_id": "1442",
+        "issue_number": null,
+        "started_at": "2026-11-25T20:41:23.573Z"
+      },
+      "after": {
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-26T10:57:32.300Z",
+        "key": "global",
+        "busy": false,
+        "execution_id": "1445",
+        "issue_number": 1,
+        "started_at": "2026-11-26T10:57:31.920Z"
+      },
+      "nodes": [
+        "US3 test entry",
+        "Read control",
+        "Validate entry",
+        "Already held",
+        "Prepare acquisition",
+        "Acquire control",
+        "Check acquire receipt",
+        "Read acquired control",
+        "Verify acquisition",
+        "Discover tracked issues",
+        "Select tracked issue",
+        "Have tracked issue",
+        "Set issue context",
+        "Check issue context",
+        "Read issue",
+        "Read comments",
+        "Read events",
+        "Read pulls",
+        "Read association",
+        "Read plan",
+        "Read has result",
+        "Read result detail",
+        "Read verified plan",
+        "Read ready",
+        "Recheck issue",
+        "Recheck comments",
+        "Recheck events",
+        "Recheck pulls",
+        "Recheck association",
+        "Recheck plan",
+        "Recheck has result",
+        "Recheck result detail",
+        "Recheck verified plan",
+        "Recheck ready",
+        "Compare snapshot",
+        "Need marker",
+        "Post result marker",
+        "Check marker receipt",
+        "Need transition",
+        "Add result state",
+        "Check target receipt",
+        "Remove previous state",
+        "Check state receipt",
+        "Final issue",
+        "Final comments",
+        "Final events",
+        "Final pulls",
+        "Final association",
+        "Final plan",
+        "Final has result",
+        "Final result detail",
+        "Final verified plan",
+        "Final ready",
+        "Complete tracked result",
+        "Require acknowledged completion",
+        "Read before release",
+        "Verify release ownership",
+        "Release control",
+        "Check release receipt",
+        "Read released control",
+        "Confirm idle",
+        "Report completion"
+      ],
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/github/repos/MBroholm/software-factory/issues/1/comments"
+        },
+        {
+          "method": "POST",
+          "path": "/github/repos/MBroholm/software-factory/issues/1/labels"
+        },
+        {
+          "method": "DELETE",
+          "path": "/github/repos/MBroholm/software-factory/issues/1/labels/Building"
+        }
+      ],
+      "marker_count": 1,
+      "error": null,
+      "version": "84c351e0-0e3e-41dc-a58b-81da72721b3c",
+      "startedAt": "2026-11-26T10:57:31.886Z",
+      "stoppedAt": "2026-11-26T10:57:32.318Z",
+      "usedPrivateCredentials": false,
+      "markers": [
+        {
+          "issue_number": 1,
+          "approval_event_id": 4,
+          "pr_number": 7,
+          "head_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      ],
+      "issue_states": [
+        {
+          "number": 1,
+          "state": "open",
+          "labels": [
+            "documentation",
+            "Your QA"
+          ]
+        }
+      ],
+      "source_code_bodies_verified": 30
+    },
+    {
+      "scenario": "open-result",
+      "repeat": true,
+      "execution_id": "1448",
+      "mode": "webhook",
+      "status": "success",
+      "http": 200,
+      "before": {
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-26T10:57:32.300Z",
+        "key": "global",
+        "busy": false,
+        "execution_id": "1445",
+        "issue_number": 1,
+        "started_at": "2026-11-26T10:57:31.920Z"
+      },
+      "after": {
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-26T10:58:51.571Z",
+        "key": "global",
+        "busy": false,
+        "execution_id": "1448",
+        "issue_number": 1,
+        "started_at": "2026-11-26T10:58:51.341Z"
+      },
+      "nodes": [
+        "US3 test entry",
+        "Read control",
+        "Validate entry",
+        "Already held",
+        "Prepare acquisition",
+        "Acquire control",
+        "Check acquire receipt",
+        "Read acquired control",
+        "Verify acquisition",
+        "Discover tracked issues",
+        "Select tracked issue",
+        "Have tracked issue",
+        "Set issue context",
+        "Check issue context",
+        "Read issue",
+        "Read comments",
+        "Read events",
+        "Read pulls",
+        "Read association",
+        "Read plan",
+        "Read has result",
+        "Read result detail",
+        "Read verified plan",
+        "Read ready",
+        "Recheck issue",
+        "Recheck comments",
+        "Recheck events",
+        "Recheck pulls",
+        "Recheck association",
+        "Recheck plan",
+        "Recheck has result",
+        "Recheck result detail",
+        "Recheck verified plan",
+        "Recheck ready",
+        "Compare snapshot",
+        "Need marker",
+        "Need transition",
+        "Final issue",
+        "Final comments",
+        "Final events",
+        "Final pulls",
+        "Final association",
+        "Final plan",
+        "Final has result",
+        "Final result detail",
+        "Final verified plan",
+        "Final ready",
+        "Complete tracked result",
+        "Require acknowledged completion",
+        "Read before release",
+        "Verify release ownership",
+        "Release control",
+        "Check release receipt",
+        "Read released control",
+        "Confirm idle",
+        "Report completion"
+      ],
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/github/repos/MBroholm/software-factory/issues/1/comments"
+        },
+        {
+          "method": "POST",
+          "path": "/github/repos/MBroholm/software-factory/issues/1/labels"
+        },
+        {
+          "method": "DELETE",
+          "path": "/github/repos/MBroholm/software-factory/issues/1/labels/Building"
+        }
+      ],
+      "marker_count": 1,
+      "error": null,
+      "version": "84c351e0-0e3e-41dc-a58b-81da72721b3c",
+      "startedAt": "2026-11-26T10:58:51.317Z",
+      "stoppedAt": "2026-11-26T10:58:51.589Z",
+      "usedPrivateCredentials": false,
+      "markers": [
+        {
+          "issue_number": 1,
+          "approval_event_id": 4,
+          "pr_number": 7,
+          "head_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      ],
+      "issue_states": [
+        {
+          "number": 1,
+          "state": "open",
+          "labels": [
+            "documentation",
+            "Your QA"
+          ]
+        }
+      ],
+      "source_code_bodies_verified": 30
+    },
+    {
+      "scenario": "closed-unmerged",
+      "repeat": false,
+      "execution_id": "1452",
+      "mode": "webhook",
+      "status": "success",
+      "http": 200,
+      "before": {
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-26T10:58:51.571Z",
+        "key": "global",
+        "busy": false,
+        "execution_id": "1448",
+        "issue_number": 1,
+        "started_at": "2026-11-26T10:58:51.341Z"
+      },
+      "after": {
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-26T10:58:58.808Z",
+        "key": "global",
+        "busy": false,
+        "execution_id": "1452",
+        "issue_number": 1,
+        "started_at": "2026-11-26T10:58:58.560Z"
+      },
+      "nodes": [
+        "US3 test entry",
+        "Read control",
+        "Validate entry",
+        "Already held",
+        "Prepare acquisition",
+        "Acquire control",
+        "Check acquire receipt",
+        "Read acquired control",
+        "Verify acquisition",
+        "Discover tracked issues",
+        "Select tracked issue",
+        "Have tracked issue",
+        "Set issue context",
+        "Check issue context",
+        "Read issue",
+        "Read comments",
+        "Read events",
+        "Read pulls",
+        "Read association",
+        "Read plan",
+        "Read has result",
+        "Read result detail",
+        "Read verified plan",
+        "Read ready",
+        "Recheck issue",
+        "Recheck comments",
+        "Recheck events",
+        "Recheck pulls",
+        "Recheck association",
+        "Recheck plan",
+        "Recheck has result",
+        "Recheck result detail",
+        "Recheck verified plan",
+        "Recheck ready",
+        "Compare snapshot",
+        "Need marker",
+        "Post result marker",
+        "Check marker receipt",
+        "Need transition",
+        "Add result state",
+        "Check target receipt",
+        "Remove previous state",
+        "Check state receipt",
+        "Final issue",
+        "Final comments",
+        "Final events",
+        "Final pulls",
+        "Final association",
+        "Final plan",
+        "Final has result",
+        "Final result detail",
+        "Final verified plan",
+        "Final ready",
+        "Complete tracked result",
+        "Require acknowledged completion",
+        "Read before release",
+        "Verify release ownership",
+        "Release control",
+        "Check release receipt",
+        "Read released control",
+        "Confirm idle",
+        "Report completion"
+      ],
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/github/repos/MBroholm/software-factory/issues/1/comments"
+        },
+        {
+          "method": "POST",
+          "path": "/github/repos/MBroholm/software-factory/issues/1/labels"
+        },
+        {
+          "method": "DELETE",
+          "path": "/github/repos/MBroholm/software-factory/issues/1/labels/Building"
+        }
+      ],
+      "marker_count": 1,
+      "error": null,
+      "version": "84c351e0-0e3e-41dc-a58b-81da72721b3c",
+      "startedAt": "2026-11-26T10:58:58.539Z",
+      "stoppedAt": "2026-11-26T10:58:58.832Z",
+      "usedPrivateCredentials": false,
+      "markers": [
+        {
+          "issue_number": 1,
+          "approval_event_id": 4,
+          "pr_number": 7,
+          "head_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      ],
+      "issue_states": [
+        {
+          "number": 1,
+          "state": "open",
+          "labels": [
+            "documentation",
+            "Your QA"
+          ]
+        }
+      ],
+      "source_code_bodies_verified": 30
+    },
+    {
+      "scenario": "no-result",
+      "repeat": false,
+      "execution_id": "1456",
+      "mode": "webhook",
+      "status": "success",
+      "http": 200,
+      "before": {
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-26T10:58:58.808Z",
+        "key": "global",
+        "busy": false,
+        "execution_id": "1452",
+        "issue_number": 1,
+        "started_at": "2026-11-26T10:58:58.560Z"
+      },
+      "after": {
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-26T10:58:59.598Z",
+        "key": "global",
+        "busy": false,
+        "execution_id": "1456",
+        "issue_number": 1,
+        "started_at": "2026-11-26T10:58:59.428Z"
+      },
+      "nodes": [
+        "US3 test entry",
+        "Read control",
+        "Validate entry",
+        "Already held",
+        "Prepare acquisition",
+        "Acquire control",
+        "Check acquire receipt",
+        "Read acquired control",
+        "Verify acquisition",
+        "Discover tracked issues",
+        "Select tracked issue",
+        "Have tracked issue",
+        "Set issue context",
+        "Check issue context",
+        "Read issue",
+        "Read comments",
+        "Read events",
+        "Read pulls",
+        "Read association",
+        "Read plan",
+        "Read has result",
+        "Read ready",
+        "Recheck issue",
+        "Recheck comments",
+        "Recheck events",
+        "Recheck pulls",
+        "Recheck association",
+        "Recheck plan",
+        "Recheck has result",
+        "Recheck ready",
+        "Compare snapshot",
+        "Need marker",
+        "Need transition",
+        "Final issue",
+        "Final comments",
+        "Final events",
+        "Final pulls",
+        "Final association",
+        "Final plan",
+        "Final has result",
+        "Final ready",
+        "Complete tracked result",
+        "Require acknowledged completion",
+        "Read before release",
+        "Verify release ownership",
+        "Release control",
+        "Check release receipt",
+        "Read released control",
+        "Confirm idle",
+        "Report completion"
+      ],
+      "writes": [],
+      "marker_count": 0,
+      "error": null,
+      "version": "84c351e0-0e3e-41dc-a58b-81da72721b3c",
+      "startedAt": "2026-11-26T10:58:59.408Z",
+      "stoppedAt": "2026-11-26T10:58:59.617Z",
+      "usedPrivateCredentials": false,
+      "markers": [],
+      "issue_states": [
+        {
+          "number": 1,
+          "state": "open",
+          "labels": [
+            "Building",
+            "documentation"
+          ]
+        }
+      ],
+      "source_code_bodies_verified": 30
+    },
+    {
+      "scenario": "no-candidate",
+      "repeat": false,
+      "execution_id": "1460",
+      "mode": "webhook",
+      "status": "success",
+      "http": 200,
+      "before": {
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-26T10:58:59.598Z",
+        "key": "global",
+        "busy": false,
+        "execution_id": "1456",
+        "issue_number": 1,
+        "started_at": "2026-11-26T10:58:59.428Z"
+      },
+      "after": {
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-26T10:59:00.136Z",
+        "key": "global",
+        "busy": false,
+        "execution_id": "1460",
+        "issue_number": null,
+        "started_at": "2026-11-26T10:59:00.068Z"
+      },
+      "nodes": [
+        "US3 test entry",
+        "Read control",
+        "Validate entry",
+        "Already held",
+        "Prepare acquisition",
+        "Acquire control",
+        "Check acquire receipt",
+        "Read acquired control",
+        "Verify acquisition",
+        "Discover tracked issues",
+        "Select tracked issue",
+        "Have tracked issue",
+        "No work",
+        "Require acknowledged completion",
+        "Read before release",
+        "Verify release ownership",
+        "Release control",
+        "Check release receipt",
+        "Read released control",
+        "Confirm idle",
+        "Report completion"
+      ],
+      "writes": [],
+      "marker_count": 0,
+      "error": null,
+      "version": "84c351e0-0e3e-41dc-a58b-81da72721b3c",
+      "startedAt": "2026-11-26T10:59:00.042Z",
+      "stoppedAt": "2026-11-26T10:59:00.166Z",
+      "usedPrivateCredentials": false,
+      "markers": [],
+      "issue_states": [],
+      "source_code_bodies_verified": 30
+    },
+    {
+      "scenario": "session-comments",
+      "repeat": false,
+      "execution_id": "1464",
+      "mode": "webhook",
+      "status": "success",
+      "http": 200,
+      "before": {
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-26T10:59:00.136Z",
+        "key": "global",
+        "busy": false,
+        "execution_id": "1460",
+        "issue_number": null,
+        "started_at": "2026-11-26T10:59:00.068Z"
+      },
+      "after": {
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-26T10:59:00.918Z",
+        "key": "global",
+        "busy": false,
+        "execution_id": "1464",
+        "issue_number": 1,
+        "started_at": "2026-11-26T10:59:00.680Z"
+      },
+      "nodes": [
+        "US3 test entry",
+        "Read control",
+        "Validate entry",
+        "Already held",
+        "Prepare acquisition",
+        "Acquire control",
+        "Check acquire receipt",
+        "Read acquired control",
+        "Verify acquisition",
+        "Discover tracked issues",
+        "Select tracked issue",
+        "Have tracked issue",
+        "Set issue context",
+        "Check issue context",
+        "Read issue",
+        "Read comments",
+        "Read events",
+        "Read pulls",
+        "Read association",
+        "Read plan",
+        "Read has result",
+        "Read result detail",
+        "Read verified plan",
+        "Read ready",
+        "Recheck issue",
+        "Recheck comments",
+        "Recheck events",
+        "Recheck pulls",
+        "Recheck association",
+        "Recheck plan",
+        "Recheck has result",
+        "Recheck result detail",
+        "Recheck verified plan",
+        "Recheck ready",
+        "Compare snapshot",
+        "Need marker",
+        "Post result marker",
+        "Check marker receipt",
+        "Need transition",
+        "Add result state",
+        "Check target receipt",
+        "Remove previous state",
+        "Check state receipt",
+        "Final issue",
+        "Final comments",
+        "Final events",
+        "Final pulls",
+        "Final association",
+        "Final plan",
+        "Final has result",
+        "Final result detail",
+        "Final verified plan",
+        "Final ready",
+        "Complete tracked result",
+        "Require acknowledged completion",
+        "Read before release",
+        "Verify release ownership",
+        "Release control",
+        "Check release receipt",
+        "Read released control",
+        "Confirm idle",
+        "Report completion"
+      ],
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/github/repos/MBroholm/software-factory/issues/1/comments"
+        },
+        {
+          "method": "POST",
+          "path": "/github/repos/MBroholm/software-factory/issues/1/labels"
+        },
+        {
+          "method": "DELETE",
+          "path": "/github/repos/MBroholm/software-factory/issues/1/labels/Building"
+        }
+      ],
+      "marker_count": 1,
+      "error": null,
+      "version": "84c351e0-0e3e-41dc-a58b-81da72721b3c",
+      "startedAt": "2026-11-26T10:59:00.659Z",
+      "stoppedAt": "2026-11-26T10:59:00.937Z",
+      "usedPrivateCredentials": false,
+      "markers": [
+        {
+          "issue_number": 1,
+          "approval_event_id": 4,
+          "pr_number": 7,
+          "head_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      ],
+      "issue_states": [
+        {
+          "number": 1,
+          "state": "open",
+          "labels": [
+            "documentation",
+            "Your QA"
+          ]
+        }
+      ],
+      "source_code_bodies_verified": 30
+    },
+    {
+      "scenario": "rework-stale",
+      "repeat": false,
+      "execution_id": "1468",
+      "mode": "webhook",
+      "status": "success",
+      "http": 200,
+      "before": {
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-26T10:59:00.918Z",
+        "key": "global",
+        "busy": false,
+        "execution_id": "1464",
+        "issue_number": 1,
+        "started_at": "2026-11-26T10:59:00.680Z"
+      },
+      "after": {
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-26T10:59:01.784Z",
+        "key": "global",
+        "busy": false,
+        "execution_id": "1468",
+        "issue_number": 1,
+        "started_at": "2026-11-26T10:59:01.614Z"
+      },
+      "nodes": [
+        "US3 test entry",
+        "Read control",
+        "Validate entry",
+        "Already held",
+        "Prepare acquisition",
+        "Acquire control",
+        "Check acquire receipt",
+        "Read acquired control",
+        "Verify acquisition",
+        "Discover tracked issues",
+        "Select tracked issue",
+        "Have tracked issue",
+        "Set issue context",
+        "Check issue context",
+        "Read issue",
+        "Read comments",
+        "Read events",
+        "Read pulls",
+        "Read association",
+        "Read plan",
+        "Read has result",
+        "Read ready",
+        "Recheck issue",
+        "Recheck comments",
+        "Recheck events",
+        "Recheck pulls",
+        "Recheck association",
+        "Recheck plan",
+        "Recheck has result",
+        "Recheck ready",
+        "Compare snapshot",
+        "Need marker",
+        "Need transition",
+        "Final issue",
+        "Final comments",
+        "Final events",
+        "Final pulls",
+        "Final association",
+        "Final plan",
+        "Final has result",
+        "Final ready",
+        "Complete tracked result",
+        "Require acknowledged completion",
+        "Read before release",
+        "Verify release ownership",
+        "Release control",
+        "Check release receipt",
+        "Read released control",
+        "Confirm idle",
+        "Report completion"
+      ],
+      "writes": [],
+      "marker_count": 1,
+      "error": null,
+      "version": "84c351e0-0e3e-41dc-a58b-81da72721b3c",
+      "startedAt": "2026-11-26T10:59:01.584Z",
+      "stoppedAt": "2026-11-26T10:59:01.800Z",
+      "usedPrivateCredentials": false,
+      "markers": [
+        {
+          "issue_number": 1,
+          "approval_event_id": 4,
+          "pr_number": 7,
+          "head_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      ],
+      "issue_states": [
+        {
+          "number": 1,
+          "state": "open",
+          "labels": [
+            "Building",
+            "documentation"
+          ]
+        }
+      ],
+      "source_code_bodies_verified": 30
+    },
+    {
+      "scenario": "rework-head",
+      "repeat": false,
+      "execution_id": "1472",
+      "mode": "webhook",
+      "status": "success",
+      "http": 200,
+      "before": {
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-26T10:59:01.784Z",
+        "key": "global",
+        "busy": false,
+        "execution_id": "1468",
+        "issue_number": 1,
+        "started_at": "2026-11-26T10:59:01.614Z"
+      },
+      "after": {
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-26T10:59:02.843Z",
+        "key": "global",
+        "busy": false,
+        "execution_id": "1472",
+        "issue_number": 1,
+        "started_at": "2026-11-26T10:59:02.628Z"
+      },
+      "nodes": [
+        "US3 test entry",
+        "Read control",
+        "Validate entry",
+        "Already held",
+        "Prepare acquisition",
+        "Acquire control",
+        "Check acquire receipt",
+        "Read acquired control",
+        "Verify acquisition",
+        "Discover tracked issues",
+        "Select tracked issue",
+        "Have tracked issue",
+        "Set issue context",
+        "Check issue context",
+        "Read issue",
+        "Read comments",
+        "Read events",
+        "Read pulls",
+        "Read association",
+        "Read plan",
+        "Read has result",
+        "Read result detail",
+        "Read verified plan",
+        "Read ready",
+        "Recheck issue",
+        "Recheck comments",
+        "Recheck events",
+        "Recheck pulls",
+        "Recheck association",
+        "Recheck plan",
+        "Recheck has result",
+        "Recheck result detail",
+        "Recheck verified plan",
+        "Recheck ready",
+        "Compare snapshot",
+        "Need marker",
+        "Post result marker",
+        "Check marker receipt",
+        "Need transition",
+        "Add result state",
+        "Check target receipt",
+        "Remove previous state",
+        "Check state receipt",
+        "Final issue",
+        "Final comments",
+        "Final events",
+        "Final pulls",
+        "Final association",
+        "Final plan",
+        "Final has result",
+        "Final result detail",
+        "Final verified plan",
+        "Final ready",
+        "Complete tracked result",
+        "Require acknowledged completion",
+        "Read before release",
+        "Verify release ownership",
+        "Release control",
+        "Check release receipt",
+        "Read released control",
+        "Confirm idle",
+        "Report completion"
+      ],
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/github/repos/MBroholm/software-factory/issues/1/comments"
+        },
+        {
+          "method": "POST",
+          "path": "/github/repos/MBroholm/software-factory/issues/1/labels"
+        },
+        {
+          "method": "DELETE",
+          "path": "/github/repos/MBroholm/software-factory/issues/1/labels/Building"
+        }
+      ],
+      "marker_count": 2,
+      "error": null,
+      "version": "84c351e0-0e3e-41dc-a58b-81da72721b3c",
+      "startedAt": "2026-11-26T10:59:02.609Z",
+      "stoppedAt": "2026-11-26T10:59:02.860Z",
+      "usedPrivateCredentials": false,
+      "markers": [
+        {
+          "issue_number": 1,
+          "approval_event_id": 4,
+          "pr_number": 7,
+          "head_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        {
+          "issue_number": 1,
+          "approval_event_id": 10,
+          "pr_number": 7,
+          "head_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+        }
+      ],
+      "issue_states": [
+        {
+          "number": 1,
+          "state": "open",
+          "labels": [
+            "documentation",
+            "Your QA"
+          ]
+        }
+      ],
+      "source_code_bodies_verified": 30
+    },
+    {
+      "scenario": "rework-new-pr",
+      "repeat": false,
+      "execution_id": "1476",
+      "mode": "webhook",
+      "status": "success",
+      "http": 200,
+      "before": {
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-26T10:59:02.843Z",
+        "key": "global",
+        "busy": false,
+        "execution_id": "1472",
+        "issue_number": 1,
+        "started_at": "2026-11-26T10:59:02.628Z"
+      },
+      "after": {
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-26T10:59:03.606Z",
+        "key": "global",
+        "busy": false,
+        "execution_id": "1476",
+        "issue_number": 1,
+        "started_at": "2026-11-26T10:59:03.377Z"
+      },
+      "nodes": [
+        "US3 test entry",
+        "Read control",
+        "Validate entry",
+        "Already held",
+        "Prepare acquisition",
+        "Acquire control",
+        "Check acquire receipt",
+        "Read acquired control",
+        "Verify acquisition",
+        "Discover tracked issues",
+        "Select tracked issue",
+        "Have tracked issue",
+        "Set issue context",
+        "Check issue context",
+        "Read issue",
+        "Read comments",
+        "Read events",
+        "Read pulls",
+        "Read association",
+        "Read plan",
+        "Read has result",
+        "Read result detail",
+        "Read verified plan",
+        "Read ready",
+        "Recheck issue",
+        "Recheck comments",
+        "Recheck events",
+        "Recheck pulls",
+        "Recheck association",
+        "Recheck plan",
+        "Recheck has result",
+        "Recheck result detail",
+        "Recheck verified plan",
+        "Recheck ready",
+        "Compare snapshot",
+        "Need marker",
+        "Post result marker",
+        "Check marker receipt",
+        "Need transition",
+        "Add result state",
+        "Check target receipt",
+        "Remove previous state",
+        "Check state receipt",
+        "Final issue",
+        "Final comments",
+        "Final events",
+        "Final pulls",
+        "Final association",
+        "Final plan",
+        "Final has result",
+        "Final result detail",
+        "Final verified plan",
+        "Final ready",
+        "Complete tracked result",
+        "Require acknowledged completion",
+        "Read before release",
+        "Verify release ownership",
+        "Release control",
+        "Check release receipt",
+        "Read released control",
+        "Confirm idle",
+        "Report completion"
+      ],
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/github/repos/MBroholm/software-factory/issues/1/comments"
+        },
+        {
+          "method": "POST",
+          "path": "/github/repos/MBroholm/software-factory/issues/1/labels"
+        },
+        {
+          "method": "DELETE",
+          "path": "/github/repos/MBroholm/software-factory/issues/1/labels/Building"
+        }
+      ],
+      "marker_count": 2,
+      "error": null,
+      "version": "84c351e0-0e3e-41dc-a58b-81da72721b3c",
+      "startedAt": "2026-11-26T10:59:03.357Z",
+      "stoppedAt": "2026-11-26T10:59:03.623Z",
+      "usedPrivateCredentials": false,
+      "markers": [
+        {
+          "issue_number": 1,
+          "approval_event_id": 4,
+          "pr_number": 7,
+          "head_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        {
+          "issue_number": 1,
+          "approval_event_id": 10,
+          "pr_number": 8,
+          "head_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      ],
+      "issue_states": [
+        {
+          "number": 1,
+          "state": "open",
+          "labels": [
+            "documentation",
+            "Your QA"
+          ]
+        }
+      ],
+      "source_code_bodies_verified": 30
+    },
+    {
+      "scenario": "reapproved",
+      "repeat": false,
+      "execution_id": "1480",
+      "mode": "webhook",
+      "status": "success",
+      "http": 200,
+      "before": {
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-26T10:59:03.606Z",
+        "key": "global",
+        "busy": false,
+        "execution_id": "1476",
+        "issue_number": 1,
+        "started_at": "2026-11-26T10:59:03.377Z"
+      },
+      "after": {
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-26T10:59:04.493Z",
+        "key": "global",
+        "busy": false,
+        "execution_id": "1480",
+        "issue_number": null,
+        "started_at": "2026-11-26T10:59:04.410Z"
+      },
+      "nodes": [
+        "US3 test entry",
+        "Read control",
+        "Validate entry",
+        "Already held",
+        "Prepare acquisition",
+        "Acquire control",
+        "Check acquire receipt",
+        "Read acquired control",
+        "Verify acquisition",
+        "Discover tracked issues",
+        "Select tracked issue",
+        "Have tracked issue",
+        "No work",
+        "Require acknowledged completion",
+        "Read before release",
+        "Verify release ownership",
+        "Release control",
+        "Check release receipt",
+        "Read released control",
+        "Confirm idle",
+        "Report completion"
+      ],
+      "writes": [],
+      "marker_count": 1,
+      "error": null,
+      "version": "84c351e0-0e3e-41dc-a58b-81da72721b3c",
+      "startedAt": "2026-11-26T10:59:04.383Z",
+      "stoppedAt": "2026-11-26T10:59:04.515Z",
+      "usedPrivateCredentials": false,
+      "markers": [
+        {
+          "issue_number": 1,
+          "approval_event_id": 4,
+          "pr_number": 7,
+          "head_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      ],
+      "issue_states": [
+        {
+          "number": 1,
+          "state": "open",
+          "labels": [
+            "Approved",
+            "documentation"
+          ]
+        }
+      ],
+      "source_code_bodies_verified": 30
+    },
+    {
+      "scenario": "pagination",
+      "repeat": false,
+      "execution_id": "1484",
+      "mode": "webhook",
+      "status": "success",
+      "http": 200,
+      "before": {
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-26T10:59:04.493Z",
+        "key": "global",
+        "busy": false,
+        "execution_id": "1480",
+        "issue_number": null,
+        "started_at": "2026-11-26T10:59:04.410Z"
+      },
+      "after": {
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-26T10:59:07.422Z",
+        "key": "global",
+        "busy": false,
+        "execution_id": "1484",
+        "issue_number": 1,
+        "started_at": "2026-11-26T10:59:04.882Z"
+      },
+      "nodes": [
+        "US3 test entry",
+        "Read control",
+        "Validate entry",
+        "Already held",
+        "Prepare acquisition",
+        "Acquire control",
+        "Check acquire receipt",
+        "Read acquired control",
+        "Verify acquisition",
+        "Discover tracked issues",
+        "Select tracked issue",
+        "Have tracked issue",
+        "Set issue context",
+        "Check issue context",
+        "Read issue",
+        "Read comments",
+        "Read events",
+        "Read pulls",
+        "Read association",
+        "Read plan",
+        "Read has result",
+        "Read result detail",
+        "Read verified plan",
+        "Read ready",
+        "Recheck issue",
+        "Recheck comments",
+        "Recheck events",
+        "Recheck pulls",
+        "Recheck association",
+        "Recheck plan",
+        "Recheck has result",
+        "Recheck result detail",
+        "Recheck verified plan",
+        "Recheck ready",
+        "Compare snapshot",
+        "Need marker",
+        "Post result marker",
+        "Check marker receipt",
+        "Need transition",
+        "Add result state",
+        "Check target receipt",
+        "Remove previous state",
+        "Check state receipt",
+        "Final issue",
+        "Final comments",
+        "Final events",
+        "Final pulls",
+        "Final association",
+        "Final plan",
+        "Final has result",
+        "Final result detail",
+        "Final verified plan",
+        "Final ready",
+        "Complete tracked result",
+        "Require acknowledged completion",
+        "Read before release",
+        "Verify release ownership",
+        "Release control",
+        "Check release receipt",
+        "Read released control",
+        "Confirm idle",
+        "Report completion"
+      ],
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/github/repos/MBroholm/software-factory/issues/1/comments"
+        },
+        {
+          "method": "POST",
+          "path": "/github/repos/MBroholm/software-factory/issues/1/labels"
+        },
+        {
+          "method": "DELETE",
+          "path": "/github/repos/MBroholm/software-factory/issues/1/labels/Building"
+        }
+      ],
+      "marker_count": 1,
+      "error": null,
+      "version": "84c351e0-0e3e-41dc-a58b-81da72721b3c",
+      "startedAt": "2026-11-26T10:59:04.861Z",
+      "stoppedAt": "2026-11-26T10:59:07.479Z",
+      "usedPrivateCredentials": false,
+      "markers": [
+        {
+          "issue_number": 1,
+          "approval_event_id": 4,
+          "pr_number": 7,
+          "head_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      ],
+      "issue_states": [
+        {
+          "number": 1,
+          "state": "open",
+          "labels": [
+            "documentation",
+            "Your QA"
+          ]
+        }
+      ],
+      "source_code_bodies_verified": 30
+    },
+    {
+      "scenario": "merged",
+      "repeat": false,
+      "execution_id": "1488",
+      "mode": "webhook",
+      "status": "success",
+      "http": 200,
+      "before": {
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-26T10:59:07.422Z",
+        "key": "global",
+        "busy": false,
+        "execution_id": "1484",
+        "issue_number": 1,
+        "started_at": "2026-11-26T10:59:04.882Z"
+      },
+      "after": {
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-26T10:59:08.618Z",
+        "key": "global",
+        "busy": false,
+        "execution_id": "1488",
+        "issue_number": 1,
+        "started_at": "2026-11-26T10:59:08.369Z"
+      },
+      "nodes": [
+        "US3 test entry",
+        "Read control",
+        "Validate entry",
+        "Already held",
+        "Prepare acquisition",
+        "Acquire control",
+        "Check acquire receipt",
+        "Read acquired control",
+        "Verify acquisition",
+        "Discover tracked issues",
+        "Select tracked issue",
+        "Have tracked issue",
+        "Set issue context",
+        "Check issue context",
+        "Read issue",
+        "Read comments",
+        "Read events",
+        "Read pulls",
+        "Read association",
+        "Read plan",
+        "Read has result",
+        "Read result detail",
+        "Read verified plan",
+        "Read ready",
+        "Recheck issue",
+        "Recheck comments",
+        "Recheck events",
+        "Recheck pulls",
+        "Recheck association",
+        "Recheck plan",
+        "Recheck has result",
+        "Recheck result detail",
+        "Recheck verified plan",
+        "Recheck ready",
+        "Compare snapshot",
+        "Need marker",
+        "Post result marker",
+        "Check marker receipt",
+        "Need transition",
+        "Add result state",
+        "Check target receipt",
+        "Remove previous state",
+        "Check state receipt",
+        "Final issue",
+        "Final comments",
+        "Final events",
+        "Final pulls",
+        "Final association",
+        "Final plan",
+        "Final has result",
+        "Final ready",
+        "Complete tracked result",
+        "Require acknowledged completion",
+        "Read before release",
+        "Verify release ownership",
+        "Release control",
+        "Check release receipt",
+        "Read released control",
+        "Confirm idle",
+        "Report completion"
+      ],
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/github/repos/MBroholm/software-factory/issues/1/comments"
+        },
+        {
+          "method": "POST",
+          "path": "/github/repos/MBroholm/software-factory/issues/1/labels"
+        },
+        {
+          "method": "DELETE",
+          "path": "/github/repos/MBroholm/software-factory/issues/1/labels/Building"
+        }
+      ],
+      "marker_count": 1,
+      "error": null,
+      "version": "84c351e0-0e3e-41dc-a58b-81da72721b3c",
+      "startedAt": "2026-11-26T10:59:08.349Z",
+      "stoppedAt": "2026-11-26T10:59:08.636Z",
+      "usedPrivateCredentials": false,
+      "markers": [
+        {
+          "issue_number": 1,
+          "approval_event_id": 4,
+          "pr_number": 7,
+          "head_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      ],
+      "issue_states": [
+        {
+          "number": 1,
+          "state": "open",
+          "labels": [
+            "documentation",
+            "Done"
+          ]
+        }
+      ],
+      "source_code_bodies_verified": 30
+    },
+    {
+      "scenario": "owner-closed",
+      "repeat": false,
+      "execution_id": "1492",
+      "mode": "webhook",
+      "status": "success",
+      "http": 200,
+      "before": {
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-26T10:59:08.618Z",
+        "key": "global",
+        "busy": false,
+        "execution_id": "1488",
+        "issue_number": 1,
+        "started_at": "2026-11-26T10:59:08.369Z"
+      },
+      "after": {
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-26T10:59:09.772Z",
+        "key": "global",
+        "busy": false,
+        "execution_id": "1492",
+        "issue_number": 1,
+        "started_at": "2026-11-26T10:59:09.598Z"
+      },
+      "nodes": [
+        "US3 test entry",
+        "Read control",
+        "Validate entry",
+        "Already held",
+        "Prepare acquisition",
+        "Acquire control",
+        "Check acquire receipt",
+        "Read acquired control",
+        "Verify acquisition",
+        "Discover tracked issues",
+        "Select tracked issue",
+        "Have tracked issue",
+        "Set issue context",
+        "Check issue context",
+        "Read issue",
+        "Read comments",
+        "Read events",
+        "Read pulls",
+        "Read association",
+        "Read plan",
+        "Read has result",
+        "Read ready",
+        "Recheck issue",
+        "Recheck comments",
+        "Recheck events",
+        "Recheck pulls",
+        "Recheck association",
+        "Recheck plan",
+        "Recheck has result",
+        "Recheck ready",
+        "Compare snapshot",
+        "Need marker",
+        "Need transition",
+        "Add result state",
+        "Check target receipt",
+        "Remove previous state",
+        "Check state receipt",
+        "Final issue",
+        "Final comments",
+        "Final events",
+        "Final pulls",
+        "Final association",
+        "Final plan",
+        "Final has result",
+        "Final ready",
+        "Complete tracked result",
+        "Require acknowledged completion",
+        "Read before release",
+        "Verify release ownership",
+        "Release control",
+        "Check release receipt",
+        "Read released control",
+        "Confirm idle",
+        "Report completion"
+      ],
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/github/repos/MBroholm/software-factory/issues/1/labels"
+        },
+        {
+          "method": "DELETE",
+          "path": "/github/repos/MBroholm/software-factory/issues/1/labels/Building"
+        }
+      ],
+      "marker_count": 0,
+      "error": null,
+      "version": "84c351e0-0e3e-41dc-a58b-81da72721b3c",
+      "startedAt": "2026-11-26T10:59:09.578Z",
+      "stoppedAt": "2026-11-26T10:59:09.789Z",
+      "usedPrivateCredentials": false,
+      "markers": [],
+      "issue_states": [
+        {
+          "number": 1,
+          "state": "closed",
+          "labels": [
+            "documentation",
+            "Done"
+          ]
+        }
+      ],
+      "source_code_bodies_verified": 30
+    },
+    {
+      "scenario": "ambiguous",
+      "repeat": false,
+      "execution_id": "1496",
+      "mode": "webhook",
+      "status": "error",
+      "http": 500,
+      "before": {
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-26T10:59:09.772Z",
+        "key": "global",
+        "busy": false,
+        "execution_id": "1492",
+        "issue_number": 1,
+        "started_at": "2026-11-26T10:59:09.598Z"
+      },
+      "after": {
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-26T10:59:10.556Z",
+        "key": "global",
+        "busy": true,
+        "execution_id": "1496",
+        "issue_number": 1,
+        "started_at": "2026-11-26T10:59:10.519Z"
+      },
+      "nodes": [
+        "US3 test entry",
+        "Read control",
+        "Validate entry",
+        "Already held",
+        "Prepare acquisition",
+        "Acquire control",
+        "Check acquire receipt",
+        "Read acquired control",
+        "Verify acquisition",
+        "Discover tracked issues",
+        "Select tracked issue",
+        "Have tracked issue",
+        "Set issue context",
+        "Check issue context",
+        "Read issue",
+        "Read comments",
+        "Read events",
+        "Read pulls",
+        "Read association",
+        "Read plan"
+      ],
+      "writes": [],
+      "marker_count": 0,
+      "error": "Ambiguous current results [line 41]",
+      "version": "84c351e0-0e3e-41dc-a58b-81da72721b3c",
+      "startedAt": "2026-11-26T10:59:10.498Z",
+      "stoppedAt": "2026-11-26T10:59:10.602Z",
+      "usedPrivateCredentials": false,
+      "markers": [],
+      "issue_states": [
+        {
+          "number": 1,
+          "state": "open",
+          "labels": [
+            "Building",
+            "documentation"
+          ]
+        }
+      ],
+      "source_code_bodies_verified": 30
+    },
+    {
+      "scenario": "captured-edit",
+      "repeat": false,
+      "execution_id": "1503",
+      "mode": "webhook",
+      "status": "error",
+      "http": 500,
+      "before": {
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-26T10:59:11.468Z",
+        "key": "global",
+        "busy": false,
+        "execution_id": "1496",
+        "issue_number": 1,
+        "started_at": "2026-11-26T10:59:10.519Z"
+      },
+      "after": {
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-26T10:59:11.779Z",
+        "key": "global",
+        "busy": true,
+        "execution_id": "1503",
+        "issue_number": 1,
+        "started_at": "2026-11-26T10:59:11.746Z"
+      },
+      "nodes": [
+        "US3 test entry",
+        "Read control",
+        "Validate entry",
+        "Already held",
+        "Prepare acquisition",
+        "Acquire control",
+        "Check acquire receipt",
+        "Read acquired control",
+        "Verify acquisition",
+        "Discover tracked issues",
+        "Select tracked issue",
+        "Have tracked issue",
+        "Set issue context",
+        "Check issue context",
+        "Read issue",
+        "Read comments",
+        "Read events",
+        "Read pulls",
+        "Read association",
+        "Read plan"
+      ],
+      "writes": [],
+      "marker_count": 0,
+      "error": "Approved source edited/deleted [line 41]",
+      "version": "84c351e0-0e3e-41dc-a58b-81da72721b3c",
+      "startedAt": "2026-11-26T10:59:11.726Z",
+      "stoppedAt": "2026-11-26T10:59:11.809Z",
+      "usedPrivateCredentials": false,
+      "markers": [],
+      "issue_states": [
+        {
+          "number": 1,
+          "state": "open",
+          "labels": [
+            "Building",
+            "documentation"
+          ]
+        }
+      ],
+      "source_code_bodies_verified": 30
+    },
+    {
+      "scenario": "unchanged-reopen",
+      "repeat": false,
+      "execution_id": "1510",
+      "mode": "webhook",
+      "status": "error",
+      "http": 500,
+      "before": {
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-26T10:59:12.872Z",
+        "key": "global",
+        "busy": false,
+        "execution_id": "1503",
+        "issue_number": 1,
+        "started_at": "2026-11-26T10:59:11.746Z"
+      },
+      "after": {
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-26T10:59:13.415Z",
+        "key": "global",
+        "busy": true,
+        "execution_id": "1510",
+        "issue_number": 1,
+        "started_at": "2026-11-26T10:59:13.383Z"
+      },
+      "nodes": [
+        "US3 test entry",
+        "Read control",
+        "Validate entry",
+        "Already held",
+        "Prepare acquisition",
+        "Acquire control",
+        "Check acquire receipt",
+        "Read acquired control",
+        "Verify acquisition",
+        "Discover tracked issues",
+        "Select tracked issue",
+        "Have tracked issue",
+        "Set issue context",
+        "Check issue context",
+        "Read issue",
+        "Read comments",
+        "Read events",
+        "Read pulls",
+        "Read association",
+        "Read plan"
+      ],
+      "writes": [],
+      "marker_count": 0,
+      "error": "Unchanged reopened result [line 41]",
+      "version": "84c351e0-0e3e-41dc-a58b-81da72721b3c",
+      "startedAt": "2026-11-26T10:59:13.363Z",
+      "stoppedAt": "2026-11-26T10:59:13.495Z",
+      "usedPrivateCredentials": false,
+      "markers": [],
+      "issue_states": [
+        {
+          "number": 1,
+          "state": "open",
+          "labels": [
+            "Building",
+            "documentation"
+          ]
+        }
+      ],
+      "source_code_bodies_verified": 30
+    },
+    {
+      "scenario": "unexpected-before",
+      "repeat": false,
+      "execution_id": "1517",
+      "mode": "webhook",
+      "status": "error",
+      "http": 500,
+      "before": {
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-26T10:59:14.269Z",
+        "key": "global",
+        "busy": false,
+        "execution_id": "1510",
+        "issue_number": 1,
+        "started_at": "2026-11-26T10:59:13.383Z"
+      },
+      "after": {
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-26T10:59:14.581Z",
+        "key": "global",
+        "busy": true,
+        "execution_id": "1517",
+        "issue_number": 1,
+        "started_at": "2026-11-26T10:59:14.546Z"
+      },
+      "nodes": [
+        "US3 test entry",
+        "Read control",
+        "Validate entry",
+        "Already held",
+        "Prepare acquisition",
+        "Acquire control",
+        "Check acquire receipt",
+        "Read acquired control",
+        "Verify acquisition",
+        "Discover tracked issues",
+        "Select tracked issue",
+        "Have tracked issue",
+        "Set issue context",
+        "Check issue context",
+        "Read issue",
+        "Read comments",
+        "Read events",
+        "Read pulls",
+        "Read association"
+      ],
+      "writes": [],
+      "marker_count": 0,
+      "error": "Issue read failed [line 41]",
+      "version": "84c351e0-0e3e-41dc-a58b-81da72721b3c",
+      "startedAt": "2026-11-26T10:59:14.527Z",
+      "stoppedAt": "2026-11-26T10:59:14.611Z",
+      "usedPrivateCredentials": false,
+      "markers": [],
+      "issue_states": [
+        {
+          "number": 1,
+          "state": "open",
+          "labels": [
+            "Building",
+            "documentation"
+          ]
+        }
+      ],
+      "source_code_bodies_verified": 30
+    },
+    {
+      "scenario": "unknown-post",
+      "repeat": false,
+      "execution_id": "1524",
+      "mode": "webhook",
+      "status": "error",
+      "http": 500,
+      "before": {
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-26T10:59:15.080Z",
+        "key": "global",
+        "busy": false,
+        "execution_id": "1517",
+        "issue_number": 1,
+        "started_at": "2026-11-26T10:59:14.546Z"
+      },
+      "after": {
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-26T10:59:15.476Z",
+        "key": "global",
+        "busy": true,
+        "execution_id": "1524",
+        "issue_number": 1,
+        "started_at": "2026-11-26T10:59:15.410Z"
+      },
+      "nodes": [
+        "US3 test entry",
+        "Read control",
+        "Validate entry",
+        "Already held",
+        "Prepare acquisition",
+        "Acquire control",
+        "Check acquire receipt",
+        "Read acquired control",
+        "Verify acquisition",
+        "Discover tracked issues",
+        "Select tracked issue",
+        "Have tracked issue",
+        "Set issue context",
+        "Check issue context",
+        "Read issue",
+        "Read comments",
+        "Read events",
+        "Read pulls",
+        "Read association",
+        "Read plan",
+        "Read has result",
+        "Read result detail",
+        "Read verified plan",
+        "Read ready",
+        "Recheck issue",
+        "Recheck comments",
+        "Recheck events",
+        "Recheck pulls",
+        "Recheck association",
+        "Recheck plan",
+        "Recheck has result",
+        "Recheck result detail",
+        "Recheck verified plan",
+        "Recheck ready",
+        "Compare snapshot",
+        "Need marker",
+        "Post result marker",
+        "Check marker receipt"
+      ],
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/github/repos/MBroholm/software-factory/issues/1/comments"
+        }
+      ],
+      "marker_count": 1,
+      "error": "Result POST unconfirmed [line 41]",
+      "version": "84c351e0-0e3e-41dc-a58b-81da72721b3c",
+      "startedAt": "2026-11-26T10:59:15.392Z",
+      "stoppedAt": "2026-11-26T10:59:15.588Z",
+      "usedPrivateCredentials": false,
+      "markers": [
+        {
+          "issue_number": 1,
+          "approval_event_id": 4,
+          "pr_number": 7,
+          "head_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      ],
+      "issue_states": [
+        {
+          "number": 1,
+          "state": "open",
+          "labels": [
+            "Building",
+            "documentation"
+          ]
+        }
+      ],
+      "source_code_bodies_verified": 30
+    },
+    {
+      "scenario": "partial-label",
+      "repeat": false,
+      "execution_id": "1531",
+      "mode": "webhook",
+      "status": "error",
+      "http": 500,
+      "before": {
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-26T10:59:16.750Z",
+        "key": "global",
+        "busy": false,
+        "execution_id": "1524",
+        "issue_number": 1,
+        "started_at": "2026-11-26T10:59:15.410Z"
+      },
+      "after": {
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-26T10:59:17.105Z",
+        "key": "global",
+        "busy": true,
+        "execution_id": "1531",
+        "issue_number": 1,
+        "started_at": "2026-11-26T10:59:17.055Z"
+      },
+      "nodes": [
+        "US3 test entry",
+        "Read control",
+        "Validate entry",
+        "Already held",
+        "Prepare acquisition",
+        "Acquire control",
+        "Check acquire receipt",
+        "Read acquired control",
+        "Verify acquisition",
+        "Discover tracked issues",
+        "Select tracked issue",
+        "Have tracked issue",
+        "Set issue context",
+        "Check issue context",
+        "Read issue",
+        "Read comments",
+        "Read events",
+        "Read pulls",
+        "Read association",
+        "Read plan",
+        "Read has result",
+        "Read result detail",
+        "Read verified plan",
+        "Read ready",
+        "Recheck issue",
+        "Recheck comments",
+        "Recheck events",
+        "Recheck pulls",
+        "Recheck association",
+        "Recheck plan",
+        "Recheck has result",
+        "Recheck result detail",
+        "Recheck verified plan",
+        "Recheck ready",
+        "Compare snapshot",
+        "Need marker",
+        "Post result marker",
+        "Check marker receipt",
+        "Need transition",
+        "Add result state",
+        "Check target receipt"
+      ],
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/github/repos/MBroholm/software-factory/issues/1/comments"
+        },
+        {
+          "method": "POST",
+          "path": "/github/repos/MBroholm/software-factory/issues/1/labels"
+        }
+      ],
+      "marker_count": 1,
+      "error": "Target label unconfirmed [line 41]",
+      "version": "84c351e0-0e3e-41dc-a58b-81da72721b3c",
+      "startedAt": "2026-11-26T10:59:17.003Z",
+      "stoppedAt": "2026-11-26T10:59:17.225Z",
+      "usedPrivateCredentials": false,
+      "markers": [
+        {
+          "issue_number": 1,
+          "approval_event_id": 4,
+          "pr_number": 7,
+          "head_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      ],
+      "issue_states": [
+        {
+          "number": 1,
+          "state": "open",
+          "labels": [
+            "Building",
+            "documentation",
+            "Your QA"
+          ]
+        }
+      ],
+      "source_code_bodies_verified": 30
+    }
+  ],
+  "held_skips": [
+    {
+      "scenario": "ambiguous",
+      "held_skip": true,
+      "owner_execution": "1496"
+    },
+    {
+      "scenario": "captured-edit",
+      "held_skip": true,
+      "owner_execution": "1503"
+    },
+    {
+      "scenario": "unchanged-reopen",
+      "held_skip": true,
+      "owner_execution": "1510"
+    },
+    {
+      "scenario": "unexpected-before",
+      "held_skip": true,
+      "owner_execution": "1517"
+    },
+    {
+      "scenario": "unknown-post",
+      "held_skip": true,
+      "owner_execution": "1524"
+    },
+    {
+      "scenario": "partial-label",
+      "held_skip": true,
+      "owner_execution": "1531"
+    }
+  ],
+  "explicit_inspected_resets": [
+    {
+      "operator_fixture_reset": true,
+      "reason": "Inspected completed US3 synthetic ambiguous execution 1496; preserve evidence and prepare next independent case",
+      "before": {
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-26T10:59:10.556Z",
+        "key": "global",
+        "busy": true,
+        "execution_id": "1496",
+        "issue_number": 1,
+        "started_at": "2026-11-26T10:59:10.519Z"
+      },
+      "after": {
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-26T10:59:11.468Z",
+        "key": "global",
+        "busy": false,
+        "execution_id": "1496",
+        "issue_number": 1,
+        "started_at": "2026-11-26T10:59:10.519Z"
+      }
+    },
+    {
+      "operator_fixture_reset": true,
+      "reason": "Inspected completed US3 synthetic captured-edit execution 1503; preserve evidence and prepare next independent case",
+      "before": {
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-26T10:59:11.779Z",
+        "key": "global",
+        "busy": true,
+        "execution_id": "1503",
+        "issue_number": 1,
+        "started_at": "2026-11-26T10:59:11.746Z"
+      },
+      "after": {
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-26T10:59:12.872Z",
+        "key": "global",
+        "busy": false,
+        "execution_id": "1503",
+        "issue_number": 1,
+        "started_at": "2026-11-26T10:59:11.746Z"
+      }
+    },
+    {
+      "operator_fixture_reset": true,
+      "reason": "Inspected completed US3 synthetic unchanged-reopen execution 1510; preserve evidence and prepare next independent case",
+      "before": {
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-26T10:59:13.415Z",
+        "key": "global",
+        "busy": true,
+        "execution_id": "1510",
+        "issue_number": 1,
+        "started_at": "2026-11-26T10:59:13.383Z"
+      },
+      "after": {
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-26T10:59:14.269Z",
+        "key": "global",
+        "busy": false,
+        "execution_id": "1510",
+        "issue_number": 1,
+        "started_at": "2026-11-26T10:59:13.383Z"
+      }
+    },
+    {
+      "operator_fixture_reset": true,
+      "reason": "Inspected completed US3 synthetic unexpected-before execution 1517; preserve evidence and prepare next independent case",
+      "before": {
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-26T10:59:14.581Z",
+        "key": "global",
+        "busy": true,
+        "execution_id": "1517",
+        "issue_number": 1,
+        "started_at": "2026-11-26T10:59:14.546Z"
+      },
+      "after": {
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-26T10:59:15.080Z",
+        "key": "global",
+        "busy": false,
+        "execution_id": "1517",
+        "issue_number": 1,
+        "started_at": "2026-11-26T10:59:14.546Z"
+      }
+    },
+    {
+      "operator_fixture_reset": true,
+      "reason": "Inspected completed US3 synthetic unknown-post execution 1524; preserve evidence and prepare next independent case",
+      "before": {
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-26T10:59:15.476Z",
+        "key": "global",
+        "busy": true,
+        "execution_id": "1524",
+        "issue_number": 1,
+        "started_at": "2026-11-26T10:59:15.410Z"
+      },
+      "after": {
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-26T10:59:16.750Z",
+        "key": "global",
+        "busy": false,
+        "execution_id": "1524",
+        "issue_number": 1,
+        "started_at": "2026-11-26T10:59:15.410Z"
+      }
+    },
+    {
+      "operator_fixture_reset": true,
+      "reason": "Inspected completed US3 synthetic partial-label execution 1531; preserve evidence and prepare next independent case",
+      "before": {
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-26T10:59:17.105Z",
+        "key": "global",
+        "busy": true,
+        "execution_id": "1531",
+        "issue_number": 1,
+        "started_at": "2026-11-26T10:59:17.055Z"
+      },
+      "after": {
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-26T11:03:45.263Z",
+        "key": "global",
+        "busy": false,
+        "execution_id": "1531",
+        "issue_number": 1,
+        "started_at": "2026-11-26T10:59:17.055Z"
+      }
+    }
+  ],
+  "scheduled": {
+    "observed": [
+      {
+        "id": "1538",
+        "mode": "trigger",
+        "status": "success",
+        "version": "53ab3ae8-7cb7-488f-abe4-cbbae7164f62",
+        "startedAt": "2026-11-26T11:05:11.837Z",
+        "stoppedAt": "2026-11-26T11:05:12.205Z",
+        "row": {
+          "key": "global",
+          "busy": false,
+          "execution_id": "1538",
+          "issue_number": 1,
+          "started_at": "2026-11-26T11:05:11.860Z",
+          "id": 1,
+          "createdAt": "2026-11-25T08:55:42.755Z",
+          "updatedAt": "2026-11-26T11:05:12.186Z"
+        },
+        "nodes": [
+          "Poll inactive",
+          "Read control",
+          "Validate entry",
+          "Already held",
+          "Prepare acquisition",
+          "Acquire control",
+          "Check acquire receipt",
+          "Read acquired control",
+          "Verify acquisition",
+          "Discover tracked issues",
+          "Select tracked issue",
+          "Have tracked issue",
+          "Set issue context",
+          "Check issue context",
+          "Read issue",
+          "Read comments",
+          "Read events",
+          "Read pulls",
+          "Read association",
+          "Read plan",
+          "Read has result",
+          "Read result detail",
+          "Read verified plan",
+          "Read ready",
+          "Recheck issue",
+          "Recheck comments",
+          "Recheck events",
+          "Recheck pulls",
+          "Recheck association",
+          "Recheck plan",
+          "Recheck has result",
+          "Recheck result detail",
+          "Recheck verified plan",
+          "Recheck ready",
+          "Compare snapshot",
+          "Need marker",
+          "Post result marker",
+          "Check marker receipt",
+          "Need transition",
+          "Add result state",
+          "Check target receipt",
+          "Remove previous state",
+          "Check state receipt",
+          "Final issue",
+          "Final comments",
+          "Final events",
+          "Final pulls",
+          "Final association",
+          "Final plan",
+          "Final has result",
+          "Final result detail",
+          "Final verified plan",
+          "Final ready",
+          "Complete tracked result",
+          "Require acknowledged completion",
+          "Read before release",
+          "Verify release ownership",
+          "Release control",
+          "Check release receipt",
+          "Read released control",
+          "Confirm idle",
+          "Report completion"
+        ],
+        "posted": true
+      },
+      {
+        "id": "1542",
+        "mode": "trigger",
+        "status": "success",
+        "version": "53ab3ae8-7cb7-488f-abe4-cbbae7164f62",
+        "startedAt": "2026-11-26T11:07:45.852Z",
+        "stoppedAt": "2026-11-26T11:07:46.154Z",
+        "row": {
+          "key": "global",
+          "busy": false,
+          "execution_id": "1542",
+          "issue_number": 1,
+          "started_at": "2026-11-26T11:07:45.876Z",
+          "id": 1,
+          "createdAt": "2026-11-25T08:55:42.755Z",
+          "updatedAt": "2026-11-26T11:07:46.136Z"
+        },
+        "nodes": [
+          "Poll inactive",
+          "Read control",
+          "Validate entry",
+          "Already held",
+          "Prepare acquisition",
+          "Acquire control",
+          "Check acquire receipt",
+          "Read acquired control",
+          "Verify acquisition",
+          "Discover tracked issues",
+          "Select tracked issue",
+          "Have tracked issue",
+          "Set issue context",
+          "Check issue context",
+          "Read issue",
+          "Read comments",
+          "Read events",
+          "Read pulls",
+          "Read association",
+          "Read plan",
+          "Read has result",
+          "Read result detail",
+          "Read verified plan",
+          "Read ready",
+          "Recheck issue",
+          "Recheck comments",
+          "Recheck events",
+          "Recheck pulls",
+          "Recheck association",
+          "Recheck plan",
+          "Recheck has result",
+          "Recheck result detail",
+          "Recheck verified plan",
+          "Recheck ready",
+          "Compare snapshot",
+          "Need marker",
+          "Need transition",
+          "Final issue",
+          "Final comments",
+          "Final events",
+          "Final pulls",
+          "Final association",
+          "Final plan",
+          "Final has result",
+          "Final result detail",
+          "Final verified plan",
+          "Final ready",
+          "Complete tracked result",
+          "Require acknowledged completion",
+          "Read before release",
+          "Verify release ownership",
+          "Release control",
+          "Check release receipt",
+          "Read released control",
+          "Confirm idle",
+          "Report completion"
+        ],
+        "posted": false
+      }
+    ],
+    "engine_metadata_delta": "Empty Schedule Trigger parameters.notice inserted by n8n; all other trigger fields, Code bodies and connections match."
+  },
+  "shutdown": {
+    "at": "2026-11-26T11:08:33.399Z",
+    "workflow_count": 22,
+    "active_workflows": [],
+    "running": 0,
+    "waiting": 0,
+    "row": {
+      "id": 1,
+      "createdAt": "2026-11-25T08:55:42.755Z",
+      "updatedAt": "2026-11-26T11:07:46.136Z",
+      "key": "global",
+      "busy": false,
+      "execution_id": "1542",
+      "issue_number": 1,
+      "started_at": "2026-11-26T11:07:45.876Z"
+    },
+    "route_status": 404,
+    "fixture_service_stopped": true
+  },
+  "limits": [
+    "Synthetic HTTP results, not real factory task runs",
+    "Operational owner review/manual matching-revision import still required",
+    "T026 broad guard/restart/release-fault matrix remains outstanding"
+  ],
+  "observer_interventions": [
+    "First scheduled tick succeeded; observer rejected engine-added empty Schedule Trigger parameters.notice. Schedule paused and exact field normalization added; original successful trace retained.",
+    "A collection attempt while unpublished received expected 404 from private fixture inspection; no workflow/state mutation. Republished same scheduled revision to observe unchanged tick."
+  ]
+}

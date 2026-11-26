@@ -1,10 +1,10 @@
 # US3 result tracking validation — 2026-11-26
 
-Source implementation T020/T021 and review runbook T022 are complete. T023 native acceptance
-and T033 boundary verification remain incomplete. No operational adoption, real task processing,
-merge, issue/comment write, native test execution or test import occurred in this session.
+T020–T023 are complete, and T033 passed for credential-free US3 fixture testing. Native
+validation below supersedes the initial source-only checkpoint. No operational adoption, real
+factory-task processing, GitHub issue/comment write or merge occurred.
 
-Tested source is the current uncommitted worktree on `001-basic-a-factory`:
+Initial source-only checkpoint (historical; native closeout follows below):
 
 - `factory/workflows/track.json` SHA-256: `d739916089873846b8f7a61aee71edfd0b7bee411cb727f3aefec54ff63b64b8`.
 - `factory/tests/tracking-test.json` SHA-256: `bc3ed25bc8929dda514e27a518fef8954906b77e098e73131bfc5547f1372dc0`.
@@ -59,7 +59,7 @@ isolated browser access or supply an approved test API access method. Unknown bo
 native import/execution as required by T033; this is an access/boundary gap, not an owner manual
 test-import approval requirement.
 
-## Pending acceptance
+## Initial pending acceptance (superseded by native closeout)
 
 All T023 native cases in [tracking-test.md](../factory/tests/tracking-test.md) remain UNRUN,
 including native repeated polls, rework, merged/closed results, failures and scheduled entry.
@@ -67,3 +67,90 @@ Use the prepared credential-free test copy only after T033 passes. Record tested
 revision, instance, mappings, actual traces/control rows/effects and shutdown state. Do not
 count synthetic fixtures as additional real issue/PR runs. Operational adoption separately
 requires owner PR review and manual import of the matching reviewed revision.
+
+
+## T023 native closeout — 2026-11-26
+
+Tested operational source: commit `db20bc67ff459e69abe3a02ab57581f667fc23b2`,
+`track.json` SHA-256 `d739916089873846b8f7a61aee71edfd0b7bee411cb727f3aefec54ff63b64b8`.
+The source is unchanged from that commit. Test helpers/package are worktree changes on that
+base. Exact public/mapped package hashes, imported references, native traces and control rows
+are summarized in [review-native-results.json](review-native-results.json).
+
+T033's fresh check passed before the new import: known isolated n8n 2.48.8, separate volume and
+loopback port, typed idle singleton, all 21 historical test workflows inactive and no running
+or waiting executions. The previously missing API key is now available in ignored local
+`factory/local/test.env`; the adapter authenticates directly to verified test port 5679.
+No browser connection was needed and no credential value was exported. GitHub/Gemini saved
+credentials are unused: every test HTTP node uses fixed synthetic container loopback 18767.
+
+A NEW isolated workflow `3SmlqLqhRDB5S5e9` was imported automatically and read back inactive.
+Initial version: `84c351e0-0e3e-41dc-a58b-81da72721b3c`.
+Mapped package SHA-256: `426d85d6ce0af0bd440902647dd76c10094c21b7cf058f06d937bbfff3d2972c`.
+All 30 operational Code bodies and existing source connections match; only test mapping,
+HTTP/authentication, name/notes, disabled schedule and separate private operator webhooks differ.
+The public test artifact uses a placeholder rather than an instance-specific table ID.
+The test copy uses `IgWCIu94ieyHQRHS`; all workflow executions report
+`usedPrivateCredentials=false`. Source Code and full mapped connections were checked against
+actual execution snapshots, not just the saved workflow.
+
+| Native case | Execution | Observed result |
+|---|---|---|
+| Open result | 1445 | Building -> Your QA, one exact approval/PR/head marker, idle release |
+| Repeated QA poll | 1448 | No additional marker/label writes, idle release |
+| Closed unmerged PR, open issue | 1452 | Your QA, never Done |
+| No result / no candidate | 1456 / 1460 | No writes, idle release |
+| Session/in-scope rework summary | 1464 | Captured digest remains valid, QA succeeds |
+| New handoff, unchanged baseline | 1468 | Old result ignored, Building retained, idle release |
+| Fresh rework head / new PR | 1472 / 1476 | New approval 10 associates PR 7/head b… / PR 8; old attempt retained |
+| New Approved state | 1480 | Old result cannot overwrite approval, no writes |
+| Actual pagination | 1484 | Issues/comments/events/PRs each return two native pages, first 100 items |
+| Verified merged current result | 1488 | Done with detailed PR evidence, idle release |
+| Owner-closed issue | 1492 | Done without requiring PR/handoff |
+| Multiple current PRs | 1496 | Failed held before writes; later poll preserves row/effects |
+| Edited captured source | 1503 | Failed held; later poll preserves row/effects |
+| Unchanged reopened baseline | 1510 | Ambiguity failed held; later poll preserves row/effects |
+| Unexpected pre-write HTTP failure | 1517 | Failed held with no result write; later poll skips |
+| Successful POST, lost valid receipt | 1524 | Marker effect retained, no retry/release; later poll skips |
+| Label addition, lost valid receipt | 1531 | Partial state retained, no removal/release; later poll skips |
+
+Nineteen primary executions cover 18 distinct scenarios and one unchanged repeat. Six expected
+error executions plus their held-skip polls passed the assertions. Between independent cases,
+the operator adapter inspected each known completed synthetic error and drained executions,
+recorded the reason, then explicitly reset only busy through a separate fixture endpoint.
+Six deliberate resets include preparation after 1531; there is no finally cleanup, automatic
+error-path reset or unknown-hold recovery. Before/after rows and reasons remain in the results.
+Historical US1/US2 fixtures and earlier failure evidence were preserved.
+
+### Original scheduled-entry acceptance and observer correction
+
+The same isolated workflow was unpublished, its unchanged source 60-second Schedule Trigger
+enabled, then imported/read back as version `53ab3ae8-7cb7-488f-abe4-cbbae7164f62` and published
+alone. Native mode=trigger 1538 moved the fresh synthetic result to QA and released busy;
+1542 observed unchanged QA, no additional POST/label writes, one marker and idle release.
+Both actual execution versions, trigger interval, Code and connections match the scheduled
+readback. These supplement webhook cases, not real task evidence.
+
+The first observer attempt rejected an extra empty `parameters.notice` inserted by n8n in the
+Schedule Trigger execution snapshot, after native 1538 had already succeeded. The schedule was
+paused, the harmless empty-field difference explicitly normalized, and the original successful
+trace retained. An inspection attempt while unpublished correctly received 404; this was an
+adapter sequencing error, not a workflow pass/failure. The same scheduled revision was
+republished to observe 1542. No operational workflow or source behavior change was required.
+Version IDs come from actual `execution.workflowVersionId`, not the workflow snapshot (which
+does not include a versionId). Collector checks preserve this distinction.
+
+### Shutdown and limits
+
+At `2026-11-26T11:08:33.399Z`, all 22 isolated workflows were inactive, running=0, waiting=0,
+and the US3 inspection webhook returned 404. The singleton row was busy=false, execution 1542,
+issue 1, start `2026-11-26T11:07:45.876Z`. The synthetic fixture service was stopped and a
+container-loopback connection check returned ECONNREFUSED; its state/logs remain preserved.
+Only the US3 fixture PID was stopped. Operational containers/workflows and real issues/PRs
+were untouched. These fixture runs do not count toward the five genuine task runs.
+
+T023 is complete. T026's broader finished-workflow guard matrix (including remaining release,
+acquisition and crash/restart checks) and other US4 tasks remain pending. Operational adoption
+still requires owner PR review and manual matching-revision import; no operational activation
+or full Basic A acceptance is claimed. Existing local checks and source-only limits above are
+retained as historical checkpoints rather than evidence of a native failure.

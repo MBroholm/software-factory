@@ -1,47 +1,87 @@
-# US3 native validation handoff
+# US3 native validation
 
 Source: `factory/workflows/track.json`; generator: `factory/scripts/build-track.cjs`.
-Run local graph checks with `node factory/tests/check-tracking.cjs` and packaging consistency
-with `node factory/scripts/build-track.cjs --check`.
+T033 boundary verification and actual T023 results are in
+[evidence/review-validation.md](../../evidence/review-validation.md) and
+[evidence/acceptance.md](../../evidence/acceptance.md). These tests use the main n8n engine,
+not the standalone CLI Data Table context.
 
-`node factory/tests/build-tracking-test.cjs` prepares `factory/tests/tracking-test.json` offline.
-All Code bodies and connections match source. Only Data Table mapping (`IgWCIu94ieyHQRHS`),
-HTTP origin/authentication (credential-free loopback `127.0.0.1:18767/github`), notes, name and
-disabled schedule differ. Do not import into the operational instance. T033 must first verify
-the isolated instance, current idle row, credential/destination boundary and drained executions.
+## Offline preparation
 
-Native execution requires the main n8n engine: standalone CLI Data Table execution has a known
-context limitation documented in guard-validation.md. A signed-in isolated editor or authorized
-test-instance API is needed. No native pass is claimed by local graph or packaging checks.
+```bash
+node factory/tests/check-tracking.cjs --fixtures
+node factory/tests/tracking-cases.cjs
+node factory/scripts/build-track.cjs --check
+node factory/tests/build-tracking-test.cjs
+node factory/tests/build-tracking-test.cjs --mapped
+node factory/tests/build-tracking-test.cjs --check
+node factory/tests/build-tracking-test.cjs --mapped --check
+```
 
-Use synthetic fixtures (`node factory/tests/check-tracking.cjs --fixtures` writes ignored local
-inputs). The prepared `tracking-fixture-server.cjs` implements synthetic GitHub
-issue listing/detail, comments, events, PR listing/detail and additive/deleting label routes.
-It persists inspectable state across repeated polls and never proxies requests to GitHub. Start it
-inside the isolated container with fixture and NEW state-file arguments; both paths must be
-explicit. The authenticated native execution adapter, remote service start and native cases
-remain pending; the packaged copy must remain inactive.
+The scenario generator reads the ignored seed fixture produced above and writes
+`factory/local/us3/scenarios.json`. The 18 named cases are
+synthetic, including fresh rework/new head/new PR, unchanged baseline, reopen ambiguity,
+owner closure, unmerged closure, pagination and injected failures. The fixture server only
+serves these records and never proxies to GitHub.
 
-Exercise these cases through the actual entry/acquire/work/release path, inspecting traces,
-control row and fixture effects after each:
+The versioned test copy retains a table placeholder. `--mapped` reads
+`FACTORY_CONTROL_TABLE_ID` from `factory/local/test.env` and writes the ignored mapped copy.
+All production Code bodies and existing connections remain identical. Differences are fixed
+container-loopback HTTP 18767 with NO credentials, mapped test table, test name/notes,
+disabled schedule and separate private run/fixture/inspection/explicit-reset webhook paths.
+The operator paths are never connected to work/error cleanup. They are test tools, not a
+factory recovery framework. Never import these copies into operational n8n.
 
-| Case | Required result |
-|---|---|
-| Open current result | Building -> Your QA; one approval/PR/head marker; idle release |
-| Repeated poll | No marker or label write; idle release |
-| Current result merged | Detailed merge evidence -> Done; idle release |
-| Owner closes issue | Done without requiring a PR |
-| Closed unmerged PR, issue open | Remains Your QA |
-| No result / no candidate | No writes; idle release |
-| Fresh rework handoff | Unchanged baseline ignored; new open-baseline head or new PR accepted |
-| New Approved label | Old result cannot override approval |
-| Ordinary session/rework comment | Captured digest unchanged |
-| Several current PRs / unchanged reopen / missing history | Held failure; no guessed association |
-| Unknown POST / partial labels / exception | Hold persists; next poll skips |
-| Failed acquisition / release | No remote work / no assumed completion respectively |
+## Native sequence
 
-Record tested source hash, imported workflow/revision, deltas, mode, execution IDs, node traces,
-actual row/effects, failures and deliberate interventions in evidence/review-validation.md.
-Unpublish/drain after tests and verify final state; preserve held failures before owner recovery.
-Native scheduled-entry validation is needed before claiming scheduled acceptance. Operational
-adoption separately requires owner PR review and manual matching-revision import.
+After verifying container identity, separate volume/port, correct typed singleton, no other
+active workflow and no running/waiting executions:
+
+```bash
+node factory/tests/tracking-api.cjs inspect
+python3 factory/tests/deploy-tracking-fixture.py start
+node factory/tests/tracking-api.cjs import
+node factory/tests/tracking-api.cjs publish
+node factory/tests/run-tracking-native.cjs case open-result
+node factory/tests/run-tracking-native.cjs repeat open-result
+node factory/tests/run-tracking-native.cjs suite
+```
+
+The API adapter loads the test n8n key privately and refuses destinations other than verified
+loopback test port 5679. No API key enters JSON. It creates a NEW registered test workflow;
+subsequent mutations target that recorded ID only. Existing workflow IDs are not replaced.
+The deployment tool checks the isolated image/port/volume and refuses to overwrite fixture state.
+A second run needs deliberate new private registration/state paths or inspection, not blind retry.
+
+The runner executes one case at a time, checks native traces and Code/connection fingerprints,
+inspects actual control/fixture effects and stops on any assertion failure. Each expected
+failure must leave busy true; a later webhook poll must preserve the row/effects with no HTTP.
+Before the next independent scenario, the runner explicitly inspects the known completed
+synthetic error and drained executions, records a reason, then calls the separate fixture reset.
+No finally cleanup or unknown-hold reset is allowed. Six such deliberate resets occur when
+running the suite followed by scheduled preparation; the last suite failure otherwise stays held.
+
+Native scheduled acceptance uses the exact original 60-second Schedule Trigger:
+
+```bash
+node factory/tests/run-tracking-native.cjs prepare-schedule
+node factory/tests/tracking-api.cjs unpublish
+node factory/tests/tracking-api.cjs schedule
+node factory/tests/tracking-api.cjs publish
+node factory/tests/run-tracking-native.cjs observe-schedule
+node factory/tests/run-tracking-native.cjs collect-schedule
+node factory/tests/tracking-api.cjs unpublish
+node factory/tests/tracking-api.cjs shutdown-check
+python3 factory/tests/deploy-tracking-fixture.py stop
+node factory/tests/collect-tracking-evidence.cjs
+```
+
+Prepare while the test copy's schedule is still disabled. During scheduled observation, only
+read operations run; no manual work entry or fixture mutation. Require two native mode=trigger
+successes: QA transition with one marker, then unchanged poll with no additional writes. The
+observer deadline does not auto-unpublish on failure: inspect and stop the test schedule explicitly.
+After unpublishing verify zero active/running/waiting workflows and test routes return 404;
+stop only the matching loopback fixture PID, preserving state/logs. Record revision/hash,
+execution IDs, node traces, actual row/effects, interventions and limitations. Fixture runs do
+not count as genuine issue/PR runs. Operational adoption still requires owner PR review/manual
+matching-revision import. Broad completed-workflow guard/restart coverage remains T026.

@@ -608,3 +608,51 @@ credential-bearing test workflows must remain inactive. No test import/execution
 until T033 finishes fresh row/drain/access and destination verification. See
 [US3 evidence](../evidence/review-validation.md) for observed versus pending checks.
 The tracking source stays inactive pending native validation and owner operational adoption.
+
+## Local import mappings
+
+### T033 verification for US3 — 2026-11-26
+
+Fresh read-only checks identify `factory-guard-test`, n8n 2.48.8, loopback 5679 and
+`factory_guard_test_data`; operational n8n remains on 5678 with a different volume.
+The configured test API returns the 21 known isolated workflows, all inactive, no running
+or waiting executions, and the existing story table `IgWCIu94ieyHQRHS` with the correct five
+column types. Its singleton row is idle, execution 1442, issue null, start
+`2026-11-25T20:41:23.573Z`. No reset was needed; earlier held-test evidence is preserved.
+
+US3 tests use a NEW test-only workflow, not any historical real-API copy. It has no saved
+GitHub/Gemini credentials: all HTTP goes to the synthetic service on container loopback
+18767. It retains native Data Table/HTTP/Code/IF nodes and uses only the verified story table.
+The public artifact retains a table placeholder; `--mapped` reads the test `.env` locally.
+Separate private run/fixture/inspection/reset webhook paths are confined to test port 5679.
+Fixture reset is an explicit operator action only after inspecting a completed, known
+synthetic failure; no error path resets busy. Never reset an unknown or running execution.
+
+The local test API key authenticates only to the explicitly checked loopback test endpoint;
+it is never embedded in JSON or copied into n8n node credentials. Existing credential-bearing
+workflows stay inactive, so their GitHub/Gemini scopes are not exercised or expanded. This
+verification covers credential-free US3 fixture tests, not permission to use ordinary factory
+issues or activate real-API copies. The adapter refuses operational URLs/ports and any import
+with credentials or non-loopback HTTP destinations. Record native revisions/results separately
+in [review validation](../evidence/review-validation.md). Operational review/manual import remains
+a separate owner action.
+
+Use the [offline mapping guide](workflow-mapping.md) to generate JSON with the saved credential
+and control-table references already selected. Separate ignored test/operational `.env` files
+feed `factory/scripts/map-workflows.cjs`; output is inactive under `factory/local/mapped/` with
+source/output hashes. Secrets stay in n8n. This saves repeated UI mapping while preserving owner
+review/manual operational import. Mapped test source retains its original external destinations;
+use verified fixture copies for isolated synthetic execution.
+
+
+## US3 isolated validation shutdown — 2026-11-26
+
+T023 is complete in isolation; operational adoption still requires owner review/manual import.
+New fixture-only workflow `3SmlqLqhRDB5S5e9` is unpublished. All 22 isolated workflows are
+inactive, with no running/waiting executions, and its private routes return 404. Current story
+row: busy=false, execution 1542, issue 1, started `2026-11-26T11:07:45.876Z`. The synthetic
+loopback service on 18767 was stopped with its state/logs retained. Six deliberate resets of
+known completed synthetic failures are recorded in [native results](../evidence/review-native-results.json).
+Do not treat historical 1442/1369 row descriptions above as the current state. No operational
+workflow/source, credential or real task was changed. Future native work rechecks boundaries;
+T026 broad guard and later operational acceptance tasks remain outstanding.
