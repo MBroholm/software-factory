@@ -40,6 +40,11 @@ QA. To request rework, stop the previous agent, resolve the reservation while pa
 reapprove and obtain a fresh handoff. Changed scope additionally requires fresh refinement.
 Changes to an already accepted result head without this new attempt require manual resolution.
 
+A validated poll with no pending result comment or state change completes as no-work. A PR or
+merge arriving after that snapshot is processed by the next poll. Read-only polls do not repeat
+write-oriented snapshot comparisons; planned writes retain strict recheck and final readback.
+See [the race regression evidence](../evidence/tracking-race-validation.md).
+
 Testing may automatically import/update/execute only in the designated isolated test instance,
 after T033 confirms separate storage/control tables, scoped test credentials and all destinations.
 Use synthetic fixtures or explicitly designated test resources. Never process ordinary factory

@@ -23,7 +23,7 @@ function run({issues=[clone(issue)],discussion=clone(comments),history=clone(eve
  const evaluate=v=>typeof v==='string'&&v.startsWith('={{')?vm.runInNewContext(`(${v.slice(3,-2).trim()})`,env()):v;
  try{for(let step=0;name;step++){
   assert(step<100);trace.push(name);const n=nodes.get(name),p=n.parameters;let result=input,branch=0;
-  if(fault?.at===name&&fault.before)fault.before({issues,discussion,history,row});
+  if(fault?.at===name&&fault.before)fault.before({issues,discussion,history,pulls,row});
   if(fault?.at===name&&fault.throw)throw Error('Injected failure');
   if(process.argv.includes('--native-fixtures') && !fault) {
    const collect=(value,path=[])=>{if(path.includes('pagination'))return;
@@ -60,6 +60,29 @@ function run({issues=[clone(issue)],discussion=clone(comments),history=clone(eve
  return {row,issues,discussion,history,trace,calls,error,output:input,pulls};
 }
 test('open result QA then repeated poll has no writes/duplicate marker',()=>{const r=run();assert.equal(r.error,null,r.error?.stack);assert.equal(r.row.busy,false);assert.equal(R.state(r.issues[0]),'Your QA');assert.equal(r.discussion.length,4);const a=run(r);assert.equal(a.error,null,a.error?.stack);assert.equal(a.calls.filter(c=>c.method!=='GET').length,0);});
+test('PR arriving after a no-result read waits for next poll without holding busy',()=>{
+ const r=run({pulls:[],fault:{at:'Read ready',before:({pulls})=>pulls.push(clone(prs[0]))}});
+ assert.equal(r.error,null,r.error?.stack);assert.equal(r.row.busy,false);
+ assert.equal(R.state(r.issues[0]),'Building');assert(!r.calls.some(c=>c.method!=='GET'));
+ assert(!r.trace.includes('Recheck issue'));assert(!r.trace.includes('Final issue'));
+ const next=run(r);assert.equal(next.error,null,next.error?.stack);
+ assert.equal(next.row.busy,false);assert.equal(R.state(next.issues[0]),'Your QA');
+ assert.equal(next.discussion.filter(c=>c.body.startsWith('<!-- factory:result:v1')).length,1);
+ const unchanged=run(next);assert.equal(unchanged.error,null,unchanged.error?.stack);
+ assert(!unchanged.trace.includes('Recheck issue'));assert.equal(unchanged.calls.filter(c=>c.method!=='GET').length,0);
+});
+test('merge arriving after unchanged QA read waits for next poll',()=>{
+ const first=run();assert.equal(first.error,null,first.error?.stack);
+ const r=run({...first,fault:{at:'Read ready',before:({pulls})=>Object.assign(pulls[0],{state:'closed',merged:true,merged_at:later})}});
+ assert.equal(r.error,null,r.error?.stack);assert.equal(r.row.busy,false);
+ assert.equal(R.state(r.issues[0]),'Your QA');assert(!r.calls.some(c=>c.method!=='GET'));
+ const next=run(r);assert.equal(next.error,null,next.error?.stack);assert.equal(R.state(next.issues[0]),'Done');assert.equal(next.row.busy,false);
+});
+test('PR head change before a planned write still holds without writing',()=>{
+ const r=run({fault:{at:'Recheck issue',before:({pulls})=>pulls[0].head.sha='b'.repeat(40)}});
+ assert.match(r.error?.message??'',/Tracking evidence changed/);assert.equal(r.row.busy,true);
+ assert(!r.calls.some(c=>c.method!=='GET'));assert(!r.trace.includes('Release control'));
+});
 test('authoritative merge detail completes',()=>{const r=run({pulls:[{...clone(prs[0]),state:'closed',merged:true,merged_at:later}]});assert.equal(r.error,null,r.error?.stack);assert.equal(R.state(r.issues[0]),'Done');assert.equal(r.row.busy,false);});
 test('merge comes from detail even when list omits merge status',()=>{const merged={...clone(prs[0]),state:'closed',merged:true,merged_at:later};const r=run({pulls:[merged],fault:{at:'Read pulls',result:items=>{const out=clone(items);delete out[0].json.body[0].merged;delete out[0].json.body[0].merged_at;return out;}}});assert.equal(r.error,null,r.error?.stack);assert.equal(R.state(r.issues[0]),'Done');});
 test('closed unmerged open issue stays QA',()=>{const r=run({pulls:[{...clone(prs[0]),state:'closed'}]});assert.equal(r.error,null,r.error?.stack);assert.equal(R.state(r.issues[0]),'Your QA');});
