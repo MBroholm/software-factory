@@ -3,8 +3,8 @@ const fs=require('node:fs'),{createHash}=require('node:crypto');
 const hash=s=>createHash('sha256').update(s).digest('hex');
 const read=p=>fs.readFileSync(p,'utf8');
 const file='factory/workflows/reserve.json';
-// Track is the unchanged T007 guard template. Keep guard policy identical.
-const w=JSON.parse(read('factory/workflows/track.json'));
+// Shared unchanged T007 guard template; independent of story workflow outputs.
+const w=JSON.parse(read('factory/scripts/guard-template.json'));
 w.nodes=w.nodes.filter(n=>!['Skeleton work boundary','Review and isolated testing only'].includes(n.name));
 delete w.connections['Skeleton work boundary'];
 const refinement=read('factory/scripts/refinement-runtime.cjs');
