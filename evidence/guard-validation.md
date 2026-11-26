@@ -430,3 +430,59 @@ that revision or that an owner-reviewed Git commit has been recorded. All refere
 control table I1JBIePgy75Ecnlp. Both post-effect copies reference effects table 8fCAvfPK5z11XeRJ.
 No test row was reset or modified by these assistant actions; current persistent row was not
 read because the CLI's first Data Table operation failed. Owner-run evidence remains intact.
+
+
+## T026 finished-workflow closeout — 2026-11-26
+
+**Complete.** This section assesses all three finished workflows, not the historical skeletons.
+Operational source at `219e351f77cd6be3534f297d1df2d95421f10f5d` is unchanged: refine
+`ee3f6e782f72ec409d6e9a6cb02ca0f8b9a4b43eccbfad4dff0a9003ffe1ec38`, reserve
+`ea6760fb5787dd216418596d93c37be981079aca8cc20f9a7f5ec2cab88930b6`, track
+`d739916089873846b8f7a61aee71edfd0b7bee411cb727f3aefec54ff63b64b8` (SHA-256).
+[Actual sanitized traces](us4-guard-results.json) record imported IDs/versions, exact executed
+package hashes, before/after rows, reached nodes, errors and native held-poll IDs.
+
+Fresh T033 checks: n8n 2.48.8 `factory-guard-test`, separate `factory_guard_test_data`,
+loopback 5679; operational instance remains on 5678 and a different volume. Initially all 22
+historical workflows were inactive/drained; singleton idle at 1542. Three new credential-free
+copies raise the count to 25. All HTTP stays on synthetic container loopback 18768 and all
+source Code bodies are unchanged. Native Data Table/HTTP/IF/Code paths are used. Test-only
+adapters and exact edge changes are described in [the test guide](../factory/tests/us4-validation.md).
+
+### Coverage and evidence reuse
+
+| Guard/exit obligation | Finished-workflow evidence |
+|---|---|
+| G01 all no-work early returns | New native no-candidate checks on all three graphs. Refine's no eligible discovery and exhausted Ready/discussion loop reuse current US1 non-owner/PR/closed/Approved/Ready-unchanged/non-owner-discussion/factory-marker cases. Reserve no candidate/occupied slot (including malformed/closed/non-owner Building) reuses 1287/1291/1295/1299/1303 and scheduled 1439. Track no candidate/no result/reapproval/stale baseline/unchanged QA reuses 1448/1456/1460/1468/1480/1542. All acquired no-work exits release. |
+| G02 real story success | Reuse real refine 753/757 and scheduled 1232/1234; real reserve 1275 and scheduled 1411; native tracking 1445/1488/1492 and scheduled 1538. Exact unchanged source hashes and explicit mapping differences are retained in story evidence. |
+| G03/G15 pre-held, issue context and null context | New native cross-workflow held polls preserve the full row, never acquire/release or reach HTTP. Both nullable pre-selection context and story issue context are represented. |
+| G04/G05 unexpected before/after effect | Reuse current US1 unexpected-before/after and unknown-post, reserve 1331/1339/1347/1355, track 1517/1524/1531. Source validation exceptions and uncertain acknowledged effects retain busy; later native polls skip. |
+| G06 invalid entry | Each finished graph rejects empty, duplicate, wrong-key and invalid-context inputs at native entry. Output injection preserves the historical singleton; actual persisted invalid/missing row variants remain in the unchanged-validator skeleton evidence. No auto-provisioning. |
+| G07 acquisition failure | Each graph's native Acquire control targets a nonexistent table; original row stays unchanged and no HTTP runs. |
+| G08/G09 unconfirmed acquisition | Empty/wrong update receipt, missing acquired reread and nonexistent reread table each fail before HTTP; actual acquired row stays busy. |
+| G10 invalid completion | Unacknowledged success/error-shaped output fails at native completion validator; no release. |
+| G11 failed release | Native nonexistent-table update fails; row stays busy; all graphs subsequently skip. |
+| G12/G13 uncertain release | Lost/empty release receipt or unavailable final reread fails without completion; committed row is physically idle. The operator inspects this actual result; no false busy=true assertion, retry or automatic re-hold. |
+| G14 restart | Native running/acquired executions refine 1669, reserve 1673 and track 1677 were interrupted by restarting only the isolated container. Metadata reports crashed; exact row persists and all three finished graphs skip unchanged. Historical US1 backoff and US2 partial-reservation restarts retain their additional story-effect evidence. |
+| G16 ownership loss | Changed ownership input fails before release on each graph; real row stays held. |
+
+There are **55 new guard primary executions** (51 specified variants, one initial no-work
+preflight and three crashes). The combined collector also includes four recovery error
+executions and **93 actual native held skips** across guard/recovery exercises. Intentional
+errors remain error/crashed executions; the pass is their asserted failure behavior.
+Separate scheduled checks are reused from T031/T032/T023, not blanket repeated.
+
+Known completed synthetic holds were explicitly inspected/reset only between independent
+cases, with reason, exact row/execution filter and drain checks. No workflow error path resets.
+G08/G12 output injections establish downstream acknowledgement handling, not a database-network
+fault; unavailable-table cases exercise native Data Table failures. Direct UI cancellation
+remains unrun; restart is demonstrated. No exactly-once/distributed-lock claim is made.
+
+First readback rejected n8n's generated Wait `webhookId`; the same inactive import was reused
+with that metadata field explicitly normalized. No source fix was required. Recovery observer
+and activation-boundary failures are retained in the collector and recovery evidence. Later
+clarification of test-only node notes changes no execution parameter/connection or source Code.
+
+Final test/restore shutdown and real-state preservation are recorded in
+[recovery validation](recovery-validation.md). US4 tests do not count as real issue/PR tasks,
+activate operational workflows, or replace owner review/manual matching-revision import.

@@ -12,6 +12,16 @@ const server=http.createServer(async(req,res)=>{let body='';for await(const chun
   const input=JSON.parse(body);if(!Object.hasOwn(scenarios,input.scenario))throw Error('Unknown synthetic scenario');
   state={...structuredClone(scenarios[input.scenario]),scenario:input.scenario};save();result=state;
  }
+ else if(path==='/repair'&&req.method==='POST'&&Number(process.argv[4])===18768){
+  const input=JSON.parse(body);if(typeof input.reason!=='string'||input.reason.length<20||input.expectedScenario!==state.scenario)throw Error('Explicit inspected fixture repair reason/scenario required');
+  if(!['partial-label','unknown-post','unexpected-before'].includes(state.scenario))throw Error('No known repair for this fixture');
+  const previous=state.scenario;
+  if(previous!=='unexpected-before'){
+   if(state.comments.filter(c=>c.body.startsWith('<!-- factory:result:v1')).length!==1)throw Error('Inspect exact single committed marker before repair');
+   state.issues[0].labels=state.issues[0].labels.filter(l=>l.name!=='Building');if(!state.issues[0].labels.some(l=>l.name==='Your QA'))state.issues[0].labels.push({name:'Your QA'});
+  }
+  state.operatorRepair={previous,reason:input.reason,at:new Date().toISOString()};state.scenario='open-result';save();result=state;
+ }
  else if(path.startsWith('/github/repos/MBroholm/software-factory/')){
   const route=path.slice('/github/repos/MBroholm/software-factory/'.length);state.calls.push({method:req.method,path});
   const [,kind,number,tail,label]=route.match(/^(issues|pulls)(?:\/(\d+))?(?:\/(comments|events|labels))?(?:\/(.*))?$/)??[];
@@ -35,4 +45,5 @@ const server=http.createServer(async(req,res)=>{let body='';for await(const chun
  }else{status=404;result={error:'Not a synthetic route'};}
  }catch(e){status=400;result={error:e.message};}
  res.writeHead(status,{'Content-Type':'application/json'});res.end(JSON.stringify(result));
-});server.listen(18767,'127.0.0.1',()=>console.log('US3 synthetic fixture listening on container loopback 18767'));
+});const port=Number(process.argv[4]??18767);if(![18767,18768].includes(port))throw Error('Only designated US3/US4 fixture ports allowed');
+server.listen(port,'127.0.0.1',()=>console.log('Synthetic fixture listening on container loopback '+port));

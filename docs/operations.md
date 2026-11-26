@@ -2,13 +2,16 @@
 
 ## Current status — 2026-11-26
 
-US1/refine and US2/reserve validation is recorded in `evidence/refinement-validation.md` and
-`evidence/manual-build-validation.md`, including T031/T032 scheduled-path evidence. Track remains
-a guarded US3 skeleton; T020 is the next implementation task. T033 verifies existing test
-isolation before future automated imports/native tests. This alignment performs no runtime work.
-The dated provider/bootstrap snapshots below preserve earlier observations, not current pending
-checks; consult story evidence for actual revisions, completed checks, shutdown state and holds.
-The isolated-testing/operational-adoption policy below supersedes old manual test-import gates.
+All three finished workflow artifacts are implemented and locally/native validated through US3;
+see [refinement](../evidence/refinement-validation.md), [manual build](../evidence/manual-build-validation.md)
+and [review](../evidence/review-validation.md). Their dated checkpoints remain historical.
+The current source uses Gemini, optional Ollama trials and inactive exports. Operational adoption
+requires owner PR review and manual import of the matching revision; testing does not establish
+operational deployment. US4 completes the runbook, architecture, guard/recovery validation and
+[evidence index](../evidence/index.md). Consult its actual results before treating a check as passed.
+
+Use [current deployment and backup procedures](#current-deployment-backup-and-restore--t024)
+below rather than the retained T004 trial commands. No Basic B runner is implemented.
 
 ## Provider decision snapshot — 2026-11-24
 
@@ -656,3 +659,143 @@ known completed synthetic failures are recorded in [native results](../evidence/
 Do not treat historical 1442/1369 row descriptions above as the current state. No operational
 workflow/source, credential or real task was changed. Future native work rechecks boundaries;
 T026 broad guard and later operational acceptance tasks remain outstanding.
+
+
+## Current deployment, backup and restore — T024
+
+### Prepare and verify the intended instance
+
+Use the reviewed checkout on Ubuntu and preserve server-local work. Record `git rev-parse HEAD`
+and SHA-256 for all three workflow JSON files, runtime prompt/template/schema and Compose file.
+Use `factory/compose.yaml` with an existing private `factory/.env`; create it with mode 0600
+only for a new deployment. Never replace an existing encryption key. Validate without printing
+expanded secrets:
+
+```bash
+docker compose --env-file factory/.env -f factory/compose.yaml config --quiet
+docker compose --env-file factory/.env -f factory/compose.yaml up -d --wait n8n
+docker compose --env-file factory/.env -f factory/compose.yaml ps n8n
+```
+
+This starts only n8n. The retained Ollama cache/service is an optional `local-model-trials`
+profile, not a Gemini runtime dependency; do not delete its volume or restart it for normal use.
+Pin the reviewed n8n release (`2.48.8` in existing evidence), record the actual image ID/digest,
+and retain that image for a restore. A new image/version needs change-affected verification.
+The configured provider ID is `gemini-3.5-flash-lite`, free tier only. Record returned modelVersion,
+prompt v3/template v1 hashes and usage; this hosted alias cannot be pinned to an immutable digest.
+Provider quotas are owner/project-specific: verify them privately before activation. No paid
+fallback, automatic image/model upgrade or new provider is configured.
+
+The only operational editor binding is server `127.0.0.1:5678`. On Fedora:
+
+```bash
+ssh -N -L 5678:127.0.0.1:5678 user@server
+```
+
+Open `http://localhost:5678`, retain the owner login and keep the tunnel running. A local port
+conflict requires a deliberately different local port and corresponding editor-origin check;
+do not expose a server port publicly. Test instance 5679 has a separate volume/control table
+and is never an operational alias. Verify names, image, published ports and volume identities
+before any write. Do not dump container environment or decrypted credentials into logs.
+
+### Import and normal operation
+
+Follow [mapping](workflow-mapping.md), [manual coding](manual-coding.md) and [review](review.md).
+Owner reviews JSON in its PR, manually imports each matching operational artifact while
+paused/drained, verifies source Code/connections, prompt/template, mappings and exact 60-second
+schedule, then activates deliberately. Keep one operational instance, regular execution mode
+and `N8N_CONCURRENCY_PRODUCTION_LIMIT=1`. Every control node shares the same typed singleton.
+No manual mutating execution, node retry or second instance may bypass serialization while
+schedules run. Test-only webhooks, fault nodes and inspected-reset paths never belong in production.
+
+Before launch the owner checks approval and the unique Building reservation. Busy is a short-lived
+fail-stop interlock; Building is the long-lived manual build reservation. Successful/no-work
+execution releases only busy. An error/crash holds until pause/drain/inspect/record/repair/reset;
+there is no expiry or automatic recovery. Keep the runbook's incident/unknown-write checks.
+
+### Stopped-volume backup
+
+Back up the full stopped `/home/node/.n8n` volume, including SQLite and its associated files,
+config, encrypted credentials, Data Tables, workflow versions and other instance state. Also
+retain the matching private encryption key source (`factory/.env` when supplied by Compose),
+reviewed Compose/environment configuration and exact image digest. A JSON workflow export alone
+cannot restore credentials, Data Tables or execution history. Never print or decrypt the key.
+
+1. Pause all schedules and drain running/waiting executions through the supported API/UI.
+   Record active workflow IDs/revisions, typed singleton and external issue/PR states. Confirm
+   whether a manual agent is active; backup is not permission to release Building.
+2. Stop **only the identified instance**, then copy its volume with Docker's supported archive
+   copy or a stopped-volume archive. For example, with a fresh restricted destination:
+
+   ```bash
+   umask 077
+   mkdir backup-basic-a-YYYYMMDD
+   docker stop software-factory-basic-a-n8n-1
+   docker cp software-factory-basic-a-n8n-1:/home/node/.n8n/. backup-basic-a-YYYYMMDD/n8n
+   cp factory/.env backup-basic-a-YYYYMMDD/compose.env
+   sha256sum factory/compose.yaml factory/workflows/*.json > backup-basic-a-YYYYMMDD/source.sha256
+   ```
+
+   Replace the date with a unique name; refuse an existing destination. Stop on any failed step.
+   Copy the image/config/revision manifest too. Protect the whole backup as a secret; keep an
+   encrypted off-host copy under owner control, separate from the machine/volume it protects.
+   Do not commit it, attach it to an issue or put it in public evidence. Check archive inventory
+   and private file hashes; record only aggregate checksums/counts publicly.
+3. Start the same instance after a successful backup and inspect while schedules stay paused.
+   Preserve a held row, reservation and uncertain effects. Resume through the recovery gate,
+   never simply because the service restarted.
+
+### Restore and verify before resume
+
+Restore into an **empty separate volume** first, using the same pinned image and matching key.
+Preserve the original volume and backup as rollback; do not use `down -v`, automatic migrations,
+internal SQL, or overwrite a live volume. For a validation clone use no network or published
+ports; all backed-up workflows must be inactive. Keep restored credentials encrypted. This
+prevents old workflow state from processing ordinary tasks or writing to GitHub during rehearsal.
+
+Restore the stopped backup with Docker archive copy, retaining ownership/mode. Supply the
+matching key/config privately. Start only the isolated clone; use supported API/UI to verify:
+owner access, expected workflow IDs/revisions and inactive schedules, exact singleton values,
+Data Table column types, and no running/waiting executions. Verify full stopped-volume file
+hashes before startup (SQLite files may change after startup). Do not infer credential decrypt
+success from file equality; a credential round-trip must use a designated test-only credential
+and loopback resource if exercised. Never test restored operational credentials against real services.
+
+For an actual operational restore, owner decides adoption after reviewing the backed-up revision
+and current external task state. GitHub is not rolled back with SQLite: reconcile labels,
+markers, current approvals, PRs/heads and live agent status before reset or resumption. A restored
+idle flag is not proof that an old POST or build did not happen. Keep schedules paused if any
+outcome is unknown. Record restore instance/image, backup checksum, revision/credential/table
+mapping checks, incidents, human intervention and the first deliberately resumed poll.
+A rehearsal is evidence of that backup/environment only, not a promise that future backups work.
+
+### Retention and evidence
+
+Compose retains failed private executions, disables successful-execution payload storage and
+prunes at 336 hours (14 days) or 10,000 executions; container logs rotate at 10 MiB × 3. Verify
+actual configured values after rollout. Isolated fixture workflows deliberately retain success
+traces for validation and are not the operational retention policy. Keep raw payloads and
+backups private: even public-task executions may contain headers or credential metadata.
+Before pruning, preserve sanitized revision/environment, actual errors/retries/interventions
+and issue/PR links in `evidence/`. Keep those durable public observations separate from private
+incident diagnostics; never report a pruned or unrun check as passing.
+
+
+## US4 validated state — 2026-11-26
+
+T024–T028 are complete within their recorded boundaries. [Architecture](architecture.md),
+[finished guard coverage](../evidence/guard-validation.md),
+[recovery/restore evidence](../evidence/recovery-validation.md) and
+[real-run index](../evidence/index.md) are available. The stopped-volume rehearsal matched all
+nine files, restored 25 inactive workflows/exact singleton, and verified a backed-up disposable
+credential through a native clone-local request. The separate restore clone is stopped with
+network none/no ports; its private backup/volume are retained, not published. Operational
+volume/credentials/workflows were not adopted or changed by this rehearsal.
+
+Final observed test state at 2026-11-26T14:25:30.430Z: all 25 workflows inactive, no running/waiting
+executions, singleton idle at execution 1699/issue 1. US4 loopback fixture stopped, connection
+refused. Historical 1542/1369 holds above are superseded only as current-state descriptions;
+their original evidence remains valid. Real issue #1 remains open/Building and #4 open/Approved.
+Owner merge of real PR #5 is recorded; a real automated QA/Done transition is not claimed.
+T029/T030 acceptance consolidation and operational owner review/manual matching-revision import
+remain outstanding. The evidence index counts one real task, not five.

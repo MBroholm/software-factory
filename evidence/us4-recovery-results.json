@@ -1,0 +1,1765 @@
+{
+  "source_commit": "219e351f77cd6be3534f297d1df2d95421f10f5d",
+  "recoveries": [
+    {
+      "scenario": "unexpected-before",
+      "failed_execution": "1685",
+      "failed_status": "error",
+      "failed_version": "a229309d-6e20-42d7-ab1f-22442841c570",
+      "before": {
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-26T14:16:18.884Z",
+        "key": "global",
+        "busy": false,
+        "execution_id": "1681",
+        "issue_number": 1,
+        "started_at": "2026-11-26T14:16:15.045Z"
+      },
+      "held": {
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-26T14:18:25.541Z",
+        "key": "global",
+        "busy": true,
+        "execution_id": "1685",
+        "issue_number": 1,
+        "started_at": "2026-11-26T14:18:25.471Z"
+      },
+      "effects": {
+        "scenario": "unexpected-before",
+        "calls": [
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/1"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/1/comments"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/1/events"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/pulls"
+          }
+        ]
+      },
+      "paused_drained": {
+        "at": "2026-11-26T14:18:29.333Z",
+        "workflows": [
+          {
+            "id": "0ITfSwx2Yb69qfX5",
+            "name": "Basic A \u2014 ISOLATED guard validation bridge",
+            "active": false
+          },
+          {
+            "id": "3SmlqLqhRDB5S5e9",
+            "name": "TEST ONLY \u2014 US3 tracking",
+            "active": false
+          },
+          {
+            "id": "5SviHhy3LypzrSTl",
+            "name": "Basic A refine \u2014 US1 URL fix test",
+            "active": false
+          },
+          {
+            "id": "AGgK7NJFKTzU2vkr",
+            "name": "Basic A refine \u2014 exception test",
+            "active": false
+          },
+          {
+            "id": "CEGJ4lmhzku75vUr",
+            "name": "Basic A track \u2014 INACTIVE guard skeleton",
+            "active": false
+          },
+          {
+            "id": "EIF8Urpa0tCkd2DI",
+            "name": "Basic A reserve \u2014 US2 INACTIVE",
+            "active": false
+          },
+          {
+            "id": "EtTipKHkEuutfggH",
+            "name": "reserve \u2014 post-effect exception test",
+            "active": false
+          },
+          {
+            "id": "Gussyro70lhzF3WT",
+            "name": "Basic A refine \u2014 INACTIVE guard skeleton",
+            "active": false
+          },
+          {
+            "id": "LCWxAPCdWrtjrRIn",
+            "name": "Basic A refine \u2014 US1 INACTIVE",
+            "active": false
+          },
+          {
+            "id": "MoMw34RHi9qqfEIB",
+            "name": "Basic A refine \u2014 US1 VM fix test",
+            "active": false
+          },
+          {
+            "id": "N5CiaS51bwjwQ133",
+            "name": "Basic A reserve \u2014 exception test",
+            "active": false
+          },
+          {
+            "id": "NdYJRhC6UWLHW8Vb",
+            "name": "Basic A reserve \u2014 INACTIVE guard skeleton",
+            "active": false
+          },
+          {
+            "id": "OmzjTQGq75oRBNfR",
+            "name": "TEST ONLY \u2014 US1 scheduled refinement",
+            "active": false
+          },
+          {
+            "id": "OqiOmuxC87o2rG0P",
+            "name": "Basic A reserve \u2014 success test",
+            "active": false
+          },
+          {
+            "id": "RByomITdtfRHZ74Z",
+            "name": "TEST ONLY \u2014 US2 scheduled reservation",
+            "active": false
+          },
+          {
+            "id": "VtDVFg2gETSZv5ir",
+            "name": "TEST ONLY \u2014 US4 track guard",
+            "active": false
+          },
+          {
+            "id": "bHUN2AuZtUysarZI",
+            "name": "TEST ONLY \u2014 Basic A US2 native fault bridge",
+            "active": false
+          },
+          {
+            "id": "dV09X3Pv4Cmd4krk",
+            "name": "refine \u2014 post-effect exception test",
+            "active": false
+          },
+          {
+            "id": "hheODhtDH4vVt3xb",
+            "name": "Basic A refine \u2014 success test",
+            "active": false
+          },
+          {
+            "id": "jjTILZ2XLFBjfaLN",
+            "name": "Basic A track \u2014 success test",
+            "active": false
+          },
+          {
+            "id": "p3E27rtBxAB8zvxL",
+            "name": "TEST ONLY \u2014 Basic A US1 native fault bridge",
+            "active": false
+          },
+          {
+            "id": "rQYrgKI7d22qpiov",
+            "name": "TEST ONLY \u2014 US4 refine guard",
+            "active": false
+          },
+          {
+            "id": "s3G2AFhIfXvm6AwV",
+            "name": "TEST ONLY \u2014 US4 reserve guard",
+            "active": false
+          },
+          {
+            "id": "sPrdMHSQ1Eubs5Oh",
+            "name": "Basic A refine \u2014 US1 token counting test",
+            "active": false
+          },
+          {
+            "id": "zcynhzDmEAapj2dT",
+            "name": "Basic A refine \u2014 US1 reviewed pagination fix test",
+            "active": false
+          }
+        ],
+        "running": 0,
+        "waiting": 0,
+        "rows": [
+          {
+            "id": 1,
+            "createdAt": "2026-11-25T08:55:42.755Z",
+            "updatedAt": "2026-11-26T14:18:25.541Z",
+            "key": "global",
+            "busy": true,
+            "execution_id": "1685",
+            "issue_number": 1,
+            "started_at": "2026-11-26T14:18:25.471Z"
+          }
+        ]
+      },
+      "repair": {
+        "previous": "unexpected-before",
+        "reason": "Operator inspected completed synthetic unexpected-before execution 1685; pause and drain confirmed; no manual agent or ordinary factory task used; reconcile exact marker/labels before reset",
+        "at": "2026-11-26T14:18:29.966Z"
+      },
+      "reset": {
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-26T14:18:30.407Z",
+        "key": "global",
+        "busy": false,
+        "execution_id": "1685",
+        "issue_number": 1,
+        "started_at": "2026-11-26T14:18:25.471Z"
+      },
+      "resume": {
+        "id": "1689",
+        "status": "success",
+        "version": "a229309d-6e20-42d7-ab1f-22442841c570",
+        "nodes": [
+          "US4 test entry",
+          "Read control",
+          "US4 before Validate entry",
+          "Validate entry",
+          "Already held",
+          "Prepare acquisition",
+          "Acquire control",
+          "US4 before Check acquire receipt",
+          "Check acquire receipt",
+          "Read acquired control",
+          "US4 before Verify acquisition",
+          "Verify acquisition",
+          "US4 in-flight restart boundary",
+          "Discover tracked issues",
+          "Select tracked issue",
+          "Have tracked issue",
+          "Set issue context",
+          "Check issue context",
+          "Read issue",
+          "Read comments",
+          "Read events",
+          "Read pulls",
+          "Read association",
+          "Read plan",
+          "Read has result",
+          "Read result detail",
+          "Read verified plan",
+          "Read ready",
+          "Recheck issue",
+          "Recheck comments",
+          "Recheck events",
+          "Recheck pulls",
+          "Recheck association",
+          "Recheck plan",
+          "Recheck has result",
+          "Recheck result detail",
+          "Recheck verified plan",
+          "Recheck ready",
+          "Compare snapshot",
+          "Need marker",
+          "Post result marker",
+          "Check marker receipt",
+          "Need transition",
+          "Add result state",
+          "Check target receipt",
+          "Remove previous state",
+          "Check state receipt",
+          "Final issue",
+          "Final comments",
+          "Final events",
+          "Final pulls",
+          "Final association",
+          "Final plan",
+          "Final has result",
+          "Final result detail",
+          "Final verified plan",
+          "Final ready",
+          "Complete tracked result",
+          "US4 before Require acknowledged completion",
+          "Require acknowledged completion",
+          "Read before release",
+          "US4 before Verify release ownership",
+          "Verify release ownership",
+          "Release control",
+          "US4 before Check release receipt",
+          "Check release receipt",
+          "Read released control",
+          "Confirm idle",
+          "Report completion"
+        ]
+      },
+      "after": {
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-26T14:18:32.631Z",
+        "key": "global",
+        "busy": false,
+        "execution_id": "1689",
+        "issue_number": 1,
+        "started_at": "2026-11-26T14:18:32.246Z"
+      },
+      "final": {
+        "scenario": "open-result",
+        "issue_labels": [
+          "documentation",
+          "Your QA"
+        ],
+        "result_marker_count": 1,
+        "calls": [
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/1"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/1/comments"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/1/events"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/pulls"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/1"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/1/comments"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/1/events"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/pulls"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/pulls/7"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/1"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/1/comments"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/1/events"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/pulls"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/pulls/7"
+          },
+          {
+            "method": "POST",
+            "path": "/github/repos/MBroholm/software-factory/issues/1/comments"
+          },
+          {
+            "method": "POST",
+            "path": "/github/repos/MBroholm/software-factory/issues/1/labels"
+          },
+          {
+            "method": "DELETE",
+            "path": "/github/repos/MBroholm/software-factory/issues/1/labels/Building"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/1"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/1/comments"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/1/events"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/pulls"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/pulls/7"
+          }
+        ]
+      },
+      "shutdown": {
+        "at": "2026-11-26T14:18:33.731Z",
+        "workflows": [
+          {
+            "id": "0ITfSwx2Yb69qfX5",
+            "name": "Basic A \u2014 ISOLATED guard validation bridge",
+            "active": false
+          },
+          {
+            "id": "3SmlqLqhRDB5S5e9",
+            "name": "TEST ONLY \u2014 US3 tracking",
+            "active": false
+          },
+          {
+            "id": "5SviHhy3LypzrSTl",
+            "name": "Basic A refine \u2014 US1 URL fix test",
+            "active": false
+          },
+          {
+            "id": "AGgK7NJFKTzU2vkr",
+            "name": "Basic A refine \u2014 exception test",
+            "active": false
+          },
+          {
+            "id": "CEGJ4lmhzku75vUr",
+            "name": "Basic A track \u2014 INACTIVE guard skeleton",
+            "active": false
+          },
+          {
+            "id": "EIF8Urpa0tCkd2DI",
+            "name": "Basic A reserve \u2014 US2 INACTIVE",
+            "active": false
+          },
+          {
+            "id": "EtTipKHkEuutfggH",
+            "name": "reserve \u2014 post-effect exception test",
+            "active": false
+          },
+          {
+            "id": "Gussyro70lhzF3WT",
+            "name": "Basic A refine \u2014 INACTIVE guard skeleton",
+            "active": false
+          },
+          {
+            "id": "LCWxAPCdWrtjrRIn",
+            "name": "Basic A refine \u2014 US1 INACTIVE",
+            "active": false
+          },
+          {
+            "id": "MoMw34RHi9qqfEIB",
+            "name": "Basic A refine \u2014 US1 VM fix test",
+            "active": false
+          },
+          {
+            "id": "N5CiaS51bwjwQ133",
+            "name": "Basic A reserve \u2014 exception test",
+            "active": false
+          },
+          {
+            "id": "NdYJRhC6UWLHW8Vb",
+            "name": "Basic A reserve \u2014 INACTIVE guard skeleton",
+            "active": false
+          },
+          {
+            "id": "OmzjTQGq75oRBNfR",
+            "name": "TEST ONLY \u2014 US1 scheduled refinement",
+            "active": false
+          },
+          {
+            "id": "OqiOmuxC87o2rG0P",
+            "name": "Basic A reserve \u2014 success test",
+            "active": false
+          },
+          {
+            "id": "RByomITdtfRHZ74Z",
+            "name": "TEST ONLY \u2014 US2 scheduled reservation",
+            "active": false
+          },
+          {
+            "id": "VtDVFg2gETSZv5ir",
+            "name": "TEST ONLY \u2014 US4 track guard",
+            "active": false
+          },
+          {
+            "id": "bHUN2AuZtUysarZI",
+            "name": "TEST ONLY \u2014 Basic A US2 native fault bridge",
+            "active": false
+          },
+          {
+            "id": "dV09X3Pv4Cmd4krk",
+            "name": "refine \u2014 post-effect exception test",
+            "active": false
+          },
+          {
+            "id": "hheODhtDH4vVt3xb",
+            "name": "Basic A refine \u2014 success test",
+            "active": false
+          },
+          {
+            "id": "jjTILZ2XLFBjfaLN",
+            "name": "Basic A track \u2014 success test",
+            "active": false
+          },
+          {
+            "id": "p3E27rtBxAB8zvxL",
+            "name": "TEST ONLY \u2014 Basic A US1 native fault bridge",
+            "active": false
+          },
+          {
+            "id": "rQYrgKI7d22qpiov",
+            "name": "TEST ONLY \u2014 US4 refine guard",
+            "active": false
+          },
+          {
+            "id": "s3G2AFhIfXvm6AwV",
+            "name": "TEST ONLY \u2014 US4 reserve guard",
+            "active": false
+          },
+          {
+            "id": "sPrdMHSQ1Eubs5Oh",
+            "name": "Basic A refine \u2014 US1 token counting test",
+            "active": false
+          },
+          {
+            "id": "zcynhzDmEAapj2dT",
+            "name": "Basic A refine \u2014 US1 reviewed pagination fix test",
+            "active": false
+          }
+        ],
+        "running": 0,
+        "waiting": 0,
+        "rows": [
+          {
+            "id": 1,
+            "createdAt": "2026-11-25T08:55:42.755Z",
+            "updatedAt": "2026-11-26T14:18:32.631Z",
+            "key": "global",
+            "busy": false,
+            "execution_id": "1689",
+            "issue_number": 1,
+            "started_at": "2026-11-26T14:18:32.246Z"
+          }
+        ]
+      },
+      "limits": "Synthetic HTTP outage/response-loss effects on designated fixtures, not an actual GitHub outage or real task transition. Existing real Building reservation untouched."
+    },
+    {
+      "scenario": "partial-label",
+      "failed_execution": "1690",
+      "failed_status": "error",
+      "failed_version": "a229309d-6e20-42d7-ab1f-22442841c570",
+      "before": {
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-26T14:18:32.631Z",
+        "key": "global",
+        "busy": false,
+        "execution_id": "1689",
+        "issue_number": 1,
+        "started_at": "2026-11-26T14:18:32.246Z"
+      },
+      "held": {
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-26T14:20:57.839Z",
+        "key": "global",
+        "busy": true,
+        "execution_id": "1690",
+        "issue_number": 1,
+        "started_at": "2026-11-26T14:20:57.773Z"
+      },
+      "effects": {
+        "scenario": "partial-label",
+        "calls": [
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/1"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/1/comments"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/1/events"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/pulls"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/pulls/7"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/1"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/1/comments"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/1/events"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/pulls"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/pulls/7"
+          },
+          {
+            "method": "POST",
+            "path": "/github/repos/MBroholm/software-factory/issues/1/comments"
+          },
+          {
+            "method": "POST",
+            "path": "/github/repos/MBroholm/software-factory/issues/1/labels"
+          }
+        ]
+      },
+      "paused_drained": {
+        "at": "2026-11-26T14:21:01.595Z",
+        "workflows": [
+          {
+            "id": "0ITfSwx2Yb69qfX5",
+            "name": "Basic A \u2014 ISOLATED guard validation bridge",
+            "active": false
+          },
+          {
+            "id": "3SmlqLqhRDB5S5e9",
+            "name": "TEST ONLY \u2014 US3 tracking",
+            "active": false
+          },
+          {
+            "id": "5SviHhy3LypzrSTl",
+            "name": "Basic A refine \u2014 US1 URL fix test",
+            "active": false
+          },
+          {
+            "id": "AGgK7NJFKTzU2vkr",
+            "name": "Basic A refine \u2014 exception test",
+            "active": false
+          },
+          {
+            "id": "CEGJ4lmhzku75vUr",
+            "name": "Basic A track \u2014 INACTIVE guard skeleton",
+            "active": false
+          },
+          {
+            "id": "EIF8Urpa0tCkd2DI",
+            "name": "Basic A reserve \u2014 US2 INACTIVE",
+            "active": false
+          },
+          {
+            "id": "EtTipKHkEuutfggH",
+            "name": "reserve \u2014 post-effect exception test",
+            "active": false
+          },
+          {
+            "id": "Gussyro70lhzF3WT",
+            "name": "Basic A refine \u2014 INACTIVE guard skeleton",
+            "active": false
+          },
+          {
+            "id": "LCWxAPCdWrtjrRIn",
+            "name": "Basic A refine \u2014 US1 INACTIVE",
+            "active": false
+          },
+          {
+            "id": "MoMw34RHi9qqfEIB",
+            "name": "Basic A refine \u2014 US1 VM fix test",
+            "active": false
+          },
+          {
+            "id": "N5CiaS51bwjwQ133",
+            "name": "Basic A reserve \u2014 exception test",
+            "active": false
+          },
+          {
+            "id": "NdYJRhC6UWLHW8Vb",
+            "name": "Basic A reserve \u2014 INACTIVE guard skeleton",
+            "active": false
+          },
+          {
+            "id": "OmzjTQGq75oRBNfR",
+            "name": "TEST ONLY \u2014 US1 scheduled refinement",
+            "active": false
+          },
+          {
+            "id": "OqiOmuxC87o2rG0P",
+            "name": "Basic A reserve \u2014 success test",
+            "active": false
+          },
+          {
+            "id": "RByomITdtfRHZ74Z",
+            "name": "TEST ONLY \u2014 US2 scheduled reservation",
+            "active": false
+          },
+          {
+            "id": "VtDVFg2gETSZv5ir",
+            "name": "TEST ONLY \u2014 US4 track guard",
+            "active": false
+          },
+          {
+            "id": "bHUN2AuZtUysarZI",
+            "name": "TEST ONLY \u2014 Basic A US2 native fault bridge",
+            "active": false
+          },
+          {
+            "id": "dV09X3Pv4Cmd4krk",
+            "name": "refine \u2014 post-effect exception test",
+            "active": false
+          },
+          {
+            "id": "hheODhtDH4vVt3xb",
+            "name": "Basic A refine \u2014 success test",
+            "active": false
+          },
+          {
+            "id": "jjTILZ2XLFBjfaLN",
+            "name": "Basic A track \u2014 success test",
+            "active": false
+          },
+          {
+            "id": "p3E27rtBxAB8zvxL",
+            "name": "TEST ONLY \u2014 Basic A US1 native fault bridge",
+            "active": false
+          },
+          {
+            "id": "rQYrgKI7d22qpiov",
+            "name": "TEST ONLY \u2014 US4 refine guard",
+            "active": false
+          },
+          {
+            "id": "s3G2AFhIfXvm6AwV",
+            "name": "TEST ONLY \u2014 US4 reserve guard",
+            "active": false
+          },
+          {
+            "id": "sPrdMHSQ1Eubs5Oh",
+            "name": "Basic A refine \u2014 US1 token counting test",
+            "active": false
+          },
+          {
+            "id": "zcynhzDmEAapj2dT",
+            "name": "Basic A refine \u2014 US1 reviewed pagination fix test",
+            "active": false
+          }
+        ],
+        "running": 0,
+        "waiting": 0,
+        "rows": [
+          {
+            "id": 1,
+            "createdAt": "2026-11-25T08:55:42.755Z",
+            "updatedAt": "2026-11-26T14:20:57.839Z",
+            "key": "global",
+            "busy": true,
+            "execution_id": "1690",
+            "issue_number": 1,
+            "started_at": "2026-11-26T14:20:57.773Z"
+          }
+        ]
+      },
+      "repair": {
+        "previous": "partial-label",
+        "reason": "Operator inspected completed synthetic partial-label execution 1690; pause and drain confirmed; no manual agent or ordinary factory task used; reconcile exact marker/labels before reset",
+        "at": "2026-11-26T14:21:02.147Z"
+      },
+      "reset": {
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-26T14:21:02.517Z",
+        "key": "global",
+        "busy": false,
+        "execution_id": "1690",
+        "issue_number": 1,
+        "started_at": "2026-11-26T14:20:57.773Z"
+      },
+      "resume": {
+        "id": "1694",
+        "status": "success",
+        "version": "a229309d-6e20-42d7-ab1f-22442841c570",
+        "nodes": [
+          "US4 test entry",
+          "Read control",
+          "US4 before Validate entry",
+          "Validate entry",
+          "Already held",
+          "Prepare acquisition",
+          "Acquire control",
+          "US4 before Check acquire receipt",
+          "Check acquire receipt",
+          "Read acquired control",
+          "US4 before Verify acquisition",
+          "Verify acquisition",
+          "US4 in-flight restart boundary",
+          "Discover tracked issues",
+          "Select tracked issue",
+          "Have tracked issue",
+          "Set issue context",
+          "Check issue context",
+          "Read issue",
+          "Read comments",
+          "Read events",
+          "Read pulls",
+          "Read association",
+          "Read plan",
+          "Read has result",
+          "Read result detail",
+          "Read verified plan",
+          "Read ready",
+          "Recheck issue",
+          "Recheck comments",
+          "Recheck events",
+          "Recheck pulls",
+          "Recheck association",
+          "Recheck plan",
+          "Recheck has result",
+          "Recheck result detail",
+          "Recheck verified plan",
+          "Recheck ready",
+          "Compare snapshot",
+          "Need marker",
+          "Need transition",
+          "Final issue",
+          "Final comments",
+          "Final events",
+          "Final pulls",
+          "Final association",
+          "Final plan",
+          "Final has result",
+          "Final result detail",
+          "Final verified plan",
+          "Final ready",
+          "Complete tracked result",
+          "US4 before Require acknowledged completion",
+          "Require acknowledged completion",
+          "Read before release",
+          "US4 before Verify release ownership",
+          "Verify release ownership",
+          "Release control",
+          "US4 before Check release receipt",
+          "Check release receipt",
+          "Read released control",
+          "Confirm idle",
+          "Report completion"
+        ]
+      },
+      "after": {
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-26T14:21:04.847Z",
+        "key": "global",
+        "busy": false,
+        "execution_id": "1694",
+        "issue_number": 1,
+        "started_at": "2026-11-26T14:21:04.592Z"
+      },
+      "final": {
+        "scenario": "open-result",
+        "issue_labels": [
+          "documentation",
+          "Your QA"
+        ],
+        "result_marker_count": 1,
+        "calls": [
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/1"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/1/comments"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/1/events"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/pulls"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/pulls/7"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/1"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/1/comments"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/1/events"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/pulls"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/pulls/7"
+          },
+          {
+            "method": "POST",
+            "path": "/github/repos/MBroholm/software-factory/issues/1/comments"
+          },
+          {
+            "method": "POST",
+            "path": "/github/repos/MBroholm/software-factory/issues/1/labels"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/1"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/1/comments"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/1/events"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/pulls"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/pulls/7"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/1"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/1/comments"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/1/events"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/pulls"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/pulls/7"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/1"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/1/comments"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/1/events"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/pulls"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/pulls/7"
+          }
+        ]
+      },
+      "shutdown": {
+        "at": "2026-11-26T14:21:05.683Z",
+        "workflows": [
+          {
+            "id": "0ITfSwx2Yb69qfX5",
+            "name": "Basic A \u2014 ISOLATED guard validation bridge",
+            "active": false
+          },
+          {
+            "id": "3SmlqLqhRDB5S5e9",
+            "name": "TEST ONLY \u2014 US3 tracking",
+            "active": false
+          },
+          {
+            "id": "5SviHhy3LypzrSTl",
+            "name": "Basic A refine \u2014 US1 URL fix test",
+            "active": false
+          },
+          {
+            "id": "AGgK7NJFKTzU2vkr",
+            "name": "Basic A refine \u2014 exception test",
+            "active": false
+          },
+          {
+            "id": "CEGJ4lmhzku75vUr",
+            "name": "Basic A track \u2014 INACTIVE guard skeleton",
+            "active": false
+          },
+          {
+            "id": "EIF8Urpa0tCkd2DI",
+            "name": "Basic A reserve \u2014 US2 INACTIVE",
+            "active": false
+          },
+          {
+            "id": "EtTipKHkEuutfggH",
+            "name": "reserve \u2014 post-effect exception test",
+            "active": false
+          },
+          {
+            "id": "Gussyro70lhzF3WT",
+            "name": "Basic A refine \u2014 INACTIVE guard skeleton",
+            "active": false
+          },
+          {
+            "id": "LCWxAPCdWrtjrRIn",
+            "name": "Basic A refine \u2014 US1 INACTIVE",
+            "active": false
+          },
+          {
+            "id": "MoMw34RHi9qqfEIB",
+            "name": "Basic A refine \u2014 US1 VM fix test",
+            "active": false
+          },
+          {
+            "id": "N5CiaS51bwjwQ133",
+            "name": "Basic A reserve \u2014 exception test",
+            "active": false
+          },
+          {
+            "id": "NdYJRhC6UWLHW8Vb",
+            "name": "Basic A reserve \u2014 INACTIVE guard skeleton",
+            "active": false
+          },
+          {
+            "id": "OmzjTQGq75oRBNfR",
+            "name": "TEST ONLY \u2014 US1 scheduled refinement",
+            "active": false
+          },
+          {
+            "id": "OqiOmuxC87o2rG0P",
+            "name": "Basic A reserve \u2014 success test",
+            "active": false
+          },
+          {
+            "id": "RByomITdtfRHZ74Z",
+            "name": "TEST ONLY \u2014 US2 scheduled reservation",
+            "active": false
+          },
+          {
+            "id": "VtDVFg2gETSZv5ir",
+            "name": "TEST ONLY \u2014 US4 track guard",
+            "active": false
+          },
+          {
+            "id": "bHUN2AuZtUysarZI",
+            "name": "TEST ONLY \u2014 Basic A US2 native fault bridge",
+            "active": false
+          },
+          {
+            "id": "dV09X3Pv4Cmd4krk",
+            "name": "refine \u2014 post-effect exception test",
+            "active": false
+          },
+          {
+            "id": "hheODhtDH4vVt3xb",
+            "name": "Basic A refine \u2014 success test",
+            "active": false
+          },
+          {
+            "id": "jjTILZ2XLFBjfaLN",
+            "name": "Basic A track \u2014 success test",
+            "active": false
+          },
+          {
+            "id": "p3E27rtBxAB8zvxL",
+            "name": "TEST ONLY \u2014 Basic A US1 native fault bridge",
+            "active": false
+          },
+          {
+            "id": "rQYrgKI7d22qpiov",
+            "name": "TEST ONLY \u2014 US4 refine guard",
+            "active": false
+          },
+          {
+            "id": "s3G2AFhIfXvm6AwV",
+            "name": "TEST ONLY \u2014 US4 reserve guard",
+            "active": false
+          },
+          {
+            "id": "sPrdMHSQ1Eubs5Oh",
+            "name": "Basic A refine \u2014 US1 token counting test",
+            "active": false
+          },
+          {
+            "id": "zcynhzDmEAapj2dT",
+            "name": "Basic A refine \u2014 US1 reviewed pagination fix test",
+            "active": false
+          }
+        ],
+        "running": 0,
+        "waiting": 0,
+        "rows": [
+          {
+            "id": 1,
+            "createdAt": "2026-11-25T08:55:42.755Z",
+            "updatedAt": "2026-11-26T14:21:04.847Z",
+            "key": "global",
+            "busy": false,
+            "execution_id": "1694",
+            "issue_number": 1,
+            "started_at": "2026-11-26T14:21:04.592Z"
+          }
+        ]
+      },
+      "limits": "Synthetic HTTP outage/response-loss effects on designated fixtures, not an actual GitHub outage or real task transition. Existing real Building reservation untouched."
+    },
+    {
+      "scenario": "unknown-post",
+      "failed_execution": "1695",
+      "failed_status": "error",
+      "failed_version": "a229309d-6e20-42d7-ab1f-22442841c570",
+      "before": {
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-26T14:21:04.847Z",
+        "key": "global",
+        "busy": false,
+        "execution_id": "1694",
+        "issue_number": 1,
+        "started_at": "2026-11-26T14:21:04.592Z"
+      },
+      "held": {
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-26T14:22:18.014Z",
+        "key": "global",
+        "busy": true,
+        "execution_id": "1695",
+        "issue_number": 1,
+        "started_at": "2026-11-26T14:22:17.944Z"
+      },
+      "effects": {
+        "scenario": "unknown-post",
+        "calls": [
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/1"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/1/comments"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/1/events"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/pulls"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/pulls/7"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/1"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/1/comments"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/1/events"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/pulls"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/pulls/7"
+          },
+          {
+            "method": "POST",
+            "path": "/github/repos/MBroholm/software-factory/issues/1/comments"
+          }
+        ]
+      },
+      "paused_drained": {
+        "at": "2026-11-26T14:22:22.276Z",
+        "workflows": [
+          {
+            "id": "0ITfSwx2Yb69qfX5",
+            "name": "Basic A \u2014 ISOLATED guard validation bridge",
+            "active": false
+          },
+          {
+            "id": "3SmlqLqhRDB5S5e9",
+            "name": "TEST ONLY \u2014 US3 tracking",
+            "active": false
+          },
+          {
+            "id": "5SviHhy3LypzrSTl",
+            "name": "Basic A refine \u2014 US1 URL fix test",
+            "active": false
+          },
+          {
+            "id": "AGgK7NJFKTzU2vkr",
+            "name": "Basic A refine \u2014 exception test",
+            "active": false
+          },
+          {
+            "id": "CEGJ4lmhzku75vUr",
+            "name": "Basic A track \u2014 INACTIVE guard skeleton",
+            "active": false
+          },
+          {
+            "id": "EIF8Urpa0tCkd2DI",
+            "name": "Basic A reserve \u2014 US2 INACTIVE",
+            "active": false
+          },
+          {
+            "id": "EtTipKHkEuutfggH",
+            "name": "reserve \u2014 post-effect exception test",
+            "active": false
+          },
+          {
+            "id": "Gussyro70lhzF3WT",
+            "name": "Basic A refine \u2014 INACTIVE guard skeleton",
+            "active": false
+          },
+          {
+            "id": "LCWxAPCdWrtjrRIn",
+            "name": "Basic A refine \u2014 US1 INACTIVE",
+            "active": false
+          },
+          {
+            "id": "MoMw34RHi9qqfEIB",
+            "name": "Basic A refine \u2014 US1 VM fix test",
+            "active": false
+          },
+          {
+            "id": "N5CiaS51bwjwQ133",
+            "name": "Basic A reserve \u2014 exception test",
+            "active": false
+          },
+          {
+            "id": "NdYJRhC6UWLHW8Vb",
+            "name": "Basic A reserve \u2014 INACTIVE guard skeleton",
+            "active": false
+          },
+          {
+            "id": "OmzjTQGq75oRBNfR",
+            "name": "TEST ONLY \u2014 US1 scheduled refinement",
+            "active": false
+          },
+          {
+            "id": "OqiOmuxC87o2rG0P",
+            "name": "Basic A reserve \u2014 success test",
+            "active": false
+          },
+          {
+            "id": "RByomITdtfRHZ74Z",
+            "name": "TEST ONLY \u2014 US2 scheduled reservation",
+            "active": false
+          },
+          {
+            "id": "VtDVFg2gETSZv5ir",
+            "name": "TEST ONLY \u2014 US4 track guard",
+            "active": false
+          },
+          {
+            "id": "bHUN2AuZtUysarZI",
+            "name": "TEST ONLY \u2014 Basic A US2 native fault bridge",
+            "active": false
+          },
+          {
+            "id": "dV09X3Pv4Cmd4krk",
+            "name": "refine \u2014 post-effect exception test",
+            "active": false
+          },
+          {
+            "id": "hheODhtDH4vVt3xb",
+            "name": "Basic A refine \u2014 success test",
+            "active": false
+          },
+          {
+            "id": "jjTILZ2XLFBjfaLN",
+            "name": "Basic A track \u2014 success test",
+            "active": false
+          },
+          {
+            "id": "p3E27rtBxAB8zvxL",
+            "name": "TEST ONLY \u2014 Basic A US1 native fault bridge",
+            "active": false
+          },
+          {
+            "id": "rQYrgKI7d22qpiov",
+            "name": "TEST ONLY \u2014 US4 refine guard",
+            "active": false
+          },
+          {
+            "id": "s3G2AFhIfXvm6AwV",
+            "name": "TEST ONLY \u2014 US4 reserve guard",
+            "active": false
+          },
+          {
+            "id": "sPrdMHSQ1Eubs5Oh",
+            "name": "Basic A refine \u2014 US1 token counting test",
+            "active": false
+          },
+          {
+            "id": "zcynhzDmEAapj2dT",
+            "name": "Basic A refine \u2014 US1 reviewed pagination fix test",
+            "active": false
+          }
+        ],
+        "running": 0,
+        "waiting": 0,
+        "rows": [
+          {
+            "id": 1,
+            "createdAt": "2026-11-25T08:55:42.755Z",
+            "updatedAt": "2026-11-26T14:22:18.014Z",
+            "key": "global",
+            "busy": true,
+            "execution_id": "1695",
+            "issue_number": 1,
+            "started_at": "2026-11-26T14:22:17.944Z"
+          }
+        ]
+      },
+      "repair": {
+        "previous": "unknown-post",
+        "reason": "Operator inspected completed synthetic unknown-post execution 1695; pause and drain confirmed; no manual agent or ordinary factory task used; reconcile exact marker/labels before reset",
+        "at": "2026-11-26T14:22:22.897Z"
+      },
+      "reset": {
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-26T14:22:23.189Z",
+        "key": "global",
+        "busy": false,
+        "execution_id": "1695",
+        "issue_number": 1,
+        "started_at": "2026-11-26T14:22:17.944Z"
+      },
+      "resume": {
+        "id": "1699",
+        "status": "success",
+        "version": "a229309d-6e20-42d7-ab1f-22442841c570",
+        "nodes": [
+          "US4 test entry",
+          "Read control",
+          "US4 before Validate entry",
+          "Validate entry",
+          "Already held",
+          "Prepare acquisition",
+          "Acquire control",
+          "US4 before Check acquire receipt",
+          "Check acquire receipt",
+          "Read acquired control",
+          "US4 before Verify acquisition",
+          "Verify acquisition",
+          "US4 in-flight restart boundary",
+          "Discover tracked issues",
+          "Select tracked issue",
+          "Have tracked issue",
+          "Set issue context",
+          "Check issue context",
+          "Read issue",
+          "Read comments",
+          "Read events",
+          "Read pulls",
+          "Read association",
+          "Read plan",
+          "Read has result",
+          "Read result detail",
+          "Read verified plan",
+          "Read ready",
+          "Recheck issue",
+          "Recheck comments",
+          "Recheck events",
+          "Recheck pulls",
+          "Recheck association",
+          "Recheck plan",
+          "Recheck has result",
+          "Recheck result detail",
+          "Recheck verified plan",
+          "Recheck ready",
+          "Compare snapshot",
+          "Need marker",
+          "Need transition",
+          "Final issue",
+          "Final comments",
+          "Final events",
+          "Final pulls",
+          "Final association",
+          "Final plan",
+          "Final has result",
+          "Final result detail",
+          "Final verified plan",
+          "Final ready",
+          "Complete tracked result",
+          "US4 before Require acknowledged completion",
+          "Require acknowledged completion",
+          "Read before release",
+          "US4 before Verify release ownership",
+          "Verify release ownership",
+          "Release control",
+          "US4 before Check release receipt",
+          "Check release receipt",
+          "Read released control",
+          "Confirm idle",
+          "Report completion"
+        ]
+      },
+      "after": {
+        "id": 1,
+        "createdAt": "2026-11-25T08:55:42.755Z",
+        "updatedAt": "2026-11-26T14:22:25.269Z",
+        "key": "global",
+        "busy": false,
+        "execution_id": "1699",
+        "issue_number": 1,
+        "started_at": "2026-11-26T14:22:24.968Z"
+      },
+      "final": {
+        "scenario": "open-result",
+        "issue_labels": [
+          "documentation",
+          "Your QA"
+        ],
+        "result_marker_count": 1,
+        "calls": [
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/1"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/1/comments"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/1/events"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/pulls"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/pulls/7"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/1"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/1/comments"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/1/events"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/pulls"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/pulls/7"
+          },
+          {
+            "method": "POST",
+            "path": "/github/repos/MBroholm/software-factory/issues/1/comments"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/1"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/1/comments"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/1/events"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/pulls"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/pulls/7"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/1"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/1/comments"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/1/events"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/pulls"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/pulls/7"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/1"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/1/comments"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/issues/1/events"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/pulls"
+          },
+          {
+            "method": "GET",
+            "path": "/github/repos/MBroholm/software-factory/pulls/7"
+          }
+        ]
+      },
+      "shutdown": {
+        "at": "2026-11-26T14:22:26.272Z",
+        "workflows": [
+          {
+            "id": "0ITfSwx2Yb69qfX5",
+            "name": "Basic A \u2014 ISOLATED guard validation bridge",
+            "active": false
+          },
+          {
+            "id": "3SmlqLqhRDB5S5e9",
+            "name": "TEST ONLY \u2014 US3 tracking",
+            "active": false
+          },
+          {
+            "id": "5SviHhy3LypzrSTl",
+            "name": "Basic A refine \u2014 US1 URL fix test",
+            "active": false
+          },
+          {
+            "id": "AGgK7NJFKTzU2vkr",
+            "name": "Basic A refine \u2014 exception test",
+            "active": false
+          },
+          {
+            "id": "CEGJ4lmhzku75vUr",
+            "name": "Basic A track \u2014 INACTIVE guard skeleton",
+            "active": false
+          },
+          {
+            "id": "EIF8Urpa0tCkd2DI",
+            "name": "Basic A reserve \u2014 US2 INACTIVE",
+            "active": false
+          },
+          {
+            "id": "EtTipKHkEuutfggH",
+            "name": "reserve \u2014 post-effect exception test",
+            "active": false
+          },
+          {
+            "id": "Gussyro70lhzF3WT",
+            "name": "Basic A refine \u2014 INACTIVE guard skeleton",
+            "active": false
+          },
+          {
+            "id": "LCWxAPCdWrtjrRIn",
+            "name": "Basic A refine \u2014 US1 INACTIVE",
+            "active": false
+          },
+          {
+            "id": "MoMw34RHi9qqfEIB",
+            "name": "Basic A refine \u2014 US1 VM fix test",
+            "active": false
+          },
+          {
+            "id": "N5CiaS51bwjwQ133",
+            "name": "Basic A reserve \u2014 exception test",
+            "active": false
+          },
+          {
+            "id": "NdYJRhC6UWLHW8Vb",
+            "name": "Basic A reserve \u2014 INACTIVE guard skeleton",
+            "active": false
+          },
+          {
+            "id": "OmzjTQGq75oRBNfR",
+            "name": "TEST ONLY \u2014 US1 scheduled refinement",
+            "active": false
+          },
+          {
+            "id": "OqiOmuxC87o2rG0P",
+            "name": "Basic A reserve \u2014 success test",
+            "active": false
+          },
+          {
+            "id": "RByomITdtfRHZ74Z",
+            "name": "TEST ONLY \u2014 US2 scheduled reservation",
+            "active": false
+          },
+          {
+            "id": "VtDVFg2gETSZv5ir",
+            "name": "TEST ONLY \u2014 US4 track guard",
+            "active": false
+          },
+          {
+            "id": "bHUN2AuZtUysarZI",
+            "name": "TEST ONLY \u2014 Basic A US2 native fault bridge",
+            "active": false
+          },
+          {
+            "id": "dV09X3Pv4Cmd4krk",
+            "name": "refine \u2014 post-effect exception test",
+            "active": false
+          },
+          {
+            "id": "hheODhtDH4vVt3xb",
+            "name": "Basic A refine \u2014 success test",
+            "active": false
+          },
+          {
+            "id": "jjTILZ2XLFBjfaLN",
+            "name": "Basic A track \u2014 success test",
+            "active": false
+          },
+          {
+            "id": "p3E27rtBxAB8zvxL",
+            "name": "TEST ONLY \u2014 Basic A US1 native fault bridge",
+            "active": false
+          },
+          {
+            "id": "rQYrgKI7d22qpiov",
+            "name": "TEST ONLY \u2014 US4 refine guard",
+            "active": false
+          },
+          {
+            "id": "s3G2AFhIfXvm6AwV",
+            "name": "TEST ONLY \u2014 US4 reserve guard",
+            "active": false
+          },
+          {
+            "id": "sPrdMHSQ1Eubs5Oh",
+            "name": "Basic A refine \u2014 US1 token counting test",
+            "active": false
+          },
+          {
+            "id": "zcynhzDmEAapj2dT",
+            "name": "Basic A refine \u2014 US1 reviewed pagination fix test",
+            "active": false
+          }
+        ],
+        "running": 0,
+        "waiting": 0,
+        "rows": [
+          {
+            "id": 1,
+            "createdAt": "2026-11-25T08:55:42.755Z",
+            "updatedAt": "2026-11-26T14:22:25.269Z",
+            "key": "global",
+            "busy": false,
+            "execution_id": "1699",
+            "issue_number": 1,
+            "started_at": "2026-11-26T14:22:24.968Z"
+          }
+        ]
+      },
+      "limits": "Synthetic HTTP outage/response-loss effects on designated fixtures, not an actual GitHub outage or real task transition. Existing real Building reservation untouched."
+    }
+  ],
+  "backup_restore": {
+    "image_id": "sha256:e0df076a41076127d5f765e05acb8ba746bddff86442a92269c0f5a7219a7e4b",
+    "source_container": "factory-guard-test",
+    "source_volume": "factory_guard_test_data",
+    "restore_container": "factory-us4-restore",
+    "restore_volume": "factory_us4_restore_data",
+    "network": "none",
+    "published_ports": [],
+    "backup_sha256": "357c7fd341c069602a717af64383f06c356cfc02a4d423a1cf70696d152e70c7",
+    "file_count": 9,
+    "all_stopped_file_hashes_equal": true,
+    "workflow_count_restored": 25,
+    "all_restored_workflows_inactive": true,
+    "control_rows_exact": true,
+    "restored_row": {
+      "id": 1,
+      "createdAt": "2026-11-25T08:55:42.755Z",
+      "updatedAt": "2026-11-26T14:22:25.269Z",
+      "key": "global",
+      "busy": false,
+      "execution_id": "1699",
+      "issue_number": 1,
+      "started_at": "2026-11-26T14:22:24.968Z"
+    },
+    "running": 0,
+    "waiting": 0,
+    "test_credential_restored": true,
+    "credential_test_execution": "1700",
+    "credential_test_workflow": "UnJxYKBNIvifC5TE",
+    "clone_stopped": true,
+    "original_volume_untouched": true,
+    "private_backup_retained": true,
+    "limits": "Only the designated test volume restored; no operational restore or ordinary task processing. Restored historical credentials remain encrypted and unused."
+  },
+  "retained_intervention": "First outage resume adapter read old execution before webhook registration. Paused/drained and inspected; corrected HTTP/new-ID assertion and bounded registration wait; independent corrected case passed. No source workflow behavior changed."
+}
