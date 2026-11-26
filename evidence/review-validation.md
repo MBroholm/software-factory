@@ -154,3 +154,56 @@ acquisition and crash/restart checks) and other US4 tasks remain pending. Operat
 still requires owner PR review and manual matching-revision import; no operational activation
 or full Basic A acceptance is claimed. Existing local checks and source-only limits above are
 retained as historical checkpoints rather than evidence of a native failure.
+
+
+## T034 real-task owner review closeout — 2026-11-26
+
+**Complete.** Fresh read-only GitHub REST observations at approximately
+`2026-11-26T13:47:29Z` establish an existing owner acceptance decision for the genuine
+[issue #1](https://github.com/MBroholm/software-factory/issues/1) /
+[PR #5](https://github.com/MBroholm/software-factory/pull/5) manual build.
+The earlier local pending-review statements above and in the US2 record are historical.
+The convergence finding used those older statements without checking current GitHub state;
+no additional owner decision or new real run was necessary.
+
+**Owner decision reference:** PR #5 reports `merged=true`, `merged_by.login=MBroholm`,
+`merged_by.id=202449424`, `merged_at=2026-11-25T19:04:05Z`, and merge commit
+`bb474bda2544fcc8c19695460c1f2ad1dea6c055`. The accepted head is
+`d0101c4011a1b1a2f29a2b3bc17a7828008a348f`. The owner's actual merge is the explicit
+acceptance decision; the reviews endpoint contains no formal PR review submissions.
+Do not infer a separate formal review or undocumented owner testing from the merge.
+
+| Review gate | Evidence observed and assessment |
+|---|---|
+| Explicit task approval | Owner event `37246567614`, actor `202449424`, after unedited refinement `7161366810`; current packaged approval validator passes against the live issue/comments/events and captured source digest. |
+| Issue linkage | PR body contains `Refs #1`, exact refinement and handoff links; handoff `7169659105` records the same approval, refinement and source. |
+| Branch isolation | Same-repository `issue-1` head, `main` base, accepted head above; GitHub files endpoint and local committed diff show only `factory/README.md`, +15/-0. |
+| Acceptance evidence | All four PR acceptance boxes are now checked. Read-only content assertions pass for the SSH access section, exact placeholder command/URL, privacy text and balanced fences. The PR heading still says “left unchecked for review”; the actual boxes are checked. |
+| Secret exclusion | Manual inspection of the complete added patch finds only `user@server` placeholders and loopback addresses; targeted token/private-key pattern screen passes. This is a check of the changed patch, not a repository-wide secret audit. |
+| Workflow JSON/permissions | No workflows, services, credentials, configuration or permission files change; no operational import is needed for this documentation-only result. |
+| Questions and scope | [Decision 7170400632](https://github.com/MBroholm/software-factory/issues/1#issuecomment-7170400632) preserves the real session question, owner-selected endpoint/command and explicit unchanged-scope answer. See [US2 real manual build](manual-build-validation.md#real-manual-build-result--issue-1--pr-5). |
+
+**Checks actually performed for T034:** on the local Fedora development workspace, read-only
+GitHub REST reads of the PR, changed files, reviews, PR comments, issue, comments, approval
+history, head check runs and commit statuses; local `git show` at the accepted head and
+`git diff a47222a47d6e15edf0fccfee2cb296434418263f...d0101c4011a1b1a2f29a2b3bc17a7828008a348f --check`
+(PASS); Node assertions for the gates above (PASS). GitHub reports zero check runs and zero
+commit statuses (`pending` aggregate with no statuses); this is not a CI pass.
+
+**Retained failures/unrun checks:** the original PR records an SSH configuration-permission
+failure and successful `ssh -F /dev/null -G` parse fallback. That parse is reused as reported,
+not rerun here. Live SSH/browser connectivity and controlled failure tests remain unrun for
+this result; acceptance checks establish documentation content, not live connectivity.
+An initial T034 Python wrapper could not reach GitHub from the sandbox; direct approved
+`gh api` reads succeeded. A Node child-process wrapper reported `spawnSync git EPERM`;
+standalone read-only `git show` followed by file-based Node checks succeeded. Neither wrapper
+failure changed source, GitHub or runtime state.
+
+**Limits and scope:** this closes SC-002's real manual build-to-owner-decision evidence gap
+and supplies the US3/AC2 review evidence. The real issue is still open with `Building` and
+no result marker was present in the observed comments. No current tracking execution or
+real QA/Done transition is claimed: US3 behavior remains supported by the separately recorded
+native/scheduled fixtures. Those fixtures are reused without rerunning unchanged suites and
+are not counted as additional real tasks. No issue/PR comment, label, merge, workflow import,
+execution or operational adoption was performed in T034. US4, final acceptance, five-run
+project evaluation and operational owner review/manual import remain separate.

@@ -606,3 +606,17 @@ success/occupied observations augment, rather than replace, the real issue #1/ma
 and PR #5 evidence. This does not claim owner PR acceptance, a complete Basic A loop or a
 new real task run. No production activation, agent auto-launch, merge or US3 work occurred.
 No .specify/extensions.yml exists; no post-implementation hooks are registered.
+
+
+## T034 owner-decision evidence update — 2026-11-26
+
+Fresh read-only GitHub inspection confirms that the owner `MBroholm` (ID `202449424`)
+merged [PR #5](https://github.com/MBroholm/software-factory/pull/5) at
+`2026-11-25T19:04:05Z`, accepting head `d0101c4011a1b1a2f29a2b3bc17a7828008a348f`
+as merge commit `bb474bda2544fcc8c19695460c1f2ad1dea6c055`. All four PR acceptance boxes
+are checked. Earlier pending/open observations remain historical; the actual owner merge
+supplies the previously unrecorded acceptance decision. See the
+[T034 review closeout](review-validation.md#t034-real-task-owner-review-closeout--2026-11-26)
+for approval/linkage/branch/content/secret/permission checks and explicit failed/unrun limits.
+Issue #1 remains open/Building; this update does not claim a real tracking execution,
+operational workflow adoption or another real task run.
