@@ -334,5 +334,39 @@
     "waiting": 0,
     "fixture_stopped": true,
     "production_unchanged": true
+  },
+  "operational_import": {
+    "owner_confirmed": true,
+    "verified_at": "2026-11-26T16:53:53.644Z",
+    "workflow_id": "spA3DraW41PVkV3z",
+    "saved_version": "6dcd3b8e-b018-4e4a-8f4e-25f26bdb0615",
+    "published": false,
+    "code_matches": true,
+    "connections_match": true,
+    "if_conditions_match": true,
+    "credential_references_match": true,
+    "control_table_references_match": true,
+    "schedule_seconds": 60,
+    "all_workflows_unpublished": true,
+    "running_or_waiting": 0,
+    "guard": {
+      "id": 1,
+      "key": "global",
+      "busy": true,
+      "execution_id": "133",
+      "issue_number": 9,
+      "started_at": "2026-11-26T16:12:35.164Z"
+    },
+    "github_readback": {
+      "issue": 9,
+      "state": "open",
+      "label": "Building",
+      "result_marker_count": 0,
+      "pr": 10,
+      "pr_state": "open",
+      "merged": false,
+      "head": "b84bfef4d438f7631f51045521ca59c207490d2f"
+    },
+    "recovery_pending": true
   }
 }

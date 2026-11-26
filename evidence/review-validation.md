@@ -2,8 +2,8 @@
 
 **Subsequent tracking fix, 2026-11-26:** the [no-work race record](tracking-race-validation.md)
 documents production execution 133, the revised tracking source hash and focused local/native
-checks. Earlier T023 results below remain evidence for their recorded source revision; renewed
-operational owner import and real QA/Done observations for this fix remain pending.
+checks. Earlier T023 results below remain evidence for their recorded source revision; the owner has subsequently imported the fix and its version/mappings were verified read-only.
+Production recovery/publication and real QA/Done observations remain pending.
 
 T020–T023 are complete, and T033 passed for credential-free US3 fixture testing. Native
 validation below supersedes the initial source-only checkpoint. No operational adoption, real

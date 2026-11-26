@@ -13,7 +13,7 @@ operational deployment. US4 completes the runbook, architecture, guard/recovery 
 Use [current deployment and backup procedures](#current-deployment-backup-and-restore--t024)
 below rather than the retained T004 trial commands. No Basic B runner is implemented.
 
-## Tracking no-work race fix — pending owner adoption
+## Tracking no-work race fix — import verified, recovery pending
 
 Production execution 133 found no PR, then found newly created PR #10 at final readback and
 held safely without any writes. [The incident and tested fix](../evidence/tracking-race-validation.md)
@@ -21,8 +21,11 @@ record the new read-only completion branch: validated no-result/unchanged QA rel
 leaves new arrivals for the next poll. Planned writes still require strict rechecks and final
 readback. Source track SHA-256 is
 `3d4e5883f4af1e7028c89dbe384217327cae4d330ee6e02d92f8cab1ac24d23c`.
-This source is not the previously published track version 943b51b9. Renew owner PR review and
-manual import/mapping verification before adopting it; no refine/reserve reimport is required.
+The owner manually imported this source; read-only verification at 2026-11-26T16:53:53.644Z
+confirmed saved track version `6dcd3b8e-b018-4e4a-8f4e-25f26bdb0615`, with matching Code,
+connections, IF conditions and credential/table references. All workflows remain unpublished;
+the 133/issue 9 hold is unchanged. Owner recovery/publication and real QA/Done observation
+remain pending. No refine/reserve reimport is required.
 Keep production paused/drained until the owner reconciles the actual 133 hold using the linked
 recovery steps. No agent production reset, retry or publication was performed.
 

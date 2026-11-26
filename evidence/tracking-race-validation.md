@@ -101,6 +101,31 @@ actual state. With the known no-write outcome confirmed, the owner may clear onl
 its diagnostic context and publish/resume reviewed schedules. Let a **fresh scheduled poll**
 process the PR; do not Retry the failed execution or run individual mutation nodes.
 
-Owner manual import, new operational version/mapping verification, production reset/resumption
-and real QA/Done observations remain **UNRUN** for this fix. Prior T030 completion describes the
+Owner manual import and new operational version/mapping verification were subsequently completed
+as recorded below. Production reset/resumption and real QA/Done observations remain **UNRUN**. Prior T030 completion describes the
 previous imported revision and is preserved; it does not waive renewed review/manual import.
+
+
+## Owner manual import verified — 2026-11-26
+
+The owner confirmed importing the new workflow. Read-only supported export inspection at
+**16:53:53.644 UTC** verified tracking workflow `spA3DraW41PVkV3z`, saved version
+`6dcd3b8e-b018-4e4a-8f4e-25f26bdb0615`. All 71 nodes are present; every packaged Code body,
+all connections, IF conditions and saved credential/control-table references match the privately
+mapped reviewed artifact. The schedule remains 60 seconds. Credential values were not read.
+This inspection establishes these specific fields; it does not audit credential scopes.
+
+All three operational workflows remain unpublished (active=false, activeVersionId=null),
+with no running/waiting/new executions. The typed singleton still has id=1, global, busy=true,
+execution_id=133, issue_number=9, started_at=2026-11-26T16:12:35.164Z. Exported SQLite Boolean
+1 was normalized to logical true; no direct SQL was used. Execution 133 remains error/stopped.
+Fresh public GitHub readback confirms #9 open/Building, no result marker, PR #10 open/unmerged
+at the unchanged b84bfef4d438f7631f51045521ca59c207490d2f head. Thus the known no-write
+incident is unchanged. Supported export files/disposable key were removed after inspection;
+filtered readback remains private/ignored. Public observations are appended in the results JSON.
+
+The owner still needs to confirm the coding agent is finished/stopped, record reconciliation on
+#9 and set only busy=false while workflows remain paused. Retain the execution/issue/start
+fields and Building label, publish the reviewed workflows, and observe a fresh scheduled poll.
+No production reset/publication, failed-execution retry or real QA/Done transition was performed
+or inferred by this read-only verification.
