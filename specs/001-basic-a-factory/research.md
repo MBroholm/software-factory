@@ -5,7 +5,8 @@ hosted comparison and Ubuntu API smoke verification. Credential/node activation 
 
 ## Context and method
 
-Read the brief, constitution v1.1.1, approved spec, original draft and checklist. The original
+Original research read the brief, constitution v1.1.1, approved spec, original draft and checklist.
+Governance alignment (2026-11-26) applies constitution v2.0.0 and brief v2 (2026-11-25). The original
 artifacts remain in commit `920399e`. A research agent checked official deployment, GitHub and
 Ollama references; the primary agent reviewed the complexity against FR-001–016. Existing public
 repository and labels were verified by anonymous GitHub API reads on 2026-11-22. No server was
@@ -29,7 +30,8 @@ Do not copy a full hosted Assistant stack. [n8n Compose installation](https://do
 SpecKit templates under `.specify/templates/` produce development artifacts only. The factory's
 runtime refinement inputs are versioned `factory/templates/task.md` and
 `factory/prompts/refinement.md`, reviewed together with the refine JSON and verified during
-manual import. No runtime SpecKit template resolver is part of Basic A.
+manual operational import; isolated test imports may be automated under FR-012. No runtime
+SpecKit template resolver is part of Basic A.
 
 ## R2 — Remove task ledger; retain one fail-stop flag
 
@@ -197,5 +199,9 @@ Architecture is specified; no unresolved scope question blocks Phase 1. Before a
 retain observed server/image/model metadata; provision GitHub and Gemini credentials, verify
 browser login and the actual imported HTTP node, and close missing/change-affected quality
 checks. Model/provider choice is resolved; no paid budget is authorized. Review FR-016/SC targets.
-The instructor-confirmation requirement remains outstanding and unchanged. No automated
-resumption is planned. No extension registry/hooks exist.
+Constitution v2.0.0 accepts initial approval versus unchanged-scope resumption as owner policy;
+no instructor confirmation is required. Only the owner grants initial approval and expanded
+scope needs renewed explicit approval. No automated Basic A resumption is planned. Isolated
+automated testing is permitted under FR-012; operational adoption retains owner PR review and
+manual import of the matching reviewed revision, before or after merge. Manual import does
+not require manual execution of every test. No extension registry/hooks exist.

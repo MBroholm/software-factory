@@ -51,7 +51,7 @@ Input budget must account for prompt/schema and output reserve, not character co
 The runtime task template is `factory/templates/task.md`; its versioned refinement prompt is
 `factory/prompts/refinement.md`. SpecKit templates in `.specify/templates/` guide development
 artifacts only and are not runtime refinement inputs. The owner verifies reviewed prompt/template
-versions when manually importing the refine workflow; no runtime SpecKit template resolver is
+versions at operational manual import; test operators verify tested versions in isolation; no runtime SpecKit template resolver is
 introduced. The task template is separate from SpecKit's feature spec template. It asks what to build, why,
 constraints, testable acceptance criteria and unresolved questions; it never grants approval.
 
@@ -102,7 +102,9 @@ No count, GitHub write, network/timeout/lost-response, authentication/quota/429,
 or malformed/truncated output retry is authorized. Exhaustion or any such failure retains busy
 and visible `Refining` for inspected owner recovery. An exact marked revision skips both provider
 calls. No queue, failed-execution replay, quota ledger, model switch or paid fallback is added.
-Native live retry/cancellation behavior remains unverified until owner manual import and testing.
+Native retry/cancellation evidence is revision-specific; consult `evidence/refinement-validation.md`
+for completed checks. Missing/change-affected native checks may be automated in isolated testing
+under FR-012; operational adoption retains owner review and manual import.
 
 ## Data transfer and credential boundary
 
@@ -116,7 +118,7 @@ The transient SSH smoke-test key was not installed remotely.
 
 Before activation, the owner saves a dedicated credential through the private n8n editor,
 checks the active project quotas and confirms browser login. Verify one HTTP Request node using
-the reviewed payload after owner manual import of reviewed JSON, reusing unaffected quality
+the reviewed payload in isolated testing with scoped credentials under FR-012, reusing unaffected quality
 evidence. Scrub diagnostic messages and execution/export data; do not print request headers.
 
 ## Early candidate evaluation before workflow implementation

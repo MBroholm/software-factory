@@ -1,17 +1,26 @@
 # One-import isolated guard validation bridge
 
+Current policy (2026-11-26): imports, updates and execution in designated isolated dev/test
+n8n may be automated after T033 boundary verification, using test data, scoped credentials and
+designated test resources. No operational workflow replacement/activation or ordinary factory
+tasks are allowed. Record tested source/imported revision and environment. Operational adoption
+requires owner PR review and manual import of the matching reviewed JSON revision, renewed for
+subsequent changes, before or after merge. Manual import does not require manual execution of
+every test. Historical owner imports and shutdown observations below remain evidence, not new
+setup requirements. Existing scripts' limited capabilities are unchanged by this policy.
+
 This test-only workflow reduces repeated manual fault edits/runs. It is not part of Basic A's
 production workflow design, and adds no runner or product API. T008 remains incomplete until
 actual native-engine results are collected; local compilation is not a runtime pass.
 
-## Owner review and one manual import
+## Review and isolated test import
 
 Review `build-guard-bridge.py` and generated `guard-bridge.json`. The generated workflow starts
 inactive and contains three prefixed copies of the current guard graphs, with native Data Table
 nodes, explicit fault injection and the same acknowledgement/ownership/release checks. Original
 workflow files remain unchanged; source hashes are in `guard-bridge-sources.json`.
 
-In **factory-guard-test at localhost:5679 only**, manually import `guard-bridge.json` as a new
+In **factory-guard-test at localhost:5679 only**, import (automation permitted) `guard-bridge.json` as a new
 workflow. Publish that test workflow so its webhooks register. There are **no Schedule triggers**,
 no GitHub/model calls, no credential references, no subworkflows and no automatic failure cleanup.
 Keep all existing skeleton/test workflows unpublished. Do not import this bridge into production.
@@ -78,7 +87,7 @@ names/connection targets are unique/resolved; no retries/continue-on-failure/cre
 remote HTTP/subworkflow nodes; original guard source hashes match. Owner imported/published bridge `0ITfSwx2Yb69qfX5`, version
 `2c36bf8c-6531-4ec4-bc77-4402ba3b8d83`; assistant verified all 43 Code bodies match the prepared
 source. Native bridge checks are recorded in `evidence/guard-bridge-results.json`. Rebuild with `python3 factory/tests/build-guard-bridge.py` after
-source changes, review the resulting diff and manually reimport before relying on its results.
+source changes, inspect the resulting diff and reimport into isolated test n8n before relying on its results.
 
 ## Operator helpers and observed runs
 

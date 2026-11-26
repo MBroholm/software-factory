@@ -2,7 +2,7 @@
 
 **Input**: [plan.md](plan.md), [spec.md](spec.md), [research.md](research.md),
 [data-model.md](data-model.md), [contracts/](contracts/task-lifecycle.md), [quickstart.md](quickstart.md).
-**Created**: 2026-11-23. **Validated against current design**: 2026-11-24.
+**Created**: 2026-11-23. **Governance alignment**: 2026-11-26 (constitution v2.0.0; brief v2, 2026-11-25).
 **Branch**: `001-basic-a-factory`. Existing task work and planning amendments are preserved.
 **Tests**: The owner explicitly requests shared-flag success/no-work release and unexpected-failure
 retention tests, plus early model evaluation (local trials retained; owner adopted Gemini). These tasks plan those checks; no result is asserted.
@@ -18,9 +18,27 @@ SpecKit templates create development artifacts. Runtime refinement uses only
 No runtime SpecKit resolver/full pipeline is introduced.
 
 This is Basic A: three workflows, owner-selected Gemini refinement, manual Codex on Fedora, Ubuntu/Compose,
-one Building slot, explicit approval, review and manual JSON import. No runner, Redis, automatic
+one Building slot, explicit approval, review and manual operational JSON import. No runner, Redis, automatic
 resume/repair, question-to-issue automation or advanced extension work. Manual recovery and the
-single fail-stop interlock remain intentional. No changes to the constitution or approved spec.
+single fail-stop interlock remain intentional. The existing spec/plan are amended for governance
+alignment only; no feature regeneration or new Basic B/advanced implementation is authorized.
+
+### Import and test policy for remaining work
+
+Automated import, update and execution are permitted only in a designated isolated dev/test n8n
+instance using test data, scoped test credentials and designated external test resources. No
+operational workflow replacement/activation or ordinary factory-task processing is permitted in
+this testing. T033 verifies these boundaries before future automated imports or native tests.
+Operational adoption requires owner review of versioned JSON in its PR and owner manual import
+of the matching reviewed revision, renewed for subsequent changes, before or after merge.
+Manual import does not require manual execution of every test. Evidence identifies tested
+revision/hash, imported revision, environment, test-copy deltas and actual outcomes.
+
+Completed task descriptions and dated checkpoints below retain the historical process and
+observations; old manual test-import handoffs describe that process, not a continuing blanket
+prohibition. Checkboxes and valid evidence are preserved. Only missing/change-affected checks
+are required. Approval/resumption is accepted owner policy without instructor confirmation;
+Basic A retains manual launch, explicit owner rework and owner-controlled recovery.
 
 ## Phase 1: Setup and early model decision
 
@@ -68,12 +86,12 @@ rows retained. No production change, issue/model call, automatic import or T009+
 The Phase 2 foundation checkpoint still requires T009; do not start user stories from this
 partial-phase closeout.
 
-- [X] T009 Write pause/drain/inspect/record/repair/reset/resume instructions and credential/export boundaries in `docs/operations.md` and `docs/permissions.md`; include GitHub-outage visibility fallback, manual agent checks, no blind unknown-write retry, role-needed token permissions and manual reviewed JSON import. Retain the constitutional instructor-confirmation follow-up.
+- [X] T009 Write pause/drain/inspect/record/repair/reset/resume instructions and credential/export boundaries in `docs/operations.md` and `docs/permissions.md`; include GitHub-outage visibility fallback, manual agent checks, no blind unknown-write retry, role-needed token permissions and manual reviewed JSON import. Preserve owner initial/scope approval and review/merge authority.
 
 **T009 closeout, 2026-11-24**: Added owner-controlled recovery, outage incident record,
 uncertain-write/release reconciliation, agent/reservation checks and reviewed import/revision
 verification in `docs/operations.md`; added component/token, credential/data-transfer and public
-export boundaries in `docs/permissions.md`. Instructor confirmation remains outstanding.
+export boundaries in `docs/permissions.md`. The former instructor-confirmation follow-up is superseded by accepted owner policy (2026-11-26).
 Validation: manual comparison with constitution/plan/contracts and T008 shutdown evidence;
 16 local Markdown links/anchors and both documents' code fences checked; `git diff --check`
 passed. GitHub/n8n technical references checked against official documentation. Documentation
@@ -162,7 +180,8 @@ mappings; 754/758 traces confirm no count/inference calls. Actual core 10/30-sec
 AbortSignal cancellation pass; full graph cancellation is not implied. Prepared credential-free
 native fault bridge and 43-case HTTP simulator pass fixture packaging plus 335 installed VM/
 Wait checks. The loopback-only synthetic server is ready inside factory-guard-test. Zero full
-bridge cases have run; owner manual import/publication remains required by constitution I/III.
+bridge cases have run at this historical checkpoint; the former owner test-import gate is
+superseded by the 2026-11-26 isolated-testing policy above.
 T014 stays unchecked. See `factory/tests/refinement-bridge.md` and the validation evidence.
 
 
@@ -218,8 +237,8 @@ closure, including a closed-unmerged PR with the issue still open.
 
 - [ ] T020 [US3] Implement paginated result matching in `factory/workflows/track.json`, citing `Result pull request.head repository/branch/SHA`, `Result pull request.base branch`, `Result pull request.body issue link`, `Result pull request.state`, `Result pull request.merged status/time` and `Result pull request.activity times` in [data-model.md — Result pull request](data-model.md#result-pull-request); require an unambiguous current result and compare the handoff PR baseline/new approval so stale PRs cannot overwrite rework.
 - [ ] T021 [US3] Implement result markers and `Your QA`/`Done` tracking in `factory/workflows/track.json`, citing `Result pull request.current approval event ID`, `Result pull request.PR number`, `Result pull request.head SHA` and result-marker constraints in [data-model.md](data-model.md#result-pull-request), plus [State transitions](data-model.md#state-transitions); merged current result/closed issue completes, while unmerged closure with open issue stays QA; unchanged/no-result paths release acquired busy and unexpected failures retain it.
-- [ ] T022 [P] [US3] Document issue-linked PR summary/actual checks, owner review, explicit rework approval and manual workflow JSON import in `docs/review.md` per `contracts/manual-handoff.md`; distinguish universal review gates from additional factory-task approval/linkage gates and show failed/unrun acceptance criteria honestly.
-- [ ] T023 [US3] Before live exercises, have the owner manually import the reviewed `factory/workflows/track.json` and verify the other active workflows still match their reviewed revisions; record reviewed commits/imported revisions in `evidence/review-validation.md`, then exercise open-result QA, merge, issue close, closed-unmerged/open-issue, fresh rework/new head and ambiguous stale PR cases, recording results in `evidence/review-validation.md`; verify ordinary session summaries/in-scope rework comments do not invalidate captured source, repeated polls do not duplicate QA markers, and no autonomous merge/import occurs.
+- [ ] T022 [P] [US3] Document issue-linked PR summary/actual checks, owner review, explicit rework approval, isolated automated testing and manual operational workflow JSON import in `docs/review.md` per `contracts/manual-handoff.md`; distinguish universal review gates from additional factory-task approval/linkage gates and show failed/unrun acceptance criteria honestly.
+- [ ] T023 [US3] After T033, import `factory/workflows/track.json` into designated isolated test n8n (automation permitted); verify imported source and test-only mappings, while operational workflows remain untouched. Record tested commits/environment/imported revisions in `evidence/review-validation.md`, then exercise open-result QA, merge, issue close, closed-unmerged/open-issue, fresh rework/new head and ambiguous stale PR cases, recording results in `evidence/review-validation.md`; verify ordinary session summaries/in-scope rework comments do not invalidate captured source, repeated polls do not duplicate QA markers, and no autonomous merge or operational import occurs. Operational adoption separately requires owner PR review and manual import of the matching reviewed JSON revision, before or after merge.
 
 **Checkpoint**: The complete normal Basic A loop is available, subject to cross-workflow validation.
 
@@ -231,7 +250,7 @@ trace a real task's input, decisions, PR and review entirely from sanitized repo
 
 - [ ] T024 [US4] Complete deployment/operations instructions in `docs/operations.md` for private SSH editor login, pinned model/images, one production instance, volume/encryption-key backup and restore, private execution retention and manual import/revision verification; preserve one-row guard and no automatic recovery/expiry tradeoff.
 - [ ] T025 [P] [US4] Create `docs/architecture.md` from the reviewed Basic A design, explicitly separating `.specify/templates/` development artifacts from runtime `factory/templates/task.md` and `factory/prompts/refinement.md`, and showing server n8n, outbound Gemini refinement, Fedora manual coding and GitHub interface; distinguish retained optional Ollama trial artifacts from runtime dependencies.
-- [ ] T026 [US4] Complete the `factory/tests/guard-scenarios.md` matrix against **all three completed workflows** in isolation; verify reviewed/manual-imported revisions, reuse applicable current-version story evidence and execute missing or change-affected cases, including success, every no-work early return, already-busy entry, unexpected exception before/after side effects, failed final release, crash/restart and missing/unconfirmed acquisition; record actual rows, failed/skipped executions and later-poll behavior in `evidence/guard-validation.md`; do not accept skeleton/helper-only results or unconditional cleanup that masks failures.
+- [ ] T026 [US4] Complete the `factory/tests/guard-scenarios.md` matrix against **all three completed workflows** in isolation; verify source/imported revisions and isolated environment under T033, reuse applicable current-version story evidence and execute missing or change-affected cases, including success, every no-work early return, already-busy entry, unexpected exception before/after side effects, failed final release, crash/restart and missing/unconfirmed acquisition; record actual rows, failed/skipped executions and later-poll behavior in `evidence/guard-validation.md`; do not accept skeleton/helper-only results or unconditional cleanup that masks failures.
 - [ ] T027 [US4] Execute pause/drain/inspect/repair/reset/resume and backup/restore exercises, including GitHub outage, partial label transition and unknown comment POST, in an isolated deployment; record operator steps, marker inspection, retained Building reservations and sanitized failures in `evidence/recovery-validation.md`; ambiguous outcomes remain held rather than retried automatically.
 - [ ] T028 [US4] Assemble `evidence/index.md` linking the real task issue/PR, refinement, session decision, owner review and actual checks from the validation records; explicitly distinguish fixtures from real runs, count only genuine issue/PR-linked tasks and retain the final-project minimum of five runs as outstanding until actually met.
 
@@ -239,8 +258,8 @@ trace a real task's input, decisions, PR and review entirely from sanitized repo
 
 ## Phase 7: Polish and cross-cutting review
 
-- [ ] T029 Summarize existing acceptance evidence against `specs/001-basic-a-factory/quickstart.md` in `evidence/acceptance.md`, linking T004/T014/T019/T023/T026/T027/T028 results and their tested revisions with passed/failed/unrun status; use T026 as the completed-workflow guard evidence, not a second guard test pass. Run only checks missing from the evidence or affected by subsequent changes (including any missing or change-affected secret/export/permission checks), recording why each additional check is needed; reviewed changed JSON must be manually imported by the owner before affected live checks. Do not blanket-rerun the acceptance matrix or checks already valid for unchanged artifacts.
-- [ ] T030 Review all Basic A artifacts on an appropriate PR/branch, update `docs/operations.md` with reviewed active workflow versions and owner-manual import evidence, and preserve the instructor-confirmation follow-up; no auto-merge, automatic workflow activation, Basic B implementation or advanced work is authorized by this checklist.
+- [ ] T029 Summarize existing acceptance evidence against `specs/001-basic-a-factory/quickstart.md` in `evidence/acceptance.md`, linking T004/T014/T019/T023/T026/T027/T028 results and their tested revisions with passed/failed/unrun status; use T026 as the completed-workflow guard evidence, not a second guard test pass. Run only checks missing from the evidence or affected by subsequent changes (including any missing or change-affected secret/export/permission checks), recording why each additional check is needed; changed test JSON may be imported automatically after T033; any operational adoption requires owner PR review and manual import of the matching reviewed revision. Do not blanket-rerun the acceptance matrix or checks already valid for unchanged artifacts.
+- [ ] T030 Review all Basic A artifacts on an appropriate PR/branch, update `docs/operations.md` with reviewed active workflow versions and owner-manual import evidence, and accepted initial-approval/unchanged-scope-resumption policy; no auto-merge, automatic operational workflow adoption, Basic B implementation or advanced work is authorized by this checklist.
 
 ## Dependencies and execution order
 
@@ -256,8 +275,10 @@ trace a real task's input, decisions, PR and review entirely from sanitized repo
 - **US3**: Requires an approved handoff; T020 -> T021 -> T023. T022 can proceed alongside
   T020–T021. Historical fixtures can be prepared without claiming earlier stories complete.
 - **US4**: T024 -> T026 -> T027 -> T028; T025 can proceed alongside T024. T026 runs after the
-  completed workflows, not only skeletons. T014/T019/T023 each require the owner to manually
-  import reviewed JSON before live exercises; T030 is not a substitute for these checkpoints.
+  completed workflows, not only skeletons. Completed T014/T019 imports remain historical evidence.
+  T033 precedes future automated imports/native isolated checks, including T023/T026/T027 and any
+  change-affected T029 checks. It need not block offline T020–T022 work. Owner manual operational
+  import remains required for adoption; T030 cannot substitute for that gate.
   T029 consolidates the resulting evidence and runs only missing/change-affected checks; T030
   follows for final review and recording, not deferred first imports.
 - This individual project normally proceeds serially. No parallel production mutations or
@@ -307,11 +328,15 @@ real evidence. Tests requested here must cover actual workflow completion/error 
 just duplicate control logic in Python. Manual fixture tests and isolated fault injection are
 acceptable; use the smallest practical harness and standard-library checks where useful.
 
-All tasks remain unchecked. Owner-only approvals, manual JSON imports and conservative manual
-recovery are acceptance boundaries throughout. If stronger exactly-once behavior or autonomous
+Checkboxes record actual completion. Owner-only initial/scope approvals, manual operational
+JSON imports and conservative manual recovery remain acceptance boundaries throughout. If stronger exactly-once behavior or autonomous
 recovery becomes necessary, surface that requirement and revise the plan instead of silently
 weakening FR-016 or implementing a new orchestration platform.
 
+
+## Isolated-test boundary verification (before future automated testing)
+
+- [ ] T033 [US4] Verify the existing isolated development/test n8n environment before any future automated import/update/native execution (FR-012/013, SC-003/006). Record instance identity/version, separate volume/control tables, test credential scopes, designated fixture or external test resources, and all HTTP destinations/mappings in `docs/operations.md` and `evidence/acceptance.md`. Verify it cannot target operational workflows or ordinary factory tasks; stop on unknown boundaries. Reuse existing `factory-guard-test` setup/evidence where valid rather than create another deployment or rerun completed suites. Record tested source/imported revisions and environment for subsequent tests; keep owner PR review/manual matching-revision import as the separate operational adoption gate. This task does not authorize operational deployment or a new test framework.
 
 ## Phase 8: Convergence
 

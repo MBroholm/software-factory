@@ -1,6 +1,16 @@
 # Basic A operations — setup, guard and manual recovery
 
-## Current provider decision — 2026-11-24
+## Current status — 2026-11-26
+
+US1/refine and US2/reserve validation is recorded in `evidence/refinement-validation.md` and
+`evidence/manual-build-validation.md`, including T031/T032 scheduled-path evidence. Track remains
+a guarded US3 skeleton; T020 is the next implementation task. T033 verifies existing test
+isolation before future automated imports/native tests. This alignment performs no runtime work.
+The dated provider/bootstrap snapshots below preserve earlier observations, not current pending
+checks; consult story evidence for actual revisions, completed checks, shutdown state and holds.
+The isolated-testing/operational-adoption policy below supersedes old manual test-import gates.
+
+## Provider decision snapshot — 2026-11-24
 
 The project owner adopted **Gemini 3.5 Flash-Lite**, free tier only, replacing the failed local
 refinement candidates. [Evidence](../evidence/gemini-evaluation.md) records the model trials and
@@ -38,7 +48,7 @@ The original Ollama instructions below are **historical trial procedures**, reta
 reproduction. They are not the adopted provider's deployment instructions. The current activation
 steps are in [quickstart section 4](../specs/001-basic-a-factory/quickstart.md#4-verify-the-adopted-provider-then-provision-guard-and-import-manually).
 
-## Current boundary and verified repository configuration
+## Bootstrap snapshot and verified repository configuration — 2026-11-24
 
 This is interactive factory bootstrapping under constitution III, on `001-basic-a-factory`.
 T001–T004 are complete. T007 supplies inactive guard-only workflow skeletons for isolated
@@ -161,7 +171,8 @@ ssh -N -L 5678:127.0.0.1:5678 your-existing-ssh-alias
 ```
 
 Visit `http://localhost:5678`, create/use the n8n owner account and verify login. No workflow is
-imported or activated at this stage. Later JSON changes require PR review and owner manual import.
+imported or activated at this stage. Later operational adoption requires PR review and owner manual import; isolated test changes
+follow the isolated-testing policy below.
 
 ## T004, step 3 — model and offline request preparation (owner on Ubuntu)
 
@@ -251,7 +262,7 @@ Create `evidence/ollama-evaluation.md` only from observed results, containing:
 Only mark T004 complete after the actual server trial and owner judgement. If access/hardware or
 quality fails, record the problem and leave it unchecked. T005+ remain gated; no workflow or
 shared-flag behavior is claimed by this model trial. Keep the documented manual-recovery tradeoff
-and instructor-confirmation follow-up unchanged.
+and accepted approval boundaries unchanged.
 
 ## Sources for setup choices
 
@@ -302,7 +313,7 @@ An invalid pre-held row errors without mutating it.
 remain skeletons. Do not rebuild/reimport the old guard bridge against the current refine graph
 or treat the earlier native skeleton passes as US1 validation.
 
-After reviewing the original skeleton JSON, the owner manually imports `factory/workflows/{refine,reserve,track}.json`
+For isolated skeleton checks, inspect the source and import (automation permitted after T033) `factory/workflows/{refine,reserve,track}.json`
 into isolation, leaves them inactive, and selects the **same table ID in every Data Table node**.
 The placeholder `OWNER_SELECT_ISOLATED_CONTROL_TABLE` intentionally fails closed until mapped.
 Do not use table-name lookup, which could select the wrong similarly named table. Updates match
@@ -499,9 +510,12 @@ The current guard-only skeletons stay unpublished; T009 performs no recovery exe
 
 ## T009 — reviewed JSON import and credential boundaries
 
-Workflow changes follow JSON in Git -> PR review -> owner manual import -> mapping/revision
-verification -> deliberate activation. This applies during bootstrap too; no agent, SSH script,
-CLI import or deployment pipeline substitutes for owner import. Review includes branch isolation,
+Operational adoption follows JSON in Git -> owner PR review -> owner manual import of the
+matching reviewed revision -> mapping/revision verification -> deliberate operational activation.
+This applies during bootstrap too; no agent, SSH script, CLI import or deployment pipeline
+substitutes for owner operational import. Renew review and manual import for subsequent changes;
+import may precede merge for final acceptance testing or follow merge. Manual import does not
+require manual execution of every test. Isolated automated testing follows the boundary below. Review includes branch isolation,
 actual acceptance evidence, secret exclusion, workflow JSON and permissions; factory task PRs
 also require explicit approval and issue linkage. Owner alone decides merges.
 
@@ -520,6 +534,31 @@ an earlier execution. Keep inactive if comparison or required story/credential c
 No credential value belongs in Git, workflow parameters, issue comments or evidence. Full
 backup/restore and retention procedures remain T024.
 
+## Isolated testing and operational adoption
+
+Constitution v2.0.0 and `project-brief.md` version 2 (2026-11-25) govern this feature.
+The coding agent may automatically import, update, and execute workflow JSON only in a
+designated isolated development/test n8n instance, using test data and scoped test credentials.
+External writes must target designated test resources. Testing must not replace or activate
+operational workflows or process ordinary factory tasks. Verify instance identity, separate
+storage/control tables, destinations and credential mappings before testing; an unknown
+boundary stops the test. Existing `factory-guard-test` fixtures may be reused after verification.
+
+Operational adoption requires owner review of versioned JSON in its pull request and owner
+manual import of that reviewed revision into operational n8n. Verify that the imported artifact
+matches the reviewed artifact; record necessary instance-specific credential/table mappings.
+Subsequent changes require renewed review and manual operational import. This may occur before
+merge for final acceptance testing or after merge. Manual import does not require manual
+execution of every test. Record tested source revision/hash, imported revision, environment,
+actual outcomes and test-copy deltas; distinguish fixture results from real factory runs.
+
+Only the owner grants initial task approval. Unchanged-scope work may resume after the owner's
+answer; expanded scope requires renewed explicit owner approval. This is accepted project
+policy and requires no instructor confirmation. Basic A retains in-session answers and manual
+rework/recovery; this policy does not add automated question handling or recovery. Owner review
+and merge authority remain unchanged. Completed tasks and valid evidence are preserved; run
+only missing or change-affected checks. Basic B and advanced implementation remain out of scope.
+
 ## US1 — optional Ollama startup and refinement import
 
 `factory/compose.yaml` now puts the retained trial Ollama service behind profile
@@ -530,8 +569,9 @@ service. After reviewing the rollout, the owner can stop only the unused Ollama 
 `docker compose --env-file factory/.env -f factory/compose.yaml --profile local-model-trials stop ollama`.
 Do not remove its data or run `down -v`. No server service is changed by the source patch.
 
-The completed US1 source is inactive pending owner review/manual import and native credential/
-story checks. See [the exact handoff and evidence matrix](../evidence/refinement-validation.md).
+For operational adoption the completed US1 source still requires owner review/manual import.
+Historical native credential/story checks are recorded in the validation evidence; run only
+missing/change-affected checks in isolated testing. See [the exact handoff and evidence matrix](../evidence/refinement-validation.md).
 Map all Data Table nodes, including Set issue context, and both saved Header Auth credentials.
 The GitHub header is Authorization; Gemini's is x-goog-api-key. The same Gemini credential is
 selected on both countTokens and generateContent. Every request/status/receipt is
@@ -541,7 +581,7 @@ exhaustion stop without release. Map the new Read generation guard node too: eig
 now share the same intended singleton table. Short waits stay in-process with no resume webhook;
 interruption/restart leaves busy held for manual inspection.
 Use whole-workflow executions only while schedules are paused/drained. Preserve the deliberately
-held T008 row until reconciled, or provision a fresh isolated table. US2/US3 are not implemented.
+held T008 row until reconciled, or provision a fresh isolated table. US2 is implemented and validated; US3 remains incomplete.
 
 The owner-approved token preflight replaces whole-input byte estimation. One count-only call
 precedes each new inference; valid provider count + fixed schema allowance + 768 output + 256
@@ -550,10 +590,10 @@ marked output skips both calls. Count errors/over-budget results retain busy, an
 usage is checked again before publishing. Never automatically reset or replay a failed execution. The successful
 report includes count/reserve/payload-digest evidence; the model prompt/template are unchanged.
 
-## Constitutional follow-up — instructor confirmation still outstanding
+## Accepted approval and resumption policy
 
-Constitution v1.1.1 interprets owner answers as allowing resumption only within previously
-explicitly approved scope; answers never substitute for initial or changed-scope approval.
-The project owner must seek instructor confirmation and record the outcome. A conflicting
-answer requires a constitution amendment before relying on that interpretation. T009 does not
-resolve this follow-up or add automated question handling/resumption to Basic A.
+Constitution v2.0.0 accepts owner answers as permitting resumption only within previously
+explicitly approved scope. Only the owner grants initial approval; answers never substitute for
+initial approval, and expanded scope requires renewed explicit owner approval. No instructor
+confirmation is required. Basic A retains in-session continuation and owner-controlled recovery;
+this policy adds no automated question handling or state repair.

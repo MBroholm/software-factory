@@ -1,5 +1,14 @@
 # T032 isolated scheduled reservation
 
+Current policy (2026-11-26): imports, updates and execution in designated isolated dev/test
+n8n may be automated after T033 boundary verification, using test data, scoped credentials and
+designated test resources. No operational workflow replacement/activation or ordinary factory
+tasks are allowed. Record tested source/imported revision and environment. Operational adoption
+requires owner PR review and manual import of the matching reviewed JSON revision, renewed for
+subsequent changes, before or after merge. Manual import does not require manual execution of
+every test. Historical owner imports and shutdown observations below remain evidence, not new
+setup requirements. Existing scripts' limited capabilities are unchanged by this policy.
+
 This test copy preserves all 20 reserve Code bodies, existing source connections and the exact
 60-second Schedule Trigger. Only HTTP destinations/authentication, table mapping, test notes and
 separate operator state/reset endpoints differ. All HTTP goes to container loopback port 18766,
@@ -15,8 +24,8 @@ node factory/tests/build-reservation-schedule.cjs --check
 
 The builder uses the previously inspected isolated mapping in the existing native bridge.
 Public review artifact: `factory/tests/reservation-schedule.json`.
-Owner import artifact: `factory/local/us2/native-bridge/schedule-mapped.json`.
-Review the source and generated JSON before manually importing as a NEW isolated workflow.
+Isolated test import artifact: `factory/local/us2/native-bridge/schedule-mapped.json`.
+Review the source and generated JSON before importing as a NEW isolated workflow (automation permitted).
 All nine Data Table nodes must reference the same existing isolated table. No credentials or
 pinned data may be present. Keep every other workflow inactive and all manual mutators stopped.
 
@@ -28,7 +37,7 @@ known hold; elapsed time is not authorization. The observer never resets it.
 Start the existing `reservation-fixture-server.cjs` in the isolated container with the reviewed
 `fixtures.json`, a NEW `/tmp/basic-a-us2-schedule-state.json` persistence file and port 18766.
 Do not overwrite `/tmp/basic-a-us2-fixture-state.json`. Verify the new state has no session 32001.
-Owner publishes only the new schedule after reviewed manual import and deliberate recovery.
+Publish only the new isolated schedule after import verification and deliberate fixture recovery.
 Verify saved/active revision, all Code/connection fingerprints, HTTP/table mappings and schedule
 before observing. Run `python3 /tmp/run-reservation-schedule.py` on NAS promptly after publication;
 it reads the private state webhook and fixture only, never starts a workflow.

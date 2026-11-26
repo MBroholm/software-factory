@@ -1,11 +1,20 @@
 # Isolated US1 native fault validation
 
+Current policy (2026-11-26): imports, updates and execution in designated isolated dev/test
+n8n may be automated after T033 boundary verification, using test data, scoped credentials and
+designated test resources. No operational workflow replacement/activation or ordinary factory
+tasks are allowed. Record tested source/imported revision and environment. Operational adoption
+requires owner PR review and manual import of the matching reviewed JSON revision, renewed for
+subsequent changes, before or after merge. Manual import does not require manual execution of
+every test. Historical owner imports and shutdown observations below remain evidence, not new
+setup requirements. Existing scripts' limited capabilities are unchanged by this policy.
+
 This is test infrastructure for T014. It copies the current refinement graph, keeping native
 Code, IF, Split In Batches, HTTP Request, Data Table and Wait nodes. It has no schedules,
 credential references, real GitHub/provider destinations, subworkflows or production access.
 The source workflow and issue #1 remain unchanged.
 
-## Review and owner import
+## Review and isolated test import
 
 Build from the repository root with `node factory/tests/build-refinement-bridge.cjs`.
 The builder produces the committed placeholder-mapped `factory/tests/refinement-bridge.json`
@@ -13,7 +22,7 @@ and `refinement-bridge-sources.json` for review. For the ready-mapped owner impo
 the ignored, previously owner-imported isolated mapping artifact
 `factory/local/refine-us1-retry-mapped.json`. It writes:
 
-- `factory/local/refinement-native-bridge/workflow.json` — owner import only
+- `factory/local/refinement-native-bridge/workflow.json` — isolated test import
 - `factory/local/refinement-native-bridge/fixtures.json` — synthetic HTTP data
 - `factory/local/refinement-native-bridge/manifest.json` — hashes and explicit copy deltas
 
@@ -29,12 +38,12 @@ fixture identity headers added. Eight source Data Table nodes retain the same is
 control mapping. Extra operator state/reset nodes use that same table; resets require row ID,
 expected execution ID and a reason, change only busy, and are never connected to failure paths.
 
-Constitution sections I/III require the owner to manually import reviewed workflow JSON.
+Constitution I/III permit automated import/update/execution within the isolated test boundary.
 Import the workflow as a **new** workflow into **factory-guard-test, localhost:5679 only**.
 Name: `TEST ONLY — Basic A US1 native fault bridge`. Publish only this test bridge to register
 its webhooks. Keep all other workflows inactive and do not execute manual tests concurrently.
 No schedules are present. Do not import this bridge into production or remap it to production.
-Source changes to the builder require rebuilding/review and owner reimport before relying on them.
+Source changes require rebuilding, test reimport and fingerprint verification before relying on results.
 
 ## Assistant execution after import
 
@@ -79,7 +88,7 @@ session tokens or claim that cancellation ran merely from restart evidence.
 `check-refinement-bridge.cjs` checks packaging's HTTP fixture independently: all 43 case
 initializations, 503 response sequences, payload identity, pagination and an actual dropped
 connection. This is simulator validation, not a workflow pass. Installed native VM parameter
-checks also cover the bridge's rewritten URLs and fixture headers before manual import.
+checks also cover the bridge's rewritten URLs and fixture headers before isolated test import.
 Actual core waits of 10/30 seconds and AbortSignal cancellation were checked separately with
 `check-refinement-native-waits.cjs` against installed n8n packages;
 that does not prove complete engine routing/cancellation or persisted guard behavior.

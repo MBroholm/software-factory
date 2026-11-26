@@ -1,19 +1,19 @@
 # Basic A permissions and publication boundaries
 
-This documents the approved Basic A design and T009 operating rules. The current three workflows
-are inactive guard-only skeletons with no GitHub/model credentials or story operations. Credential
-provisioning and actual HTTP-node verification remain T012/T014; this document grants no new
-access and does not claim those checks passed. Use [manual recovery](operations.md#t009--manual-failure-recovery)
+This documents the Basic A design and operating boundaries under constitution v2.0.0 and
+brief version 2 (2026-11-25). US1/refine and US2/reserve have recorded isolated validation;
+US3/track remains a guarded skeleton. See the story evidence for tested revisions and limits;
+this policy update claims no new runtime checks or operational adoption. Use [manual recovery](operations.md#t009--manual-failure-recovery)
 for changes while paused/drained.
 
 ## Roles and minimum access
 
 | Role | Needed access | Autonomous work and owner boundary |
 |---|---|---|
-| Ubuntu n8n | One-repository fine-grained GitHub token for `MBroholm/software-factory`: Issues read/write, Pull requests read, required Metadata read; shared Data Table read/update; outbound HTTPS to GitHub/Google | Guarded refine/reserve/track only after reviewed implementation and activation. Never adds `Approved`, edits code, pushes branches, creates/merges PRs or imports changed workflows. |
+| Ubuntu n8n | One-repository fine-grained GitHub token for `MBroholm/software-factory`: Issues read/write, Pull requests read, required Metadata read; shared Data Table read/update; outbound HTTPS to GitHub/Google | Guarded refine/reserve/track only after reviewed implementation and activation. Never adds `Approved`, edits code, pushes branches, creates/merges PRs or adopts changed operational workflows. |
 | Gemini refinement | Dedicated API key stored as n8n header-auth credential for `x-goog-api-key`; approved free-tier project | Receives bounded task data and returns candidate JSON. No GitHub credentials, tools, shell, approval/state mutation or automatic provider/billing change. |
-| Interactive Fedora Codex | Local issue branch/worktree, repository reads; separate owner-authorized Git push and PR creation credentials when needed | Manually launched for one approved factory task. May edit/check code, summarize material decisions and open a linked PR within authorization. Never independently approves tasks, merges `main`, imports workflow JSON or assumes Ubuntu administration. |
-| Project owner | Explicit approval/review/merge decisions, manual agent launch, Ubuntu SSH and n8n owner administration | Provisions scoped credentials, manually imports reviewed JSON, activates schedules and controls recovery. A task author/assignee is not thereby the project owner. |
+| Interactive Fedora Codex | Local issue branch/worktree, repository reads; separate owner-authorized Git push and PR creation credentials when needed | Manually launched for one approved factory task. May edit/check code, summarize material decisions and open a linked PR within authorization. Never independently approves tasks, merges `main`, imports operational workflow JSON or assumes Ubuntu administration. Isolated test imports/updates/execution are allowed only within the boundary below. |
+| Project owner | Explicit approval/review/merge decisions, manual agent launch, Ubuntu SSH and n8n owner administration | Provisions scoped credentials, manually imports reviewed operational JSON, activates operational schedules and controls recovery. A task author/assignee is not thereby the project owner. |
 
 The n8n token is selected for this single repository, not all owner repositories. Do not grant
 Contents write, Pull requests write, Actions, administration, organization or account permissions
@@ -61,6 +61,31 @@ grant new authority. No new credential, billing change or provider fallback is i
 generation 503 UNAVAILABLE retries reuse that same payload/key at most twice after 10/30 seconds.
 They add no tools, permissions, GitHub write retry or external resume endpoint.
 
+## Isolated testing and operational adoption
+
+Constitution v2.0.0 and `project-brief.md` version 2 (2026-11-25) govern this feature.
+The coding agent may automatically import, update, and execute workflow JSON only in a
+designated isolated development/test n8n instance, using test data and scoped test credentials.
+External writes must target designated test resources. Testing must not replace or activate
+operational workflows or process ordinary factory tasks. Verify instance identity, separate
+storage/control tables, destinations and credential mappings before testing; an unknown
+boundary stops the test. Existing `factory-guard-test` fixtures may be reused after verification.
+
+Operational adoption requires owner review of versioned JSON in its pull request and owner
+manual import of that reviewed revision into operational n8n. Verify that the imported artifact
+matches the reviewed artifact; record necessary instance-specific credential/table mappings.
+Subsequent changes require renewed review and manual operational import. This may occur before
+merge for final acceptance testing or after merge. Manual import does not require manual
+execution of every test. Record tested source revision/hash, imported revision, environment,
+actual outcomes and test-copy deltas; distinguish fixture results from real factory runs.
+
+Only the owner grants initial task approval. Unchanged-scope work may resume after the owner's
+answer; expanded scope requires renewed explicit owner approval. This is accepted project
+policy and requires no instructor confirmation. Basic A retains in-session answers and manual
+rework/recovery; this policy does not add automated question handling or recovery. Owner review
+and merge authority remain unchanged. Completed tasks and valid evidence are preserved; run
+only missing or change-affected checks. Basic B and advanced implementation remain out of scope.
+
 ## Export and public evidence boundary
 
 The repository, issue comments and PR logs are public. An export is private until inspected:
@@ -81,10 +106,10 @@ The repository, issue comments and PR logs are public. An export is private unti
    human interventions. Summarize material agent decisions without full private transcripts. Mark
    failed/unrun criteria honestly and preserve corrections; never publish request headers or keys.
 
-Workflow changes require a reviewed JSON PR and **owner manual import**, including bootstrap.
-Map credentials/control tables privately and verify saved/published revision against reviewed
-content before activation; [operations](operations.md#t009--reviewed-json-import-and-credential-boundaries)
+Operational workflow adoption requires a reviewed JSON PR and **owner manual import**, including
+bootstrap. Renew review/import for subsequent changes; import may precede merge for final
+acceptance testing or follow merge. Map credentials/control tables privately and verify
+saved/published revision against the reviewed artifact before operational activation; [operations](operations.md#t009--reviewed-json-import-and-credential-boundaries)
 defines the handoff. Permission/autonomy expansions require documentation and owner review.
 This runbook adds no automatic deployment, merge, recovery, write retry or question resumption.
-The [constitutional instructor-confirmation follow-up](operations.md#constitutional-follow-up--instructor-confirmation-still-outstanding)
-remains outstanding.
+Approval/resumption is accepted owner policy; no instructor confirmation is required.

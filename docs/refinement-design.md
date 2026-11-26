@@ -151,6 +151,9 @@ digest or remote peak RAM is available. Keep original failed local-model digest/
 If the prompt/template changes materially, assess and run missing/change-affected checks before
 integration, preserving unchanged evidence and tested versions. The first workflow-generated
 validated output example belongs to T014; current synthetic examples are model trials only.
-When workflow JSON exists, changes are reviewed in a pull request and the owner manually imports
-it, verifying these runtime versions. No automatic workflow importer, runner or recovery engine
-is added. The single shared guard and manual-recovery tradeoff remain later implementation work.
+For operational adoption, the owner reviews workflow JSON in its PR and manually imports the
+matching reviewed revision, verifying runtime versions; renewed changes repeat this gate,
+before or after merge. Automated isolated test imports, updates and execution are permitted
+under [permissions](permissions.md#isolated-testing-and-operational-adoption); manual import
+does not require manual execution of every test. No operational importer, runner or recovery
+engine is added. The single shared guard and manual-recovery tradeoff remain later implementation work.

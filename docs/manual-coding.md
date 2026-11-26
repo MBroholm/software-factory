@@ -69,12 +69,16 @@ Keep secrets, tokens and private session logs out of comments; summarize only th
 reasoning. If posting through an assistant, explicitly authorize that issue comment. An interrupted
 session leaves Building reserved: inspect agent/worktree/remote writes and record failure or
 intervention before owner-directed recovery. No blind POST retries, automatic state repair or
-agent restart. The instructor-confirmation follow-up remains outstanding.
+agent restart. Unchanged-scope continuation is accepted policy; no instructor confirmation is
+required. Only the owner grants initial approval or renewed approval for expanded scope.
 
 Return changes on `issue-N` in the same repository with base `main`. Owner or authorized agent
 may push/open the PR. Include an explicit `Refs #N` or full issue URL in its body, the approval
 and handoff references, change summary, actual checks and outcomes, failures/retries/intervention,
 and unchecked acceptance criteria. Distinguish new commits from the handoff's existing PR/head
 baseline. Never mark unrun tests passed. Owner reviews and decides merge/close; workflow JSON
-still needs owner manual import after review. Result tracking/review automation is US3 work,
+still needs owner PR review and manual import of the matching reviewed revision for operational
+adoption, before or after merge; subsequent changes renew this gate. Isolated automated testing
+follows [permissions](permissions.md#isolated-testing-and-operational-adoption), and manual
+import does not require manual execution of every test. Result tracking/review automation is US3 work,
 not proof of US2 completion.

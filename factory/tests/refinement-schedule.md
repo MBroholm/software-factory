@@ -1,5 +1,14 @@
 # T031 — scheduled US1 validation
 
+Current policy (2026-11-26): imports, updates and execution in designated isolated dev/test
+n8n may be automated after T033 boundary verification, using test data, scoped credentials and
+designated test resources. No operational workflow replacement/activation or ordinary factory
+tasks are allowed. Record tested source/imported revision and environment. Operational adoption
+requires owner PR review and manual import of the matching reviewed JSON revision, renewed for
+subsequent changes, before or after merge. Manual import does not require manual execution of
+every test. Historical owner imports and shutdown observations below remain evidence, not new
+setup requirements. Existing scripts' limited capabilities are unchanged by this policy.
+
 This test copy addresses the scheduled-entry gap found by US1 convergence. It reuses the
 native HTTP/Data Table refinement graph and existing synthetic fixture service, preserving all
 31 source Code bodies, the exact Schedule Trigger, its 60-second interval and direct connection
@@ -15,15 +24,14 @@ node factory/tests/build-refinement-schedule.cjs --check
 
 Review the committed `refinement-schedule.json` and `refinement-schedule-sources.json` with
 the builder, fixture-server changes and `run-refinement-schedule.py`. The ready-mapped private
-owner import is `factory/local/refinement-native-bridge/schedule-mapped.json`. It retains the
+isolated test import is `factory/local/refinement-native-bridge/schedule-mapped.json`. It retains the
 existing isolated US1 table mapping. No credentials are present; all external HTTP URL bases
 point only to 127.0.0.1:18765 inside factory-guard-test. Production-source JSON is unchanged.
 
-The owner manually imports this as a **new**, initially inactive workflow into the test container
+Import this (automation permitted) as a **new**, initially inactive workflow into the test container
 at localhost:5679, named `TEST ONLY — US1 scheduled refinement`. Keep every other schedule and
 the earlier fault bridge unpublished. Preserve the known 1218 cancellation hold for inspection.
-Do not import into production. Constitution I/III require reviewed owner manual import; the
-assistant must not use CLI/API import as a shortcut. After owner confirmation, the operator
+Do not import into production. Constitution I/III permit automated import after isolated-boundary verification. The operator
 verifies the imported graph, publishes only this copy and starts the observer. The row stays
 held until an explicitly inspected fixture reset for this independent test.
 

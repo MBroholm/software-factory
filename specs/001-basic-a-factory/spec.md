@@ -4,9 +4,10 @@
 
 **Created**: 2026-11-22
 
-**Status**: Draft — behavior clarifications resolved; ready for planning.
+**Status**: Existing Basic A feature; governance aligned 2026-11-26. US1/US2 complete within
+recorded evidence limits; US3/US4 and final acceptance remain incomplete (see tasks.md).
 
-**Input**: Specify Basic A from project-brief.md and constitution v1.1.1. Reuse the published
+**Input**: Specify Basic A from project-brief.md version 2 (2026-11-25) and constitution v2.0.0. Reuse the published
 GitHub repository and existing state labels. Use Codex as the coding agent and SpecKit for
 project development. Expect factory operation on Ubuntu server and development on Fedora laptop.
 Defer Basic B and advanced extensions; distinguish mandates, preferences, and proposals.
@@ -89,7 +90,7 @@ merge, and issue-closure paths independently of the refinement workflow.
    explicitly returns it to `Approved`, **Then** a subsequent build is manually launched and
    remains subject to approved scope.
 5. **Given** a pull request changing workflow JSON, **When** the owner accepts the change,
-   **Then** activation still requires the project owner's manual import after review.
+   **Then** operational adoption still requires the project owner's manual import after review.
 6. **Given** a task in `Your QA` with an open issue, **When** its pull request closes unmerged,
    **Then** it remains in `Your QA`; a subsequent scheduled check does not mark it `Done`.
    The project owner may return it to `Approved` for rework or close the issue to finish it.
@@ -136,7 +137,7 @@ questions, pull request, review, and recorded checks without consulting private 
 - A pull request closes without merge while its issue remains open: retain `Your QA` until
   the project owner returns the task to `Approved` or closes the issue (FR-011).
 - Workflow exports or generated evidence contain credentials: exclude secrets from public artifacts
-  and logs; workflow activation remains a manual step after review.
+  and logs; operational adoption requires owner manual import after review.
 
 ## Requirements *(mandatory)*
 
@@ -144,7 +145,7 @@ questions, pull request, review, and recorded checks without consulting private 
 
 - **B** denotes assignment mandates from [project-brief.md](../../project-brief.md), especially
   “Basic A,” “States,” “n8n workflows,” “Scope,” and “Deliverables.”
-- **C** denotes governance from [constitution v1.1.1](../../.specify/memory/constitution.md);
+- **C** denotes governance from [constitution v2.0.0](../../.specify/memory/constitution.md);
   principle or section references below identify the applicable rule.
 - **U** denotes the project owner's stated preferences/context, not assignment mandates.
 - **P** denotes a proposed derived behavior or acceptance target requiring owner agreement;
@@ -155,8 +156,9 @@ tracking, with real-run validation. The repository is already published and labe
 exist (U); creating a repository or labels is not feature work. Reuse and verify them.
 
 Basic B's runner, automatic agent launch, question-to-issue automation, automated resumption,
-30-minute runner timeout, and result collection are deferred. Advanced memory, Neo4j, MCP-based
-extensions, and other advanced capabilities are deferred. The project-owner-authorship-only
+30-minute runner timeout, and result collection are deferred. Both advanced foundations (independent runner verification and agent isolation), and optional
+Neo4j memory, MCP tools, AI review, review feedback and metrics are deferred. Chess is an
+example, not a required product. The project-owner-authorship-only
 restriction is a Basic B mandate. The project owner explicitly chose the same restriction for
 Basic A during clarification; for Basic A this is a user policy, not a brief mandate.
 
@@ -199,7 +201,8 @@ evidence toward them; this feature does not claim to finish the whole assignment
   after an answer; scope expansion MUST follow FR-005.
 - **FR-009 (B: Basic A; C V)**: The project owner or agent MAY open the pull request. Each pull
   request MUST summarize changes, actual checks and outcomes, failed checks, and unchecked
-  acceptance criteria. Unrun checks MUST NOT be described as passing.
+  acceptance criteria. Test evidence MUST identify the tested revision and environment. Unrun
+  checks MUST NOT be described as passing.
 - **FR-010 (B: States; C I, Planning and Review Gates)**: On discovering a linked pull request,
   tracking MUST set `Your QA`. Only the project owner decides merge or rejection. Review MUST
   verify branch isolation, acceptance evidence, secrets exclusion, workflow JSON/permission
@@ -211,10 +214,15 @@ evidence toward them; this feature does not claim to finish the whole assignment
   that pull request alone MUST NOT cause `Done`. The project owner may explicitly return the
   task to `Approved` for rework or close the issue to finish it. This unmerged closure policy
   was chosen by the project owner on 2026-11-22.
-- **FR-012 (B: Scope; C I, III)**: Workflow changes MUST be versioned as JSON, reviewed in a pull
-  request, and manually imported by the project owner after review. Initial setup and bootstrap
-  MAY be interactive before the factory loop exists; factory-executed tasks MUST obey its
-  approval/review process. Bootstrap does not waive manual workflow import.
+- **FR-012 (B: Scope; C I, III)**: Workflow changes MUST be versioned as JSON. The coding agent
+  MAY automatically import, update and execute JSON in a designated isolated development/test
+  n8n instance with test data and scoped test credentials; external writes MUST target
+  designated test resources. Testing MUST NOT replace or activate operational workflows or
+  process ordinary factory tasks. Operational adoption MUST require owner PR review and manual
+  import of the matching reviewed revision; subsequent changes require renewed review/import.
+  Manual operational import MAY occur before merge for final acceptance testing or after merge;
+  it does not require manual execution of every test. These boundaries apply during interactive
+  setup/bootstrap too; factory-executed tasks MUST retain approval/review gates.
 - **FR-013 (C II, IV)**: Keep factory artifacts and a separate folder for built software in the
   same public repository. Document component permissions, allowed autonomous actions, and
   required owner actions. Grant only role-needed permissions and keep secrets out of Git,
@@ -248,7 +256,7 @@ evidence toward them; this feature does not claim to finish the whole assignment
 - **Build attempt**: Manual execution of approved work on an issue-specific branch, with checks,
   failures, retries, and intervention evidence.
 - **Result pull request**: Linked changes and acceptance evidence awaiting the owner's decision.
-- **Workflow artifact**: Reviewed, versioned n8n JSON whose activation requires manual import.
+- **Workflow artifact**: Reviewed, versioned n8n JSON whose operational adoption requires owner manual import after PR review.
 
 ## Success Criteria *(mandatory)*
 
@@ -266,7 +274,8 @@ interval or invented response-time threshold is prescribed here.
   an isolated branch, a linked pull request, and an owner acceptance decision.
 - **SC-003 (B/C safety; validates FR-005, 007, 010, 012–013)**: Across acceptance exercises,
   there are zero unauthorized approvals, automatic agent starts, autonomous merges, concurrent
-  factory builds, secret disclosures, or automatic activations of changed workflows.
+  factory builds, secret disclosures, or automatic operational adoption of changed workflows. Isolated
+  automated tests complying with FR-012 are permitted.
 - **SC-004 (P; validates FR-009–011, 014)**: Demonstrations cover a merged result, a closed issue,
   an unmerged pull request closure with its issue still open, and owner-requested rework.
   Every resulting state matches the approved state rules, and every
@@ -287,16 +296,15 @@ interval or invented response-time threshold is prescribed here.
 - **Source interpretation**: Basic A does not use `Waiting for you` or `Stuck`, as stated in the
   brief's States table. Questions happen in-session; no automated question restart or 30-minute
   timeout is introduced here. Manual interruption/retry handling must be documented in planning.
-- **Governance dependency**: The constitution's distinction between initial approval and automated
-  in-scope resumption remains an interpretation requiring instructor confirmation. Basic A uses
-  in-session continuation; automated resumption is deferred, and this specification does not
-  claim instructor confirmation. A conflicting outcome requires a constitution amendment before
-  relying on that interpretation.
+- **Accepted governance policy**: Only the owner grants initial approval. Automation may resume
+  previously approved work after the owner's answer when scope is unchanged; expanded scope
+  requires renewed explicit approval. No instructor confirmation is required. Basic A keeps
+  in-session continuation and explicit owner rework/recovery; automated resumption is deferred.
 - **Proposals awaiting owner agreement**: FR-016 and the P-labelled success targets are derived
   reliability/validation proposals. Their source is this draft, not the assignment. They must
-  be reviewed with the owner during planning; the three behavior decisions resolved here do
+  be reviewed with the owner during planning (the existing plan retains these targets); the three behavior decisions resolved here do
   not imply separate acceptance of these proposals. No additional tooling is selected by them.
-- **Planning decisions deliberately open**: Refinement provider/model and cost limits, hosting
+- **Original specification planning deferrals (resolved choices are recorded in plan.md)**: Refinement provider/model and cost limits, hosting
   and deployment method, agent execution location, remote access, credentials and exact component
   permissions, polling cadence, queue selection, branch naming/link detection mechanics, and
   recovery procedures belong in planning. Codex is the user's coding-agent preference only.

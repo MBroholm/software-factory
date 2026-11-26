@@ -62,6 +62,9 @@ the server factory continues polling. No public editor/domain/reverse proxy is r
 
 ## 4. Verify the adopted provider, then provision guard and import manually
 
+The heading retains existing links; manual import below means operational adoption. Isolated
+test imports, updates and execution may be automated under FR-012 and the boundaries below.
+
 The owner adopted Gemini 3.5 Flash-Lite on 2026-11-24 after unsuccessful local trials,
 a versioned hosted comparison and a successful Ubuntu-container API smoke check. See
 [actual evidence](../../evidence/gemini-evaluation.md). The alternative-model choice checkpoint
@@ -80,20 +83,22 @@ Before activation:
 2. Confirm active project quotas in AI Studio; do not enable billing or switch models.
 3. Assess existing v2/v3 evidence and run only missing/change-affected prompt checks; don't
    claim the four v2 outputs were tested against v3. Keep public results sanitized.
-4. After owner manual import of reviewed JSON, verify saved-credential use in the actual HTTP
+4. After import into the designated test instance, verify saved-credential use in the actual HTTP
    Request nodes (countTokens then generateContent) with the reviewed runtime versions
    (T012/T014). Both use the same saved Gemini Header Auth credential. The earlier Node-in-container
    smoke test did not exercise n8n's credential store or workflow engine. Keep schedules inactive.
 5. Verify API/quota errors stop and retain the shared flag, with redacted evidence and manual
    recovery. Verify selective 503 retries, identical counted payload, guard/source rechecks,
-   exhaustion and interruption holds after the retry revision is manually imported. No replay
+   exhaustion and interruption holds after the retry revision is imported into the isolated test instance. No replay
    or model fallback. Reuse the appropriate guard/story checks.
 
 In the n8n Data Tables UI, create `factory_control` with the exact columns in
 [data-model.md](data-model.md), and one `global` row with `busy=false`. This is not a task ledger.
-Map the table and credential references in the three reviewed workflow JSONs during manual
-import. Keep schedules inactive until isolation, credentials and model checks pass. The owner
-imports JSON by hand after review; CLI/deployment automation must not replace this quality gate.
+Map the table and scoped credential references in the three workflow JSONs during isolated
+test import; keep operational mappings separate. Keep schedules inactive until isolation, credentials and model checks pass. For operational adoption the owner
+manually imports the matching PR-reviewed JSON revision; CLI/deployment automation must not
+replace that gate. Renew review/import for each change, before or after merge. Manual import
+does not require manual execution of every test.
 
 US1's local checks execute exported Code bodies/connections with stand-ins. Run them from the
 repository root; execute the required native/live matrix separately. The
@@ -116,6 +121,31 @@ Implementation should provide only enough tests for the risky rules and failure 
 Avoid a generic integration platform. Logs/pinned data must contain no credentials. Verify any
 exported JSON before commit; remove execution data and pinned/private test payloads.
 
+## Isolated testing and operational adoption
+
+Constitution v2.0.0 and `project-brief.md` version 2 (2026-11-25) govern this feature.
+The coding agent may automatically import, update, and execute workflow JSON only in a
+designated isolated development/test n8n instance, using test data and scoped test credentials.
+External writes must target designated test resources. Testing must not replace or activate
+operational workflows or process ordinary factory tasks. Verify instance identity, separate
+storage/control tables, destinations and credential mappings before testing; an unknown
+boundary stops the test. Existing `factory-guard-test` fixtures may be reused after verification.
+
+Operational adoption requires owner review of versioned JSON in its pull request and owner
+manual import of that reviewed revision into operational n8n. Verify that the imported artifact
+matches the reviewed artifact; record necessary instance-specific credential/table mappings.
+Subsequent changes require renewed review and manual operational import. This may occur before
+merge for final acceptance testing or after merge. Manual import does not require manual
+execution of every test. Record tested source revision/hash, imported revision, environment,
+actual outcomes and test-copy deltas; distinguish fixture results from real factory runs.
+
+Only the owner grants initial task approval. Unchanged-scope work may resume after the owner's
+answer; expanded scope requires renewed explicit owner approval. This is accepted project
+policy and requires no instructor confirmation. Basic A retains in-session answers and manual
+rework/recovery; this policy does not add automated question handling or recovery. Owner review
+and merge authority remain unchanged. Completed tasks and valid evidence are preserved; run
+only missing or change-affected checks. Basic B and advanced implementation remain out of scope.
+
 ## 5. Activate production deliberately
 
 Verify exactly one factory instance and `N8N_CONCURRENCY_PRODUCTION_LIMIT=1`. All three workflows
@@ -128,8 +158,9 @@ mappings. Polling default is 60 seconds; inspect backlog/actual runtime before t
 
 Use small real issues in the existing repository, with the owner's explicit approval for any
 build. A useful first task is a bounded documentation/factory improvement, not a newly chosen
-product implementation. Deliberately crafted failure tests run only in an isolated instance or
-while all production schedules are paused/drained. Never manufacture a non-owner approval by
+product implementation. Deliberately crafted failure tests and automated imports run only in the designated isolated
+test instance using designated test resources and scoped credentials. Pausing operational
+schedules alone does not turn operational n8n into the isolated testing environment. Never manufacture a non-owner approval by
 sharing credentials; use fixtures where a second identity is unavailable and report that limit.
 
 | Check | Steps | Expected outcome / requirement |
@@ -143,7 +174,7 @@ sharing credentials; use fixtures where a second identity is unavailable and rep
 | Rejected attempt | Close PR unmerged, leave issue open | Remains QA; no repeated QA comments; FR-011 |
 | Rework | Owner comments and reapproves; observe fresh handoff, then new PR or new commits | Ordinary in-scope rework comment/session summary does not invalidate captured source; old PR does not overwrite Approved/Building; ambiguity holds; FR-010/011 |
 | Completion | Owner merges current result, or closes task issue | Done only for confirmed merge/issue closure; FR-011 |
-| Workflow change | Review JSON change and merge if accepted | Owner manually imports; no automatic activation; FR-012 |
+| Workflow change | Test in isolation; owner reviews JSON PR; merge if accepted | Manual operational import matches reviewed artifact, before or after merge; no automatic operational adoption; FR-012 |
 | Successful flag release | Exercise acknowledged work in each of refine/reserve/track | Acquired flag returns to idle; next scheduled execution can run; Building reservation persists where appropriate |
 | No-work flag release | Exercise each workflow with no eligible work, unchanged input or occupied build slot | Acquired flag returns to idle without repeated comments or global deadlock |
 | Existing hold | Enter each workflow with busy already true | Skip preserves busy and original context; no remote mutations |
@@ -192,6 +223,6 @@ payloads or backup archives. Preserve the optional historical Ollama cache separ
 access is restored through the encrypted n8n credential store, not a copied evaluation key file.
 
 Implementation produces architecture/operation/permission docs, prompt/template/example and a
-sanitized evidence index. For each run include issue/PR URLs, revision/approval, actual checks,
+sanitized evidence index. For each run include issue/PR URLs, tested revision/environment, approval, actual checks,
 failures/retries and human intervention. Pruned n8n logs are not the permanent course evidence.
-The instructor-confirmation requirement remains unconfirmed; do not claim its resolution.
+Approval/resumption is accepted owner policy; no instructor confirmation is required.

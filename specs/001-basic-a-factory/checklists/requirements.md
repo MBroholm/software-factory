@@ -47,7 +47,8 @@
 - FR-016 and P-labelled success targets are explicitly proposals for owner review, not brief
   requirements. In particular, the one-run feature target does not replace the final five-run
   assignment obligation.
-- The instructor-confirmation requirement is preserved as an external governance follow-up;
-  automated resumption is out of scope for Basic A.
+- Constitution v2.0.0 accepts approval/resumption policy without instructor confirmation;
+  automated resumption remains out of scope for Basic A. FR-012 distinguishes automated isolated
+  testing from reviewed owner-manual operational import; completed work/evidence is retained.
 - No extension registry exists; pre- and post-specification hooks are absent.
 - Ready for planning. No implementation or runtime tests performed.

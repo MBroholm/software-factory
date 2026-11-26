@@ -1,5 +1,14 @@
 # Guard and contract scenarios — T006
 
+Current policy (2026-11-26): imports, updates and execution in designated isolated dev/test
+n8n may be automated after T033 boundary verification, using test data, scoped credentials and
+designated test resources. No operational workflow replacement/activation or ordinary factory
+tasks are allowed. Record tested source/imported revision and environment. Operational adoption
+requires owner PR review and manual import of the matching reviewed JSON revision, renewed for
+subsequent changes, before or after merge. Manual import does not require manual execution of
+every test. Historical owner imports and shutdown observations below remain evidence, not new
+setup requirements. Existing scripts' limited capabilities are unchanged by this policy.
+
 Status: specified before story implementation. Owner-run skeleton checks and assistant-run
 native bridge evidence are now recorded in `evidence/guard-validation.md` and
 `evidence/guard-bridge-results.json`. Local graph checks alone do not establish Data Table
@@ -9,10 +18,10 @@ missing/change-affected coverage on finished workflows; story cases below remain
 
 ## Isolated setup and exact entry path
 
-1. Owner reviews the three `factory/workflows/*.json` files and manually imports them into an
+1. Inspect the three `factory/workflows/*.json` files and import them (automation permitted) into an
    isolated n8n **2.48.8** instance/project with a separate persistent volume and no production
    workflows, secrets or GitHub/Gemini credentials. Record reviewed Git revision/file SHA-256,
-   imported workflow ID/revision and n8n version. Keep all schedules inactive. No CLI import.
+   imported workflow ID/revision and n8n version. Keep all schedules inactive. Automated isolated import is permitted after T033 verification.
 2. Owner provisions the test `factory_control` table and singleton row as described in
    [operations](../../docs/operations.md#t005--isolated-control-row-provisioning).
    In **every** Data Table node select that same table by ID, replacing
@@ -104,7 +113,7 @@ T014/T019/T023 execute the relevant story cases; T026 checks all finished guard 
 | R03 refinement API | Canned 429, timeout, transport error; source changes during call | No retry, paid/provider fallback or publication of stale content; hold; T012–T014 |
 | H01 manual handoff | Approval 31/refinement 21; deterministic marker, URL/digests, branch issue-101, PR baseline and timestamp | One complete handoff; Building survives laptop off/restart, no agent launch; T017/T019 |
 | H02 manual launch | Approved snapshot versus changed scope/missing handoff; session question affects result | Verify before manual launch; material answer summarized on issue; changed scope waits for fresh explicit approval; T018/T019 |
-| H03 review | Same-repo issue-101 PR to main, explicit issue link, actual checks and unchecked criteria | Owner alone reviews/merges; rejected unmerged/open issue stays QA; JSON manually imported after review; T022/T023 |
+| H03 review | Same-repo issue-101 PR to main, explicit issue link, actual checks and unchecked criteria | Owner alone reviews/merges; rejected unmerged/open issue stays QA; operational JSON owner-manually imported after PR review; T022/T023 |
 
 ## Evidence record per run
 
@@ -117,7 +126,7 @@ case counts as passed because a guard-only skeleton released successfully.
 ## Assisted native execution option (T008)
 
 The owner requested assistance because individual UI fault edits/runs were taking substantial
-time. The [isolated validation bridge](guard-bridge.md) provides one reviewed manual import,
+time. The [isolated validation bridge](guard-bridge.md) provides a single isolated test import (automation permitted),
 then SSH-local requests through the real n8n server. It copies the same three guarded paths,
 uses native Data Table operations, records persistent effects and never imports/activates the
 production workflows. Keep the manual source evidence and report bridge results separately.

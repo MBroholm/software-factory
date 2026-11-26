@@ -33,4 +33,27 @@ When implementing or changing n8n workflows in this directory:
 
 Documentation/layout changes alone do not require new behavior tests. When intended to be
 documentation-only, verify that execution parameters and connections remain unchanged.
-Existing workflow review and owner manual-import requirements still apply.
+## Isolated testing and operational adoption
+
+Constitution v2.0.0 and `project-brief.md` version 2 (2026-11-25) govern this feature.
+The coding agent may automatically import, update, and execute workflow JSON only in a
+designated isolated development/test n8n instance, using test data and scoped test credentials.
+External writes must target designated test resources. Testing must not replace or activate
+operational workflows or process ordinary factory tasks. Verify instance identity, separate
+storage/control tables, destinations and credential mappings before testing; an unknown
+boundary stops the test. Existing `factory-guard-test` fixtures may be reused after verification.
+
+Operational adoption requires owner review of versioned JSON in its pull request and owner
+manual import of that reviewed revision into operational n8n. Verify that the imported artifact
+matches the reviewed artifact; record necessary instance-specific credential/table mappings.
+Subsequent changes require renewed review and manual operational import. This may occur before
+merge for final acceptance testing or after merge. Manual import does not require manual
+execution of every test. Record tested source revision/hash, imported revision, environment,
+actual outcomes and test-copy deltas; distinguish fixture results from real factory runs.
+
+Only the owner grants initial task approval. Unchanged-scope work may resume after the owner's
+answer; expanded scope requires renewed explicit owner approval. This is accepted project
+policy and requires no instructor confirmation. Basic A retains in-session answers and manual
+rework/recovery; this policy does not add automated question handling or recovery. Owner review
+and merge authority remain unchanged. Completed tasks and valid evidence are preserved; run
+only missing or change-affected checks. Basic B and advanced implementation remain out of scope.

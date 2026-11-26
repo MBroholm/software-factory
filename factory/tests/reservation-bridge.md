@@ -1,7 +1,16 @@
 # Isolated US2 native fault bridge — T019
 
+Current policy (2026-11-26): imports, updates and execution in designated isolated dev/test
+n8n may be automated after T033 boundary verification, using test data, scoped credentials and
+designated test resources. No operational workflow replacement/activation or ordinary factory
+tasks are allowed. Record tested source/imported revision and environment. Operational adoption
+requires owner PR review and manual import of the matching reviewed JSON revision, renewed for
+subsequent changes, before or after merge. Manual import does not require manual execution of
+every test. Historical owner imports and shutdown observations below remain evidence, not new
+setup requirements. Existing scripts' limited capabilities are unchanged by this policy.
+
 This is a test harness for the finished reserve graph, not a runner or production workflow.
-The owner reviews and **manually imports** the test JSON into `factory-guard-test` only.
+Import the test JSON (automation permitted) into `factory-guard-test` only after T033 verification.
 Existing US1 evidence is retained; real issue #1/PR #5 and queued #4 are not modified by this
 harness. Do not import into production or use real GitHub/Gemini credentials.
 
@@ -19,7 +28,7 @@ harness. Do not import into production or use real GitHub/Gemini credentials.
 - Source/build/checker: `build-reservation-bridge.cjs`, `reservation-fixture-server.cjs`,
   `check-reservation-bridge.cjs`, `run-reservation-bridge.py`, in this directory.
 - Public review artifact: `factory/tests/reservation-bridge.json`, with table placeholders.
-  Concrete owner-import artifact: `factory/local/us2/native-bridge/workflow.json`, using only
+  Concrete isolated-test import artifact: `factory/local/us2/native-bridge/workflow.json`, using only
   the previously inspected isolated table ID. It has **no credential references or secrets**.
 - Separate state/read/reset webhooks support explicit operator inspection between completed
   cases. The reset is never on a run/error/finally path. It compares singleton ID/key, busy and
@@ -41,20 +50,20 @@ synthetic VM contexts are ignored under `factory/local/us2/native-bridge/express
 feed them to `check-reservation-native-expressions.cjs` in the approved installed n8n environment.
 Local fixture/package checks and native parameter checks do not count as full native executions.
 
-## Owner import/publication
+## Isolated test import/publication
 
 1. Review the test-only source and generated JSON in the US2 PR, including the two exception
    prefixes, loopback-only destinations, disabled schedule and separate inspected-reset endpoint.
 2. All existing test/production schedules must be inactive and previous executions complete.
    Preserve the known real Building reservation and queued Approved issue. Inspect the current
    shared row before any reset; an unknown hold stops setup.
-3. Manually import `factory/local/us2/native-bridge/workflow.json` as a **new** workflow named
+3. Import (automation permitted) `factory/local/us2/native-bridge/workflow.json` as a **new** workflow named
    `TEST ONLY — Basic A US2 native fault bridge`. Do not overwrite reserve or refine.
 4. All nine Data Table nodes must select the same existing isolated `factory_control_us1`
    table (source's seven plus fixture-state get and explicit fixture reset). Prepared mappings
    already select it. All 17 HTTP nodes must have Authentication=None and fixed loopback URLs.
    `Poll inactive` must remain disabled. Keep pinned data empty.
-5. Save, then owner **publishes only this test bridge** so its private test webhooks register.
+5. Save, then publish **only this isolated test bridge** so its private test webhooks register.
    Publication does not enable its disabled schedule. The assistant verifies imported source,
    mappings and disabled schedule before starting a whitelisted case.
 

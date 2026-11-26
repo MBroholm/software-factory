@@ -2,16 +2,15 @@
 
 **Branch**: `001-basic-a-factory` | **Date**: 2026-11-24 | **Spec**: [spec.md](spec.md)
 
-**Input**: Approved Basic A specification; constitution v1.1.1; owner's complexity review,
+**Input**: Approved Basic A specification; constitution v2.0.0; project-brief.md version 2 (2026-11-25); owner's complexity review,
 Fedora/Ubuntu/Compose preferences, SSH availability, completed model trials and explicit owner
 decision on 2026-11-24 to adopt Gemini 3.5 Flash-Lite refinement on the free tier.
 
-**Status**: T001–T003 implemented; local model trials failed semantic checks. Owner selected
-Gemini after the hosted comparison and Ubuntu container-to-API smoke check. This amendment records
-that choice; n8n credential/node integration remains unrun. Targeted v3 quality checks passed
-assistant assessment; the owner confirmed editor login and accepted the outputs on 2026-11-24.
-T004 is complete and the alternative-model decision checkpoint is satisfied. No workflow or
-remote deployment is changed by this closeout; T012/T014 credential/node checks remain unrun.
+**Status (2026-11-26)**: T001–T019 and scheduled-path T031/T032 are complete, with the
+recorded limits in their evidence. US3 tracking (T020 onward) and final Basic A acceptance remain
+incomplete. T033 verifies existing isolated-test boundaries before future automated imports or
+native isolated tests. This governance alignment changes no workflow or deployment, resets no
+tasks and does not claim new checks. Historical planning observations below retain their dates.
 
 ## Summary
 
@@ -20,20 +19,20 @@ labels, comments and pull requests connect them. Deploy n8n with Docker Compose;
 3.5 Flash-Lite HTTPS API for refinement. The existing Ollama service/cache are trial artifacts,
 not a runtime dependency; make its startup optional during T012 without deleting its data.
 The owner accesses n8n's editor through SSH forwarding; no public editor or webhook is needed.
-Keep human approval, questions in the agent session, review and manual workflow JSON import.
+Keep human approval, questions in the agent session, review and manual operational workflow JSON import.
 
 ### Requirements, preferences and recommendations
 
 | Classification | Inputs |
 |---|---|
-| Brief/constitution; FR-001–014 | Three workflows; fixed refinement template; explicit approval; manual coding-agent launch; one build at a time; branch/PR linkage; human review; manual JSON import; bounded permissions and truthful evidence |
+| Brief/constitution; FR-001–014 | Three workflows; fixed refinement template; explicit approval; manual coding-agent launch; one build at a time; branch/PR linkage; human review; manual operational JSON import; bounded permissions and truthful evidence |
 | Confirmed owner policies; FR-002, 006, 011 | Only owner-authored issues; `Building` reserves the slot before manual launch; unmerged PR closure leaves `Your QA` while issue remains open |
 | Owner preferences; FR-015 | Interactive Codex/SpecKit on Fedora, always-on Ubuntu factory, Docker Compose; SSH access is available |
 | Owner-selected design, 2026-11-24 | Gemini 3.5 Flash-Lite refinement using the confirmed free-tier project; no automatic paid/model fallback |
 | Design recommendations | SQLite; one serialized n8n instance; one shared fail-stop flag; GitHub comment markers; direct Gemini HTTP Request node; SSH forwarding; 60-second polling |
 | Spec proposals, not brief mandates | FR-016 reliability behavior and P-labelled success targets; this plan retains them as design/validation targets without calling them assignment mandates |
 
-The spec and constitution are unchanged. The layout, polling interval, flag, marker format and
+The spec is aligned with constitution v2.0.0; the constitution is unchanged by this alignment. The layout, polling interval, flag, marker format and
 model candidate are recommendations, not requirements discovered in the brief.
 
 ### Development templates versus runtime refinement
@@ -44,8 +43,9 @@ refinement uses its own versioned `factory/templates/task.md` and
 `factory/prompts/refinement.md`, maintained together with the refine workflow JSON. During manual
 import, the owner verifies the deployed workflow contains the reviewed template/prompt versions;
 Compose does not mount the development template tree as runtime refinement configuration.
-Changes to runtime template/prompt content are reviewed with any affected workflow JSON and
-manually imported by the owner. No general template resolver or full SpecKit pipeline is added
+Changes to runtime template/prompt content are reviewed with affected workflow JSON for
+operational adoption and manually imported by the owner; isolated test imports may be automated. No general template
+resolver or full SpecKit pipeline is added
 to the running factory.
 
 ### Inspection and preservation
@@ -107,11 +107,12 @@ approval journal, reservation table, operation journal or autonomous recovery st
 **Testing**: Small contract fixtures for guards/transitions and marker parsing; targeted live
 workflow exercises; one real manual run with a session question and PR. Use the acceptance matrix
 and commands in [quickstart.md](quickstart.md). Actual model/server observations are in
-[Gemini evidence](../../evidence/gemini-evaluation.md); workflow checks remain unrun.
+[Gemini evidence](../../evidence/gemini-evaluation.md). US1/US2 workflow results are recorded in
+their validation evidence; US3 and completed-workflow acceptance checks remain pending.
 
 **Target Platform**: Ubuntu server for n8n; Fedora laptop for Codex, Git and SSH tunnel.
 Existing Ollama deployment remains unused until made optional. Server preflight and API smoke
-access passed; owner confirmed browser login. Saved n8n credential/node use remains untested.
+access passed; owner confirmed browser login. Saved credential/node checks are revision-specific; consult US1 evidence for completed checks.
 
 **Project Type**: Single-user workflow automation, deployment/runbooks and a separate product folder.
 
@@ -242,10 +243,10 @@ links/outcomes in GitHub and `evidence/` so pruning does not erase course eviden
 
 | Component | Recommended access | Human boundary |
 |---|---|---|
-| n8n | Single-repository fine-grained token: Issues write, Pull requests read, required Metadata | Never sets `Approved`, changes code, creates/merges PRs, or imports workflow changes |
+| n8n | Single-repository fine-grained token: Issues write, Pull requests read, required Metadata | Never sets `Approved`, changes code, creates/merges PRs, or adopts operational workflow changes |
 | Gemini API | HTTPS input: reviewed prompt/template/schema and bounded public issue/discussion data; dedicated header-auth n8n credential | Candidate JSON only; no tools, approval, GitHub access or automatic paid/model fallback |
 | Fedora Codex | Working tree, issue reading and owner-authorized branch push/PR creation | Manual launch and in-session questions; no autonomous approval, main merge or production access |
-| Owner | Approval/review, GitHub merge/close, Ubuntu SSH and n8n administration | Manually imports reviewed JSON; performs failure recovery |
+| Owner | Approval/review, GitHub merge/close, Ubuntu SSH and n8n administration | Manually imports reviewed operational JSON; performs failure recovery |
 
 Issues write is coarser than permission to change individual labels. An owner-owned token has
 the same actor ID as the owner; code policy and operational separation enforce the no-approval
@@ -273,7 +274,7 @@ private n8n failure; publish the sanitized issue summary when access returns. Se
 
 The early local-model trial preceded full workflow implementation. Its failure led to the
 explicit owner-selected Gemini alternative, satisfying the model-choice checkpoint. Complete
-remaining T004 evidence and change-affected prompt/credential/node checks before activating refinement.
+remaining change-affected prompt/credential/node checks before activating refinement.
 Shared-flag tests must exercise all three actual workflow paths: acknowledged success and
 acquired-but-no-work release to idle; unexpected exceptions, crashes, ambiguous writes and failed
 cleanup retain busy; a pre-existing busy flag is never cleared by a skipped execution. Use no
@@ -281,10 +282,37 @@ unconditional finally/cleanup release. Document manual recovery instead of addin
 See [tasks.md](tasks.md) for the ordered implementation and test work; none is executed by this
 planning amendment.
 
-Each workflow JSON change is committed for review and manually imported by the owner, including
-bootstrap changes. Develop on the feature branch; later factory tasks use issue-specific branches.
+Each workflow JSON change is versioned. Isolated automated testing follows the boundary below;
+operational adoption, including bootstrap, requires owner PR review and manual import of the
+matching reviewed revision, before or after merge. Develop on the feature branch; later factory tasks use issue-specific branches.
 Acceptance results come only from linked evidence, not this design. The existing task list is
 amended for the owner-selected provider; no workflow implementation is performed here.
+
+## Isolated testing and operational adoption
+
+Constitution v2.0.0 and `project-brief.md` version 2 (2026-11-25) govern this feature.
+The coding agent may automatically import, update, and execute workflow JSON only in a
+designated isolated development/test n8n instance, using test data and scoped test credentials.
+External writes must target designated test resources. Testing must not replace or activate
+operational workflows or process ordinary factory tasks. Verify instance identity, separate
+storage/control tables, destinations and credential mappings before testing; an unknown
+boundary stops the test. Existing `factory-guard-test` fixtures may be reused after T033 verification; this gates future
+automated imports/native isolated tests without blocking offline US3 implementation.
+
+Operational adoption requires owner review of versioned JSON in its pull request and owner
+manual import of that reviewed revision into operational n8n. Verify that the imported artifact
+matches the reviewed artifact; record necessary instance-specific credential/table mappings.
+Subsequent changes require renewed review and manual operational import. This may occur before
+merge for final acceptance testing or after merge. Manual import does not require manual
+execution of every test. Record tested source revision/hash, imported revision, environment,
+actual outcomes and test-copy deltas; distinguish fixture results from real factory runs.
+
+Only the owner grants initial task approval. Unchanged-scope work may resume after the owner's
+answer; expanded scope requires renewed explicit owner approval. This is accepted project
+policy and requires no instructor confirmation. Basic A retains in-session answers and manual
+rework/recovery; this policy does not add automated question handling or recovery. Owner review
+and merge authority remain unchanged. Completed tasks and valid evidence are preserved; run
+only missing or change-affected checks. Basic B and advanced implementation remain out of scope.
 
 ## Constitution Check
 
@@ -298,10 +326,10 @@ amended for the owner-selected provider; no workflow implementation is performed
 | IV permissions/public work | PASS | PASS: public repository verified, private services, component access documented; deployment checks still to run |
 | V evidence | PASS | PASS: quickstart records unrun/failed checks honestly; final five-run requirement preserved |
 | Review gates | PASS | PASS: acceptance matrix, source distinctions, human actions, workflow and permission review identified |
-| Instructor confirmation | Follow-up | Preserved: interpretation is unconfirmed; no automated resumption implemented; amend constitution if contradicted |
+| Approval/resumption policy | PASS | Accepted owner policy; unchanged-scope continuation allowed, expanded scope reapproved; no instructor confirmation or Basic A automated resumption required |
 
-No constitutional exceptions requested. The model choice is resolved by the owner's Gemini
-decision; remaining work is credential/node integration and evidence closeout, not local sizing.
+The isolated-testing permission is constitutional policy, not an exception request. The model choice is resolved by the owner's Gemini
+decision; remaining work is US3 tracking and final Basic A validation/evidence, not local sizing.
 Do not activate refinement if the benchmark fails. No unresolved scope decision is hidden by a
 default, and no implementation readiness is claimed before the operational checks pass.
 

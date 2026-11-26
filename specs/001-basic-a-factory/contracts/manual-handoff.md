@@ -18,8 +18,9 @@ factory task is imposed by this contract.
 Agent asks in its session before unresolved result-changing decisions. Material answers and
 resulting choices are summarized on the issue. If scope expands, stop the changed work; owner
 records the revised scope and explicitly reapproves before continuation. If workflow state needs
-manual correction, follow pause/drain/recovery, not automatic resumption. The constitutional
-instructor-confirmation follow-up remains unchanged and unconfirmed.
+manual correction, follow pause/drain/recovery, not automatic state repair. Unchanged-scope
+continuation after the owner's answer is accepted policy; no instructor confirmation is required.
+Only the owner grants initial approval or renewed approval for expanded scope.
 
 ## Agent/owner to pull request
 
@@ -36,6 +37,13 @@ checks branch isolation, acceptance evidence, secrets, workflow JSON and permiss
 decides merge/close/rework; factory neither approves tasks nor merges. A rejected unmerged PR
 with an open issue remains `Your QA`; owner explicitly returns it to `Approved` or closes issue.
 
-Workflow changes: JSON in Git -> reviewed PR -> owner manual import into n8n -> verify credential
-references and active workflow revision -> owner activates schedules. No automated deployment
-step may import/activate changed JSON. Bootstrap is allowed interactively but retains this gate.
+Workflow changes remain JSON in Git. Automated import, update and execution are allowed only
+in a designated isolated development/test n8n instance with test data, scoped test credentials
+and external writes restricted to designated test resources. No operational workflows or
+ordinary factory tasks may be processed by this testing. Record tested revision and environment.
+
+Operational adoption: owner reviews the JSON in its PR -> owner manually imports the matching
+reviewed revision -> verifies mappings/revision -> owner activates operational schedules.
+Manual import may precede merge for final acceptance testing or follow merge. Subsequent changes
+require renewed review/import. Manual import does not require manual execution of every test.
+These boundaries also apply during bootstrap.

@@ -43,8 +43,13 @@ for the independent transport cap and schema allowance. Explicit generation 503 
 responses now permit at most two retries after 10/30-second in-process waits, with identical
 counted payload and guard/source rechecks. Other failures/exhaustion retain busy; no replay.
 See [operations](../docs/operations.md) for setup and
-the exact server evaluation procedure. Future workflow JSON changes require PR review and owner
-manual import; deployment does not import workflows automatically.
+the exact server evaluation procedure. Automated import, update and execution are permitted only
+in designated isolated development/test n8n with test data, scoped credentials and designated
+test resources; no operational workflow replacement/activation or ordinary task processing.
+Operational adoption requires owner PR review and manual import of the matching reviewed JSON
+revision, renewed for subsequent changes, before or after merge. Manual import does not require
+manual execution of every test. Record tested revision and environment; see
+[permissions](../docs/permissions.md#isolated-testing-and-operational-adoption).
 
 ## SSH access
 
