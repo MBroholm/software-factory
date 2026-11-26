@@ -492,3 +492,13 @@ limits: no independent imported-byte/mapping readback or operational execution i
 T030 is complete on this owner report. No agent import/publication/merge occurred; source
 workflows remain unchanged. Real QA/Done evidence and four additional final-project runs
 remain outstanding. Prior pending statuses above describe the earlier review checkpoint.
+
+
+**Final Basic A acceptance reconciliation, 2026-11-26**: Owner merged PR #11 and real task
+PR #10. Issue #9 demonstrates Building -> QA -> owner merge -> Done while remaining open;
+real-run evidence retains failure 133 and owner recovery. Current active versions, verified
+tracking references and successful trigger 191 are recorded. T029/T030 remain complete.
+PR #8's combined last criterion is split into satisfied live QA/Done and outstanding three
+additional final-project task runs (two of five now demonstrated). Merge with current main
+preserves the PR #11 source and evidence; documentation conflicts were reconciled without
+runtime changes or blanket test reruns. Historical pending checkpoints above remain preserved.

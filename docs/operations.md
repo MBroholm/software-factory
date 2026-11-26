@@ -21,32 +21,51 @@ Review branch: `001-basic-a-factory-final-review`, based on merged US4
 [#6](https://github.com/MBroholm/software-factory/pull/6) and
 [#7](https://github.com/MBroholm/software-factory/pull/7) are merged. Merge evidence establishes
 source history; it does not establish manual operational import or activation.
-[Acceptance](../evidence/acceptance.md) records the final matrix and unchanged source SHA-256s.
+[Acceptance](../evidence/acceptance.md) records the final matrix and historical/current source SHA-256s.
 
 | Workflow / owner import artifact | Reviewed source and test evidence | Current operational saved/published version / manual import evidence |
 |---|---|---|
-| Refine: `factory/workflows/refine.json` | PR #2; T014/T031 and T026 fingerprints; prompt v3/template v1 | Owner reports manually imported and published version `67fcc2fa` on 2026-11-26 |
-| Reserve: `factory/workflows/reserve.json` | PR #3; ec5a2de, T019/T032 and T026 fingerprints | Owner reports manually imported and published version `399ebb5e` on 2026-11-26 |
-| Track: `factory/workflows/track.json` | PR #6; db20bc67ff459e69abe3a02ab57581f667fc23b2, T023/T026 fingerprints | Owner reports manually imported and published version `943b51b9` on 2026-11-26 |
+| Refine: `factory/workflows/refine.json` | PR #2; T014/T031 and T026 fingerprints; prompt v3/template v1 | Owner manual import; active version `67fcc2fa-8027-4191-b6a4-c42649a0e32b`, independently observed 17:03:50 UTC |
+| Reserve: `factory/workflows/reserve.json` | PR #3; ec5a2de, T019/T032 and T026 fingerprints | Owner manual import; active version `399ebb5e-de11-4a74-a99f-291e2f8d5f0f`, independently observed 17:03:50 UTC |
+| Track: `factory/workflows/track.json` | PR #6 then PR #11; T023/T026 plus race-fix fingerprints | Owner reimported fix; active version `6dcd3b8e-b018-4e4a-8f4e-25f26bdb0615`, independently verified 17:03:50 UTC |
 
-**T030 complete on owner-reported adoption evidence.** Following the [PR #8](https://github.com/MBroholm/software-factory/pull/8)
-review handoff at commit `0c13c6e`, the owner confirmed: “I have imported and published the three
-workflows”, supplying the version prefixes above. This records the owner-performed import and
-publication of the artifacts supplied for review. Source workflow hashes remain those in the
-acceptance ledger, unchanged since T026. No agent import, publication or merge was performed.
+**T030 complete.** Following the [PR #8](https://github.com/MBroholm/software-factory/pull/8)
+review handoff at commit `0c13c6e`, the owner confirmed manual import/publication of the initial
+three version prefixes (track then 943b51b9). The owner subsequently manually imported and
+published the tracking fix reviewed in merged [PR #11](https://github.com/MBroholm/software-factory/pull/11).
+Read-only export at 17:03:50.259 UTC confirmed the current full active versions above. Track
+Code, connections, IF conditions and credential/control-table references match the reviewed
+mapped artifact. Refine/reserve source was unchanged by that fix. Credential scopes are not
+independently audited; historical isolated IDs are not used as operational IDs.
 
-Evidence precision: these are owner-supplied eight-character version prefixes, not independently
-read full n8n version UUIDs. Exact publication times, operational workflow IDs, current n8n version,
-credential/table mapping readback and post-publication executions were not supplied or independently
-inspected in this closeout. Imported-byte equality and current credential scopes are therefore
-not independently verified; the source-to-import association rests on the owner's handoff
-confirmation. Historical isolated workflow IDs must not be substituted for operational IDs.
-This adoption record does not claim a successful operational poll or real QA/Done transition.
+Real issue #9 reached QA, owner merge and Done, with successful trigger 191 at the current
+track version and later idle singleton observed. [Race validation](../evidence/tracking-race-validation.md)
+preserves incident 133, manual recovery, exact observations and per-node trace limits. This
+ledger distinguishes initial adoption from the later fix; it claims no agent production import,
+publication, reset or merge. No new workflow change is introduced by this documentation merge.
 
 Subsequent workflow changes still require renewed owner review and manual matching-revision
 import, with mappings checked using the procedure below. The accepted policy requires explicit
 initial approval, permits session continuation within unchanged scope and requires renewed
 approval for expanded scope. Owner review and merge authority remain unchanged.
+
+## Tracking no-work race fix — adopted and real transitions verified
+
+Production execution 133 found no PR, then found newly created PR #10 at final readback and
+held safely without any writes. [The incident and tested fix](../evidence/tracking-race-validation.md)
+record the new read-only completion branch: validated no-result/unchanged QA releases busy and
+leaves new arrivals for the next poll. Planned writes still require strict rechecks and final
+readback. Source track SHA-256 is
+`3d4e5883f4af1e7028c89dbe384217327cae4d330ee6e02d92f8cab1ac24d23c`.
+The owner manually imported this source; read-only verification at 2026-11-26T16:53:53.644Z
+confirmed saved track version `6dcd3b8e-b018-4e4a-8f4e-25f26bdb0615`, with matching Code,
+connections, IF conditions and credential/table references. At that checkpoint all workflows remained unpublished and the 133/issue 9 hold was unchanged.
+The owner subsequently recovered/resumed; QA at 16:58:23, owner merge at 17:01:15 and Done
+at 17:01:22 are verified. At 17:03:50.259 UTC all three workflows are published, the singleton
+is idle and no executions are running/waiting. Track trigger execution 191 succeeded on the
+new version. The linked evidence records per-node trace limits and retains failure 133. No refine/reserve reimport is required.
+The linked recovery steps remain the procedure for future incidents. No agent production
+reset, retry or publication was performed.
 
 ## Provider decision snapshot — 2026-11-24
 
@@ -60,7 +79,7 @@ editor/owner-account access and accepted the refinements on 2026-11-24 after the
 v3 cases passed technical/assistant semantic checks. See [the accepted outputs](../evidence/gemini-v3-review.md).
 Browser checks need not repeat. Before activating refinement, configure a dedicated Gemini
 header-auth credential in n8n. T012/T014 subsequently passed saved-credential HTTP checks in isolation;
-see the current acceptance ledger. Current owner-reported import/publication is recorded in the T030 ledger; mapping readback is not independently verified.
+see the current acceptance ledger. Current versions and the later tracking mapping verification are recorded in the T030 ledger.
 
 At this historical provider-decision checkpoint, the server was at commit `f4a8427` with
 prompt v2 modified locally; the v3 server smoke test passed its payload/key in memory. No
@@ -833,4 +852,4 @@ executions, singleton idle at execution 1699/issue 1. US4 loopback fixture stopp
 refused. Historical 1542/1369 holds above are superseded only as current-state descriptions;
 their original evidence remains valid. Real issue #1 remains open/Building and #4 open/Approved.
 Owner merge of real PR #5 is recorded; a real automated QA/Done transition is not claimed.
-T029 acceptance consolidation is recorded in the acceptance ledger. T030 owner-reported manual import/publication is recorded in the version ledger above. The evidence index counts one real task, not five.
+T029 acceptance consolidation is recorded in the acceptance ledger. T030 owner-reported manual import/publication is recorded in the version ledger above. That US4 checkpoint counted one real task; the current index counts two, leaving three toward five.

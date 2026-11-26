@@ -5,7 +5,8 @@ function cases(base){
  const P=vm.runInNewContext(`(()=>{${read('factory/scripts/refinement-runtime.cjs').split('function analyze(')[0]}${read('factory/scripts/reservation-runtime.cjs').split('module.exports =')[0]}${read('factory/scripts/tracking-runtime.cjs').split('module.exports =')[0]}return {approval,handoff,trackingPlan};})()`);
  const seed=()=>JSON.parse(JSON.stringify({issues:[base.issue],comments:base.comments,events:base.events,pulls:base.prs,calls:[]}));
  const all={};const add=(name,edit=()=>{})=>{const s=seed();edit(s);all[name]=s;return s;};
- add('open-result');add('no-result',s=>s.pulls=[]);add('no-candidate',s=>s.issues=[]);
+ add('open-result');add('no-result',s=>s.pulls=[]);
+ add('arriving-result',s=>{s.arrivingPulls=s.pulls;s.pulls=[];});add('no-candidate',s=>s.issues=[]);
  add('merged',s=>Object.assign(s.pulls[0],{state:'closed',merged:true,merged_at:'2026-11-25T16:00:00Z'}));
  add('owner-closed',s=>{s.issues[0].state='closed';s.pulls=[];s.comments=[];s.events=[];});
  add('closed-unmerged',s=>s.pulls[0].state='closed');

@@ -11,7 +11,8 @@ revision/environment limits. US4 adds operations/architecture, finished-workflow
 inspected recovery and a network-disabled stopped-volume restore rehearsal; see
 `evidence/index.md`, `evidence/guard-validation.md` and `evidence/recovery-validation.md`.
 T029 evidence consolidation and T030 owner-reported operational manual import/publication are
-complete; version prefixes and verification limits are recorded in operations and acceptance. One genuine issue/PR task has an owner acceptance decision; the final-project five-run
+complete; version prefixes and verification limits are recorded in operations and acceptance. Two genuine issue/PR tasks have owner acceptance; #9 additionally demonstrates real QA/Done
+through the manually adopted PR #11 fix. Current operational versions are verified in the ledgers. The final-project five-run
 minimum is still outstanding. No source workflow behavior changed in US4.
 
 ## Summary

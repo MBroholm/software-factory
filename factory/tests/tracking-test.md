@@ -85,3 +85,21 @@ stop only the matching loopback fixture PID, preserving state/logs. Record revis
 execution IDs, node traces, actual row/effects, interventions and limitations. Fixture runs do
 not count as genuine issue/PR runs. Operational adoption still requires owner PR review/manual
 matching-revision import. Broad completed-workflow guard/restart coverage remains T026.
+
+## No-work arrival regression
+
+`check-tracking.cjs` covers a PR arriving after a read-only snapshot and a merge arriving after
+unchanged QA: release this poll without writes and process the change on the next poll. Planned
+writes retain strict Recheck/Final validation. `tracking-cases.cjs` adds `arriving-result`; its
+synthetic loopback server returns the empty list once, then exposes the PR to subsequent reads.
+
+After fresh T033 verification, prepare `--fixtures`, cases and `build-tracking-test.cjs --mapped`
+as above. Run `node factory/tests/run-tracking-race.cjs` only after starting the fixture service
+on the verified test container loopback 18767, using fresh private fixture/state paths. It creates
+a separately named credential-free test copy with disabled schedules and a unique webhook path,
+verifies actual Code/connection fingerprints, tests arrival/next-poll/unchanged and unknown-POST
+hold/later skip, then unpublishes/drains. It refuses an existing run registry and **never resets
+busy automatically**. Inspect a deliberate completed fixture hold and reconcile it explicitly
+before resetting only that test row; preserve its marker and traces, then stop only this fixture
+process. See `evidence/tracking-race-validation.md` for the executed run and remaining operational
+owner import/recovery steps. Production must never be targeted by this runner.
