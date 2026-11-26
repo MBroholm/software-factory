@@ -13,6 +13,19 @@ operational deployment. US4 completes the runbook, architecture, guard/recovery 
 Use [current deployment and backup procedures](#current-deployment-backup-and-restore--t024)
 below rather than the retained T004 trial commands. No Basic B runner is implemented.
 
+## Tracking no-work race fix — pending owner adoption
+
+Production execution 133 found no PR, then found newly created PR #10 at final readback and
+held safely without any writes. [The incident and tested fix](../evidence/tracking-race-validation.md)
+record the new read-only completion branch: validated no-result/unchanged QA releases busy and
+leaves new arrivals for the next poll. Planned writes still require strict rechecks and final
+readback. Source track SHA-256 is
+`3d4e5883f4af1e7028c89dbe384217327cae4d330ee6e02d92f8cab1ac24d23c`.
+This source is not the previously published track version 943b51b9. Renew owner PR review and
+manual import/mapping verification before adopting it; no refine/reserve reimport is required.
+Keep production paused/drained until the owner reconciles the actual 133 hold using the linked
+recovery steps. No agent production reset, retry or publication was performed.
+
 ## Provider decision snapshot — 2026-11-24
 
 The project owner adopted **Gemini 3.5 Flash-Lite**, free tier only, replacing the failed local

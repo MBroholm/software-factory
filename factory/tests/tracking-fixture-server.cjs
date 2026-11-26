@@ -27,7 +27,10 @@ const server=http.createServer(async(req,res)=>{let body='';for await(const chun
   const [,kind,number,tail,label]=route.match(/^(issues|pulls)(?:\/(\d+))?(?:\/(comments|events|labels))?(?:\/(.*))?$/)??[];
   if(!kind)throw Error('Unknown fixture route');const issue=state.issues.find(i=>i.number===Number(number));const data=body?JSON.parse(body):null;
   if(req.method==='GET'){
-   if(!number)result=kind==='issues'?state.issues:state.pulls;
+   if(!number){result=kind==='issues'?state.issues:state.pulls;
+    // Return the no-result snapshot once, then expose the arriving PR to the next read.
+    if(kind==='pulls'&&state.arrivingPulls){state.pulls=state.arrivingPulls;delete state.arrivingPulls;}
+   }
    else if(kind==='pulls')result=state.pulls.find(p=>p.number===Number(number));
    else if(tail==='comments')result=state.comments;
    else if(tail==='events')result=state.events;

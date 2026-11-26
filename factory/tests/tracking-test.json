@@ -1984,13 +1984,62 @@
       "notes": "Join only validated snapshot paths. No errors are routed here."
     },
     {
+      "id": "948ac6e921cbd347266d649b462f8e52",
+      "name": "Have tracking work",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1800,
+        1610
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "Have tracking work",
+              "leftValue": "={{ $json.body !== null || ($json.target !== null && $json.target !== $json.from) }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "notes": "A validated read with no marker or state change completes as no-work now. New PRs or merges arriving afterward wait for the next poll; only planned writes need rechecks."
+    },
+    {
+      "id": "fa57c86acbc9a34c7636231a1fb31259",
+      "name": "No tracked changes",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        0,
+        1840
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// Pure transforms embedded in the reviewed JSON by build-refine.cjs. No I/O or tools.\nconst OWNER_ID = 202449424;\nconst REPOSITORY = 'MBroholm/software-factory';\nconst STATES = ['Ideas', 'Refining', 'Ready for approval', 'Approved', 'Building', 'Your QA', 'Done', 'Waiting for you', 'Stuck'];\nconst PROMPT_VERSION = 'v3';\nconst TEMPLATE_VERSION = 'v1';\nconst lf = value => String(value ?? '').replace(/\\r\\n?/g, '\\n');\nfunction bytes(text) {\n  return Array.from(encodeURIComponent(text).replace(/%([0-9A-F]{2})/g, (_, h) => String.fromCharCode(parseInt(h, 16))), c => c.charCodeAt(0));\n}\n// FIPS 180-4 SHA-256 over UTF-8. Avoids enabling module/host access in n8n Code.\nfunction sha256(text) {\n  const data = bytes(text), bitLength = data.length * 8;\n  data.push(128);\n  while (data.length % 64 !== 56) data.push(0);\n  for (let i = 7; i >= 0; i--) data.push(Math.floor(bitLength / 2 ** (i * 8)) & 255);\n  const k = [], h = [];\n  for (let n = 2; k.length < 64; n++) {\n    let prime = true;\n    for (let d = 2; d * d <= n; d++) if (n % d === 0) { prime = false; break; }\n    if (prime) {\n      if (h.length < 8) h.push((Math.sqrt(n) % 1 * 2 ** 32) | 0);\n      k.push((Math.cbrt(n) % 1 * 2 ** 32) | 0);\n    }\n  }\n  const r = (x, n) => (x >>> n) | (x << (32 - n));\n  for (let offset = 0; offset < data.length; offset += 64) {\n    const w = [];\n    for (let i = 0; i < 16; i++) w[i] = (data[offset+4*i]<<24)|(data[offset+4*i+1]<<16)|(data[offset+4*i+2]<<8)|data[offset+4*i+3];\n    for (let i = 16; i < 64; i++) w[i] = (w[i-16] + (r(w[i-15],7)^r(w[i-15],18)^(w[i-15]>>>3)) + w[i-7] + (r(w[i-2],17)^r(w[i-2],19)^(w[i-2]>>>10))) | 0;\n    let [a,b,c,d,e,f,g,j] = h;\n    for (let i = 0; i < 64; i++) {\n      const t1 = (j + (r(e,6)^r(e,11)^r(e,25)) + ((e&f)^(~e&g)) + k[i] + w[i]) | 0;\n      const t2 = ((r(a,2)^r(a,13)^r(a,22)) + ((a&b)^(a&c)^(b&c))) | 0;\n      [j,g,f,e,d,c,b,a] = [g,f,e,(d+t1)|0,c,b,a,(t1+t2)|0];\n    }\n    [a,b,c,d,e,f,g,j].forEach((v,i) => { h[i] = (h[i]+v)|0; });\n  }\n  return h.map(v => (v>>>0).toString(16).padStart(8,'0')).join('');\n}\nfunction demand(condition, message) { if (!condition) throw Error(message); }\nfunction state(issue) {\n  demand(Number.isSafeInteger(issue.number) && Array.isArray(issue.labels), 'Invalid issue');\n  const labels = issue.labels.map(l => typeof l === 'string' ? l : l.name);\n  const managed = labels.filter(l => STATES.includes(l));\n  demand(managed.length === 1, 'Missing/conflicting task states; owner recovery required');\n  demand(!['Waiting for you','Stuck'].includes(managed[0]), 'Unsupported Basic A state');\n  return managed[0];\n}\nfunction eligible(issue) {\n  return !issue.pull_request && issue.user?.id === OWNER_ID && issue.state === 'open';\n}\nfunction discover(issues) {\n  demand(new Set(issues.map(i => i.number)).size === issues.length, 'Duplicate issue page entries; inspect pagination');\n  const result = [];\n  for (const issue of issues) {\n    if (!eligible(issue)) continue;\n    // Unlabelled ordinary repository issues are not factory tasks.\n    if (!issue.labels?.some(l => STATES.includes(typeof l === 'string' ? l : l.name))) continue;\n    const current = state(issue);\n    demand(current !== 'Refining', 'Stranded Refining; no automatic resumption');\n    if (['Ideas','Ready for approval'].includes(current)) result.push(issue);\n  }\n  return result.sort((a,b) => a.number-b.number);\n}\nfunction factoryComment(comment) {\n  return /^(?:<!--\\s*)?factory:[a-z][a-z0-9_-]*:v1\\b/.test(lf(comment.body));\n}\nfunction canonical(issue, comments) {\n  return JSON.stringify({title:lf(issue.title), body:lf(issue.body), owner_comments:comments.map(c => ({id:c.id,body:lf(c.body)})).sort((a,b) => a.id-b.id)});\n}\nfunction source(issue, comments) {\n  const ids = comments.map(c => c.id).sort((a,b) => a-b);\n  demand(new Set(ids).size === ids.length && ids.every(id => Number.isSafeInteger(id) && id > 0), 'Invalid captured IDs');\n  const source_digest = sha256(canonical(issue, comments));\n  const last_included_owner_comment_id = ids.at(-1) ?? 0;\n  return {issue_number:issue.number, source_digest, captured_comment_ids:ids, last_included_owner_comment_id,\n    prompt_version:PROMPT_VERSION, template_version:TEMPLATE_VERSION,\n    source_key:`${issue.number}:${source_digest}:${last_included_owner_comment_id}:${PROMPT_VERSION}`};\n}\nfunction history(comments, issue) {\n  const revisions = [];\n  for (const comment of comments) {\n    if (!/^<!-- factory:refinement:v1\\b/.test(lf(comment.body))) continue;\n    demand(comment.user?.id === OWNER_ID, 'Untrusted refinement marker; inspect manually');\n    const match = lf(comment.body).match(/^<!-- factory:refinement:v1 (\\{[^\\n]+\\}) -->\\n([\\s\\S]*)$/);\n    demand(match, 'Malformed refinement marker');\n    let meta; try { meta = JSON.parse(match[1]); } catch { throw Error('Malformed refinement metadata'); }\n    demand(meta.issue_number === issue.number && /^[a-f0-9]{64}$/.test(meta.source_digest)\n      && /^[a-f0-9]{64}$/.test(meta.content_sha256) && meta.content_sha256 === sha256(match[2])\n      && Array.isArray(meta.captured_comment_ids) && meta.captured_comment_ids.every(Number.isSafeInteger)\n      && new Set(meta.captured_comment_ids).size === meta.captured_comment_ids.length\n      && meta.captured_comment_ids.every((id,i,a) => id > 0 && (i === 0 || id > a[i-1]))\n      && meta.last_included_owner_comment_id === (meta.captured_comment_ids.at(-1) ?? 0)\n      && /^v\\d+$/.test(meta.prompt_version) && /^v\\d+$/.test(meta.template_version)\n      && meta.source_key === `${issue.number}:${meta.source_digest}:${meta.last_included_owner_comment_id}:${meta.prompt_version}`,\n    'Edited/invalid refinement evidence');\n    demand(Number.isSafeInteger(comment.id) && Number.isFinite(Date.parse(comment.created_at))\n      && comment.created_at === comment.updated_at, 'Edited refinement comment; inspect manually');\n    revisions.push({comment,meta});\n  }\n  revisions.sort((a,b) => a.comment.id-b.comment.id);\n  demand(new Set(revisions.map(r => r.meta.source_key)).size === revisions.length, 'Duplicate refinement markers');\n  return revisions;\n}\nfunction pages(items) {\n  const result = [];\n  demand(items.length > 0 && items.length < 100, 'Pagination cap reached; inspect before processing');\n  for (const item of items) {\n    demand(item.statusCode === 200 && Array.isArray(item.body), 'Invalid paginated response');\n    result.push(...item.body);\n  }\n  const last = items.at(-1);\n  demand(!/rel=\"next\"/.test(last.headers?.link ?? '') && last.body.length < 100, 'Incomplete pagination');\n  return result;\n}\n// Pure US2 policy, packaged with the unchanged US1 canonical-source helpers.\nfunction reservationCandidates(issues) {\n  demand(new Set(issues.map(i=>i.number)).size===issues.length,'Duplicate issue pages');\n  // Closed, non-owner and conflicting Building tasks also reserve the slot.\n  if (issues.some(i=>!i.pull_request && i.labels?.some(l=>(typeof l==='string'?l:l.name)==='Building'))) return [];\n  return issues.filter(i=>eligible(i) && i.labels?.some(l=>(typeof l==='string'?l:l.name)==='Approved'))\n    .map(i=>{demand(state(i)==='Approved','Conflicting approval state');return i;}).sort((a,b)=>a.number-b.number);\n}\nfunction approval(issue,comments,events,expectedState='Approved') {\n  demand(eligible(issue) && state(issue)===expectedState,'Issue no longer eligible');\n  demand(new Set(comments.map(c=>c.id)).size===comments.length,'Duplicate comments');\n  demand(new Set(events.map(e=>e.id)).size===events.length,'Duplicate approval history');\n  const relevant=events.filter(e=>['labeled','unlabeled'].includes(e.event) && e.label?.name==='Approved').sort((a,b)=>a.id-b.id);\n  demand(relevant.every(e=>Number.isSafeInteger(e.id) && Number.isFinite(Date.parse(e.created_at))),'Invalid approval history');\n  // After our transition, the last Approved event is our removal, not new approval.\n  if(expectedState==='Building') {\n    const removed=relevant.pop(); demand(removed?.event==='unlabeled' && removed.actor?.id===OWNER_ID,'Approval removal missing');\n  }\n  const event=relevant.at(-1);\n  demand(event?.event==='labeled' && event.actor?.id===OWNER_ID,'Missing current explicit owner approval');\n  const latest=history(comments,issue).at(-1);\n  demand(latest,'Missing successful refinement');\n  demand(Date.parse(latest.comment.created_at)<Date.parse(event.created_at)\n    && Date.parse(latest.comment.updated_at)<Date.parse(event.created_at),'Refinement not before approval');\n  demand(latest.comment.html_url===`https://github.com/${REPOSITORY}/issues/${issue.number}#issuecomment-${latest.comment.id}`,'Invalid refinement URL');\n  const included=latest.meta.captured_comment_ids.map(id=>{\n    const c=comments.find(c=>c.id===id);\n    demand(c?.user?.id===OWNER_ID && !factoryComment(c) && typeof c.body==='string','Captured source missing/changed');return c;\n  });\n  demand(source(issue,included).source_digest===latest.meta.source_digest,'Approved source edited/deleted');\n  return {issue_number:issue.number,approval_event_id:event.id,approval_actor_id:event.actor.id,approval_timestamp:event.created_at,\n    refinement_comment_id:latest.comment.id,refinement_url:latest.comment.html_url,\n    refinement_created_at:latest.comment.created_at,refinement_updated_at:latest.comment.updated_at,\n    refinement_content_sha256:latest.meta.content_sha256,refinement_body_sha256:sha256(latest.comment.body),\n    source_digest:latest.meta.source_digest,branch:`issue-${issue.number}`};\n}\nfunction sameApproval(original,current) {\n  demand(JSON.stringify(original)===JSON.stringify(current),'Approval/refinement/source changed; inspect manually');\n}\nfunction baseline(pulls,number) {\n  demand(new Set(pulls.map(p=>p.number)).size===pulls.length,'Duplicate PR pages');\n  return pulls.filter(p=>p.head?.repo?.full_name===REPOSITORY && p.head.ref===`issue-${number}` && p.base?.ref==='main').map(p=>{\n    demand(Number.isSafeInteger(p.number) && /^[0-9a-f]{40}$/.test(p.head.sha) && ['open','closed'].includes(p.state),'Invalid PR baseline');\n    return {number:p.number,head_sha:p.head.sha,state:p.state};\n  }).sort((a,b)=>a.number-b.number);\n}\nfunction checkHandoffs(comments,plan) {\n  for(const c of comments) {\n    if(!/^<!-- factory:handoff:v1\\b/.test(lf(c.body))) continue;\n    const m=lf(c.body).match(/^<!-- factory:handoff:v1 (\\{[^\\n]+\\}) -->\\n/);\n    demand(m && c.user?.id===OWNER_ID && c.created_at===c.updated_at,'Invalid/edited handoff; manual recovery');\n    let meta;try{meta=JSON.parse(m[1]);}catch{throw Error('Malformed handoff');}\n    demand(meta.issue_number===plan.issue_number && Number.isSafeInteger(meta.approval_event_id),'Invalid handoff metadata');\n    demand(meta.approval_event_id!==plan.approval_event_id,'Approval already handed off; manual recovery');\n  }\n}\nfunction handoff(plan,prs,timestamp) {\n  demand(Number.isFinite(Date.parse(timestamp)),'Invalid handoff timestamp');\n  const metadata={...plan,baseline_prs:baseline(prs,plan.issue_number),timestamp};\n  const body=`<!-- factory:handoff:v1 ${JSON.stringify(metadata)} -->\\n## Manual build reservation\\n\\nIssue: https://github.com/${REPOSITORY}/issues/${plan.issue_number}\\nApproved refinement: ${plan.refinement_url}\\nApproval event: ${plan.approval_event_id} (${plan.approval_timestamp}); owner actor ${plan.approval_actor_id}.\\nRefinement content SHA-256: ${plan.refinement_content_sha256}\\nSource SHA-256: ${plan.source_digest}\\nBranch: \\`${plan.branch}\\`; base: \\`main\\`.\\n\\nBuilding reserves the single slot; it does not confirm Codex has started. The owner must verify this approved input and launch Codex manually on Fedora using docs/manual-coding.md. Ask result-changing questions in the session and summarize answers/decisions on this issue. Expanded scope requires fresh explicit approval. Return changes in a linked pull request with actual checks and unchecked criteria. No agent was launched by this workflow.\\n`;\n  return {metadata,body};\n}\n// Conservative current-attempt association; no repair, merge or approval authority.\nfunction trackingCandidates(issues) {\n demand(new Set(issues.map(i=>i.number)).size===issues.length,'Duplicate issue pages');\n return issues.filter(i=>!i.pull_request && i.user?.id===OWNER_ID && i.labels?.some(l=>STATES.includes(typeof l==='string'?l:l.name)) && (['Building','Your QA'].includes(state(i)) || (i.state==='closed' && state(i)!=='Done'))).sort((a,b)=>a.number-b.number);\n}\nfunction marked(comments,kind,number) {\n return comments.filter(c=>lf(c.body).startsWith(`<!-- factory:${kind}:v1`)).map(c=>{\n  const m=lf(c.body).match(new RegExp(`^<!-- factory:${kind}:v1 (\\\\{[^\\\\n]+\\\\}) -->\\\\n`));\n  demand(m && c.user?.id===OWNER_ID && c.created_at===c.updated_at,'Invalid/edited '+kind);\n  const meta=JSON.parse(m[1]);demand(meta.issue_number===number && Number.isSafeInteger(meta.approval_event_id),'Invalid marker identity');return {comment:c,meta};\n });\n}\nfunction trackingPlan(issue,comments,events,pulls) {\n const current=state(issue);demand(issue.user?.id===OWNER_ID && !issue.pull_request,'Invalid tracked issue');\n if(issue.state==='closed')return {issue_number:issue.number,from:current,target:'Done',result:null,body:null};\n demand(['Building','Your QA'].includes(current),'Tracking cannot override reapproval');\n const removals=events.filter(e=>e.label?.name==='Approved' && ['labeled','unlabeled'].includes(e.event)).sort((a,b)=>a.id-b.id);\n const removed=removals.pop(),approved=removals.at(-1);\n demand(removed?.event==='unlabeled' && removed.actor?.id===OWNER_ID && approved?.event==='labeled','Current reservation history missing');\n // Reuse canonical source/approval checks without treating QA as a new approval.\n const p=approval({...issue,labels:issue.labels.map(l=>(typeof l==='string'?l:l.name)===current?{name:'Building'}:l)},comments,events,'Building');\n const handoffs=marked(comments,'handoff',issue.number).filter(h=>h.meta.approval_event_id===p.approval_event_id);\n demand(handoffs.length===1,'Missing/duplicate current handoff');const h=handoffs[0];\n for(const [key,value] of Object.entries(p))demand(h.meta[key]===value,'Handoff scope/approval mismatch');\n demand(Array.isArray(h.meta.baseline_prs) && Date.parse(h.meta.timestamp)>=Date.parse(p.approval_timestamp),'Invalid handoff baseline/time');\n demand(new Set(h.meta.baseline_prs.map(b=>b.number)).size===h.meta.baseline_prs.length,'Duplicate baseline');\n demand(new Set(pulls.map(r=>r.number)).size===pulls.length,'Duplicate PR pages');\n const associated=pulls.filter(r=>r.head?.repo?.full_name===REPOSITORY && r.head.ref===p.branch && r.base?.ref==='main' && r.base?.repo?.full_name===REPOSITORY && (new RegExp(`(?:^|\\\\s)Refs #${issue.number}(?![0-9])`,'i').test(r.body??'') || new RegExp(`https://github\\\\.com/${REPOSITORY}/issues/${issue.number}(?![0-9])`).test(r.body??'')));\n const prior=marked(comments,'result',issue.number).filter(r=>r.meta.approval_event_id===p.approval_event_id);\n demand(prior.length<=1,'Duplicate current result markers');\n const candidates=associated.filter(r=>{\n  const b=h.meta.baseline_prs.find(b=>b.number===r.number);\n  if(prior[0]?.meta.pr_number===r.number)return true;\n  if(!b){demand(Number.isFinite(Date.parse(r.created_at)) && Date.parse(r.created_at)>Date.parse(p.approval_timestamp),'Unbaselined old PR or unclear creation time');return true;}\n  if(b.head_sha===r.head.sha){demand(!(b.state==='closed' && r.state==='open'),'Unchanged reopened result');return false;}\n  demand(b.state==='open' && Date.parse(r.updated_at)>Date.parse(p.approval_timestamp),'Ambiguous baseline activity');return true;\n });\n demand(candidates.length<=1,'Ambiguous current results');\n if(!candidates.length){demand(!prior.length && current==='Building','Current result disappeared');return {issue_number:issue.number,from:current,target:null,result:null,body:null};}\n const r=candidates[0];demand(/^[a-f0-9]{40}$/.test(r.head.sha) && ['open','closed'].includes(r.state) && typeof r.merged==='boolean','Invalid detailed PR');\n demand(!r.merged || (r.state==='closed' && Number.isFinite(Date.parse(r.merged_at))),'Invalid merge evidence');\n if(prior.length)demand(prior[0].meta.pr_number===r.number && prior[0].meta.head_sha===r.head.sha,'Accepted result head changed; owner resolution required');\n const meta={issue_number:issue.number,approval_event_id:p.approval_event_id,pr_number:r.number,head_sha:r.head.sha};\n const body=prior.length?null:`<!-- factory:result:v1 ${JSON.stringify(meta)} -->\\n## Result ready for owner review\\n\\nhttps://github.com/${REPOSITORY}/pull/${r.number}\\nHead: ${r.head.sha}\\nOwner decides review, merge, closure or explicitly approved rework.\\n`;\n return {issue_number:issue.number,from:current,target:r.merged?'Done':'Your QA',result:meta,body};\n}\n\nconst p=$('Read ready').first().json;demand(p.body===null && (p.target===null || p.target===p.from),'Unexpected pending tracking write');return [{json:{acknowledged:true,outcome:'no_work',issue_number:p.issue_number}}];"
+      },
+      "notes": "Acknowledge this read-only snapshot and release only the acquired execution guard. Preserve Building/QA and all markers; later external changes are handled by a fresh poll."
+    },
+    {
       "id": "190f68749b999084da4948dccc28c59a",
       "name": "Compare snapshot",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1800,
-        1610
+        300,
+        1840
       ],
       "parameters": {
         "mode": "runOnceForAllItems",
@@ -2004,7 +2053,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        0,
+        600,
         1840
       ],
       "parameters": {
@@ -2038,7 +2087,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        300,
+        900,
         1840
       ],
       "parameters": {
@@ -2087,7 +2136,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        600,
+        1200,
         1840
       ],
       "parameters": {
@@ -2102,7 +2151,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        900,
+        1500,
         1840
       ],
       "parameters": {
@@ -2136,7 +2185,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        1200,
+        1800,
         1840
       ],
       "parameters": {
@@ -2185,8 +2234,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1500,
-        1840
+        0,
+        2070
       ],
       "parameters": {
         "mode": "runOnceForAllItems",
@@ -2200,8 +2249,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        1800,
-        1840
+        300,
+        2070
       ],
       "parameters": {
         "method": "DELETE",
@@ -2246,7 +2295,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        0,
+        600,
         2070
       ],
       "parameters": {
@@ -2261,7 +2310,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        300,
+        900,
         2070
       ],
       "parameters": {
@@ -2325,7 +2374,7 @@
         2100
       ],
       "parameters": {
-        "content": "## 4. Confirm and release\n\nFinal readback and acknowledged success/no-work release; errors never release.",
+        "content": "## 4. Confirm and release\n\nRead-only polls release after a validated snapshot; writes require final readback. Errors never release.",
         "height": 180,
         "width": 430
       }
@@ -2337,7 +2386,7 @@
       "typeVersion": 2.1,
       "position": [
         -1000,
-        1380
+        1420
       ],
       "parameters": {
         "httpMethod": "POST",
@@ -2355,7 +2404,7 @@
       "typeVersion": 2.1,
       "position": [
         -1000,
-        1400
+        1440
       ],
       "parameters": {
         "httpMethod": "POST",
@@ -2373,7 +2422,7 @@
       "typeVersion": 4.2,
       "position": [
         -1000,
-        1420
+        1460
       ],
       "parameters": {
         "method": "POST",
@@ -2404,7 +2453,7 @@
       "typeVersion": 2.1,
       "position": [
         -1000,
-        1440
+        1480
       ],
       "parameters": {
         "httpMethod": "GET",
@@ -2422,7 +2471,7 @@
       "typeVersion": 4.2,
       "position": [
         -1000,
-        1460
+        1500
       ],
       "parameters": {
         "method": "GET",
@@ -2450,7 +2499,7 @@
       "typeVersion": 2.1,
       "position": [
         -1000,
-        1480
+        1520
       ],
       "parameters": {
         "httpMethod": "POST",
@@ -2468,7 +2517,7 @@
       "typeVersion": 2,
       "position": [
         -1000,
-        1500
+        1540
       ],
       "parameters": {
         "mode": "runOnceForAllItems",
@@ -3149,7 +3198,36 @@
       "main": [
         [
           {
+            "node": "Have tracking work",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Have tracking work": {
+      "main": [
+        [
+          {
             "node": "Recheck issue",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No tracked changes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "No tracked changes": {
+      "main": [
+        [
+          {
+            "node": "Require acknowledged completion",
             "type": "main",
             "index": 0
           }
