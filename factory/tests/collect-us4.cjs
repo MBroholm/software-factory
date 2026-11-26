@@ -1,0 +1,18 @@
+// Sanitize actual native traces, never publishes raw snapshots, credentials or backups.
+const fs=require('node:fs'),assert=require('node:assert/strict'),{createHash}=require('node:crypto');
+const {api}=require('./tracking-api.cjs'),G=require('./us4-guard.cjs');
+const dir='factory/local/us4',read=n=>JSON.parse(fs.readFileSync(`${dir}/${n}.json`));
+(async()=>{
+ const registry=read('registry'),events=read('events'),native=[];
+ for(const [story,r]of Object.entries(registry)){
+  const all=[];let cursor;do{const p=await api('/api/v1/executions?workflowId='+r.id+'&limit=100'+(cursor?'&cursor='+encodeURIComponent(cursor):''));all.push(...p.data);cursor=p.nextCursor;}while(cursor);
+  for(const item of all){const e=await G.execution(story,item.id),data=e.data?.resultData?.runData??{};
+   const held=!!data['Report existing hold'];if(held){assert(!data['Acquire control']);assert(!data['Release control']);assert(!Object.keys(data).some(n=>e.workflowData.nodes.find(x=>x.name===n)?.type.endsWith('.httpRequest')));}
+   const output=(data['Report existing hold']??data['Report completion'])?.at(-1)?.data?.main?.[0]?.[0]?.json??null;
+   native.push({story,id:e.id,status:e.status,mode:e.mode,version:e.workflowVersionId,startedAt:e.startedAt,stoppedAt:e.stoppedAt,nodes:Object.keys(data),held_skip:held,output,error:e.data?.resultData?.error?.message??null,code_connections_verified:true,used_private_credentials:e.usedPrivateCredentials});
+  }
+ }
+ const summary={source_commit:process.argv[2],environment:{container:'factory-guard-test',image:'docker.n8n.io/n8nio/n8n:2.48.8',volume:'factory_guard_test_data',published_port:'127.0.0.1:5679',table:'IgWCIu94ieyHQRHS',http:'container loopback 18768 only',credentials_used:false},imported:registry,primary:events.filter(e=>e.id),inspected_resets:events.filter(e=>e.operator_reset),native,counts:{primary:events.filter(e=>e.id).length,guard_cases:events.filter(e=>e.id&&!e.case.startsWith('recovery-')).length,held_skips:native.filter(e=>e.held_skip).length,crashed:native.filter(e=>e.status==='crashed').length},limits:['G06 uses native next-node output injection rather than deleting the shared historical singleton; original persisted-row G06 skeleton evidence is retained.','G08/G09-empty/G10/G12/G16 inject at the real downstream boundary; unavailable-table cases exercise actual native Data Table errors.','Story success/no-work/pre/post-effect cases and scheduled paths reuse unchanged-source US1/US2/US3 native evidence; not rerun.','Three source workflow JSON files are unchanged; only test harnesses/documentation added.','Original source Code bodies are identical; fixed loopback/no auth, disabled schedules, scoped/unavailable table IDs and added boundary adapters/connections are explicit test-only deltas.'],interventions:['First import comparison rejected n8n-added Wait webhookId. Inactive copy reused after explicitly allowing only that metadata field; no behavior fix.','First outage resume observer read old failed execution before webhook registration. All copies paused/drained; API confirmed no fresh resumed execution. Added registration delay, HTTP receipt and new execution-ID assertions; independent corrected recovery passed.','Two attempted next-case calls stopped at the active-workflow boundary after the observer failure; no fixture case executed.','Later test-note clarification changed only generated explanatory notes; actual mapped artifact hashes in imported registry identify executed packages.']};
+ fs.writeFileSync('evidence/us4-guard-results.json',JSON.stringify(summary,null,2)+'\n');
+ console.log(JSON.stringify(summary.counts));
+})().catch(e=>{console.error(e.stack);process.exitCode=1;});

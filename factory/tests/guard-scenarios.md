@@ -13,8 +13,8 @@ Status: specified before story implementation. Owner-run skeleton checks and ass
 native bridge evidence are now recorded in `evidence/guard-validation.md` and
 `evidence/guard-bridge-results.json`. Local graph checks alone do not establish Data Table
 persistence, engine routing or restart behavior.
-Repeat every G case on **refine, reserve and track**, recording each separately. T026 repeats
-missing/change-affected coverage on finished workflows; story cases below remain pending.
+Repeat every G case on **refine, reserve and track**, recording each separately. T026 completes missing/change-affected coverage on finished workflows; actual completed story
+and guard outcomes are recorded in the linked evidence, while the tables below remain the original test specification.
 
 ## Isolated setup and exact entry path
 
@@ -131,3 +131,14 @@ then SSH-local requests through the real n8n server. It copies the same three gu
 uses native Data Table operations, records persistent effects and never imports/activates the
 production workflows. Keep the manual source evidence and report bridge results separately.
 No helper-only result or standalone CLI failure substitutes for engine-path validation.
+
+
+## Finished-workflow T026 result — 2026-11-26
+
+All required guard paths now have finished-workflow evidence or explicitly justified reuse of
+unchanged current-source story checks. See [T026 coverage](../../evidence/guard-validation.md#t026-finished-workflow-closeout--2026-11-26),
+[actual native results](../../evidence/us4-guard-results.json) and the
+[US4 harness boundary](us4-validation.md). Historical skeleton successes alone were not used
+for completed story behavior. Supplemental UI cancellation remains unrun; all three acquired
+in-flight restart cases passed. Do not rerun unchanged suites just because the old setup text
+calls the then-current workflow a skeleton.

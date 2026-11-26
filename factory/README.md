@@ -17,19 +17,32 @@ Workflow documentation conventions for future changes are recorded in [AGENTS.md
 
 The pinned images were observed healthy on the actual server; digests and model trials are in
 [Gemini/server evidence](../evidence/gemini-evaluation.md) and [local trials](../evidence/ollama-evaluation.md).
-The API key is not stored in Compose or workflow JSON; runtime use will reference n8n credentials.
-`workflows/refine.json` implements US1; `workflows/reserve.json` implements US2 approval,
-reservation and handoff. Reviewed copies were manually imported and tested in isolation;
-all test workflows are now unpublished. `workflows/track.json` remains a guarded skeleton for US3.
-US2 source packaging: `node factory/scripts/build-reserve.cjs --check` from the repository root;
-local policy/graph checks: `node factory/tests/check-reservation.cjs`.
-See [manual coding](../docs/manual-coding.md) and
-[US2 validation/import handoff](../evidence/manual-build-validation.md). US2 native/live results and the deliberate final test hold are recorded there.
-See [refinement validation and import handoff](../evidence/refinement-validation.md),
-[runtime design](../docs/refinement-design.md) and [output example](../docs/refinement-example.md).
-Run `node scripts/build-refine.cjs --check` from this directory to verify source packaging;
-run tests from repository root with `node factory/tests/check-refinement.cjs` and
-`node factory/tests/check-guard-skeletons.cjs`. Native checks remain required.
+The API key is not stored in Compose or workflow JSON; runtime nodes reference saved n8n credentials.
+All three workflows are implemented: `workflows/refine.json` (US1), `workflows/reserve.json`
+(US2) and `workflows/track.json` (US3). Their exported artifacts remain inactive. US4 operations,
+architecture, finished-graph guards and recovery/restore validation are documented in
+[operations](../docs/operations.md), [architecture](../docs/architecture.md) and the
+[evidence index](../evidence/index.md). Test instances are distinct from operational adoption;
+all test workflows are unpublished and the restore clone is stopped.
+
+Run source consistency checks from the **repository root**, for example:
+
+```bash
+node factory/scripts/build-refine.cjs --check
+node factory/scripts/build-reserve.cjs --check
+node factory/scripts/build-track.cjs --check
+```
+
+Local behavior checks are `node factory/tests/check-refinement.cjs`,
+`node factory/tests/check-reservation.cjs` and `node factory/tests/check-tracking.cjs`.
+Native/scheduled results are revision-specific in [refinement validation](../evidence/refinement-validation.md),
+[manual-build validation](../evidence/manual-build-validation.md),
+[review validation](../evidence/review-validation.md) and
+[finished-graph guard coverage](../evidence/guard-validation.md). Reuse unchanged valid evidence;
+local tests alone do not establish native persistence or credential behavior. The
+[US4 test guide](tests/us4-validation.md) describes isolated-only fault/recovery/backup tools.
+See [manual coding](../docs/manual-coding.md), [runtime design](../docs/refinement-design.md)
+and [output example](../docs/refinement-example.md).
 For parameter-expression changes, `node factory/tests/check-refinement.cjs --native-fixtures`
 prepares synthetic contexts for `tests/check-refinement-native-expressions.cjs`. That checker
 requires installed n8n packages and explicitly uses the VM evaluator; ordinary standalone

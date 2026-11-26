@@ -248,11 +248,11 @@ closure, including a closed-unmerged PR with the issue still open.
 **Independent test**: Follow only the runbooks, inspect a known failed/held task and safely recover;
 trace a real task's input, decisions, PR and review entirely from sanitized repository evidence.
 
-- [ ] T024 [US4] Complete deployment/operations instructions in `docs/operations.md` for private SSH editor login, pinned model/images, one production instance, volume/encryption-key backup and restore, private execution retention and manual import/revision verification; preserve one-row guard and no automatic recovery/expiry tradeoff.
-- [ ] T025 [P] [US4] Create `docs/architecture.md` from the reviewed Basic A design, explicitly separating `.specify/templates/` development artifacts from runtime `factory/templates/task.md` and `factory/prompts/refinement.md`, and showing server n8n, outbound Gemini refinement, Fedora manual coding and GitHub interface; distinguish retained optional Ollama trial artifacts from runtime dependencies.
-- [ ] T026 [US4] Complete the `factory/tests/guard-scenarios.md` matrix against **all three completed workflows** in isolation; verify source/imported revisions and isolated environment under T033, reuse applicable current-version story evidence and execute missing or change-affected cases, including success, every no-work early return, already-busy entry, unexpected exception before/after side effects, failed final release, crash/restart and missing/unconfirmed acquisition; record actual rows, failed/skipped executions and later-poll behavior in `evidence/guard-validation.md`; do not accept skeleton/helper-only results or unconditional cleanup that masks failures.
-- [ ] T027 [US4] Execute pause/drain/inspect/repair/reset/resume and backup/restore exercises, including GitHub outage, partial label transition and unknown comment POST, in an isolated deployment; record operator steps, marker inspection, retained Building reservations and sanitized failures in `evidence/recovery-validation.md`; ambiguous outcomes remain held rather than retried automatically.
-- [ ] T028 [US4] Assemble `evidence/index.md` linking the real task issue/PR, refinement, session decision, owner review and actual checks from the validation records; explicitly distinguish fixtures from real runs, count only genuine issue/PR-linked tasks and retain the final-project minimum of five runs as outstanding until actually met.
+- [X] T024 [US4] Complete deployment/operations instructions in `docs/operations.md` for private SSH editor login, pinned model/images, one production instance, volume/encryption-key backup and restore, private execution retention and manual import/revision verification; preserve one-row guard and no automatic recovery/expiry tradeoff.
+- [X] T025 [P] [US4] Create `docs/architecture.md` from the reviewed Basic A design, explicitly separating `.specify/templates/` development artifacts from runtime `factory/templates/task.md` and `factory/prompts/refinement.md`, and showing server n8n, outbound Gemini refinement, Fedora manual coding and GitHub interface; distinguish retained optional Ollama trial artifacts from runtime dependencies.
+- [X] T026 [US4] Complete the `factory/tests/guard-scenarios.md` matrix against **all three completed workflows** in isolation; verify source/imported revisions and isolated environment under T033, reuse applicable current-version story evidence and execute missing or change-affected cases, including success, every no-work early return, already-busy entry, unexpected exception before/after side effects, failed final release, crash/restart and missing/unconfirmed acquisition; record actual rows, failed/skipped executions and later-poll behavior in `evidence/guard-validation.md`; do not accept skeleton/helper-only results or unconditional cleanup that masks failures.
+- [X] T027 [US4] Execute pause/drain/inspect/repair/reset/resume and backup/restore exercises, including GitHub outage, partial label transition and unknown comment POST, in an isolated deployment; record operator steps, marker inspection, retained Building reservations and sanitized failures in `evidence/recovery-validation.md`; ambiguous outcomes remain held rather than retried automatically.
+- [X] T028 [US4] Assemble `evidence/index.md` linking the real task issue/PR, refinement, session decision, owner review and actual checks from the validation records; explicitly distinguish fixtures from real runs, count only genuine issue/PR-linked tasks and retain the final-project minimum of five runs as outstanding until actually met.
 
 **Checkpoint**: Basic A has real-run evidence and documented human intervention, not merely a diagram.
 
@@ -446,3 +446,28 @@ The convergence finding relied on stale local pending-review evidence; no new ow
 was needed. No external write, workflow execution/import or merge performed. Real issue #1
 remains open/Building; no real tracking transition is claimed. Existing native/scheduled
 fixtures retained; US4/final acceptance and operational adoption remain outside this task.
+
+
+**US4/T024–T028 complete, 2026-11-26**: Updated current deployment/retention/import and
+stopped-volume backup/restore runbook; added architecture and real-task evidence index.
+Source workflow JSON is unchanged from 219e351f77cd6be3534f297d1df2d95421f10f5d. T026 closes
+finished-graph guard coverage with 55 new primary guard executions, three native crashes and
+93 actual cross-workflow held skips across guard/recovery, reusing unchanged story/scheduled
+evidence. T027 passed inspected simulated outage/partial-label/unknown-POST recovery and a
+full stopped-volume restore into a separate network-disabled clone: nine file hashes, 25
+inactive workflows/exact singleton and a backed-up disposable credential round trip passed.
+Harness metadata/registration failures and corrections are retained, not hidden as passes.
+All 25 test workflows inactive/drained, singleton idle at 1699; fixture stopped and clone stopped.
+No operational adoption or real GitHub write occurred. T028 counts one genuine issue #1/PR #5
+run with actual owner merge decision; real issue #1 still Building, #4 Approved. Five-run final
+project minimum, T029/T030 final acceptance and owner operational review/manual import remain
+outstanding. See evidence/guard-validation.md, evidence/recovery-validation.md,
+evidence/us4-guard-results.json, evidence/us4-recovery-results.json and evidence/index.md.
+
+
+**US4 final local verification**: all three workflow generator checks and isolated tracking
+package consistency pass; 22 tracking behavior groups and seven mapping groups pass; five
+JavaScript helper syntax checks and Python backup-helper compilation pass. Affected Markdown
+local link destinations/fences, public result JSON/targeted secret-pattern screen and
+`git diff --check` pass. Operational workflow hashes are unchanged. No extension hooks are
+registered (`.specify/extensions.yml` absent). No blanket story/native suite rerun was needed.

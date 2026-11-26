@@ -6,13 +6,13 @@
 Fedora/Ubuntu/Compose preferences, SSH availability, completed model trials and explicit owner
 decision on 2026-11-24 to adopt Gemini 3.5 Flash-Lite refinement on the free tier.
 
-**Status (2026-11-26)**: T001–T019 and scheduled-path T031/T032 are complete, with the
-recorded limits in their evidence. US3 T020–T023 and T033 are now complete: credential-free
-native fixture cases and original scheduled QA/unchanged polls passed in the isolated instance;
-see review-validation.md and review-native-results.json under evidence/. Final Basic A
-acceptance and US4 remain incomplete; operational owner review/manual import is separate.
-Future tests recheck the existing isolation boundaries. Historical planning observations below
-retain their dates; no operational deployment or source behavior changed in this validation.
+**Status (2026-11-26)**: T001–T028 and T031–T034 are complete within their recorded
+revision/environment limits. US4 adds operations/architecture, finished-workflow guard coverage,
+inspected recovery and a network-disabled stopped-volume restore rehearsal; see
+`evidence/index.md`, `evidence/guard-validation.md` and `evidence/recovery-validation.md`.
+T029/T030 final acceptance and operational owner review/manual matching-revision import remain
+incomplete. One genuine issue/PR task has an owner acceptance decision; the final-project five-run
+minimum is still outstanding. No source workflow behavior changed in US4.
 
 ## Summary
 
