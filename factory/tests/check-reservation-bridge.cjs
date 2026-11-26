@@ -1,7 +1,8 @@
+const {readGenerated}=require('./test-artifacts.cjs');
 // Tests packaging and synthetic HTTP/persistence only, not native n8n or live tasks.
 const fs=require('node:fs'),path=require('node:path'),os=require('node:os'),assert=require('node:assert/strict'),vm=require('node:vm');
 const {spawn}=require('node:child_process');
-const read=p=>fs.readFileSync(p,'utf8'),source=JSON.parse(read('factory/workflows/reserve.json')),graph=JSON.parse(read('factory/local/us2/native-bridge/workflow.json'));
+const read=p=>readGenerated(p,'node factory/tests/prepare-test-artifacts.cjs'),source=JSON.parse(read('factory/workflows/reserve.json')),graph=JSON.parse(read('factory/local/us2/native-bridge/workflow.json'));
 const config=JSON.parse(read('factory/local/us2/native-bridge/fixtures.json'));
 const runtime=read('factory/scripts/refinement-runtime.cjs').split('function analyze(')[0]+read('factory/scripts/reservation-runtime.cjs').split('module.exports =')[0];
 const P=vm.runInNewContext('(()=>{'+runtime+';return {approval,handoff,reservationCandidates};})()');

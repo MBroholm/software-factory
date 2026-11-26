@@ -369,6 +369,9 @@ An invalid pre-held row errors without mutating it.
 **Historical T007/T008 instructions below describe the original guard-only exports.** Current
 `refine.json` is the inactive US1 implementation with real GitHub/model calls; use the
 [US1 import/validation handoff](../evidence/refinement-validation.md) for it. Reserve/track were skeletons at that checkpoint; both are now implemented and validated.
+The old checker and bridge tools are preserved in the [T008 archive](../factory/tests/historical/t008/README.md).
+Use the [current test setup](../factory/tests/test-preparation.md) and
+[finished-workflow guard guide](../factory/tests/us4-validation.md) for new checks.
 Do not rebuild/reimport the old guard bridge against the current refine graph
 or treat the earlier native skeleton passes as US1 validation.
 

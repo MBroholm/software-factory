@@ -1,5 +1,9 @@
 # Guard and contract scenarios — T006
 
+This matrix remains the coverage specification. The skeleton setup and T008 procedures below
+are historical; current finished-workflow setup is in [US4 validation](us4-validation.md).
+The [T008 archive](historical/t008/README.md) preserves the superseded tools and original artifacts.
+
 Current policy (2026-11-26): imports, updates and execution in designated isolated dev/test
 n8n may be automated after T033 boundary verification, using test data, scoped credentials and
 designated test resources. No operational workflow replacement/activation or ordinary factory
@@ -126,7 +130,7 @@ case counts as passed because a guard-only skeleton released successfully.
 ## Assisted native execution option (T008)
 
 The owner requested assistance because individual UI fault edits/runs were taking substantial
-time. The [isolated validation bridge](guard-bridge.md) provides a single isolated test import (automation permitted),
+time. The [isolated validation bridge](historical/t008/guard-bridge.md) provides a single isolated test import (automation permitted),
 then SSH-local requests through the real n8n server. It copies the same three guarded paths,
 uses native Data Table operations, records persistent effects and never imports/activates the
 production workflows. Keep the manual source evidence and report bridge results separately.

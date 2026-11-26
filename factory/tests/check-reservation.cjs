@@ -6,6 +6,9 @@ const P=vm.runInNewContext(`(()=>{${fs.readFileSync('factory/scripts/refinement-
 const clone=x=>JSON.parse(JSON.stringify(x));
 const issue={number:1,title:'A guide',body:'Document only',user:{id:R.OWNER_ID},state:'open',labels:[{name:'Approved'},{name:'documentation'}]};
 const time='2026-11-25T10:00:00Z',later='2026-11-25T11:00:00Z';
+// Exported Code uses Date for guard/handoff timestamps. Freeze the fixture clock so
+// regeneration/checking does not depend on when the test process runs.
+class FixtureDate extends Date {constructor(...args){super(...(args.length?args:[later]));}static now(){return Date.parse(later);}}
 const human={id:2,user:{id:R.OWNER_ID},body:'Keep it short',created_at:time,updated_at:time};
 const meta={...R.source(issue,[human]),content_sha256:R.sha256('Guide')};
 const refinement={id:3,user:{id:R.OWNER_ID},body:`<!-- factory:refinement:v1 ${JSON.stringify(meta)} -->\nGuide`,created_at:time,updated_at:time,html_url:'https://github.com/MBroholm/software-factory/issues/1#issuecomment-3'};
@@ -31,7 +34,7 @@ const nodes=new Map(graph.nodes.map(n=>[n.name,n]));
 const nativeFixtures=[];
 function run({issues=[clone(issue)],discussion=clone(comments),history=clone(events),row={id:1,key:'global',busy:false,execution_id:'',issue_number:null,started_at:''},fault,start='Manual isolated test'}={}) {
  const outputs=new Map(),trace=[],calls=[],runData={};let name=start,input=[{json:{}}],error=null,previous=null;
- const env=()=>({$json:input[0]?.json,$input:{all:()=>input,first:()=>input[0]},$execution:{id:'reserve-test'},$:ref=>({first:()=>outputs.get(ref)?.[0],all:()=>outputs.get(ref)??[]})});
+ const env=()=>({Date:FixtureDate,$json:input[0]?.json,$input:{all:()=>input,first:()=>input[0]},$execution:{id:'reserve-test'},$:ref=>({first:()=>outputs.get(ref)?.[0],all:()=>outputs.get(ref)??[]})});
  const evaluate=v=>typeof v==='string'&&v.startsWith('={{')?vm.runInNewContext(`(${v.slice(3,-2).trim()})`,env()):v;
  try{for(let step=0;name;step++){
   assert(step<100);trace.push(name);const n=nodes.get(name),p=n.parameters;let result=input,branch=0;

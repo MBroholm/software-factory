@@ -1,5 +1,10 @@
 # US1 refinement validation
 
+Historical `factory/tests/check-guard-skeletons.cjs` commands in this record refer to the
+then-current skeleton revision. That checker and T008 bridge tools are now in the
+[T008 archive](../factory/tests/historical/t008/README.md); they are not current test commands.
+Recorded outcomes below are unchanged.
+
 **Date**: 2026-11-24; reconciled 2026-11-25. **Status: T010–T014 complete for US1.**
 The required real refinement/revision/unchanged-poll/owner-approval exercises passed, as did
 41 native synthetic fault cases, restart hold verification and full UI cancellation.
@@ -312,7 +317,7 @@ record those owner-only mapping differences separately, without credential value
 | `node factory/scripts/build-refine.cjs --check` | PASS | Offline packaging consistency only |
 | `node factory/tests/check-guard-skeletons.cjs` | PASS, 50 scenarios | Remaining reserve/track skeletons only; no new native claim |
 | Compose `config --quiet`, default and `--profile local-model-trials` | PASS with nonsecret placeholder key | Configuration only; no server rollout |
-| Five requests prepared by `evaluate_gemini.cjs --prepare` compared to runtime `request()` | All five exactly equal | Offline, ignored `factory/local/us1-runtime-payload-review`; no key read or API call |
+| Five requests prepared by `evaluate_gemini.cjs --prepare` compared to runtime `request()` | Assistant-recorded check: all five exactly equal; comparison transcript not published | Offline, ignored `factory/local/us1-runtime-payload-review`; no key read or API call; retained request bytes alone do not independently establish equality with runtime output |
 | SHA-256 known/Unicode/multiblock vectors vs Node crypto | PASS | Local transform correctness |
 | Accepted output example through validator/renderer/marker parser | PASS | Offline reuse of accepted result; no new inference |
 | Markdown destinations/fences and `git diff --check` | PASS, 25 local link destinations | Documentation/whitespace checks only |

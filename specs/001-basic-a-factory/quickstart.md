@@ -100,16 +100,25 @@ manually imports the matching PR-reviewed JSON revision; CLI/deployment automati
 replace that gate. Renew review/import for each change, before or after merge. Manual import
 does not require manual execution of every test.
 
-US1's local checks execute exported Code bodies/connections with stand-ins. Run them from the
+The current story checks execute exported Code bodies/connections with stand-ins. Run them from the
 repository root; execute the required native/live matrix separately. The
 [US1 evidence/import handoff](../../evidence/refinement-validation.md) records the current gate.
 
 ```bash
 # Fedora/repository root; these commands do not import or execute n8n workflows
 node factory/scripts/build-refine.cjs --check
+node factory/scripts/build-reserve.cjs --check
+node factory/scripts/build-track.cjs --check
 node factory/tests/check-refinement.cjs
-node factory/tests/check-guard-skeletons.cjs
+node factory/tests/check-reservation.cjs
+node factory/tests/check-tracking.cjs
+node factory/tests/check-workflow-mapping.cjs
 ```
+
+For generated fixtures and native-test packages use
+[clean-checkout preparation](../../factory/tests/test-preparation.md). The retired skeleton
+checker and T008 tooling are preserved in the [historical archive](../../factory/tests/historical/t008/README.md);
+they are not current regression commands.
 
 These tests cover parsing/transition guards with fixtures, not mocked proof of a real factory.
 The runtime token preflight admits provider count + fixed schema allowance + 768 output + 256

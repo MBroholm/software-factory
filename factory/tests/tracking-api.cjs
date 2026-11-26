@@ -1,8 +1,10 @@
 // US3 isolated-test API access only; no operational URL or credential export.
 const fs=require('node:fs'),path=require('node:path'),{parseEnv}=require('node:util');
 const assert=require('node:assert/strict'),{createHash}=require('node:crypto');
+const {readGenerated,mapping}=require('./test-artifacts.cjs');
 const root=path.resolve(__dirname,'../..'),dir=path.join(root,'factory/local/us3');
 function settings(){
+ mapping('US3',['--mapped']);
  const c=parseEnv(fs.readFileSync(path.join(root,'factory/local/test.env'),'utf8'));
  const u=new URL(c.N8N_BASE_URL);
  if(c.FACTORY_TARGET!=='test'||!['127.0.0.1','localhost'].includes(u.hostname)||u.port!=='5679'||u.protocol!=='http:'||u.username||u.password)throw Error('Only designated loopback test instance :5679 allowed');
@@ -26,7 +28,7 @@ async function inspect(){
  return result;
 }
 const hash=s=>createHash('sha256').update(s).digest('hex');
-function registry(){return JSON.parse(fs.readFileSync(path.join(dir,'imported.json'),'utf8'));}
+function registry(){return JSON.parse(readGenerated('factory/local/us3/imported.json','node factory/tests/tracking-api.cjs import (only after fresh isolation verification)'));}
 function validate(w){
  assert.equal(w.name,'TEST ONLY — US3 tracking');assert.equal(w.active,false);assert(!w.id);
  const source=JSON.parse(fs.readFileSync(path.join(root,'factory/workflows/track.json')));
@@ -43,10 +45,10 @@ async function install(){
  const before=await inspect();assert(!before.workflows.data.some(w=>w.active));assert(!before.running.data.length&&!before.waiting.data.length);
  assert.equal(before.rows.data.length,1);assert.equal(before.rows.data[0].busy,false);
  assert(!fs.existsSync(path.join(dir,'imported.json')),'Existing test registration: inspect instead of creating duplicate');
- const w=validate(JSON.parse(fs.readFileSync(path.join(dir,'tracking-test-mapped.json'))));
+ const w=validate(JSON.parse(readGenerated('factory/local/us3/tracking-test-mapped.json','node factory/tests/prepare-test-artifacts.cjs --mapped')));
  const body={name:w.name,nodes:w.nodes,connections:w.connections,settings:w.settings};
  const result=await api('/api/v1/workflows','POST',body);
- save('imported.json',{id:result.id,versionId:result.versionId,source_sha256:hash(fs.readFileSync(path.join(root,'factory/workflows/track.json'))),mapped_sha256:hash(fs.readFileSync(path.join(dir,'tracking-test-mapped.json')))});
+ save('imported.json',{id:result.id,versionId:result.versionId,source_sha256:hash(fs.readFileSync(path.join(root,'factory/workflows/track.json'))),mapped_sha256:hash(readGenerated('factory/local/us3/tracking-test-mapped.json','node factory/tests/prepare-test-artifacts.cjs --mapped'))});
  const readback=await api('/api/v1/workflows/'+result.id);save('import-readback.json',readback);
  assert.deepEqual(readback.nodes,w.nodes);assert.deepEqual(readback.connections,w.connections);assert.equal(readback.active,false);
  console.log('Imported and verified NEW isolated workflow '+result.id+' revision '+readback.versionId);
@@ -57,7 +59,7 @@ async function publish(active){const r=registry();const current=await api('/api/
 }
 async function scheduled(){
  const r=registry(),current=await api('/api/v1/workflows/'+r.id);assert.equal(current.name,'TEST ONLY — US3 tracking');assert.equal(current.active,false);
- const w=validate(JSON.parse(fs.readFileSync(path.join(dir,'tracking-test-mapped.json'))));
+ const w=validate(JSON.parse(readGenerated('factory/local/us3/tracking-test-mapped.json','node factory/tests/prepare-test-artifacts.cjs --mapped')));
  const n=w.nodes.find(n=>n.type.endsWith('.scheduleTrigger'));assert(n);n.disabled=false;
  n.notes='TEST ONLY: original source 60-second schedule, synthetic loopback only. Other workflows remain inactive; do not start manual work during scheduled observation.';
  const response=await api('/api/v1/workflows/'+r.id,'PUT',{name:w.name,nodes:w.nodes,connections:w.connections,settings:w.settings});

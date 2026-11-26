@@ -22,6 +22,11 @@ operational workflows were unpublished. Their saved track version was
 version UUID, so that current saved version is not substituted as per-execution provenance.
 No production flag reset, retry, import, publication or task mutation was performed.
 
+The [sanitized incident extract](tracking-incident-133.json) preserves execution metadata,
+the reached-node list and the changed plan fields supporting this diagnosis. The private
+filtered export is optional supporting material; it is not required to read these observations.
+The extract does not recover the missing per-execution version UUID.
+
 ## Change and safety boundary
 
 After the first validated Read ready snapshot, Have tracking work routes only a pending marker
@@ -44,7 +49,7 @@ Refine and reserve source are unchanged; their unaffected evidence is reused.
 
 - **Regression before fix:** the new arriving-PR test failed against the old graph with
   `Tracking evidence changed before write` (the earlier version of the same no-work race).
-  The production snapshot separately proves the later Final-window variant.
+  The retained [incident observation](tracking-incident-133.json) separately records the later Final-window variant.
 - **PASS 25 local exported-graph/policy groups:** PR arrives after no-result read, next poll
   enters QA once, unchanged poll makes no writes; merge arriving after unchanged QA waits for
   next poll then enters Done; changed PR head before a planned write still holds; previous

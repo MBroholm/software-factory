@@ -3,14 +3,16 @@ const fs=require('node:fs'),assert=require('node:assert/strict'),crypto=require(
 const read=p=>JSON.parse(fs.readFileSync(p,'utf8'));
 const hash=x=>crypto.createHash('sha256').update(x).digest('hex');
 const source=read('factory/workflows/reserve.json');
-const bridge=read('factory/local/us2/native-bridge/workflow.json');
+const bridge=read('factory/tests/reservation-bridge.json');
+const {mapping}=require('./test-artifacts.cjs');
+const {control}=mapping('US2');
 const graph=structuredClone(source);
 graph.name='TEST ONLY — US2 scheduled reservation';graph.active=false;graph.pinData={};
 graph.nodes=graph.nodes.filter(n=>!n.type.endsWith('.manualTrigger'));
 delete graph.connections['Manual isolated test'];
 const session='32001';
 for(const n of graph.nodes){
- if(n.type.endsWith('.dataTable'))n.parameters.dataTableId=structuredClone(bridge.nodes.find(x=>x.name===n.name).parameters.dataTableId);
+ if(n.type.endsWith('.dataTable'))n.parameters.dataTableId=structuredClone(control);
  if(n.type.endsWith('.httpRequest')){
   n.parameters.url=n.parameters.url.replaceAll('https://api.github.com','http://127.0.0.1:18766/github');
   n.parameters.authentication='none';delete n.parameters.genericAuthType;delete n.credentials;
@@ -32,11 +34,13 @@ for(const [name,edges]of Object.entries(source.connections))if(name!=='Manual is
 assert.deepEqual(schedule.parameters,source.nodes.find(n=>n.name===schedule.name).parameters);
 assert(!graph.nodes.some(n=>n.credentials||n.type.endsWith('.manualTrigger')));
 for(const n of graph.nodes.filter(n=>n.type.endsWith('.httpRequest'))){assert(n.parameters.url.includes('http://127.0.0.1:18766/github'));assert(!n.parameters.url.includes('https://'));assert(!n.retryOnFail);}
+for(const n of graph.nodes.filter(n=>n.type.endsWith('.dataTable')))n.parameters.dataTableId=structuredClone(control);
 const publicGraph=structuredClone(graph);
 for(const n of publicGraph.nodes.filter(n=>n.type.endsWith('.dataTable')))n.parameters.dataTableId={__rl:true,mode:'id',value:'OWNER_SELECT_ISOLATED_US2_CONTROL_TABLE'};
 const manifest={sourceSHA256:hash(fs.readFileSync('factory/workflows/reserve.json')),sourceCodeBodiesUnchanged:source.nodes.filter(n=>n.type.endsWith('.code')).length,sourceConnectionsPreserved:true,scheduleParameters:schedule.parameters,session,syntheticOnly:true,active:false,publicGraphSHA256:hash(JSON.stringify(publicGraph,null,2)+'\n')};
+fs.mkdirSync('factory/local/us2/native-bridge',{recursive:true});
 const dir='factory/local/us2/native-bridge';
 for(const [path,value]of Object.entries({'factory/tests/reservation-schedule.json':publicGraph,'factory/tests/reservation-schedule-sources.json':manifest,[dir+'/schedule-mapped.json']:graph})){
- const text=JSON.stringify(value,null,2)+'\n';if(process.argv.includes('--check'))assert.equal(fs.readFileSync(path,'utf8'),text,path);else fs.writeFileSync(path,text);
+ const text=JSON.stringify(value,null,2)+'\n';if(process.argv.includes('--check'))assert.equal(fs.readFileSync(path,'utf8'),text,path);else fs.writeFileSync(path,text,{mode:0o600});
 }
 console.log(JSON.stringify(manifest));

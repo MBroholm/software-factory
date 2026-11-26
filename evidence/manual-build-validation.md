@@ -1,5 +1,10 @@
 # US2 manual-build validation
 
+Historical `factory/tests/check-guard-skeletons.cjs` commands in this record refer to the
+then-current skeleton revision. That checker and T008 bridge tools are now in the
+[T008 archive](../factory/tests/historical/t008/README.md); they are not current test commands.
+Recorded outcomes below are unchanged.
+
 **Date**: 2026-11-25. **Status**: T015–T019 complete for US2. Real reservation/build, native fault/interruption/restart, scheduled held-skip and owner shutdown checks pass.
 Branch: `001-basic-a-factory-us2`. Source development is bootstrap work; the owner subsequently
 manually imported the reviewed reserve/refine JSON and ran real task exercises. The source export

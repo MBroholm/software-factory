@@ -1,5 +1,10 @@
 # Guard validation — T005–T008
 
+Historical `factory/tests/check-guard-skeletons.cjs` commands in this record refer to the
+then-current skeleton revision. That checker and T008 bridge tools are now in the
+[T008 archive](../factory/tests/historical/t008/README.md); they are not current test commands.
+Recorded outcomes below are unchanged.
+
 Date: 2026-11-24. Branch: `001-basic-a-factory`. Local implementation based on
 `9db03a7b34b8dcd06e6029b7b5f1bd68f307e900` with the listed uncommitted additions. **Native guard checks now pass across all three paths: 57 primary checks and 73 held skips.
 Six original-schedule checks also pass; all 11 isolated workflows are now unpublished. See
@@ -409,7 +414,7 @@ G05 retry is inferred from that clarification.
   path still throws before its insert, matching the reported failed setup. Track's copy named
   success test currently contains the reserve-worded throw, corroborating the owner's earlier
   workflow-identity correction. Names alone are not evidence of current test behavior.
-- Prepared one inactive test-only `factory/tests/guard-bridge.json`, generated from unchanged
+- Prepared one inactive test-only `factory/tests/guard-bridge.json` (now archived as `factory/tests/historical/t008/guard-bridge.json`), generated from unchanged
   source skeletons. Native fixture/test webhooks avoid standalone CLI Data Table limitations.
   Owner must review/manually import and publish **only in isolation** before assistant runs.
   No bridge import/publication/execution has yet occurred.

@@ -22,7 +22,10 @@ node factory/tests/build-reservation-schedule.cjs
 node factory/tests/build-reservation-schedule.cjs --check
 ```
 
-The builder uses the previously inspected isolated mapping in the existing native bridge.
+Default packaging uses table placeholders. For an import-ready copy, set up the isolated
+test configuration described in [clean-checkout preparation](test-preparation.md), then run
+`node factory/tests/build-reservation-schedule.cjs --mapped` and verify with the same
+options plus `--check`. No historical mapped bridge or export is read.
 Public review artifact: `factory/tests/reservation-schedule.json`.
 Isolated test import artifact: `factory/local/us2/native-bridge/schedule-mapped.json`.
 Review the source and generated JSON before importing as a NEW isolated workflow (automation permitted).

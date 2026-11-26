@@ -60,6 +60,13 @@ counted as an extra factory-task run.
 | [Recovery validation](recovery-validation.md), [actual results](us4-recovery-results.json) | Explicit pause/drain/inspect/repair/reset/resume for simulated outage, partial label and unknown POST; stopped-volume restore into network-disabled clone, exact hashes/state and disposable encrypted-credential round trip. |
 | [Acceptance ledger](acceptance.md) | T029 consolidated matrix, tested fingerprints, retained failures, current verified operational versions and real QA/Done evidence. Three more final-project runs and unaudited credential scopes remain explicit. |
 
+## Evidence portability audit
+
+The [2026-11-26 audit](local-evidence-audit.md) maps local references to committed records
+and documents remaining provenance limits. Model comparison outputs and the tracking incident
+now have sanitized extracts. Private traces, environment files and backups are supporting
+operator records; their availability is not assumed for review of this index.
+
 ## Reproduction and boundaries
 
 [Architecture](../docs/architecture.md), [operations](../docs/operations.md),

@@ -1,4 +1,9 @@
-# One-import isolated guard validation bridge
+# One-import isolated guard validation bridge — historical T008
+
+Archived on 2026-11-26. The instructions and pending statuses below describe the original
+skeleton era; they are not current setup instructions. Do not rebuild this bridge from today's
+finished workflows. See [archive status](README.md) and the current
+[US4 test guide](../../us4-validation.md). Original commands/paths below are retained as history.
 
 Current policy (2026-11-26): imports, updates and execution in designated isolated dev/test
 n8n may be automated after T033 boundary verification, using test data, scoped credentials and

@@ -5,10 +5,8 @@ const R=require('../scripts/refinement-runtime.cjs');
 const hash=s=>crypto.createHash('sha256').update(s).digest('hex');
 const read=p=>fs.readFileSync(p,'utf8');
 const source=JSON.parse(read('factory/workflows/reserve.json'));
-const saved=JSON.parse(read('factory/local/us2/import-readback.json'))['factory-guard-test'].find(w=>w.id==='EIF8Urpa0tCkd2DI');
-assert(saved&&!saved.active,'Inspect the inactive owner-imported source before packaging');
-const control=saved.nodes.find(n=>n.name==='Read control').parameters.dataTableId;
-assert.equal(control.value,'IgWCIu94ieyHQRHS','Only the existing isolated table is allowed');
+const {mapping,readGenerated}=require('./test-artifacts.cjs');
+const {control}=mapping('US2');
 const cases=['success','occupied','closed-building','nonowner-building','conflicting-building','non-owner','no-approval','wrong-approval','captured-edit','unexpected-before','unexpected-after','partial-label','unknown-post','restart-reservation'];
 const graph=structuredClone(source);graph.name='TEST ONLY — Basic A US2 native fault bridge';graph.active=false;graph.pinData={};
 graph.nodes=graph.nodes.filter(n=>n.name!=='Manual isolated test');delete graph.connections['Manual isolated test'];
@@ -48,11 +46,11 @@ const dir='factory/local/us2/native-bridge';fs.mkdirSync(dir,{recursive:true});
 const config={sourceSHA256:hash(read('factory/workflows/reserve.json')),owner:R.OWNER_ID,cases,fixtures:[fixtureIssue(101),fixtureIssue(102)]};
 const out=JSON.stringify(graph,null,2)+'\n';const publicGraph=structuredClone(graph);for(const n of publicGraph.nodes.filter(n=>n.type.endsWith('.dataTable')))n.parameters.dataTableId={__rl:true,mode:'id',value:'OWNER_SELECT_ISOLATED_US2_CONTROL_TABLE'};
 const outputs={[dir+'/workflow.json']:out,[dir+'/fixtures.json']:JSON.stringify(config,null,2)+'\n','factory/tests/reservation-bridge.json':JSON.stringify(publicGraph,null,2)+'\n'};
-const manifest={sourceSHA256:config.sourceSHA256,mappedBridgeSHA256:hash(out),publicBridgeSHA256:hash(outputs['factory/tests/reservation-bridge.json']),cases,sourceCodeBodies:source.nodes.filter(n=>n.type.endsWith('.code')).length,faultPrefixes:['Prepare handoff','Check handoff receipt'],syntheticOnly:true,scheduledEntryInitiallyDisabled:true,active:false};outputs['factory/tests/reservation-bridge-sources.json']=JSON.stringify(manifest,null,2)+'\n';
+const manifest={sourceSHA256:config.sourceSHA256,mappedBridgeSHA256:hash(out),publicBridgeSHA256:hash(outputs['factory/tests/reservation-bridge.json']),cases,sourceCodeBodies:source.nodes.filter(n=>n.type.endsWith('.code')).length,faultPrefixes:['Prepare handoff','Check handoff receipt'],syntheticOnly:true,scheduledEntryInitiallyDisabled:true,active:false};const {mappedBridgeSHA256,...publicManifest}=manifest;outputs['factory/tests/reservation-bridge-sources.json']=JSON.stringify(publicManifest,null,2)+'\n';outputs[dir+'/manifest.json']=JSON.stringify(manifest,null,2)+'\n';
 // Reuse source checker's synthetic contexts; extend only the new fixed fixture headers.
 const fixturePath='factory/local/reservation-native-expression-fixtures.json';
-if(fs.existsSync(fixturePath)){
- const original=JSON.parse(read(fixturePath)),by=new Map(graph.nodes.map(n=>[n.name,n]));
+if(process.argv.includes('--native-fixtures')){
+ const original=JSON.parse(readGenerated(fixturePath,'node factory/tests/check-reservation.cjs --native-fixtures')),by=new Map(graph.nodes.map(n=>[n.name,n]));
  const contexts=original.fixtures.filter(f=>by.has(f.node)),added=[];
  for(const f of contexts.filter(f=>f.path==='url'&&by.get(f.node).type.endsWith('.httpRequest'))){
   by.get(f.node).parameters.headerParameters.parameters.forEach((p,i)=>{
@@ -65,5 +63,5 @@ if(fs.existsSync(fixturePath)){
  for(const f of contexts)if(f.path==='url'&&typeof f.expected==='string')f.expected=f.expected.replaceAll('https://api.github.com','http://127.0.0.1:18766/github');
  outputs[dir+'/expression-fixtures.json']=JSON.stringify({graph,fixtures:[...contexts,...added]});
 }
-for(const [file,text]of Object.entries(outputs)){if(process.argv.includes('--check'))assert.equal(read(file),text,'Stale '+file);else fs.writeFileSync(file,text);}
+for(const [file,text]of Object.entries(outputs)){if(process.argv.includes('--check'))assert.equal(read(file),text,'Stale '+file);else fs.writeFileSync(file,text,{mode:0o600});}
 console.log(JSON.stringify({artifact:dir+'/workflow.json',...manifest}));

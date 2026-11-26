@@ -45,7 +45,7 @@
     "restart-backoff",
     "cancel-backoff"
   ],
-  "tableMappingFrom": "previous owner-imported isolated US1 artifact",
+  "tableMappingFrom": "explicit test configuration with --mapped/--env; otherwise placeholder",
   "productionCodeBodiesUnchanged": 29,
   "faultPrefixes": [
     "Validate before Refining",

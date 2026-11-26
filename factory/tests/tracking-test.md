@@ -6,6 +6,9 @@ T033 boundary verification and actual T023 results are in
 [evidence/acceptance.md](../../evidence/acceptance.md). These tests use the main n8n engine,
 not the standalone CLI Data Table context.
 
+See [clean-checkout preparation](test-preparation.md) for the combined offline command,
+configuration requirements and generated-artifact lifecycle. No historical run files are needed.
+
 ## Offline preparation
 
 ```bash

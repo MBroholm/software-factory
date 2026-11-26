@@ -1,6 +1,5 @@
 {
   "sourceSHA256": "ea6760fb5787dd216418596d93c37be981079aca8cc20f9a7f5ec2cab88930b6",
-  "mappedBridgeSHA256": "c71dff38c2a5cbde3395d97f3361d136706b886f52249b7101480f8071cb7fb1",
   "publicBridgeSHA256": "49b04964ff4f9e0dcd3f54d57ccc6364abb2bb1a292512559e6afd92734a7e38",
   "cases": [
     "success",

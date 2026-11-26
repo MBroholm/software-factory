@@ -1,9 +1,10 @@
+const {readGenerated}=require('./test-artifacts.cjs');
 // Test fixture packaging and the HTTP simulator itself, not the native workflow.
 const fs=require('node:fs'),assert=require('node:assert/strict'),path=require('node:path'),os=require('node:os');
 const {spawn}=require('node:child_process');
 const root=path.resolve(__dirname,'../..');const directory=fs.mkdtempSync(path.join(os.tmpdir(),'us1-fixture-check-'));
-const config=JSON.parse(fs.readFileSync(path.join(root,'factory/local/refinement-native-bridge/fixtures.json')));
-const graph=JSON.parse(fs.readFileSync(path.join(root,'factory/local/refinement-native-bridge/workflow.json')));
+const config=JSON.parse(readGenerated('factory/local/refinement-native-bridge/fixtures.json','node factory/tests/prepare-test-artifacts.cjs'));
+const graph=JSON.parse(readGenerated('factory/local/refinement-native-bridge/workflow.json','node factory/tests/prepare-test-artifacts.cjs'));
 const names=new Set(graph.nodes.map(n=>n.name));assert.equal(names.size,graph.nodes.length);assert.equal(graph.active,false);
 for(const n of graph.nodes){if(!n.type.endsWith('.stickyNote'))assert(n.notes?.trim(),n.name+' lacks notes');assert(!n.credentials&&!n.retryOnFail&&!n.continueOnFail);assert(!n.type.endsWith('.scheduleTrigger'));if(n.type.endsWith('.httpRequest'))assert(n.parameters.url.includes('http://127.0.0.1:18765/')&&!n.parameters.url.includes('https://'));}
 for(const branches of Object.values(graph.connections))for(const targets of branches.main)for(const target of targets??[])assert(names.has(target.node),target.node);

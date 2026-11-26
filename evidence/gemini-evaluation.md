@@ -12,6 +12,12 @@ The project owner authorized a bounded comparison against Gemini 3.5 Flash-Lite 
 confirmed the key's project uses the free tier. This authorizes this evaluation, not a
 production provider switch, paid fallback or dependent workflow implementation.
 
+The [sanitized evaluation records](gemini-evaluation-results.json) retain the executed
+v2/v3 synthetic outputs, technical results, token counts and historical source/request hashes,
+including the Ubuntu clear-task result. Local paths below identify private supporting records;
+reviewing the published model-quality findings does not require those files. These are retained
+observations, not independently authenticated provider receipts.
+
 ## Method and preserved inputs
 
 The assistant prepared five synthetic cases from the existing fixtures, prompt v2,

@@ -5,14 +5,10 @@ const read=p=>fs.readFileSync(path.join(root,p),'utf8');
 const hash=s=>crypto.createHash('sha256').update(s).digest('hex');
 const R=require('../scripts/refinement-runtime.cjs');
 const source=JSON.parse(read('factory/workflows/refine.json'));
-const mappingFile=path.join(root,'factory/local/refine-us1-retry-mapped.json');
-const mappingReady=fs.existsSync(mappingFile);
-const mapped=mappingReady?JSON.parse(fs.readFileSync(mappingFile,'utf8')):source;
+const {mapping}=require('./test-artifacts.cjs');
+const {mapped:mappingReady,control}=mapping('US1');
 const check=process.argv.includes('--check');
-function write(file,body){if(check)assert.equal(fs.readFileSync(file,'utf8'),body,'Generated bridge differs: '+file);else fs.writeFileSync(file,body);}
-const control=mapped.nodes.find(n=>n.name==='Read control').parameters.dataTableId;
-assert(control.value);
-for(const n of source.nodes.filter(n=>n.type.endsWith('.dataTable'))){const actual=mapped.nodes.find(x=>x.name===n.name);for(const key of ['operation','filters'])assert.deepEqual(actual.parameters[key],n.parameters[key],n.name+' '+key);assert.deepEqual(actual.parameters.columns?.value,n.parameters.columns?.value,n.name+' values');}
+function write(file,body){if(check)assert.equal(fs.readFileSync(file,'utf8'),body,'Generated bridge differs: '+file);else fs.writeFileSync(file,body,{mode:0o600});}
 const cases=['success','retry-once','retry-twice','exhaust','retry-after-long','retry-after-invalid','other-503','quota','auth','server-500','transport','invalid-output','truncated','missing-usage','count-error','count-invalid','over-budget','source-in-backoff','discussion-in-backoff','state-in-backoff','source-during-call','non-owner','pr','closed','approved','ready-unchanged','non-owner-discussion','factory-marker','reuse','revision','captured-edit','captured-delete','edited-marker','stranded','conflicting','pagination','later-candidate','unknown-post','partial-label','unexpected-before','unexpected-after','restart-backoff','cancel-backoff'];
 const graph=structuredClone(source);
 graph.name='TEST ONLY — Basic A US1 native fault bridge';graph.active=false;graph.settings={executionOrder:'v1',saveDataErrorExecution:'all',saveDataSuccessExecution:'all',saveManualExecutions:true};graph.pinData={};
@@ -20,7 +16,7 @@ graph.nodes=graph.nodes.filter(n=>!['n8n-nodes-base.manualTrigger','n8n-nodes-ba
 delete graph.connections['Manual isolated test'];delete graph.connections['Poll inactive'];
 const B="$('US1 test entry').first().json.body";
 for(const n of graph.nodes){
- if(n.type.endsWith('.dataTable'))n.parameters=structuredClone(mapped.nodes.find(x=>x.name===n.name).parameters);
+ if(n.type.endsWith('.dataTable'))n.parameters.dataTableId=structuredClone(control);
  if(n.type.endsWith('.httpRequest')){
    n.parameters.url=n.parameters.url.replaceAll('https://api.github.com','http://127.0.0.1:18765/github').replaceAll('https://generativelanguage.googleapis.com','http://127.0.0.1:18765/gemini');
    n.parameters.authentication='none';delete n.parameters.genericAuthType;delete n.credentials;
@@ -75,7 +71,7 @@ for(const n of publicGraph.nodes.filter(n=>n.type.endsWith('.dataTable'))){
 write(path.join(root,'factory/tests/refinement-bridge.json'),JSON.stringify(publicGraph,null,2)+'\n');
 const config={sourceSHA256:hash(read('factory/workflows/refine.json')),cases,issue:issue(),priorIssue,human,marked,model,owner:R.OWNER_ID};
 write(path.join(root,out,'fixtures.json'),JSON.stringify(config,null,2)+'\n');
-const manifest={sourceSHA256:config.sourceSHA256,bridgeSHA256:hash(JSON.stringify(graph,null,2)+'\n'),cases,tableMappingFrom:'previous owner-imported isolated US1 artifact',productionCodeBodiesUnchanged:pureCode.length,faultPrefixes:['Validate before Refining','Check comment receipt'],httpChanges:['loopback URL base','no credentials','three fixture headers'],nativeTypesRetained:['HTTP Request','Data Table','Code','IF','Split In Batches','Wait'],noSchedules:true,active:false};
+const manifest={sourceSHA256:config.sourceSHA256,bridgeSHA256:hash(JSON.stringify(graph,null,2)+'\n'),cases,tableMappingFrom:'explicit test configuration with --mapped/--env; otherwise placeholder',productionCodeBodiesUnchanged:pureCode.length,faultPrefixes:['Validate before Refining','Check comment receipt'],httpChanges:['loopback URL base','no credentials','three fixture headers'],nativeTypesRetained:['HTTP Request','Data Table','Code','IF','Split In Batches','Wait'],noSchedules:true,active:false};
 write(path.join(root,out,'manifest.json'),JSON.stringify(manifest,null,2)+'\n');
 const {bridgeSHA256,...publicManifest}=manifest;write(path.join(root,'factory/tests/refinement-bridge-sources.json'),JSON.stringify({...publicManifest,publicBridgeSHA256:hash(JSON.stringify(publicGraph,null,2)+'\n')},null,2)+'\n');
 console.log(JSON.stringify({artifact:out+'/workflow.json',mappingReady,cases:cases.length,nodes:graph.nodes.length,sourceSHA256:config.sourceSHA256,bridgeSHA256:manifest.bridgeSHA256}));

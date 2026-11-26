@@ -1,3 +1,4 @@
+const {readGenerated}=require('./test-artifacts.cjs');
 // Focused native regression. Only the verified isolated API/loopback fixture is used.
 // Run after T033 and fixture startup; never imports or executes production workflows.
 const fs=require('node:fs'),assert=require('node:assert/strict'),crypto=require('node:crypto');
@@ -19,7 +20,7 @@ async function main(){
  const before=await boundary();assert(!before.workflows.some(w=>w.active));assert.equal(before.row.busy,false,'Inspect existing hold; this test never resets automatically');
  assert(!fs.existsSync(`${dir}/registry.json`),'Existing native run: inspect retained evidence rather than duplicate it');
  const source=JSON.parse(fs.readFileSync('factory/workflows/track.json'));
- const w=JSON.parse(fs.readFileSync('factory/local/us3/tracking-test-mapped.json'));
+ const w=JSON.parse(readGenerated('factory/local/us3/tracking-test-mapped.json','node factory/tests/prepare-test-artifacts.cjs --mapped'));
  w.name='TEST ONLY — tracking no-work race';
  for(const n of w.nodes){
   assert(!n.credentials);if(n.type.endsWith('.httpRequest'))assert(n.parameters.url.includes('http://127.0.0.1:18767'));

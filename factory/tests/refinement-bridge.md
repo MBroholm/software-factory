@@ -16,17 +16,18 @@ The source workflow and issue #1 remain unchanged.
 
 ## Review and isolated test import
 
-Build from the repository root with `node factory/tests/build-refinement-bridge.cjs`.
-The builder produces the committed placeholder-mapped `factory/tests/refinement-bridge.json`
-and `refinement-bridge-sources.json` for review. For the ready-mapped owner import it also uses
-the ignored, previously owner-imported isolated mapping artifact
-`factory/local/refine-us1-retry-mapped.json`. It writes:
+From the repository root, run `node factory/tests/prepare-test-artifacts.cjs` for
+credential-free offline fixtures. This generates placeholder table mappings without reading
+any historical export. For native import preparation, copy `factory/config/test.env.example`
+to `factory/local/test.env`, fill the isolated table ID and use
+`node factory/tests/prepare-test-artifacts.cjs --mapped`. An explicit test configuration path
+can be selected with `--env PATH`. See [clean-checkout preparation](test-preparation.md).
 
-- `factory/local/refinement-native-bridge/workflow.json` — isolated test import
-- `factory/local/refinement-native-bridge/fixtures.json` — synthetic HTTP data
-- `factory/local/refinement-native-bridge/manifest.json` — hashes and explicit copy deltas
+The builder produces committed `factory/tests/refinement-bridge.json` and its source manifest
+for review, plus ignored `factory/local/refinement-native-bridge/{workflow,fixtures,manifest}.json`.
+Only explicit mapped preparation produces an import-ready table reference. Verify with the same
+options plus `--check`. Historical owner-imported mappings are not setup inputs.
 
-Verify generated files with `node factory/tests/build-refinement-bridge.cjs --check`.
 Review the builder, committed JSON, fixture server, runner and manifest. All source connections are retained
 except removed original trigger edges; all source Code bodies are exact except named prefixes
 at Validate before Refining and Check comment receipt, gated to explicit exception cases.

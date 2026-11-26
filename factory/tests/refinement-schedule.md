@@ -22,10 +22,15 @@ node factory/tests/build-refinement-schedule.cjs
 node factory/tests/build-refinement-schedule.cjs --check
 ```
 
+Default packaging uses table placeholders. For an import-ready copy, set up the isolated
+test configuration described in [clean-checkout preparation](test-preparation.md), then run
+`node factory/tests/build-refinement-schedule.cjs --mapped` and verify with the same
+options plus `--check`. No historical mapped bridge or export is read.
+
 Review the committed `refinement-schedule.json` and `refinement-schedule-sources.json` with
 the builder, fixture-server changes and `run-refinement-schedule.py`. The ready-mapped private
 isolated test import is `factory/local/refinement-native-bridge/schedule-mapped.json`. It retains the
-existing isolated US1 table mapping. No credentials are present; all external HTTP URL bases
+explicitly selected isolated US1 table mapping when built with `--mapped`. No credentials are present; all external HTTP URL bases
 point only to 127.0.0.1:18765 inside factory-guard-test. Production-source JSON is unchanged.
 
 Import this (automation permitted) as a **new**, initially inactive workflow into the test container

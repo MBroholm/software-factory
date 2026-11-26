@@ -64,6 +64,16 @@ revision, renewed for subsequent changes, before or after merge. Manual import d
 manual execution of every test. Record tested revision and environment; see
 [permissions](../docs/permissions.md#isolated-testing-and-operational-adoption).
 
+## Rebuild test inputs
+
+[Clean-checkout preparation](tests/test-preparation.md) regenerates disposable fixtures from
+versioned sources without historical exports. Use `node factory/tests/prepare-test-artifacts.cjs`
+for offline packaging; native mapping requires explicit test configuration and separate isolation checks.
+
+The superseded skeleton checker and T008 tools are in the
+[historical archive](tests/historical/t008/README.md). Current story, expression, schedule
+and finished-workflow guard/recovery suites remain in `tests/`.
+
 ## SSH access
 
 To open the existing Basic A n8n editor on the Ubuntu host, keep its server binding
