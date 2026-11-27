@@ -2,6 +2,7 @@
 import json
 import re
 import urllib.request
+import time
 from datetime import datetime
 from .contracts import digest, canonical, attempt_uuid
 from .config import secret
@@ -12,18 +13,21 @@ def timestamp(s): return datetime.fromisoformat(s.replace('Z','+00:00'))
 
 class GitHub:
     def __init__(self,config,read=None):
-        self.config=config; self.read=read or self._read
+        self.config=config; self.read=read or self._read; self.deadline=None
     def _read(self,path):
         req=urllib.request.Request('https://api.github.com/repos/'+self.config.repository+'/'+path,
           headers={'Authorization':'Bearer '+secret(self.config.github_token_file),'Accept':'application/vnd.github+json',
                    'X-GitHub-Api-Version':'2026-03-10'})
-        with urllib.request.urlopen(req,timeout=10) as r:
+        remaining=10 if self.deadline is None else min(10,self.deadline-time.monotonic())
+        if remaining<=0: raise TimeoutError('source verification budget exhausted')
+        with urllib.request.urlopen(req,timeout=remaining) as r:
             data=r.read(2*1024*1024+1)
             if len(data)>2*1024*1024: raise ValueError('GitHub response too large')
             return json.loads(data)
     def pages(self,path):
         result=[]
         for page in range(1,101):
+            if self.deadline is not None and time.monotonic()>=self.deadline: raise TimeoutError('source verification budget exhausted')
             batch=self.read(path+('&' if '?' in path else '?')+f'per_page=100&page={page}')
             if not isinstance(batch,list): raise ValueError('invalid GitHub page')
             result.extend(batch)
@@ -32,22 +36,36 @@ class GitHub:
                 if len(ids)!=len(set(ids)): raise ValueError('duplicate GitHub pages')
                 return result
         raise ValueError('incomplete GitHub pagination')
-    def verify(self,p,building=True,marker_id=None):
+    def verify(self,p,building=True,marker_id=None,state_override=None):
         if p['repository']!=self.config.repository or p['owner_author_id']!=self.config.owner_id: raise ValueError('target mismatch')
         number=p['issue_number']; issue=self.read(f'issues/{number}')
         if issue.get('pull_request') or issue['number']!=number or issue['user']['id']!=self.config.owner_id or issue['state']!='open': raise ValueError('issue no longer eligible')
         managed={'Ideas','Refining','Ready for approval','Approved','Building','Your QA','Done','Waiting for you','Stuck'}
         labels=[l['name'] for l in issue['labels'] if l['name'] in managed]
-        if labels!=['Building' if building else 'Approved']: raise ValueError('issue state changed')
+        if labels!=[state_override or ('Building' if building else 'Approved')]: raise ValueError('issue state changed')
         comments=self.pages(f'issues/{number}/comments'); events=self.pages(f'issues/{number}/events')
         auth=p['authorization']
-        if auth['kind']!='initial': raise ValueError('derived authorization requires later verifier')
+        if auth['kind'] not in {'initial','answer'}: raise ValueError('unsupported authorization')
         approved=sorted((e for e in events if e.get('label',{}).get('name')=='Approved' and e['event'] in {'labeled','unlabeled'}),key=lambda e:e['id'])
         if building:
             removed=approved.pop() if approved else None
             if not removed or removed['event']!='unlabeled' or removed['actor']['id']!=self.config.owner_id: raise ValueError('missing Building transition lineage')
-        event=approved[-1] if approved else None
-        if not event or event['event']!='labeled' or event['actor']['id']!=self.config.owner_id or event['id']!=auth['initial_approval_event'] or event['created_at']!=auth['approved_entered_at']: raise ValueError('approval event changed')
+        current=approved[-1] if approved else None
+        expected_current=auth['initial_approval_event'] if auth['kind']=='initial' else auth['approval_event']
+        if not current or current['event']!='labeled' or current['actor']['id']!=self.config.owner_id or current['id']!=expected_current or current['created_at']!=auth['approved_entered_at']:
+            raise ValueError('current approval lineage changed')
+        event=next((e for e in events if e['id']==auth['initial_approval_event']),None)
+        if not event or event['event']!='labeled' or event.get('label',{}).get('name')!='Approved' or event['actor']['id']!=self.config.owner_id:
+            raise ValueError('original explicit approval missing')
+        if auth['kind']=='answer':
+            from .questions import answer_claim
+            for captured in [*p.get('history',[]),p['continuation']]:
+                q=captured['question'];predecessor_id=q['id'].removesuffix('-q1')
+                predecessor={'id':predecessor_id,'payload':p,'result':{'id':predecessor_id+'-result','question':{'text':q['text'],'context':q['context']}}}
+                actual=answer_claim(predecessor,comments,self.config.owner_id)
+                if actual['continuation']!=captured:
+                    raise ValueError('consumed answer/question edited, deleted or ambiguous')
+            if actual['authorization_id']!=auth['id']: raise ValueError('answer authorization mismatch')
         refinements=[]
         for c in comments:
             if not lf(c['body']).startswith('<!-- factory:refinement:v1'): continue
@@ -60,6 +78,8 @@ class GitHub:
             refinements.append((c,meta,text))
         if not refinements: raise ValueError('missing refinement')
         c,meta,text=max(refinements,key=lambda x:x[0]['id'])
+        if state_override is None and auth['kind']=='initial' and any(x['body'].startswith('<!-- factory:question:v2 ') and timestamp(x['created_at'])>timestamp(c['created_at']) for x in comments):
+            raise ValueError('question continuation cannot be inferred as initial approval')
         src=p['source']
         if c['id']!=src['refinement_comment_id'] or digest(c['body'])!=src['refinement_body_sha256'] or text!=p['specification'] or digest(text)!=src['specification_digest'] or timestamp(c['updated_at'])>=timestamp(event['created_at']): raise ValueError('approved specification changed')
         captured=[]
@@ -86,6 +106,16 @@ class GitHub:
             if len(markers)!=1 or markers[0][1]!=expected or (marker_id is not None and markers[0][0]!=marker_id): raise ValueError('missing/mismatched immutable attempt marker')
         # A factory v2 marker is protocol evidence, never another human approval.
         for x in comments:
-            if re.match(r'^<!-- factory:(?:authorization|answer):v2',lf(x['body'])) and str(event['id']) in x['body']:
+            if auth['kind']=='initial' and re.match(r'^<!-- factory:(?:authorization|answer):v2',lf(x['body'])) and str(event['id']) in x['body']:
                 raise ValueError('ambiguous automated approval lineage')
         return True
+
+    def verify_answer(self,a,claim):
+        from .questions import answer_claim
+        self.deadline=time.monotonic()+8
+        try:
+            self.verify(a['payload'],building=True,marker_id=a['start_body']['building']['marker_comment_id'],state_override='Waiting for you')
+            actual=answer_claim(a,self.pages(f"issues/{a['issue_number']}/comments"),self.config.owner_id)
+            if actual!=claim: raise ValueError('current answer does not match proposed durable claim')
+            return True
+        finally: self.deadline=None

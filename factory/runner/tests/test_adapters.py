@@ -51,6 +51,26 @@ class GitHubContract(unittest.TestCase):
         p=payload(); p['authorization']['id']='another-id'
         with self.assertRaises(ValueError): validate('reservation',p)
 
+    def test_derived_launch_rechecks_original_approval_and_exact_consumed_answer(self):
+        from copy import deepcopy
+        from factory_runner.questions import answer_claim, question_body
+        p=deepcopy(self.p);id=attempt_uuid(p)
+        a={'id':id,'payload':p,'result':{'id':id+'-result','question':{'text':'Which format?','context':'Choose approved format.'}}}
+        question={'id':80,'body':question_body(a),'user':{'id':7},'created_at':'2026-11-27T11:00:00Z','updated_at':'2026-11-27T11:00:00Z'}
+        answer={'id':90,'body':f'answer {id}-q1: Use JSON.\nscope: unchanged','user':{'id':7},'created_at':'2026-11-27T12:00:00Z','updated_at':'2026-11-27T12:00:00Z'}
+        comments=self.data['issues/1/comments?per_page=100&page=1'];comments.extend([question,answer])
+        claim=answer_claim(a,comments,7)
+        p.update(predecessor=id,continuation=claim['continuation'])
+        p['authorization']={'id':claim['authorization_id'],'kind':'answer','initial_approval_event':42,'approved_entered_at':'2026-11-27T13:00:00Z','references':[42,90],'approval_event':101}
+        events=self.data['issues/1/events?per_page=100&page=1']
+        events.extend([{'id':101,'event':'labeled','label':{'name':'Approved'},'actor':{'id':7},'created_at':'2026-11-27T13:00:00Z'}, {'id':102,'event':'unlabeled','label':{'name':'Approved'},'actor':{'id':7},'created_at':'2026-11-27T14:00:00Z'}])
+        comments.append({'id':99,'user':{'id':7},'body':'<!-- factory:attempt:v2 '+jsjson({'repository':p['repository'],'issue':1,'attempt':attempt_uuid(p),'initial_approval':42,'specification_digest':p['source']['specification_digest']})+' -->\nBuild','created_at':'2026-11-27T14:00:00Z','updated_at':'2026-11-27T14:00:00Z'})
+        self.assertTrue(self.gh.verify(p,marker_id=99))
+        original=answer['body'];answer['body']='deleted/edited'
+        with self.assertRaises(ValueError):self.gh.verify(p,marker_id=99)
+        answer['body']=original;comments.append({**answer,'id':91})
+        with self.assertRaises(ValueError):self.gh.verify(p,marker_id=99)
+
 class GitContract(unittest.TestCase):
     def setUp(self):
         self.temp=tempfile.TemporaryDirectory(); self.addCleanup(self.temp.cleanup)
@@ -87,6 +107,25 @@ class GitContract(unittest.TestCase):
         id=attempt_uuid(self.p);path=self.git.prepare(self.p,id)
         self.run_git(['remote','set-url','origin','https://example.invalid/other.git'],path)
         with self.assertRaises(RuntimeError):self.git.push(self.p,id,self.git.snapshot(self.p,id))
+
+    def test_continuation_reuses_only_unchanged_attributable_dirty_work(self):
+        from copy import deepcopy
+        id=attempt_uuid(self.p);path=self.git.prepare(self.p,id)
+        (path/'fixture.txt').write_text('partial tracked work\n');(path/'new.txt').write_text('known untracked\n')
+        manifest=self.git.snapshot(self.p,id);p=deepcopy(self.p);p.update(predecessor=id,manifest=manifest)
+        p['authorization']['id']='answer:fixture:90';next=attempt_uuid(p)
+        self.assertEqual(self.git.prepare(p,next),path)
+        self.assertEqual((path/'fixture.txt').read_text(),'partial tracked work\n')
+        self.assertEqual((path/'new.txt').read_text(),'known untracked\n')
+        self.assertEqual(self.git.snapshot(p,next)['predecessor'],id)
+    def test_modified_untracked_partial_work_holds_without_overwriting_snapshot(self):
+        from copy import deepcopy
+        id=attempt_uuid(self.p);path=self.git.prepare(self.p,id);(path/'new.txt').write_text('known\n')
+        manifest=self.git.snapshot(self.p,id);artifact=Path(manifest['artifacts'][0])/'untracked.json';evidence=artifact.read_bytes()
+        p=deepcopy(self.p);p.update(predecessor=id,manifest=manifest);p['authorization']['id']='answer:fixture:90'
+        (path/'new.txt').write_text('unknown changes\n')
+        with self.assertRaises(RuntimeError):self.git.prepare(p,attempt_uuid(p))
+        self.assertEqual(artifact.read_bytes(),evidence);self.assertEqual((path/'new.txt').read_text(),'unknown changes\n')
 
 class PrivateBoundary(unittest.TestCase):
     def test_diagnostic_canaries(self):

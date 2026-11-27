@@ -6,10 +6,12 @@ function collectionPlan(issue,comments,pulls,a) {
  demand(a.payload.issue_number===issue.number && a.payload.repository===REPOSITORY && issue.user?.id===OWNER_ID,'Wrong collection target');
  if(issue.state==='closed')return {action:'cancel',issue_number:issue.number};
  demand(!a.cancellation,'Cancelled result cannot publish');
+ if(a.payload.authorization.kind==='answer')validateContinuationComments(a.payload,comments);
+ if(a.result?.outcome==='question')return questionPlan(issue,comments,a);
  const managed=issue.labels.map(l=>typeof l==='string'?l:l.name).filter(l=>STATES.includes(l));
  demand(managed.length===1 && ['Building','Your QA'].includes(managed[0]),'Stale result cannot overwrite current state/approval');
  if(!a.result || !a.result.stopped_proof?.cgroup_empty)return {action:'wait',issue_number:issue.number};
- // US1 collects only done. Question/failure publication is added by US2/US3.
+ // Failure publication/recovery is added by US3.
  if(a.result.outcome!=='done')return {action:'hold',issue_number:issue.number};
  const {pr,marker}=validateV2Association(issue,comments,pulls,a),r=a.result;
  const pr_body=`${marker}\nRefs #${issue.number}\n\n## Agent result\n${publicText(r.summary)}\n\nPushed SHA: ${r.pushed_sha}\n\n## Approved criteria and constraints\n${a.payload.specification}\n\n## Checks (agent-reported; not independently verified)\n${r.checks.map(c=>`- ${publicText(c.command)}: ${c.outcome}; revision ${publicText(c.tested_revision)}; environment ${publicText(c.environment)}; ${publicText(c.details)}`).join('\n') || 'No checks reported.'}\n\n## Unchecked criteria\n${r.unchecked_criteria.map(c=>'- '+publicText(c)).join('\n') || 'None reported by agent.'}\n\nOwner decides review and merge.\n`;

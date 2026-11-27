@@ -4,8 +4,8 @@ const fixture=require('./basic-b-execution.cjs'),clone=x=>JSON.parse(JSON.string
 const python=process.env.FACTORY_TEST_PYTHON||'factory/local/basic-b-venv/bin/python';
 function setup(){
  const tmp=fs.mkdtempSync(path.join(os.tmpdir(),'basic-b-graph-')),db=path.join(tmp,'ledger.db');
- const world={issues:[clone(fixture.issue)],comments:[clone(fixture.comment)],events:clone(fixture.events),pulls:[],calls:[],writes:[],trace:[],row:{id:1,key:'global',busy:false,execution_id:'',issue_number:null,started_at:''},tmp,db};
- world.runner=request=>JSON.parse(execFileSync(python,['factory/runner/tests/bridge.py',db],{input:JSON.stringify(request),encoding:'utf8',timeout:10000}));
+ const world={time:'2026-11-27T11:00:00Z',issues:[clone(fixture.issue)],comments:[clone(fixture.comment)],events:clone(fixture.events),pulls:[],calls:[],writes:[],trace:[],row:{id:1,key:'global',busy:false,execution_id:'',issue_number:null,started_at:''},tmp,db};
+ world.runner=request=>JSON.parse(execFileSync(python,['factory/runner/tests/bridge.py',db],{input:JSON.stringify({...request,github:{issues:world.issues,comments:world.comments,events:world.events}}),encoding:'utf8',timeout:10000}));
  return world;
 }
 let execution=0;const nativeSets=new Map();
@@ -26,6 +26,7 @@ function run(kind,w,fault=null){
    };collect(p);
   }
   if(n.type.endsWith('.code'))result=vm.runInNewContext('(()=>{'+p.jsCode+'\n})()',env(),{timeout:1000});
+  else if(n.type.endsWith('.splitInBatches')){result=[input[0]];branch=1;}
   else if(n.type.endsWith('.if'))branch=evaluate(p.conditions.conditions[0].leftValue)?0:1;
   else if(n.type.endsWith('.dataTable')){
    let selected=[w.row];if(p.operation==='update'){
@@ -39,7 +40,7 @@ function run(kind,w,fault=null){
    else{
     let data,statusCode=200;const number=Number(url.match(/\/issues\/(\d+)/)?.[1]),issue=w.issues.find(x=>x.number===number);
     if(url.includes('/issues?'))data=w.issues;
-    else if(url.endsWith('/issues/events'))data=w.events.map(e=>({...e,issue:{number:w.issues[0].number}}));
+    else if(url.endsWith('/issues/events'))data=w.events.map(e=>({...e,issue:e.issue??{number:w.issues[0].number}}));
     else if(url.includes('/git/ref/heads/main'))data={object:{sha:'a'.repeat(40)}};
     else if(url.includes('/pulls?'))data=w.pulls;
     else if(/\/pulls\/\d+$/.test(url))data=w.pulls.find(pr=>pr.number===Number(url.split('/').at(-1)));
@@ -47,19 +48,19 @@ function run(kind,w,fault=null){
      data={number:w.pulls.length+1,user:{id:202449424},body:body.body,head:{ref:body.head,sha:'b'.repeat(40),repo:{full_name:'MBroholm/software-factory'}},base:{ref:'main',repo:{full_name:'MBroholm/software-factory'}},state:'open',merged:false,merged_at:null};w.pulls.push(data);statusCode=201;
     }else if(url.endsWith('/comments') && method==='GET')data=w.comments;
     else if(url.endsWith('/comments')){
-     data={id:100+w.comments.length,user:{id:202449424},body:body.body,created_at:'2026-11-27T11:00:00Z',updated_at:'2026-11-27T11:00:00Z'};w.comments.push(data);statusCode=201;
-    }else if(url.endsWith('/events'))data=w.events;
+     data={id:100+w.comments.length,user:{id:202449424},body:body.body,created_at:w.time,updated_at:w.time};w.comments.push(data);statusCode=201;
+    }else if(url.endsWith('/events'))data=w.events.filter(e=>!e.issue||e.issue.number===number);
     else if(url.endsWith('/labels') && method==='POST'){
-     for(const label of body.labels){if(!issue.labels.some(x=>x.name===label))issue.labels.push({name:label});w.events.push({id:100+w.events.length,event:'labeled',label:{name:label},actor:{id:202449424},created_at:'2026-11-27T11:00:00Z'});}data=issue.labels;
+     for(const label of body.labels){if(!issue.labels.some(x=>x.name===label))issue.labels.push({name:label});w.events.push({id:100+w.events.length,event:'labeled',label:{name:label},actor:{id:202449424},created_at:w.time});}data=issue.labels;
     }else if(method==='DELETE'){
-     const label=decodeURIComponent(url.split('/').at(-1));issue.labels=issue.labels.filter(x=>x.name!==label);w.events.push({id:100+w.events.length,event:'unlabeled',label:{name:label},actor:{id:202449424},created_at:'2026-11-27T11:00:00Z'});data=issue.labels;
+     const label=decodeURIComponent(url.split('/').at(-1));issue.labels=issue.labels.filter(x=>x.name!==label);w.events.push({id:100+w.events.length,event:'unlabeled',label:{name:label},actor:{id:202449424},created_at:w.time});data=issue.labels;
     }else data=issue;
     if(method!=='GET')w.writes.push({name,method,url,body});response={statusCode,body:clone(data),headers:{}};
    }
    if(fault?.at===name && fault.after)throw Error('Lost acknowledgement after '+name);
    result=[{json:response}];
   }
-  outputs.set(name,clone(result));runData[name]=[{startTime:0,executionTime:0,source:previous?[{previousNode:previous}]:[],data:{main:[clone(result)]}}];input=result;previous=name;name=graph.connections[name]?.main?.[branch]?.[0]?.node;
+  outputs.set(name,clone(result));runData[name]=[{startTime:0,executionTime:0,source:previous?[{previousNode:previous}]:[],data:{main:n.type.endsWith('.splitInBatches')?[[],clone(result)]:[clone(result)]}}];input=result;previous=name;name=graph.connections[name]?.main?.[branch]?.[0]?.node;
  }}catch(e){error=e;}
  w.trace.push(...trace);return {error,trace,outputs};
 }
@@ -90,6 +91,30 @@ test('non-owner and stale approval do not launch',w=>{
 test('orphan Building blocks empty-ledger activation',w=>{w.issues[0].labels=[{name:'Building'}];assert(run('reserve',w).error);assert.equal(slot(w).attempt_id,null);});
 test('stale QA result cannot overwrite renewed owner Approved',w=>{
  const id=build(w);w.runner({action:'worker',id});w.issues[0].labels=[{name:'Approved'}];assert(run('collect',w).error);assert.equal(w.pulls.length,0);assert.equal(slot(w).attempt_id,id);
+});
+test('question once, stopped Waiting release, durable answer before Approved and fresh priority continuation',w=>{
+ const id=build(w);w.runner({action:'worker',id,outcome:'question'});must('collect',w);
+ assert.equal(slot(w).attempt_id,null);assert.equal(w.issues[0].labels[0].name,'Waiting for you');
+ const questions=()=>w.comments.filter(c=>c.body.startsWith('<!-- factory:question:v2'));
+ assert.equal(questions().length,1);must('collect',w);assert.equal(questions().length,1);
+ w.comments.push({id:200,user:{id:202449424},body:`answer ${id}-q1: Use JSON.\nscope: unchanged`,created_at:'2026-11-27T12:00:00Z',updated_at:'2026-11-27T12:00:00Z'});w.time='2026-11-27T13:00:00Z';
+ const refined=must('refine',w);assert.equal(w.issues[0].labels[0].name,'Approved');assert(refined.trace.indexOf('Persist scoped answer')<refined.trace.indexOf('Add answered Approved'));
+ const predecessor=w.runner({method:'GET',path:'/v1/attempts/'+id}).body;assert(predecessor.question.claim);
+ w.issues.push({...clone(fixture.issue),number:1});w.events.push({...clone(fixture.events[0]),id:1,issue:{number:1},created_at:'2026-11-27T09:30:00Z'});
+ must('reserve',w);const next=slot(w).attempt_id;assert.notEqual(next,id);const blocked=must('reserve',w);assert(!blocked.trace.includes('Discover all issues'));assert.equal(slot(w).attempt_id,next);
+ const a=w.runner({method:'GET',path:'/v1/attempts/'+next}).body;assert.equal(a.payload.authorization.kind,'answer');assert.equal(a.payload.continuation.answer.text,'Use JSON.');assert.equal(a.payload.predecessor,id);
+ w.runner({action:'worker',id:next});must('collect',w);assert.equal(w.issues[0].labels[0].name,'Your QA');assert.equal(w.pulls.length,1);must('track',w);
+});
+test('missing scope stays Waiting; changed scope returns to refinement without approval',w=>{
+ const id=build(w);w.runner({action:'worker',id,outcome:'question'});must('collect',w);
+ const reply={id:200,user:{id:202449424},body:`answer ${id}-q1: Expand scope.`,created_at:'2026-11-27T12:00:00Z',updated_at:'2026-11-27T12:00:00Z'};w.comments.push(reply);w.time='2026-11-27T13:00:00Z';
+ const waiting=must('refine',w);assert.equal(w.issues[0].labels[0].name,'Waiting for you');assert(waiting.trace.includes('Report unanswered question'));
+ reply.body+=`\nscope: changed`;must('refine',w);assert.equal(w.issues[0].labels[0].name,'Ideas');assert(!w.writes.some(x=>x.name==='Add answered Approved'));
+ const a=w.runner({method:'GET',path:'/v1/attempts/'+id}).body;assert.equal(a.question.claim,null);
+});
+test('lost question acknowledgement reconciles one marker and releases only with readback',w=>{
+ const id=build(w);w.runner({action:'worker',id,outcome:'question'});assert(run('collect',w,{at:'Post owner question',after:true}).error);assert.equal(slot(w).attempt_id,id);assert(w.row.busy);
+ w.row.busy=false;must('collect',w);assert.equal(slot(w).attempt_id,null);assert.equal(w.comments.filter(c=>c.body.startsWith('<!-- factory:question:v2')).length,1);
 });
 console.log(`${count} generated Basic B graph scenarios passed using real SQLite/API and fake external effects.`);
 

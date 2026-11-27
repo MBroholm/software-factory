@@ -3,7 +3,7 @@
 module.exports = [
   {
     title: '1. Acquire the shared guard',
-    summary: 'Both triggers enter here. Read the single control row and claim busy before any GitHub write or model request. An existing hold exits unchanged. An invalid row or uncertain acquisition stops processing. The final release is in stage 6.',
+    summary: 'Both triggers enter here. Read the single control row and claim busy before any GitHub write or model request. An existing hold exits unchanged. An invalid row or uncertain acquisition stops processing. The final release is in stage 7.',
     color: 4,
     nodes: [
       ['Manual isolated test', 'Starts a whole-workflow test manually. Use only while all factory schedules are paused and executions have drained; manual runs are outside production serialization.'],
@@ -79,7 +79,7 @@ module.exports = [
   },
   {
     title: '5. Publish and return to Ready',
-    summary: 'Check the source after inference before posting. Verify the comment receipt or reused output, then add Ready and remove Refining. No node grants Approved. Source changes, uncertain writes or inconsistent evidence retain busy for manual recovery.',
+    summary: 'Check the source after inference before posting. Verify the comment receipt or reused output, then add Ready and remove Refining. This refinement path never grants initial approval; scoped answer continuation uses the separate durable-claim stage. Source changes, uncertain writes or inconsistent evidence retain busy for manual recovery.',
     color: 7,
     nodes: [
       ['Read before comment', 'Fetches current issue status/content after inference and before publishing. Helps detect edits, closure or state changes while Gemini was working.'],
@@ -115,3 +115,50 @@ module.exports = [
     ],
   },
 ];
+
+module.exports.splice(2,0,{
+ title:'3. Continue scoped owner answers',color:3,
+ summary:'Waiting questions use exact ledger-bound markers and one unchanged-scope owner reply. Persist and independently verify the derived authorization before adding Approved. A changed-scope answer returns to Ideas/refinement and renewed explicit owner approval. No reply is initial approval.',
+ nodes:Object.entries({
+  'Question revision':'Route Waiting tasks to the question path; Ideas/Ready keep the established refinement path.',
+  'Read question registry':'Authenticated read of unconsumed durable questions. Unknown or ambiguous ledger identity stops.',
+  'Read Waiting issue':'Read current author, closure and sole Waiting state before considering a reply.',
+  'Read Waiting comments':'Read every comment page; exact question, captured source and owner answer must remain intact.',
+  'Plan owner answer':'Require one fresh unedited owner reply with the exact question id and literal scope line. Missing scope is reported with required grammar; competing replies hold. Factory markers cannot answer or grant initial approval.',
+  'Have scoped answer':'Only an exact unchanged-scope reply can enter durable authorization. Others wait or route to refinement.',
+  'Changed answer scope':'Changed scope returns to Ideas, never Approved. Missing scope stays Waiting and reports required confirmation.',
+  'Report unanswered question':'Report waiting or missing-confirmation guidance; the published question already contains exact instructions. Release only this workflow guard.',
+  'Persist scoped answer':'Commit unique answer claim through the runner, which independently rereads GitHub/source. No Approved write precedes this acknowledgement.',
+  'Verify answer claim':'Require the exact committed question/answer/source lineage, not merely a successful HTTP status.',
+  'Recheck answered issue':'Read current issue after the durable claim and immediately before derived approval.',
+  'Recheck answered comments':'Recheck exact question/answer, authorship, edits/deletions and source before the label write.',
+  'Validate before derived approval':'Compare the full unchanged claim with current GitHub evidence. A changed answer or approved source stops.',
+  'Add answered Approved':'Add Approved only for a persisted answer-derived authorization of previously explicitly approved scope. Never grants initial approval.',
+  'Check answered Approved':'Require both Waiting and Approved as the only managed labels before removing Waiting.',
+  'Remove answered Waiting':'Remove only Waiting after acknowledged derived Approved addition; preserve unrelated labels.',
+  'Check answered Waiting removal':'Require sole Approved receipt. Unknown or partial write keeps the fail-stop guard.',
+  'Read answered final issue':'Read back open owner-authored sole Approved before reporting the continuation eligible.',
+  'Read answered final comments':'Revalidate exact current question/answer and approved source after transition.',
+  'Read answered final events':'Read complete Approved-entry history; bind the derived event without confusing it with initial approval.',
+  'Verify answered approval':'Assemble the distinct deterministic continuation UUID with original approval, exact answer and retained work. Release only the workflow guard.',
+  'Journal changed scope':'Commit the changed-scope label intent against the old question before any external mutation.',
+  'Verify changed scope intent':'Require durable intent acknowledgement before routing expanded scope back to refinement.',
+  'Recheck changed scope issue':'Observe closure and current Waiting state before changed-scope routing.',
+  'Recheck changed scope comments':'Re-read the exact changed-scope owner answer so edits cannot trigger stale routing.',
+  'Validate changed scope routing':'Require the same valid question and changed-scope reply immediately before writes.',
+  'Add changed scope Ideas':'Add Ideas for renewed refinement; this path never adds Approved.',
+  'Check changed scope Ideas':'Require only Waiting and Ideas managed labels before removing the source.',
+  'Remove changed scope Waiting':'Remove only Waiting after Ideas acknowledgement, retaining the prior question and partial work.',
+  'Check changed scope removal':'Require the removal acknowledgement; unknown effects hold for owner recovery.',
+  'Read changed scope final issue':'Read back the changed-scope task before confirming the journal.',
+  'Verify changed scope state':'Require an open owner-authored sole Ideas state; renewed specification and explicit owner approval are still required.',
+  'Confirm changed scope':'Confirm exact Ideas state in the durable effect journal; never erase historical question/answer evidence.',
+  'Complete changed scope':'Release the short guard after confirmed routing. The next refinement captures the changed-scope reply and does not infer approval.'
+ })
+});
+module.exports.forEach((stage,index)=>{stage.title=stage.title.replace(/^\d+\./,`${index+1}.`);});
+module.exports[1].summary='Read all pages, inspect owner-authored Ideas/Ready revisions and Waiting questions. Unchanged revisions loop; questions require durable scoped authorization. No eligible work releases the short guard.';
+for(const stage of module.exports)for(const entry of stage.nodes){
+ if(entry[0]==='Discover candidates')entry[1]='Select open owner-authored Ideas/Ready/Waiting tasks by issue number. Conflicting labels or stranded Refining stop; question replies cannot enter ordinary refinement as factory output.';
+ if(entry[0]==='Plan revision')entry[1]='Dispatch Waiting to the exact question policy. For Ideas/Ready, validate prior refinement/captured source and compute the canonical revision; include applicable changed-scope owner replies for renewed refinement.';
+}

@@ -37,7 +37,7 @@ class Codex(Faults):
 class Git(Faults):
     def __init__(self): super().__init__(); self.pushes=[]; self.diff=True
     def prepare(self, payload, attempt): return '/fake/worktree'
-    def snapshot(self, payload, attempt): return {'branch':payload['branch'],'base_sha':payload['base_sha'],'head_sha':'b'*40,'status_hash':'c'*64,'patch_hash':'d'*64,'artifacts':[]}
+    def snapshot(self, payload, attempt): return {'task':{'repository':payload['repository'],'issue_number':payload['issue_number']},'predecessor':payload['predecessor'],'branch':payload['branch'],'base_sha':payload['base_sha'],'head_sha':'b'*40,'status_hash':'c'*64,'patch_hash':'d'*64,'artifacts':[]}
     def push(self, payload, attempt, manifest):
         self.hit('before_push')
         if not self.diff: raise RuntimeError('no diff')

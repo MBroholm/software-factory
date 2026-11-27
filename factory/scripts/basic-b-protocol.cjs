@@ -30,6 +30,7 @@ function initialPayload(issue,comments,events,baseSha,modelConfig) {
  demand(!comments.some(c=>/^<!-- factory:(?:authorization|answer):v2/.test(lf(c.body))),'Derived authorization is not initial approval');
  checkHandoffs(comments,plan);
  demand(!v2marked(comments,'attempt',issue.number).some(m=>m.meta.initial_approval===plan.approval_event_id),'Approval already reserved');
+ demand(!v2marked(comments,'question',issue.number).some(q=>Date.parse(q.comment.created_at)>Date.parse(refined.comment.created_at)),'Question continuation requires durable answer authorization; not initial approval');
  const p={contract_version:1,repository:REPOSITORY,issue_number:issue.number,owner_author_id:OWNER_ID,
  authorization:{id:`initial:${issue.number}:${plan.approval_event_id}`,kind:'initial',initial_approval_event:plan.approval_event_id,approved_entered_at:plan.approval_timestamp,references:[plan.approval_event_id]},
  source:{refinement_comment_id:plan.refinement_comment_id,refinement_body_sha256:plan.refinement_body_sha256,source_digest:plan.source_digest,specification_digest:sha256(spec),captured_comment_ids:refined.meta.captured_comment_ids},

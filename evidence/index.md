@@ -87,3 +87,8 @@ stopped restore clone and inactive test workflows process no ordinary factory ta
 graph checks and read-only n8n VM parameter checks for T001–T020, with
 [source fingerprints](basic-b-us1-sources.json). This is fake-adapter implementation evidence,
 not operational adoption or an additional genuine factory run. Later Basic B acceptance remains open.
+
+[US2 question/answer validation](basic-b-us2-validation.md) records the next increment's durable
+answer authorization, Waiting release, scoped continuation/partial-work preservation and priority
+checks, with [source fingerprints](basic-b-us2-sources.json). US1 commit `46bb2c7` is pushed;
+US2 fixture evidence adds no real-run or operational-adoption claim.

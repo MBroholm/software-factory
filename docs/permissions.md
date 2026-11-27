@@ -136,3 +136,13 @@ Preflight refuses unknown target identity or an unreconciled slot. Basic B same-
 is not malicious-code isolation. Agent output is untrusted public input: publish only sanitized
 allowlisted fields and attribute checks to the agent. Owner alone reviews/merges; operational
 adoption still requires manual import of the reviewed matching artifacts.
+
+US2 extends the proposed Basic B increment with issue question publication and scoped continuation.
+The orchestrator may derive Approved only after the runner independently verifies and durably
+claims one matching owner answer on previously explicitly approved, unchanged source. An answer
+never grants initial approval. Exact unchanged-scope grammar, owner numeric identity, question
+id, chronology, unedited content and unique consumption are enforced. Changed scope returns to
+Ideas/refinement and renewed explicit owner approval. Missing confirmation stays Waiting; the
+published question provides exact reply instructions and the workflow reports the missing step.
+No new credential scope, account, model, service, network exposure or operational activation is
+introduced by US2. Prior owner review/manual import and provisioning gates still apply.

@@ -73,3 +73,30 @@ A token grants the trusted n8n orchestrator these ledger mutations; no runner cr
 control API is supplied to the model prompt. Basic B same-account execution is not a malicious
 agent isolation guarantee. A manually observed state change can race an in-flight REST request;
 reconcile already-issued effects rather than claiming a cross-system atomic transaction.
+
+## US2 additive question endpoints
+
+Both endpoints use the same bearer, body limits and fail-closed parsing as the v1 API.
+`GET /v1/questions` returns current unconsumed question attempts with their durable question and
+optional answer claim; released historical attempts remain readable through their UUID endpoint.
+It does not consume an answer, reserve a task or change labels.
+
+`PUT /v1/attempts/{uuid}/answer` takes the strict immutable claim: `authorization_id`,
+`predecessor`, `initial_approval_event`, unchanged `source`, and `continuation` with exact
+published question identity/text/context/comment hash/time and owner answer id/body/text/hash/times.
+The runner independently rereads current Waiting issue/source, approval lineage, exact published
+question and complete owner comment history before committing. Return 200 for the first durable
+claim or exact replay; 409 for stale/edited/deleted/competing/unverifiable input, 422 for malformed
+input and 503 when no independent verifier is configured. No Approved label is written by the
+runner. Orchestration must confirm this claim before deriving Approved and must read that label
+back before reservation.
+
+Answer reservation inputs add `authorization.kind=answer`, `approval_event` for the new derived
+Approved entry, `predecessor`, the exact ledger-retained `manifest`, `continuation` and ordered
+`history` of earlier question/answer pairs. Authorization id is
+`answer:<predecessor-uuid>-q1:<owner-comment-id>` and references preserve the original explicit
+approval plus owner answer. The same answer claim creates only one deterministic attempt UUID.
+`approved_entered_at` binds the actual derived Approved event, not the earlier answer time.
+Reservation consumes the claim atomically; neither an automated label event nor an answer without
+a durable released predecessor can act as initial approval. An interrupted or conflicting
+continuation remains held for later owner recovery rather than discarding retained work.

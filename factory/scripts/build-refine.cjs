@@ -6,7 +6,7 @@ const root = path.resolve(__dirname,'../..');
 const read = file => fs.readFileSync(path.join(root,file),'utf8');
 const file = path.join(root,'factory/workflows/refine.json');
 const workflow = JSON.parse(fs.readFileSync(file,'utf8'));
-const runtime = read('factory/scripts/refinement-runtime.cjs').split('module.exports =')[0];
+const runtime = ['refinement-runtime','reservation-runtime','basic-b-protocol','collection-runtime','question-runtime'].map(n=>read('factory/scripts/'+n+'.cjs').split('module.exports =')[0]).join('\n');
 const prompt = read('factory/prompts/refinement.md'), template = read('factory/templates/task.md');
 const schema = JSON.parse(read('factory/templates/refinement.schema.json'));
 const artifacts = {prompt_sha256:hash(prompt),template_sha256:hash(template),runtime_sha256:hash(runtime),schema_sha256:hash(JSON.stringify(schema))};
@@ -31,18 +31,18 @@ function chain(...names) { for(let i=1;i<names.length;i++) connect(names[i-1],na
 function gate(name,expression) {
   return add(name,'if',{conditions:{options:{caseSensitive:true,leftValue:'',typeValidation:'strict',version:2},conditions:[{id:hash(name).slice(0,16),leftValue:`={{ ${expression} }}`,rightValue:true,operator:{type:'boolean',operation:'true',singleValue:true}}],combinator:'and'},options:{}});
 }
-function http(name,url,{method='GET',body,paginated=false,gemini=false}={}) {
+function http(name,url,{method='GET',body,paginated=false,gemini=false,runner=false}={}) {
   const parameters = {method,url,authentication:'genericCredentialType',genericAuthType:'httpHeaderAuth',
-    sendHeaders:true,headerParameters:{parameters:gemini ? [{name:'Content-Type',value:'application/json'}] : [{name:'Accept',value:'application/vnd.github+json'},{name:'X-GitHub-Api-Version',value:'2026-03-10'}]},
-    options:{timeout:gemini?120000:30000,redirect:{redirect:{followRedirects:false}},response:{response:{responseFormat:'json',fullResponse:true,neverError:true}}}};
-  if (body) Object.assign(parameters,{sendBody:true,specifyBody:'json',jsonBody:body});
+    sendHeaders:true,headerParameters:{parameters:runner ? [] : gemini ? [{name:'Content-Type',value:'application/json'}] : [{name:'Accept',value:'application/vnd.github+json'},{name:'X-GitHub-Api-Version',value:'2026-03-10'}]},
+    options:{timeout:gemini?120000:10000,redirect:{redirect:{followRedirects:false}},response:{response:{responseFormat:'json',fullResponse:true,neverError:true}}}};
+  if (body) Object.assign(parameters,{sendBody:true,specifyBody:'json',jsonBody:'={{ '+body.slice(3,-2).trim().replace(/}}/g,'} }')+' }}'});
   if (paginated) {
     parameters.sendQuery = true;
     parameters.queryParameters = {parameters:[{name:'per_page',value:'100'}]};
     parameters.options.pagination = {pagination:{paginationMode:'updateAParameterInEachRequest',parameters:{parameters:[{type:'qs',name:'page',value:'={{ $pageCount + 1 }}'}]},
       paginationCompleteWhen:'other',completeExpression:'={{ $response.statusCode !== 200 || !Array.isArray($response.body) || $response.body.length < 100 }}',limitPagesFetched:true,maxRequests:100,requestInterval:200}};
   }
-  return add(name,'httpRequest',parameters,{credentials:{httpHeaderAuth:{id:gemini?'OWNER_SELECT_GEMINI_HEADER_CREDENTIAL':'OWNER_SELECT_GITHUB_HEADER_CREDENTIAL',name:gemini?'Basic A Gemini x-goog-api-key':'Basic A GitHub Authorization'}},retryOnFail:false,executeOnce:true});
+  return add(name,'httpRequest',parameters,{credentials:{httpHeaderAuth:{id:runner?'OWNER_SELECT_RUNNER_BEARER_CREDENTIAL':gemini?'OWNER_SELECT_GEMINI_HEADER_CREDENTIAL':'OWNER_SELECT_GITHUB_HEADER_CREDENTIAL',name:runner?'Basic B private runner bearer':gemini?'Basic A Gemini x-goog-api-key':'Basic B GitHub orchestrator'}},retryOnFail:false,executeOnce:true});
 }
 const base = 'https://api.github.com/repos/MBroholm/software-factory/issues';
 const issueURL = `('${base}/' + $('Plan revision').first().json.issue.number)`;
@@ -60,7 +60,7 @@ add('Each candidate','splitInBatches',{batchSize:1,options:{}});
 // during HTTP parameter resolution; execution 748 resolved that lookup to undefined.
 http('Read stage events',`={{ '${base}/' + $json.number + '/events' }}`,{paginated:true});
 http('Read source comments',`={{ ${candidateURL} + '/comments' }}`,{paginated:true});
-code('Plan revision',`const comments = ${values('Read source comments')};\nconst p = analyze($('Each candidate').first(1).json, comments, ${values('Read stage events')});\np.issue_comment_watermark = Math.max(0,...comments.map(c=>c.id));\nreturn [{json:p}];`);
+code('Plan revision',`const comments = ${values('Read source comments')};\nconst candidate=$('Each candidate').first(1).json;if(state(candidate)==='Waiting for you')return [{json:{issue:candidate,work:true,question_mode:true}}];const p = analyze(candidate, comments, ${values('Read stage events')});\np.issue_comment_watermark = Math.max(0,...comments.map(c=>c.id));\nreturn [{json:p}];`);
 gate('New revision','$json.work');
 code('No work',"return [{json:{outcome:'no_work',acknowledged:true,issue_number:null}}];");
 const context = structuredClone(workflow.nodes.find(n=>n.name==='Acquire control'));
@@ -112,13 +112,52 @@ transition('Ready','Ready for approval',"'Refining'");
 http('Read final issue',`={{ ${issueURL} }}`);
 http('Read final comments',`={{ ${issueURL} + '/comments' }}`,{paginated:true});
 code('Success',`demand($('Read final issue').first().json.statusCode===200,'Final issue read failed');\nconst p=${plan}, issue=${body('Read final issue')}, comments=${values('Read final comments')};\nunchanged(p,issue,comments,'Ready for approval');\nconst matches=history(comments,issue).filter(r=>r.meta.source_key===p.meta.source_key); demand(matches.length===1,'Final refinement missing');\nconst budget=p.existing?null:$('Check token budget').first().json.budget;\nconst generation=p.existing?null:$('Evaluate generation attempt').first().json.generation;\nreturn [{json:{outcome:'success',acknowledged:true,issue_number:p.issue.number,source_key:p.meta.source_key,refinement_comment_id:matches[0].comment.id,budget,generation}}];`);
-workflow.nodes.find(n=>n.name==='Report completion').parameters.jsCode="const work=$('Require acknowledged completion').first().json;\nreturn [{json:{status:'released',outcome:work.outcome,...(work.outcome==='success'?{issue_number:work.issue_number,source_key:work.source_key,refinement_comment_id:work.refinement_comment_id,budget:work.budget,generation:work.generation}:{}),control:$input.first().json}}];";
+gate('Question revision',"$json.question_mode === true || $('Plan revision').first().json.question_mode === true");
+http('Read question registry','http://RUNNER_PRIVATE_HOST:8787/v1/questions',{runner:true});
+http('Read Waiting issue',`={{ ${issueURL} }}`);
+http('Read Waiting comments',`={{ ${issueURL} + '/comments' }}`,{paginated:true});
+code('Plan owner answer',`demand($('Read question registry').first().json.statusCode===200 && $('Read Waiting issue').first().json.statusCode===200,'Question reads failed');const registry=${body('Read question registry')};demand(Array.isArray(registry),'Invalid question registry');const prior=registry.filter(a=>a.payload.issue_number===${plan}.issue.number && a.status==='released' && !a.question.consumed_by_attempt);demand(prior.length===1,'Missing/ambiguous released question');const decision=answerPlan(${body('Read Waiting issue')},${values('Read Waiting comments')},prior[0]);return [{json:{...decision,predecessor:prior[0].id}}];`);
+gate('Have scoped answer',"$json.action === 'claim_answer'");
+gate('Changed answer scope',"$json.action === 'refine_changed_scope'");
+code('Report unanswered question',`const p=$('Plan owner answer').first().json;return [{json:{acknowledged:true,outcome:'no_work',issue_number:p.issue_number,question_decision:p.action,message:p.message??'Waiting for one matching owner answer.'}}];`);
+const answerPlanRef="$('Plan owner answer').first().json",answerURL=`'http://RUNNER_PRIVATE_HOST:8787/v1/attempts/' + ${answerPlanRef}.predecessor`;
+http('Persist scoped answer',`={{ ${answerURL} + '/answer' }}`,{runner:true,method:'PUT',body:`={{ ${answerPlanRef}.claim }}`});
+code('Verify answer claim',`const r=$input.first().json;demand(r.statusCode===200 && sortedJSON(r.body)===sortedJSON(${answerPlanRef}.claim),'Answer claim unconfirmed');return [{json:r.body}];`);
+http('Recheck answered issue',`={{ ${issueURL} }}`);
+http('Recheck answered comments',`={{ ${issueURL} + '/comments' }}`,{paginated:true});
+code('Validate before derived approval',`const r=$('Recheck answered issue').first().json;demand(r.statusCode===200,'Issue reread failed');const a=${body('Read question registry')}.find(a=>a.id===${answerPlanRef}.predecessor);const decision=answerPlan(r.body,${values('Recheck answered comments')},a);demand(decision.action==='claim_answer' && sortedJSON(decision.claim)===sortedJSON(${answerPlanRef}.claim),'Answer/source changed before derived approval');return [{json:decision}];`);
+http('Add answered Approved',`={{ ${issueURL} + '/labels' }}`,{method:'POST',body:'={{ {labels:["Approved"]} }}'});
+code('Check answered Approved',`const r=$input.first().json;demand(r.statusCode===200 && Array.isArray(r.body) && r.body.some(l=>l.name==='Approved') && r.body.some(l=>l.name==='Waiting for you') && r.body.filter(l=>STATES.includes(l.name)).length===2,'Derived approval addition unconfirmed');return [{json:{}}];`);
+http('Remove answered Waiting',`={{ ${issueURL} + '/labels/Waiting%20for%20you' }}`,{method:'DELETE'});
+code('Check answered Waiting removal',`const r=$input.first().json;demand(r.statusCode===200 && Array.isArray(r.body) && r.body.filter(l=>STATES.includes(l.name)).length===1 && r.body.some(l=>l.name==='Approved'),'Derived approval removal unconfirmed');return [{json:{}}];`);
+http('Read answered final issue',`={{ ${issueURL} }}`);
+http('Read answered final comments',`={{ ${issueURL} + '/comments' }}`,{paginated:true});
+http('Read answered final events',`={{ ${issueURL} + '/events' }}`,{paginated:true});
+code('Verify answered approval',`const r=$('Read answered final issue').first().json;demand(r.statusCode===200 && eligible(r.body) && state(r.body)==='Approved','Derived approval readback failed');const old=${body('Read question registry')}.find(a=>a.id===${answerPlanRef}.predecessor),a={...old,question:{...old.question,claim:$('Verify answer claim').first().json}};const next=continuationPayload(r.body,${values('Read answered final comments')},${values('Read answered final events')},a);return [{json:{acknowledged:true,outcome:'success',issue_number:r.body.number,authorization_id:next.payload.authorization.id}}];`);
+const scopeBody="{phase:'intent',content:{state:'Ideas'},external:null}";
+http('Journal changed scope',`={{ ${answerURL} + '/effects/scope_refinement' }}`,{runner:true,method:'PUT',body:`={{ ${scopeBody} }}`});
+code('Verify changed scope intent',`demand($input.first().json.statusCode===200,'Changed-scope intent unconfirmed');return [{json:{}}];`);
+http('Recheck changed scope issue',`={{ ${issueURL} }}`);
+http('Recheck changed scope comments',`={{ ${issueURL} + '/comments' }}`,{paginated:true});
+code('Validate changed scope routing',`const r=$('Recheck changed scope issue').first().json;demand(r.statusCode===200,'Scope issue read failed');const a=${body('Read question registry')}.find(a=>a.id===${answerPlanRef}.predecessor);demand(answerPlan(r.body,${values('Recheck changed scope comments')},a).action==='refine_changed_scope','Scope reply changed');return [{json:{}}];`);
+http('Add changed scope Ideas',`={{ ${issueURL} + '/labels' }}`,{method:'POST',body:'={{ {labels:["Ideas"]} }}'});
+code('Check changed scope Ideas',`const r=$input.first().json;demand(r.statusCode===200 && Array.isArray(r.body) && r.body.some(l=>l.name==='Ideas') && r.body.some(l=>l.name==='Waiting for you') && r.body.filter(l=>STATES.includes(l.name)).length===2,'Changed scope addition unconfirmed');return [{json:{}}];`);
+http('Remove changed scope Waiting',`={{ ${issueURL} + '/labels/Waiting%20for%20you' }}`,{method:'DELETE'});
+code('Check changed scope removal',`demand($input.first().json.statusCode===200,'Changed scope removal unconfirmed');return [{json:{}}];`);
+http('Read changed scope final issue',`={{ ${issueURL} }}`);
+code('Verify changed scope state',`const r=$input.first().json;demand(r.statusCode===200 && eligible(r.body) && state(r.body)==='Ideas','Changed scope state unconfirmed');return [{json:{}}];`);
+http('Confirm changed scope',`={{ ${answerURL} + '/effects/scope_refinement' }}`,{runner:true,method:'PUT',body:`={{ {phase:'confirmed',content:{state:'Ideas'},external:{state:'Ideas',issue_number:${plan}.issue.number}} }}`});
+code('Complete changed scope',`demand($input.first().json.statusCode===200,'Changed scope confirmation failed');return [{json:{acknowledged:true,outcome:'success',issue_number:${plan}.issue.number,question_decision:'refinement_required'}}];`);
+chain('Read question registry','Read Waiting issue','Read Waiting comments','Plan owner answer','Have scoped answer');connect('Have scoped answer','Persist scoped answer');connect('Have scoped answer','Changed answer scope',1);connect('Changed answer scope','Journal changed scope');connect('Changed answer scope','Report unanswered question',1);connect('Report unanswered question','Require acknowledged completion');
+chain('Persist scoped answer','Verify answer claim','Recheck answered issue','Recheck answered comments','Validate before derived approval','Add answered Approved','Check answered Approved','Remove answered Waiting','Check answered Waiting removal','Read answered final issue','Read answered final comments','Read answered final events','Verify answered approval','Require acknowledged completion');
+chain('Journal changed scope','Verify changed scope intent','Recheck changed scope issue','Recheck changed scope comments','Validate changed scope routing','Add changed scope Ideas','Check changed scope Ideas','Remove changed scope Waiting','Check changed scope removal','Read changed scope final issue','Verify changed scope state','Confirm changed scope','Complete changed scope','Require acknowledged completion');
+workflow.nodes.find(n=>n.name==='Report completion').parameters.jsCode="const work=$('Require acknowledged completion').first().json;\nreturn [{json:{status:'released',outcome:work.outcome,question_decision:work.question_decision??null,message:work.message??null,authorization_id:work.authorization_id??null,...(work.outcome==='success'?{issue_number:work.issue_number,source_key:work.source_key,refinement_comment_id:work.refinement_comment_id,budget:work.budget,generation:work.generation}:{}),control:$input.first().json}}];";
 chain('Verify acquisition','Discover issues','Discover candidates','Have candidates');
 connect('Have candidates','Each candidate',0); connect('Have candidates','No work',1);
 connect('Each candidate','No work',0); connect('Each candidate','Read stage events',1);
 chain('Read stage events','Read source comments','Plan revision','New revision');
 connect('New revision','Set issue context',0); connect('New revision','Each candidate',1);
-chain('Set issue context','Check issue context','Reread source issue','Reread stage events','Reread source comments','Validate before Refining','Add Refining');
+chain('Set issue context','Check issue context','Question revision');connect('Question revision','Read question registry');connect('Question revision','Reread source issue',1);chain('Reread source issue','Reread stage events','Reread source comments','Validate before Refining','Add Refining');
 chain('Check removed Refining','Read Refining issue','Read Refining comments','Prepare Gemini','Reuse marked output');
 connect('Reuse marked output','Read before Ready',0); connect('Reuse marked output','Gemini countTokens',1);
 chain('Gemini countTokens','Check token budget','Initialize generation attempts','Generation state','Read generation guard','Verify generation guard','Read before generation','Comments before generation','Prepare generation attempt','Gemini generateContent','Evaluate generation attempt','Retry unavailable');
@@ -128,8 +167,8 @@ chain('Validate and render','Read before comment','Comments before post','Valida
 chain('Read before Ready','Comments before Ready','Validate before Ready','Add Ready');
 chain('Check removed Ready','Read final issue','Read final comments','Success','Require acknowledged completion');
 connect('No work','Require acknowledged completion');
-add('Review and isolated testing only','stickyNote',{content:'## US1 — INACTIVE, owner manual import after review\nMap EVERY Data Table to the same isolated control table. Map GitHub Authorization header and Gemini x-goog-api-key credentials privately. No token values in this JSON. Execute whole workflow only with all schedules paused/drained. No stranded-state recovery or write retries. See evidence/refinement-validation.md. Runtime prompt v3 / template v1 embedded by build-refine.cjs. Production activation remains gated.',height:300,width:750});
-workflow.name='Basic A refine — US1 INACTIVE'; workflow.active=false; workflow.pinData={};
+add('Review and isolated testing only','stickyNote',{content:'## US2 — INACTIVE, owner manual import after review\nMap EVERY Data Table to the same isolated control table. Map GitHub, Gemini and separate private runner bearer credentials privately; configure the reviewed runner address. No token values in this JSON. Execute whole workflow only with all schedules paused/drained. No stranded-state recovery or write retries. See evidence/refinement-validation.md. Runtime prompt v3 / template v1 embedded by build-refine.cjs. Production activation remains gated.',height:300,width:750});
+workflow.name='Basic B refine — US2 INACTIVE'; workflow.active=false; workflow.pinData={};
 // Document each operational node and group the canvas by purpose. No execution changes.
 const stages = require('./refinement-notes.cjs');
 const documented = new Set();

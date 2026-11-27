@@ -33,7 +33,7 @@ def main():
                 proof=services.stopped(id)
                 if proof.get('cgroup_empty'): ledger.confirm_stopped(id,proof)
             except Exception: ledger.hold(id,'stopped process evidence unknown')
-    app=create_app(ledger,secret(c.bearer_file),c.repository,c.owner_id,{c.model_config},worker.dispatch,lambda:True,observe)
+    app=create_app(ledger,secret(c.bearer_file),c.repository,c.owner_id,{c.model_config},worker.dispatch,lambda:True,observe,github=GitHub(c))
     uvicorn.run(app,host=c.bind,port=c.port,access_log=False)
     return 0
 

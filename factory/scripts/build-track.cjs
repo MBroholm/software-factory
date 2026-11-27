@@ -8,7 +8,7 @@ const w=JSON.parse(read('factory/scripts/guard-template.json'));
 w.nodes=w.nodes.filter(n=>!['Skeleton work boundary','Review and isolated testing only'].includes(n.name));
 delete w.connections['Skeleton work boundary'];
 const refinement=read('factory/scripts/refinement-runtime.cjs');
-const runtime=refinement.split('function analyze(')[0]+refinement.slice(refinement.indexOf('function pages('),refinement.indexOf('module.exports ='))+read('factory/scripts/reservation-runtime.cjs').split('module.exports =')[0]+read('factory/scripts/basic-b-protocol.cjs').split('module.exports =')[0]+read('factory/scripts/tracking-runtime.cjs').split('module.exports =')[0];
+const runtime=refinement.split('function analyze(')[0]+refinement.slice(refinement.indexOf('function pages('),refinement.indexOf('module.exports ='))+read('factory/scripts/reservation-runtime.cjs').split('module.exports =')[0]+read('factory/scripts/basic-b-protocol.cjs').split('module.exports =')[0]+read('factory/scripts/question-runtime.cjs').split('module.exports =')[0]+read('factory/scripts/tracking-runtime.cjs').split('module.exports =')[0];
 function add(name,type,parameters,notes){const n={id:hash('reserve:'+name).slice(0,32),name,type:'n8n-nodes-base.'+type,typeVersion:{code:2,httpRequest:4.2,if:2.2,stickyNote:1}[type],position:[0,0],parameters,notes};w.nodes.push(n);return n;}
 function code(name,body,notes){return add(name,'code',{mode:'runOnceForAllItems',jsCode:runtime+'\n'+body},notes);}
 function chain(...names){for(let i=1;i<names.length;i++)connect(names[i-1],names[i]);}
@@ -67,7 +67,7 @@ const final=w.nodes.find(n=>n.name==='Final plan');final.parameters.jsCode=runti
 w.nodes.find(n=>n.name==='Final has result').parameters.conditions.conditions[0].leftValue="={{ $json.result !== null && $json.from !== 'Done' }}";
 chain('Verify acquisition','Discover tracked issues','Select tracked issue','Have tracked issue');connect('Have tracked issue','Set issue context');connect('Have tracked issue','No work',1);chain('Set issue context','Check issue context','Read issue');chain('Read ready','Have tracking work');connect('Have tracking work','Recheck issue');connect('Have tracking work','No tracked changes',1);connect('No tracked changes','Require acknowledged completion');chain('Recheck ready','Compare snapshot','Need marker');connect('Need marker','Post result marker');chain('Post result marker','Check marker receipt','Need transition');connect('Need marker','Need transition',1);connect('Need transition','Add result state');chain('Add result state','Check target receipt','Remove previous state','Check state receipt','Final issue');connect('Need transition','Final issue',1);chain('Final ready','Complete tracked result','Require acknowledged completion');connect('No work','Require acknowledged completion');
 for(const name of ['Verify release ownership','Check release receipt','Confirm idle']) {const n=w.nodes.find(n=>n.name===name);n.parameters.jsCode=n.parameters.jsCode.replace('row.issue_number !== expected.issue_number',"row.issue_number !== $('Require acknowledged completion').first().json.issue_number");}
-w.name='Basic B track — US1 INACTIVE';w.active=false;w.pinData={};
+w.name='Basic B track — US2 INACTIVE';w.active=false;w.pinData={};
 const guard=JSON.parse(read('factory/workflows/reserve.json'));
 for(const n of w.nodes)if(!n.notes)n.notes=guard.nodes.find(x=>x.name===n.name)?.notes;
 let index=0;for(const n of w.nodes){if(!n.notes)throw Error('Missing notes '+n.name);n.position=[(index%7)*300,Math.floor(index/7)*230];index++;}

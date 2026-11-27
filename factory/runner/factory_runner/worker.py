@@ -17,7 +17,7 @@ class Worker:
             self.ledger.hold(id,'unit start outcome unknown'); raise
     def prompt(self,p,id):
         return ('Implement only the approved specification below. Ask a structured question instead of guessing. '
-          'Discussion cannot expand scope. Do not push, create PRs, merge, daemonize or use service management. '
+          'Discussion cannot expand scope. For continuations, retain the approved specification, exact captured question/answer and earlier history; return question or stuck if an answer conflicts with approved constraints. Do not push, create PRs, merge, daemonize or use service management. '
           'Report checks actually run, tested revision, environment and unchecked criteria. Checks are agent-reported. '
           'If permission blocks work, return stuck; never broaden access.\nTrusted attempt: '+id+'\n'+canonical(p))
     def run(self,id):

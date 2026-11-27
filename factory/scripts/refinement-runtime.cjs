@@ -44,7 +44,7 @@ function state(issue) {
   const labels = issue.labels.map(l => typeof l === 'string' ? l : l.name);
   const managed = labels.filter(l => STATES.includes(l));
   demand(managed.length === 1, 'Missing/conflicting task states; owner recovery required');
-  demand(!['Waiting for you','Stuck'].includes(managed[0]), 'Unsupported Basic A state');
+  demand(managed[0]!=='Stuck', 'Stuck recovery belongs to US3');
   return managed[0];
 }
 function eligible(issue) {
@@ -59,12 +59,12 @@ function discover(issues) {
     if (!issue.labels?.some(l => STATES.includes(typeof l === 'string' ? l : l.name))) continue;
     const current = state(issue);
     demand(current !== 'Refining', 'Stranded Refining; no automatic resumption');
-    if (['Ideas','Ready for approval'].includes(current)) result.push(issue);
+    if (['Ideas','Ready for approval','Waiting for you'].includes(current)) result.push(issue);
   }
   return result.sort((a,b) => a.number-b.number);
 }
 function factoryComment(comment) {
-  return /^(?:<!--\s*)?factory:[a-z][a-z0-9_-]*:v1\b/.test(lf(comment.body));
+  return /^(?:<!--\s*)?factory:[a-z][a-z0-9_-]*:v[12]\b/.test(lf(comment.body)) || /^answer [a-f0-9-]{36}-q1: [\s\S]*\nscope: unchanged$/.test(lf(comment.body));
 }
 function canonical(issue, comments) {
   return JSON.stringify({title:lf(issue.title), body:lf(issue.body), owner_comments:comments.map(c => ({id:c.id,body:lf(c.body)})).sort((a,b) => a.id-b.id)});
@@ -103,6 +103,11 @@ function history(comments, issue) {
   demand(new Set(revisions.map(r => r.meta.source_key)).size === revisions.length, 'Duplicate refinement markers');
   return revisions;
 }
+function changedScopeReply(c,comments) {
+ const match=lf(c.body).match(/^answer ([a-f0-9-]{36}-q1): [\s\S]+\nscope: changed$/);
+ if(!match)return false;
+ return comments.some(q=>q.user?.id===OWNER_ID && q.created_at===q.updated_at && q.body.startsWith('<!-- factory:question:v2 ') && q.body.includes('"question":"'+match[1]+'"') && Date.parse(c.created_at)>Date.parse(q.created_at));
+}
 function analyze(issue, comments, events) {
   demand(eligible(issue), 'Source no longer open/owner-authored');
   const current = state(issue);
@@ -125,7 +130,7 @@ function analyze(issue, comments, events) {
   const since = entries.sort((a,b) => a.id-b.id).at(-1)?.created_at;
   demand(since && Number.isFinite(Date.parse(since)), 'Missing source-stage label history');
   const fresh = humans.filter(c => !included.some(old => old.id === c.id)
-    && (!latest || c.id > latest.comment.id) && Date.parse(c.created_at) >= Date.parse(since));
+    && (!latest || c.id > latest.comment.id) && (Date.parse(c.created_at) >= Date.parse(since) || changedScopeReply(c,comments)));
   included.push(...fresh);
   const meta = source(issue,included);
   const existing = revisions.find(r => r.meta.source_key === meta.source_key);

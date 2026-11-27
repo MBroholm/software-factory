@@ -2,7 +2,7 @@
 from .contracts import canonical, digest
 from .ledger import Conflict
 
-KINDS={'attempt','building','dispatch','push','pr','comment','state'}
+KINDS={'attempt','building','dispatch','push','pr','comment','state','scope_refinement'}
 def journal(ledger,id,kind,b):
     if kind not in KINDS: raise ValueError('unknown effect kind')
     conflict=False
@@ -10,7 +10,7 @@ def journal(ledger,id,kind,b):
         a=ledger._get(c,id)
         old=next((e for e in a['effects'] if e['kind']==kind),None)
         if not old:
-            ledger._owned(c,id)
+            if not (kind=='scope_refinement' and a['status']=='released' and a['question'] and not a['question']['consumed_by_attempt']): ledger._owned(c,id)
             if b['phase']!='intent' or b['external'] is not None: raise Conflict('intent required first')
             if a['cancellation'] and kind not in {'state'}: raise Conflict('publication cancelled')
             c.execute('INSERT INTO effects VALUES(?,?,?,?,?,?,?)',(id,kind,digest(b['content']),canonical(b['content']),'pending',None,ledger.clock()))

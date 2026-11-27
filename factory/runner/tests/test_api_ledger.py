@@ -21,7 +21,7 @@ class LedgerAPI(unittest.TestCase):
         return self.client.request(method,'/v1/'+path,json=body,headers=self.headers if headers is None else headers)
     def reserve(self): return self.req('PUT',f'attempts/{self.id}/reservation',self.p)
     def test_auth_including_reads(self):
-        for method,path in [('GET','health'),('GET','slot'),('GET',f'attempts/{self.id}'),('PUT',f'attempts/{self.id}/reservation')]:
+        for method,path in [('GET','health'),('GET','slot'),('GET','questions'),('PUT',f'attempts/{self.id}/answer'),('GET',f'attempts/{self.id}'),('PUT',f'attempts/{self.id}/reservation')]:
             for h in ({},{'Authorization':'Bearer wrong'}):
                 self.assertEqual(self.req(method,path,self.p if method=='PUT' else None,h).status_code,401)
     def test_replay_and_payload_conflicts(self):

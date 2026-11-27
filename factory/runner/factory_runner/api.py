@@ -7,7 +7,7 @@ from fastapi.responses import JSONResponse
 from .contracts import MAX_BODY, validate
 from .ledger import Conflict, Missing
 
-def create_app(ledger, bearer, repository, owner_id, models, dispatch=None, ready=None, observe=None):
+def create_app(ledger, bearer, repository, owner_id, models, dispatch=None, ready=None, observe=None, github=None):
     if len(bearer)<32: raise ValueError('bearer too short')
     app=FastAPI(docs_url=None,redoc_url=None,openapi_url=None)
     class Boundary:
@@ -59,6 +59,16 @@ def create_app(ledger, bearer, repository, owner_id, models, dispatch=None, read
     async def health():
         s=ledger.slot(); ok=not s['hold_reason'] and (ready() if ready else s['attempt_id'] is None)
         return response(200 if ok else 503,{'healthy':ok})
+    @app.get('/v1/questions')
+    async def questions(): return ledger.questions()
+    @app.put('/v1/attempts/{id}/answer')
+    async def answer(id,request:Request):
+        identity(id); claim=await body(request,'answer')
+        if github is None: return response(503,{'error':'independent source verifier unavailable'})
+        a=ledger.get(id)
+        try: github.verify_answer(a,claim)
+        except Exception: raise Conflict('current answer/source cannot be confirmed') from None
+        return ledger.claim_answer(id,claim)
     @app.get('/v1/slot')
     async def slot(): return ledger.slot()
     @app.get('/v1/attempts/{id}')

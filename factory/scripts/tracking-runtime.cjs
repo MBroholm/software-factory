@@ -51,8 +51,9 @@ function trackingV2Plan(issue,comments,events,pulls,a) {
  if(issue.state==='closed')return {issue_number:issue.number,from:current,target:'Done',result:null,body:null};
  demand(['Building','Your QA'].includes(current),'Old result cannot override renewed approval');
  demand(a && a.payload.issue_number===issue.number && a.payload.repository===REPOSITORY && !a.cancellation,'Missing/mismatched ledger result');
+ if(a.payload.authorization.kind==='answer')validateContinuationComments(a.payload,comments);
  const p=approval({...issue,labels:issue.labels.map(l=>(typeof l==='string'?l:l.name)===current?{name:'Building'}:l)},comments,events,'Building');
- demand(p.approval_event_id===a.payload.authorization.initial_approval_event && p.source_digest===a.payload.source.source_digest && p.refinement_body_sha256===a.payload.source.refinement_body_sha256,'Stale approval/source lineage');
+ demand(p.approval_event_id===(a.payload.authorization.kind==='answer'?a.payload.authorization.approval_event:a.payload.authorization.initial_approval_event) && p.source_digest===a.payload.source.source_digest && p.refinement_body_sha256===a.payload.source.refinement_body_sha256,'Stale approval/source lineage');
  if(!a.result || !a.result.stopped_proof?.cgroup_empty || a.result.outcome!=='done'){
   demand(current==='Building','QA without stopped done result');return {issue_number:issue.number,from:current,target:null,result:null,body:null};
  }

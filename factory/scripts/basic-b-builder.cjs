@@ -5,7 +5,7 @@ function builder(kind){
  const w=JSON.parse(read('factory/scripts/guard-template.json'));
  w.nodes=w.nodes.filter(n=>!['Skeleton work boundary','Review and isolated testing only'].includes(n.name));delete w.connections['Skeleton work boundary'];
  const refinement=read('factory/scripts/refinement-runtime.cjs');
- const runtime=refinement.split('function analyze(')[0]+refinement.slice(refinement.indexOf('function pages('),refinement.indexOf('module.exports ='))+['reservation-runtime','basic-b-protocol','collection-runtime'].map(name=>read('factory/scripts/'+name+'.cjs').split('module.exports =')[0]).join('\n');
+ const runtime=refinement.split('function analyze(')[0]+refinement.slice(refinement.indexOf('function pages('),refinement.indexOf('module.exports ='))+['reservation-runtime','basic-b-protocol','collection-runtime','question-runtime'].map(name=>read('factory/scripts/'+name+'.cjs').split('module.exports =')[0]).join('\n');
  const add=(name,type,parameters,notes)=>{const n={id:hash(kind+':'+name).slice(0,32),name,type:'n8n-nodes-base.'+type,typeVersion:{code:2,httpRequest:4.2,if:2.2,stickyNote:1}[type],position:[0,0],parameters,notes};w.nodes.push(n);return n;};
  const code=(name,body,notes)=>add(name,'code',{mode:'runOnceForAllItems',jsCode:runtime+'\n'+body},notes);
  const connect=(a,b,branch=0)=>{w.connections[a]??={main:[]};w.connections[a].main[branch]=[{node:b,type:'main',index:0}];};
@@ -51,7 +51,7 @@ function builder(kind){
    'Confirm idle':'Fail closed if persisted idle state differs from acknowledgement.',
    'Report completion':'Report bounded orchestration completion, never infer agent completion from guard release.'
   })[n.name];if(!n.notes)throw Error('Missing note '+n.name);}
-  w.name=`Basic B ${kind} — US1 INACTIVE`;w.active=false;w.pinData={};
+  w.name=`Basic B ${kind} — US2 INACTIVE`;w.active=false;w.pinData={};
   let i=0;for(const n of w.nodes){n.position=[i%7*320,Math.floor(i/7)*250];i++;}
   for(const [i,title,summary] of [[0,'Acquire workflow guard','Shared fail-stop short interlock; no automatic expiry or error-release.'],[1,'Read durable task state','Authenticated runner reads and complete GitHub history; unknown target or evidence stops.'],[2,'Journal and apply effects','Intent before write; no blind POST replay. Exact marker/head/base and source readback.'],[3,'Confirm and release','Reserve only acknowledges submission; collect releases durable slot only with stopped/publication proof. Owner reviews and manually imports matching artifacts.']])add(`${i+1}. ${title}`,'stickyNote',{content:`## ${i+1}. ${title}\n\n${summary}`,height:230,width:450}).position=[-500,i*850];
   const path=`factory/workflows/${kind}.json`,output=JSON.stringify(w,null,2)+'\n';if(process.argv.includes('--check')){if(read(path)!==output)throw Error(kind+'.json stale');console.log(kind+'.json matches source');}else fs.writeFileSync(path,output);
