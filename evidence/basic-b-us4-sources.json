@@ -1,0 +1,25 @@
+{
+  "base_revision": "0df34cc5dc8c3b1a6e2903f557a23145d4ddc14f",
+  "mode": "local fake-adapter US4; no adoption",
+  "sha256": {
+    "docs/architecture.md": "cb55882c2b25deac0e1697f21a071b402ba69bfabae77df464744ac61e0aeda4",
+    "docs/manual-coding.md": "970855b614c5b298b0e77f385f294e1fbc49ab0e0de2b6c76c537e597ff6e5de",
+    "docs/operations.md": "e74da4a69ecc11e38c48b981fcefe64bd426e6bb6d25230e66d5ab88b7a81269",
+    "docs/review.md": "8c198e7fdb1b9b1a5e76de7d1ef80b483fbdbb14f7b3bc749999ebcb6c18bce3",
+    "docs/workflow-mapping.md": "1ff5d785bd826f4fd2404114b4063e659caf2c7cd5befb90e87c1bbfc71ad54f",
+    "evidence/basic-b-us4-validation.md": "695912a5cc92e18ed51d124d27bc2015e1dbc64311f004ed7c6a85efab780d5e",
+    "evidence/index.md": "e26a83bce1eefb5713654de97ec0226ccf88edd56be0e508b39d2c334d807530",
+    "factory/AGENTS.md": "77d1e25d9f11ea24847a97d3bc5f37e2d1fdd44d5e683928d56d2cf521f1b42c",
+    "factory/scripts/build-track.cjs": "cda1ad02aad56b8572564f7a8815e4a019e366fb824cd8ac4233966ebb1906b6",
+    "factory/scripts/reservation-runtime.cjs": "f9f3d0b7a606ad30c3fa3c506b7e0d13219648b59441cbb1e26d7cda68f6f3be",
+    "factory/scripts/tracking-runtime.cjs": "761d96a32c2d088a6fa15e69a5d161d5e121d171211d12b0b58a6407ec0e5921",
+    "factory/tests/basic-b-review.cjs": "34c9f348bb44190f7733c6b7b036e9b1b198c4e4df251af4a9c561d3f500845b",
+    "factory/tests/basic-b-workflows.cjs": "d96c0766729f02872dc66034a679ae298dd2e323082090f686682adff98a963c",
+    "factory/tests/check-reservation.cjs": "dacfe5a81aaed4a140a48ebd44c35babbb15633c1b2ff55af06d7a28c9df223b",
+    "factory/workflows/collect.json": "2b47d665b7f696b82cb6baeeb9158c37b953ca8ec7e8dc85eee96c4cb7e7665b",
+    "factory/workflows/refine.json": "a68f9d0c160c816e6cc04a3367af01ec6d2382f3b23a1b37a7180a5b2a2a8aa0",
+    "factory/workflows/reserve.json": "feb1634aa5fc63e4a9cb7e54192dd3c9661f6302d173f9fac96c79e08fe3a4fb",
+    "factory/workflows/track.json": "77d3bc2b59a3805716eea2f5203b37d8adbaf975d58016786329e64a7e312650",
+    "specs/002-basic-b-agent/tasks.md": "6fd6fa6395d5732c450091b949ab7004fc64e66706f51ebddb0022caba23c152"
+  }
+}

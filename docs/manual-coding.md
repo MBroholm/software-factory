@@ -82,3 +82,20 @@ adoption, before or after merge; subsequent changes renew this gate. Isolated au
 follows [permissions](permissions.md#isolated-testing-and-operational-adoption), and manual
 import does not require manual execution of every test. Result tracking/review automation is US3 work,
 not proof of US2 completion.
+
+## Manual rework of a Basic B QA result
+
+Basic B normally launches a fresh runner invocation automatically after validated approval.
+Its QA feedback remains owner-controlled. Use the explicit manual takeover procedure in
+[review](review.md#basic-b-review-and-explicit-manual-qa-rework): pause/drain, prove released stopped
+work and confirmed effects, record fresh owner approval and a new v1 handoff for the exact
+existing PR/baseline, then establish Building before any manual agent launch. Record exclusive
+worktree ownership. Do not start a personal session against a potentially active runner worktree.
+
+Preserve the original v2 attempt/result/PR markers and runner ledger. Push ordinary commits to
+the same issue branch without reset/force-push, retain the same PR, and update its check report
+truthfully. Scope changes require new refinement and explicit approval. Tracking can recognize
+this separately authorized manual result without rewriting the prior runner outcome. Uncertain
+baseline, missing takeover history or remote divergence requires owner recovery. This procedure adds
+no automatic review-comment processing and authorizes no service/network provisioning or
+operational workflow import; follow the separate [adoption gates](operations.md).

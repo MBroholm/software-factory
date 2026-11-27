@@ -50,15 +50,7 @@ function baseline(pulls,number) {
   return pulls.filter(p=>p.head?.repo?.full_name===REPOSITORY && p.head.ref===`issue-${number}` && p.base?.ref==='main').map(p=>{
     demand(Number.isSafeInteger(p.number) && /^[0-9a-f]{40}$/.test(p.head.sha) && ['open','closed'].includes(p.state),'Invalid PR baseline');
     return {number:p.number,head_sha:p.head.sha,state:p.state};
-  }).sort((a,b)=>{
-      if(!queueEvents)return a.number-b.number; // Historical v1 fixture policy.
-      const entered=issue=>{
-        const relevant=queueEvents.filter(e=>e.issue?.number===issue.number && e.label?.name==='Approved' && ['labeled','unlabeled'].includes(e.event)).sort((a,b)=>a.id-b.id);
-        const event=relevant.at(-1);demand(event?.event==='labeled' && event.actor?.id===OWNER_ID && Number.isFinite(Date.parse(event.created_at)),'Missing queue approval history');
-        return Date.parse(event.created_at);
-      };
-      return entered(a)-entered(b) || a.number-b.number;
-    });
+  }).sort((a,b)=>a.number-b.number);
 }
 function checkHandoffs(comments,plan) {
   for(const c of comments) {

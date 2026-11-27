@@ -103,13 +103,13 @@ Tasks use `- [ ] Tnnn [P?] [USn?] Description`. `[P]` permits concurrent work on
 
 ### Tests
 
-- [ ] T035 [US4] Add affected Basic A/v2 review regression fixtures in `factory/tests/basic-b-review.cjs` for unchanged refinement, explicit initial approval, merge to Done, unmerged close remaining QA, owner-authorized rework with exact existing PR association and issue closure; preserve historical evidence expectations.
+- [X] T035 [US4] Add affected Basic A/v2 review regression fixtures in `factory/tests/basic-b-review.cjs` for unchanged refinement, explicit initial approval, merge to Done, unmerged close remaining QA, owner-authorized rework with exact existing PR association and issue closure; preserve historical evidence expectations.
 
 ### Implementation
 
-- [ ] T036 [US4] Complete refinement/tracking compatibility in `factory/scripts/refinement-runtime.cjs`, `factory/scripts/tracking-runtime.cjs` and `factory/scripts/basic-b-protocol.cjs`; retain manual owner QA rework authorization without advanced feedback automation, never infer approval from bot-owned actor identity, and rebuild affected `factory/workflows/refine.json` and `factory/workflows/track.json`.
-- [ ] T037 [P] [US4] Update `docs/architecture.md`, `docs/workflow-mapping.md` and `docs/review.md` for four workflows, separate durable slot, versioned markers, truthful agent-reported checks, owner merge authority and unchanged Basic A history.
-- [ ] T038 [P] [US4] Document reviewed provisioning preflight, owner account/model inputs, Basic A pause/drain/manual-Building reconciliation, matched four-artifact manual import, private mappings, rollback without ledger loss and recovery in `docs/operations.md` and `docs/manual-coding.md`; distinguish preparation from later owner-authorized service/network changes and adoption.
+- [X] T036 [US4] Complete refinement/tracking compatibility in `factory/scripts/refinement-runtime.cjs`, `factory/scripts/tracking-runtime.cjs` and `factory/scripts/basic-b-protocol.cjs`; retain manual owner QA rework authorization without advanced feedback automation, never infer approval from bot-owned actor identity, and rebuild affected `factory/workflows/refine.json` and `factory/workflows/track.json`.
+- [X] T037 [P] [US4] Update `docs/architecture.md`, `docs/workflow-mapping.md` and `docs/review.md` for four workflows, separate durable slot, versioned markers, truthful agent-reported checks, owner merge authority and unchanged Basic A history.
+- [X] T038 [P] [US4] Document reviewed provisioning preflight, owner account/model inputs, Basic A pause/drain/manual-Building reconciliation, matched four-artifact manual import, private mappings, rollback without ledger loss and recovery in `docs/operations.md` and `docs/manual-coding.md`; distinguish preparation from later owner-authorized service/network changes and adoption.
 
 **Checkpoint**: Implementation and adoption documentation preserve human authority and expose all unrun acceptance checks.
 
@@ -171,3 +171,7 @@ T003 permission documentation can run alongside package/scaffold work. Avoid par
 All tasks start unchecked. Do not reset completed historical tasks or rewrite evidence. Publish only allowlisted sanitized outcomes, never private logs, model sessions or credentials. Agent-reported checks remain attributed; independent runner verification and advanced isolation are outside this feature. Stop on uncertain resource identity, process ownership, scope or external writes and retain the relevant reservation/recovery evidence.
 
 US3 local implementation T027–T034: see `evidence/basic-b-us3-validation.md` for actual checks, failures and pending provisioned Ubuntu/native scheduled acceptance. The real elapsed deadline exercise remains pending T042.
+
+US4 local implementation T035–T038: see `evidence/basic-b-us4-validation.md` for review,
+manual rework and historical compatibility checks. Integrated/native acceptance and owner
+provisioning/adoption remain pending T039–T045; no operational import was performed.

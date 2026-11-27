@@ -27,6 +27,8 @@ for(const [name,edit] of [
 test('single slot blocks even closed/non-owner/conflicting Building',()=>{for(const extra of [{state:'closed'},{user:{id:9}},{labels:[{name:'Building'},{name:'Done'}]}])assert.equal(P.reservationCandidates([issue,{...issue,number:2,labels:[{name:'Building'}],...extra}]).length,0);});
 test('lowest number and non-owner exclusion',()=>assert.equal(P.reservationCandidates([{...issue,number:6},issue,{...issue,number:0,user:{id:9}}])[0].number,1));
 test('handoff records exact approval and PR baseline',()=>{const p=P.approval(issue,comments,events);const h=P.handoff(p,[{number:7,head:{repo:{full_name:R.REPOSITORY},ref:'issue-1',sha:'a'.repeat(40)},base:{ref:'main'},state:'closed'}],later);assert.equal(h.metadata.baseline_prs[0].number,7);assert(h.body.includes('No agent was launched'));assert.throws(()=>P.checkHandoffs([{...human,body:h.body}],p));P.sameApproval(p,clone(p));assert.throws(()=>P.sameApproval(p,{...p,approval_event_id:5}));});
+// Basic B retains this historical policy, but uses its own asynchronous graph harness.
+if(process.argv.includes('--policy-only')) {console.log(`${count} historical reservation policy groups passed; exported Basic A graph checks not selected.`);process.exit(0);}
 const graph=JSON.parse(fs.readFileSync('factory/workflows/reserve.json','utf8'));
 test('US2 graph replaces skeleton and remains inactive',()=>{assert.equal(graph.active,false);assert(!graph.nodes.some(n=>n.name==='Skeleton work boundary'));assert(graph.nodes.some(n=>n.name==='Post handoff'));});
 console.log(`${count} local scenario groups passed; native/import/live checks UNRUN.`);

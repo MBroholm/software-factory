@@ -856,3 +856,48 @@ refused. Historical 1542/1369 holds above are superseded only as current-state d
 their original evidence remains valid. Real issue #1 remains open/Building and #4 open/Approved.
 Owner merge of real PR #5 is recorded; a real automated QA/Done transition is not claimed.
 T029 acceptance consolidation is recorded in the acceptance ledger. T030 owner-reported manual import/publication is recorded in the version ledger above. That US4 checkpoint counted one real task; the current index counts two, leaving three toward five.
+
+## Basic B preparation, cutover and rollback
+
+Basic B local implementation is not deployment acceptance. T039–T045 track integrated isolated
+validation, real Ubuntu/Codex/deadline checks, adoption and genuine task evidence. Follow
+`specs/002-basic-b-agent/quickstart.md`; unavailable prerequisites remain pending. Do not substitute
+ordinary factory tasks or operational credentials for designated test resources.
+
+Before later owner-authorized provisioning, review the pinned runner install, dedicated
+unprivileged account, user manager/linger, unit templates and private bridge/firewall design.
+Owner supplies the explicit allowlisted model identifier and dedicated Codex auth store, separate
+runner Contents-write/Issues-read and orchestrator Issues/PR credentials, private bearer secret,
+repository allowlist, bind address, ledger/work paths and Git transport credential references.
+Review [permissions](permissions.md). Do not grant Workflows write implicitly. These are required
+inputs, not instructions to create accounts, services, credentials or network rules now.
+
+Run configured preflight without launching tasks. Retain private evidence of tool compatibility,
+private reachability and unauthorized rejection, manager/cgroup/deadline support, path ownership,
+scoped resources, and an empty or reconciled runner slot. Verify test instance identity, separate
+storage/control table, runner and all HTTP/credential destinations before any isolated import.
+Actual elapsed descendant deadline and bounded real Codex checks remain required before adoption.
+
+For cutover, owner pauses/drains Basic A schedules and inspects all Building issues, including
+closed/non-owner tasks and any manually started Fedora agent. Reconcile each actual process,
+branch, PR and uncertain write; a clear guard or empty new runner ledger cannot prove an old
+manual build stopped. Do not automatically adopt Basic A work as a runner attempt.
+
+Owner reviews all four generated JSON artifacts together in their PR, plus permission changes
+and validation gaps. Record reviewed source revision and SHA-256 fingerprints for refine,
+reserve, collect and track, private mapping references, preflight results and outstanding gates.
+Owner manually imports the matching four reviewed revisions, verifies every credential/control
+mapping, private runner address and configured model identifier, and compares imported execution
+parameters/connections/schedules with source, recording exact mapping deltas. Keep schedules
+inactive until all gates pass; never activate a mixed version set. Every later artifact change
+requires renewed review and matching manual operational import.
+
+For failure or rollback, pause all schedules and use the runner's configured `pause`, `drain`
+and `inspect` CLI commands. Drain does not terminate live work automatically; inspect durable
+attempt/unit/effect evidence and use recorded cancellation/reconciliation where appropriate.
+A closed issue or Done label is not stopped proof. Retain unknown effects and reservations until
+resolved. Only then may the owner manually restore previously reviewed workflow revisions and
+mappings. Never restore an older ledger to make the slot appear empty or delete retained work.
+Use coherent `backup`/`restore` tooling only with its paused/stopped history checks and a recorded
+owner decision; restore remains paused. Keep owner-managed configuration/secrets separately
+recoverable. Record failures, interventions and actual imported hashes without exposing secrets.

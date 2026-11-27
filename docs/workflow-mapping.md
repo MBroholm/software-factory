@@ -82,3 +82,21 @@ source hash against the reviewed source; mapping changes only table/credential r
 inactive status. Confirm imported mappings before activation. This tool does not resolve the
 native-access or isolation checks by itself. US3 T033/T023 subsequently passed through the
 separate credential-free native test tooling; see [review validation](../evidence/review-validation.md).
+
+## Basic B four-artifact mapping (inactive implementation)
+
+| Artifact | Responsibility | Required private mapping |
+| --- | --- | --- |
+| `factory/workflows/refine.json` | Existing refinement; durable scoped answer claims before Approved | Refinement model credential, orchestrator GitHub credential, runner bearer, shared control table |
+| `factory/workflows/reserve.json` | Queue selection, durable reserve, Building readback, asynchronous start | Orchestrator GitHub credential, runner bearer/address, owner allowlisted model config identifier, shared control table |
+| `factory/workflows/collect.json` | Poll stopped outcomes, journal/reconcile PR/question/failure, confirm state and safe release | Orchestrator GitHub credential, runner bearer/address, shared control table |
+| `factory/workflows/track.json` | Historical v1 and exact v2 review, merge/issue closure, cancellation | Orchestrator GitHub credential, runner bearer/address, shared control table |
+
+All four use 60-second schedules and production concurrency=1. Keep generated artifacts inactive
+until reviewed manual adoption. Map every guard node to the same intended singleton; the runner
+ledger/task slot is a separate private SQLite database, never this Data Table. Resolve every
+`OWNER_SELECT_*`, `RUNNER_PRIVATE_HOST` and `OWNER_CONFIGURE_MODEL_ID` placeholder explicitly.
+Credentials stay in private stores, not exports. Record source and imported fingerprints for all
+four artifacts plus instance-specific mappings in the adoption record. A mixed Basic A/Basic B
+reserve/track pair is unsafe. Isolated test copies require distinct storage, control table,
+runner account/database/work root, credentials and designated GitHub resources before writes.

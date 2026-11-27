@@ -70,3 +70,40 @@ or process ordinary tasks. Operational adoption remains owner PR review and manu
 the matching JSON revision. [Operations](operations.md) covers mapping, stopped-volume backup,
 restore, retention and recovery. [Evidence index](../evidence/index.md) separates real tasks
 from native fixtures and lists actual outcomes and remaining checks.
+
+## Basic B implementation and adoption boundary
+
+The separate Basic B implementation adds a private Ubuntu Python runner and a fourth scheduled
+workflow, collect. These artifacts are inactive preparation; the Basic A diagram above records
+the historical manual system, not an adopted Basic B deployment.
+
+```mermaid
+flowchart LR
+    Owner[Owner approval, answers, review and merge] <--> GitHub
+    GitHub <--> Refine[60s refine and answer claims]
+    GitHub <--> Reserve[60s reserve and submit]
+    GitHub <--> Collect[60s collect stopped outcomes]
+    GitHub <--> Track[60s track review and closure]
+    Refine & Reserve & Collect & Track --- Guard[n8n short mutation guard]
+    Refine & Reserve & Collect & Track --> API[Private authenticated runner API]
+    API --- Ledger[Separate SQLite ledger and durable task slot]
+    API --> Unit[Named systemd attempt unit]
+    Unit --> Codex[Fresh configured Codex invocation]
+    Unit --> Work[Preserved per-task worktree]
+    Unit -->|runner-owned push| GitHub
+```
+
+The n8n guard serializes mutations and fails closed; releasing it does not release the runner
+slot. Reserve records immutable approved input before Building and asynchronous submission.
+Collect journals external effects, reconciles exact pushed SHA/PR/result markers, confirms the
+issue state and releases only with stopped process and effect proof. Track observes merge or
+closure; Done alone never proves execution stopped. Owner answers derive authorization only
+from prior explicit approval, exact question/answer and unchanged captured source.
+
+Markers v1 retain Basic A history. Markers v2 bind repository, issue, attempt, initial approval,
+specification and result to authenticated runner state. An owner-owned automation credential is
+not human approval. Agent checks are attributed reports; Basic B does not independently rerun
+them. Only the owner merges. No merge endpoint, automated operational import or advanced review
+feedback loop is provided. See [review](review.md) for explicit manual QA rework and
+[operations](operations.md) for adoption gates. Existing Basic A evidence remains historical;
+local Basic B fixtures do not add genuine task runs.

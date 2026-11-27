@@ -94,3 +94,5 @@ checks, with [source fingerprints](basic-b-us2-sources.json). US1 commit `46bb2c
 US2 fixture evidence adds no real-run or operational-adoption claim.
 
 - [Basic B US3 recovery/cancellation/retry validation](basic-b-us3-validation.md): local/fake and synthetic native checks; real Ubuntu deadline, provisioning/adoption and genuine Basic B evidence remain pending.
+
+- [Basic B US4 local review and adoption-boundary validation](basic-b-us4-validation.md): exact v2/historical review, explicit manual QA rework, 14 fake-adapter graph scenarios and remaining adoption gates; source fingerprints in `basic-b-us4-sources.json`. No new genuine factory run.

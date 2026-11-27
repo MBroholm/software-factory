@@ -11,7 +11,9 @@ function marked(comments,kind,number) {
  });
 }
 function trackingPlan(issue,comments,events,pulls,ledger=null) {
- if(comments.some(c=>/^<!-- factory:attempt:v2\b/.test(lf(c.body))))return trackingV2Plan(issue,comments,events,pulls,ledger);
+ if(comments.some(c=>/^<!-- factory:attempt:v2\b/.test(lf(c.body)))) {
+  if(!manualRework(issue,comments,events,pulls,ledger))return trackingV2Plan(issue,comments,events,pulls,ledger);
+ }
  const current=state(issue);demand(issue.user?.id===OWNER_ID && !issue.pull_request,'Invalid tracked issue');
  if(issue.state==='closed')return {issue_number:issue.number,from:current,target:'Done',result:null,body:null};
  demand(['Building','Your QA'].includes(current),'Tracking cannot override reapproval');
@@ -45,6 +47,27 @@ function trackingPlan(issue,comments,events,pulls,ledger=null) {
  const body=prior.length?null:`<!-- factory:result:v1 ${JSON.stringify(meta)} -->\n## Result ready for owner review\n\nhttps://github.com/${REPOSITORY}/pull/${r.number}\nHead: ${r.head.sha}\nOwner decides review, merge, closure or explicitly approved rework.\n`;
  return {issue_number:issue.number,from:current,target:r.merged?'Done':'Your QA',result:meta,body};
 }
+// Manual QA rework retains Basic A handoffs; historical v2 markers remain immutable.
+function manualRework(issue,comments,events,pulls,a) {
+ const handoffs=marked(comments,'handoff',issue.number);
+ if(!handoffs.length || !a)return false;
+ const h=handoffs.at(-1),latest=v2marked(comments,'attempt',issue.number).at(-1);
+ if(!latest || Date.parse(h.comment.created_at)<=Date.parse(latest.comment.created_at))return false;
+ demand(a.payload.repository===REPOSITORY && a.payload.issue_number===issue.number && a.payload.owner_author_id===OWNER_ID && sortedJSON(latest.meta)===sortedJSON(attemptMetadata(a)) && a.id===latest.meta.attempt && a.status==='released' && !a.cancellation && a.result?.outcome==='done' && a.result.stopped_proof?.cgroup_empty && a.effects.every(e=>e.status==='confirmed'),'Manual rework predecessor unresolved');
+ demand(h.meta.approval_event_id>(a.payload.authorization.approval_event??a.payload.authorization.initial_approval_event),'Manual rework requires new owner approval');
+ const results=v2marked(comments,'result',issue.number).filter(m=>m.meta.attempt===a.id);
+ demand(results.length===1 && sortedJSON(results[0].meta)===sortedJSON({...attemptMetadata(a),result:a.result.id,sha:a.result.pushed_sha,pr_number:results[0].meta.pr_number}),'Manual rework result lineage changed');
+ demand(Date.parse(results[0].comment.created_at)<Date.parse(h.meta.approval_timestamp),'Rework approval predates QA result');
+ const previous=marked(comments,'result',issue.number).filter(r=>r.meta.pr_number===results[0].meta.pr_number && Date.parse(r.comment.created_at)>Date.parse(results[0].comment.created_at) && Date.parse(r.comment.created_at)<Date.parse(h.meta.approval_timestamp)).at(-1);
+ const acceptedSHA=previous?.meta.head_sha??a.result.pushed_sha;
+ const baseline=h.meta.baseline_prs;
+ demand(Array.isArray(baseline) && baseline.length===1 && baseline[0].number===results[0].meta.pr_number && baseline[0].head_sha===acceptedSHA && baseline[0].state==='open','Manual rework baseline must be exact existing open PR');
+ const branchPRs=pulls.filter(p=>p.head?.repo?.full_name===REPOSITORY && p.head.ref===a.payload.branch);
+ demand(branchPRs.length===1 && branchPRs[0].number===baseline[0].number,'Manual rework PR missing or ambiguous');
+ const marker=`<!-- factory:pr:v2 ${JSON.stringify({...attemptMetadata(a),result:a.result.id,sha:a.result.pushed_sha})} -->`;
+ demand(branchPRs[0].body?.startsWith(marker+'\n'),'Manual rework original PR identity changed');
+ return true;
+}
 function trackingV2Plan(issue,comments,events,pulls,a) {
  const current=state(issue);
  demand(issue.user?.id===OWNER_ID && !issue.pull_request,'Invalid tracked v2 issue');
@@ -53,7 +76,7 @@ function trackingV2Plan(issue,comments,events,pulls,a) {
  demand(a && a.payload.issue_number===issue.number && a.payload.repository===REPOSITORY && !a.cancellation,'Missing/mismatched ledger result');
  if(a.payload.authorization.kind==='answer')validateContinuationComments(a.payload,comments);
  const p=approval({...issue,labels:issue.labels.map(l=>(typeof l==='string'?l:l.name)===current?{name:'Building'}:l)},comments,events,'Building');
- demand(p.approval_event_id===(a.payload.authorization.kind==='answer'?a.payload.authorization.approval_event:a.payload.authorization.initial_approval_event) && p.source_digest===a.payload.source.source_digest && p.refinement_body_sha256===a.payload.source.refinement_body_sha256,'Stale approval/source lineage');
+ demand(p.approval_event_id===(a.payload.authorization.approval_event??a.payload.authorization.initial_approval_event) && p.source_digest===a.payload.source.source_digest && p.refinement_body_sha256===a.payload.source.refinement_body_sha256,'Stale approval/source lineage');
  if(!a.result || !a.result.stopped_proof?.cgroup_empty || a.result.outcome!=='done'){
   demand(current==='Building','QA without stopped done result');return {issue_number:issue.number,from:current,target:null,result:null,body:null};
  }

@@ -68,7 +68,7 @@ function must(kind,w,fault){const r=run(kind,w,fault);assert.equal(r.error,null,
 function slot(w){return w.runner({method:'GET',path:'/v1/slot'}).body;}
 function build(w){must('reserve',w);const id=slot(w).attempt_id;assert(id);assert.equal(w.row.busy,false);assert.equal(w.issues[0].labels[0].name,'Building');assert(w.trace.indexOf('Reserve runner')<w.trace.indexOf('Add Building'));assert(w.trace.indexOf('Final Building issue')<w.trace.indexOf('Start attempt'));const a=w.runner({method:'GET',path:'/v1/attempts/'+id}).body;assert.equal(a.status,'dispatching');return id;}
 let count=0;
-function test(name,fn){if(process.argv.includes('--recovery-only') && !/stopped failure|lost failure|closed released/.test(name))return;const w=setup();try{fn(w);count++;console.log('PASS '+name);}finally{fs.rmSync(w.tmp,{recursive:true,force:true});}}
+function test(name,fn){if(process.argv.includes('--review-only') && !/v2 review|explicit owner manual/.test(name))return;if(process.argv.includes('--recovery-only') && !/stopped failure|lost failure|closed released/.test(name))return;const w=setup();try{fn(w);count++;console.log('PASS '+name);}finally{fs.rmSync(w.tmp,{recursive:true,force:true});}}
 test('reserve async, blocked second task, supervised fake agent, exact PR, QA and safe release',w=>{
  const id=build(w);must('reserve',w);assert.equal(slot(w).attempt_id,id);
  w.runner({action:'worker',id});must('collect',w);assert.equal(slot(w).attempt_id,null);assert.equal(w.pulls.length,1);assert.equal(w.issues[0].labels[0].name,'Your QA');assert.equal(w.row.busy,false);
@@ -134,6 +134,30 @@ if(process.argv.includes('--recovery')) {
  test('closed released Waiting and Stuck tasks are cancelled and labelled Done',w=>{
   const id=build(w);w.runner({action:'worker',id,outcome:'question'});must('collect',w);w.issues[0].state='closed';must('track',w);
   assert.equal(w.issues[0].labels[0].name,'Done');assert(w.runner({method:'GET',path:'/v1/attempts/'+id}).body.cancellation);assert.equal(slot(w).attempt_id,null);
+ });
+}
+if(process.argv.includes('--review')) {
+ test('v2 review keeps unmerged closure in QA and recognizes owner merge',w=>{
+  const id=build(w);w.runner({action:'worker',id});must('collect',w);
+  w.pulls[0].state='closed';must('track',w);assert.equal(w.issues[0].labels[0].name,'Your QA');
+  w.pulls[0].merged=true;w.pulls[0].merged_at='2026-11-27T14:00:00Z';must('track',w);assert.equal(w.issues[0].labels[0].name,'Done');
+ });
+ test('explicit owner manual QA rework preserves the exact existing PR and old runner result',w=>{
+  const id=build(w);w.runner({action:'worker',id});must('collect',w);
+  const old=w.runner({method:'GET',path:'/v1/attempts/'+id}).body;
+  w.time='2026-11-27T13:00:00Z';w.issues[0].labels=[{name:'Approved'}];
+  const approved={id:900,event:'labeled',label:{name:'Approved'},actor:{id:202449424},created_at:w.time};w.events.push(approved);
+  // Owner performs the paused, explicit manual handoff; no factory launch creates it.
+  const source=fs.readFileSync('factory/scripts/refinement-runtime.cjs','utf8').split('module.exports =')[0]+fs.readFileSync('factory/scripts/reservation-runtime.cjs','utf8').split('module.exports =')[0];
+  const policy=vm.runInNewContext('(()=>{'+source+';return {approval,handoff};})()');
+  const plan=policy.approval(w.issues[0],w.comments,w.events),body=policy.handoff(plan,w.pulls,'2026-11-27T13:01:00Z').body;
+  w.comments.push({id:950,body,user:{id:202449424},created_at:'2026-11-27T13:01:00Z',updated_at:'2026-11-27T13:01:00Z'});
+  w.issues[0].labels=[{name:'Building'}];w.events.push({...approved,id:901,event:'unlabeled',created_at:'2026-11-27T13:02:00Z'});
+  w.pulls[0].head.sha='c'.repeat(40);w.pulls[0].updated_at='2026-11-27T14:00:00Z';w.time='2026-11-27T14:01:00Z';
+  const tracked=must('track',w);assert(tracked.trace.includes('Post result marker'));assert.equal(w.issues[0].labels[0].name,'Your QA');assert.equal(w.pulls.length,1);
+  assert.equal(w.comments.filter(c=>c.body.startsWith('<!-- factory:result:v1 ')).length,1);
+  must('track',w);assert.equal(w.comments.filter(c=>c.body.startsWith('<!-- factory:result:v1 ')).length,1);
+  assert.deepEqual(w.runner({method:'GET',path:'/v1/attempts/'+id}).body.result,old.result);assert.equal(slot(w).attempt_id,null);
  });
 }
 console.log(`${count} generated Basic B graph scenarios passed using real SQLite/API and fake external effects.`);
