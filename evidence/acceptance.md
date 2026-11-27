@@ -175,3 +175,11 @@ and full final-project acceptance are not claimed. Current credential scopes rem
 No workflow/runtime changes or acceptance reruns were made by this reconciliation. The merged
 source incorporates the reviewed/tested PR #11 fix; only evidence documentation conflicts were
 resolved. JSON/link/fence/whitespace and generator consistency checks were used for this merge.
+
+## Basic B local/native preparation (2026-11-27)
+
+US4 was committed/pushed as `ff14865`. Subsequent integrated validation and offline mapping
+preparation are recorded in [Basic B validation](basic-b-validation.md), with explicit pending
+scheduled acceptance, real Codex/deadline, owner provisioning/manual import and genuine Basic B
+run. [Adoption preparation](basic-b-adoption.md) grants no deployment authority. The genuine-run
+count remains two; three additional genuine task runs are still required.

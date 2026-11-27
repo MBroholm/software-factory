@@ -14,8 +14,11 @@ info=json.loads(subprocess.run(ssh+['docker inspect factory-guard-test'],capture
 if info['Config']['Image']!='docker.n8n.io/n8nio/n8n:2.48.8': raise SystemExit('Unknown test image')
 ports=info['NetworkSettings']['Ports'].get('5678/tcp',[])
 if not ports or any(x['HostIp']!='127.0.0.1' or x['HostPort']!='5679' for x in ports): raise SystemExit('Unknown isolated editor boundary')
+limits=[v.split('=',1)[1] for v in info['Config'].get('Env',[]) if v.startswith('N8N_CONCURRENCY_PRODUCTION_LIMIT=')]
+print('Production concurrency=1: '+('verified' if limits==['1'] else 'UNVERIFIED; scheduled execution prohibited'),flush=True)
+if '--require-concurrency-one' in sys.argv and limits!=['1']: raise SystemExit('Scheduled acceptance requires production concurrency=1')
 # Select libraries by exact designated container. The payload has no host paths or secrets.
-script=Path('factory/tests/check-basic-b-us1-expressions.cjs').read_text()
+script=Path('factory/tests/check-basic-b-native-expressions.cjs').read_text()
 command='docker exec -i factory-guard-test node -e '+shlex.quote(script)
 for kind in ('reserve','collect','track','refine'):
     fixture=Path('factory/local/basic-b-native')/(kind+'-expressions.json')

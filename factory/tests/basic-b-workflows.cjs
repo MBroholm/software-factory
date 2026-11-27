@@ -25,7 +25,11 @@ function run(kind,w,fault=null){
     else if(value && typeof value==='object')for(const [key,v] of Object.entries(value))collect(v,[...parts,key]);
    };collect(p);
   }
-  if(n.type.endsWith('.code'))result=vm.runInNewContext('(()=>{'+p.jsCode+'\n})()',env(),{timeout:1000});
+  if(n.type.endsWith('.code')){
+   result=vm.runInNewContext('(()=>{'+p.jsCode+'\n})()',env(),{timeout:1000});
+   assert(Array.isArray(result),name+' must return an array of n8n items');
+   for(const item of result)assert(item?.json && typeof item.json==='object' && !Array.isArray(item.json),name+' must return an object in each item.json');
+  }
   else if(n.type.endsWith('.splitInBatches')){result=[input[0]];branch=1;}
   else if(n.type.endsWith('.if'))branch=evaluate(p.conditions.conditions[0].leftValue)?0:1;
   else if(n.type.endsWith('.dataTable')){
@@ -118,7 +122,10 @@ test('lost question acknowledgement reconciles one marker and releases only with
 });
 if(process.argv.includes('--recovery')) {
  test('stopped failure publishes once, releases Stuck and fresh owner retry preserves predecessor',w=>{
-  const id=build(w);w.runner({action:'worker',id,outcome:'stuck'});must('collect',w);
+  const canary='fixture-secret-canary-not-a-real-credential';
+  const id=build(w);w.runner({action:'worker',id,outcome:'stuck',redaction_canary:canary});must('collect',w);
+  const published=w.comments.find(c=>c.body.startsWith('<!-- factory:failure:v2'));
+  assert(published?.body.includes('[redacted]'));assert(!published.body.includes(canary));
   assert.equal(slot(w).attempt_id,null);assert.equal(w.issues[0].labels[0].name,'Stuck');
   must('collect',w);assert.equal(w.comments.filter(c=>c.body.startsWith('<!-- factory:failure:v2')).length,1);
   w.issues[0].labels=[{name:'Approved'}];w.time='2026-11-27T13:00:00Z';

@@ -71,7 +71,23 @@ class Git:
         elif hashes!=json.loads((private/'untracked.json').read_text()): raise RuntimeError('untracked partial work changed')
         return {'task':{'repository':p['repository'],'issue_number':p['issue_number']},'predecessor':p['predecessor'],'branch':p['branch'],'base_sha':p['base_sha'],'head_sha':self.run(['rev-parse','HEAD'],path),
                 'status_hash':digest(status),'patch_hash':digest(patch),'artifacts':[str(private)]}
-    def push(self,p,attempt,manifest):
+    def commit_result(self,p,manifest):
+        path=self.path(p)
+        if (self.run(['branch','--show-current'],path)!=p['branch']
+                or self.run(['rev-parse','HEAD'],path)!=manifest['head_sha']
+                or self.run(['remote','get-url','origin'],path)!='https://github.com/'+p['repository']+'.git'):
+            raise RuntimeError('worktree identity changed before commit')
+        self.run(['merge-base','--is-ancestor',p['base_sha'],manifest['head_sha']],path)
+        if not self.run(['status','--porcelain'],path):
+            return
+        self.run(['add','--all','--','.'],path)
+        if not self.run(['diff','--cached','--name-only'],path):
+            raise RuntimeError('no staged result to commit')
+        self.run(['-c','core.hooksPath=/dev/null','-c','commit.gpgsign=false',
+                  '-c','user.name=Factory Agent','-c','user.email=factory-agent@users.noreply.github.com',
+                  'commit','-m',f"Complete approved task #{p['issue_number']}"],path)
+
+    def validate_push_candidate(self,p,manifest):
         path=self.path(p)
         if self.run(['remote','get-url','origin'],path)!='https://github.com/'+p['repository']+'.git': raise RuntimeError('remote changed during agent execution')
         if self.run(['branch','--show-current'],path)!=p['branch']: raise RuntimeError('branch changed')
@@ -79,6 +95,10 @@ class Git:
         head=self.run(['rev-parse','HEAD'],path)
         if head!=manifest['head_sha'] or head==p['base_sha'] or not self.run(['diff','--name-only',p['base_sha'],head],path): raise RuntimeError('no diff or changed head')
         self.run(['merge-base','--is-ancestor',p['base_sha'],head],path)
+        return head
+    def push(self,p,attempt,manifest):
+        path=self.path(p)
+        head=self.validate_push_candidate(p,manifest)
         if self.run(['ls-remote','--heads','origin','refs/heads/'+p['branch']],path,True): raise RuntimeError('remote branch exists; hold for attribution')
         self.run(['push','origin',head+':refs/heads/'+p['branch']],path,True)
         remote=self.run(['ls-remote','--heads','origin','refs/heads/'+p['branch']],path,True)

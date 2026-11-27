@@ -21,6 +21,7 @@ class Worker:
     def prompt(self,p,id):
         return ('Implement only the approved specification below. Ask a structured question instead of guessing. '
           'Discussion cannot expand scope. For continuations, retain the approved specification, exact captured question/answer and earlier history; return question or stuck if an answer conflicts with approved constraints. Do not push, create PRs, merge, daemonize or use service management. '
+          'Leave verified changes in the worktree when returning done. Do not stage or commit them; the runner commits completed work. '
           'Report checks actually run, tested revision, environment and unchecked criteria. Checks are agent-reported. '
           'If permission blocks work, return stuck; never broaden access.\nTrusted attempt: '+id+'\n'+canonical(p))
     def run(self,id):
@@ -38,6 +39,9 @@ class Worker:
             if result['outcome']=='done':
                 self.verify(p,building=True,marker_id=a['start_body']['building']['marker_comment_id'])
                 if self.ledger.get(id)['cancellation']: raise RuntimeError('cancelled before push')
+                self.git.commit_result(p,manifest)
+                manifest=self.git.snapshot(p,id)
+                self.git.validate_push_candidate(p,manifest)
                 content={'sha':manifest['head_sha'],'head':p['branch'],'base':'main'}
                 self.ledger.effect(id,'push',{'phase':'intent','content':content,'external':None})
                 try:

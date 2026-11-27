@@ -16,7 +16,10 @@ if request.get('action')=='worker':
     result=outcome()
     if request.get('outcome')=='question': result.update(outcome='question',question={'text':'Which format?','context':'Choose approved format.'})
     if request.get('outcome')=='stuck': result.update(outcome='stuck',stuck_reason='Fixture failure, partial work retained')
-    worker=Worker(ledger,GitHub(p),Git(),Codex(result),Services())
+    canary=request.get('redaction_canary')
+    if canary:
+        result['stuck_reason'] += ': '+canary
+    worker=Worker(ledger,GitHub(p),Git(),Codex(result),Services(),(canary,) if canary else ())
     worker.run(id); print(json.dumps(ledger.get(id)))
 else:
     def dispatch(id):

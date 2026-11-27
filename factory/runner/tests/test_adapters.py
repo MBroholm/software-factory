@@ -100,6 +100,16 @@ class GitContract(unittest.TestCase):
         with self.assertRaises(RuntimeError):self.git.push(self.p,id,manifest)
         self.assertEqual((path/'new.txt').read_text(),'retained\n')
         with self.assertRaises(RuntimeError):self.git.prepare(self.p,id)
+    def test_runner_commits_completed_linked_worktree(self):
+        attempt=attempt_uuid(self.p)
+        path=self.git.prepare(self.p,attempt)
+        (path/'new.txt').write_text('verified result\n')
+        self.git.commit_result(self.p,self.git.snapshot(self.p,attempt))
+        manifest=self.git.snapshot(self.p,attempt)
+        self.assertEqual(self.run_git(['status','--porcelain'],path),'')
+        self.assertEqual(self.run_git(['show','HEAD:new.txt'],path),'verified result')
+        self.assertEqual(self.git.validate_push_candidate(self.p,manifest),manifest['head_sha'])
+
     def test_empty_branch_refused(self):
         id=attempt_uuid(self.p);self.git.prepare(self.p,id);manifest=self.git.snapshot(self.p,id)
         with self.assertRaises(RuntimeError):self.git.push(self.p,id,manifest)

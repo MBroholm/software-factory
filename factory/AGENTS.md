@@ -63,5 +63,7 @@ with local fake-adapter validation. It does not authorize service installation, 
 network provisioning, operational import/activation, or advanced implementation. US2 adds issue
 questions, durable answer-derived authorization and fresh scoped continuation. US3 adds local
 recovery, cancellation, explicit retry and coherent backup/restore tooling. US4 adds review
-compatibility and owner-controlled adoption documentation. T039–T045 and advanced work remain
-outside this increment. Retain the isolated-test and manual adoption rules above.
+compatibility and owner-controlled adoption documentation. The owner subsequently authorized continuing remaining Basic B tasks. This includes local
+T039–T041 validation tooling and T043/T045 evidence preparation. Provisioning, operational
+adoption and real-run gates still require the explicit owner actions described above;
+advanced work remains outside scope. Retain the isolated-test and manual adoption rules above.

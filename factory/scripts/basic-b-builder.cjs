@@ -20,7 +20,7 @@ function builder(kind){
   return Object.assign(add(name,'httpRequest',p,notes),{credentials:{httpHeaderAuth:{id:runner?'OWNER_SELECT_RUNNER_BEARER_CREDENTIAL':'OWNER_SELECT_GITHUB_HEADER_CREDENTIAL',name:runner?'Basic B private runner bearer':'Basic B GitHub orchestrator'}},retryOnFail:false,executeOnce:true});
  }
  const response=name=>`$('${name}').first().json`,val=name=>response(name)+'.body',vals=name=>`pages($('${name}').all().map(i=>i.json))`;
- function receipt(name,previous,statuses){code(name,`const r=${response(previous)};demand(${JSON.stringify(statuses)}.includes(r.statusCode),'Unconfirmed ${previous}; retain guard/slot');return [{json:r.body}];`,'Require expected acknowledgement; timeout/unknown response holds without blind retries.');}
+ function receipt(name,previous,statuses){code(name,`const r=${response(previous)};demand(${JSON.stringify(statuses)}.includes(r.statusCode),'Unconfirmed ${previous}; retain guard/slot');return [{json:Array.isArray(r.body)?{entries:r.body}:r.body}];`,'Require expected acknowledgement; timeout/unknown response holds without blind retries.');}
  code('No work',"return [{json:{acknowledged:true,outcome:'no_work',issue_number:null}}];",'Release only this execution guard; durable runner reservation remains unchanged.');connect('No work','Require acknowledged completion');
  function context(issueExpression){
   const n=structuredClone(w.nodes.find(n=>n.name==='Acquire control'));n.name='Set issue context';n.id=hash(kind+':context').slice(0,32);

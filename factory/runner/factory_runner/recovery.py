@@ -35,6 +35,51 @@ class Recovery:
         return {'paused':paused,'slot':s,'attempt':self.ledger.get(s['attempt_id']) if s['attempt_id'] else None}
     def drain(self):
         self.pause();self.reconciler.reconcile();return self.inspect()
+    def reconcile_unissued_push(self, attempt, owner_record):
+        """Recover the legacy dirty-worktree failure that preceded any Git push."""
+        if not owner_record or not owner_record.strip() or len(owner_record) > 512:
+            raise ValueError('recorded owner recovery decision required')
+
+        def candidate(state):
+            slot, a = state['slot'], state['attempt']
+            if not state['paused'] or slot['attempt_id'] != attempt or slot['hold_reason'] != 'unknown effect: push':
+                raise Conflict('paused matching push hold required')
+            r = a['result'] or {}
+            if (a['status'] != 'terminal' or a['cancellation'] or r.get('outcome') != 'stuck'
+                    or r.get('stuck_reason') != 'RuntimeError: done left uncommitted work; retained'
+                    or r.get('pushed_sha') or not (r.get('stopped_proof') or {}).get('cgroup_empty')):
+                raise Conflict('legacy stopped pre-push failure evidence required')
+            unresolved = [effect for effect in a['effects'] if effect['status'] != 'confirmed']
+            if len(unresolved) != 1 or (unresolved[0]['kind'], unresolved[0]['status']) != ('push', 'unknown'):
+                raise Conflict('push must be the only unresolved effect')
+            return slot, a, unresolved[0]
+
+        slot, a, effect = candidate(self.inspect())
+        self.reconciler.services.verify_drained()
+        git = self.reconciler.git
+        payload = a['payload']
+        branch = f"issue-{a['issue_number']}"
+        if a['repository'] != self.config.repository or payload['branch'] != branch:
+            raise Conflict('unexpected repository or branch')
+        if git.run(['remote', 'get-url', 'origin']) != f"https://github.com/{a['repository']}.git":
+            raise Conflict('unexpected Git remote')
+        if git.run(['ls-remote', '--heads', 'origin', 'refs/heads/'+branch], transport=True):
+            raise Conflict('remote branch exists')
+        with self.ledger.tx() as c:
+            current = dict(self.ledger._owned(c, attempt, slot['generation']))
+            paused = bool(c.execute('SELECT paused FROM control WHERE id=1').fetchone()[0])
+            _, checked, latest = candidate({'paused':paused, 'slot':current, 'attempt':self.ledger._get(c,attempt)})
+            if latest != effect or checked['result'] != a['result']:
+                raise Conflict('recovery evidence changed during readback')
+            evidence = {'owner_record':owner_record.strip(), 'original_effect':effect,
+                        'generation':slot['generation'], 'remote_branch_absent':True,
+                        'stopped_proof':a['result']['stopped_proof'], 'observed_at':self.ledger.clock()}
+            c.execute('INSERT INTO push_recovery VALUES (?,?)', (attempt,canonical(evidence)))
+            c.execute("UPDATE effects SET status='confirmed', external=?, observed_at=? WHERE attempt_id=? AND kind='push'",
+                      (canonical({'outcome':'not_issued'}),evidence['observed_at'],attempt))
+            c.execute('UPDATE reservation SET hold_reason=NULL WHERE attempt_id=?', (attempt,))
+        return {'attempt':attempt, 'push':'not_issued', 'generation':slot['generation']}
+
     def _safe(self):
         state=self.inspect()
         if not state['paused'] or state['slot']['attempt_id'] or state['slot']['hold_reason']:raise Conflict('pause and fully drain/reconcile before backup or restore')
@@ -70,7 +115,7 @@ class Recovery:
         # Never overwrite a ledger with fewer/different attempts or effects, even when empty now.
         with self.ledger.tx() as current,restored.connect() as source:
             self._safe()
-            for table in ('attempts','effects','authorizations','questions','tasks'):
+            for table in ('attempts','effects','authorizations','questions','tasks','push_recovery'):
                 before=[tuple(r) for r in current.execute('SELECT * FROM '+table)]
                 after=[tuple(r) for r in source.execute('SELECT * FROM '+table)]
                 if before!=after:raise Conflict('restore would replace retained history; owner recovery must reconcile it first')

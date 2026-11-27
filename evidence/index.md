@@ -96,3 +96,5 @@ US2 fixture evidence adds no real-run or operational-adoption claim.
 - [Basic B US3 recovery/cancellation/retry validation](basic-b-us3-validation.md): local/fake and synthetic native checks; real Ubuntu deadline, provisioning/adoption and genuine Basic B evidence remain pending.
 
 - [Basic B US4 local review and adoption-boundary validation](basic-b-us4-validation.md): exact v2/historical review, explicit manual QA rework, 14 fake-adapter graph scenarios and remaining adoption gates; source fingerprints in `basic-b-us4-sources.json`. No new genuine factory run.
+
+- [Basic B integrated validation](basic-b-validation.md) and [machine-readable results](basic-b-results.json): T039–T040 local/native tooling, exact fixture-copy mappings, retained failures and pending scheduled/provisioned checks. [Adoption preparation](basic-b-adoption.md) records four source fingerprints and uncompleted owner gates. No additional genuine run.

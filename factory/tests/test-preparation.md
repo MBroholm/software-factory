@@ -76,3 +76,30 @@ evidence collectors are in the [historical archive](historical/t008/README.md). 
 not part of preparation or the current regression commands. The
 [guard coverage matrix](guard-scenarios.md) remains maintained because finished-workflow
 validation still maps to its cases and explicitly reuses some historical observations.
+
+## Basic B four-workflow fixtures
+
+Use a new private config based on `factory/config/test.env.example`; retain existing mappings.
+Fill all Basic B fields, including operational IDs to exclude, separate test role credential IDs,
+and separate loopback fixture service ports. The mapper accepts only `factory-guard-test` on
+loopback editor 5679. It rewrites GitHub/model/runner HTTP bases to explicit loopback simulators,
+leaves all four copies inactive and records source/mapped hashes and exact node deltas privately.
+It does not import, execute, provision, or prove live isolation. Verify container identity,
+separate storage/table and actual saved credential scope before any later import.
+
+```bash
+node factory/tests/check-basic-b-preparation.cjs
+node factory/tests/prepare-test-artifacts.cjs --basic-b --env factory/local/basic-b-fixtures.env
+node factory/tests/prepare-test-artifacts.cjs --basic-b --env factory/local/basic-b-fixtures.env --check
+node factory/tests/run-basic-b-native.cjs
+# Read-only VM checks using a local installed n8n 2.48.8:
+node factory/tests/run-basic-b-native.cjs --n8n-root /path/to/n8n
+# Or existing designated test container over the established SSH alias:
+node factory/tests/run-basic-b-native.cjs --remote-vm
+```
+
+The combined command runs fake-adapter US1–US4 graphs, retained affected policy checks and all
+four generators. Native mode explicitly initializes the VM and checks actual core Wait behavior.
+Results/hashes are in `factory/local/basic-b-native/validation.json`. Before scheduled tests,
+verify workflow concurrency=1 in the target instance; exported JSON cannot establish that setting.
+Missing native installation/access fails native mode and does not select an operational fallback.

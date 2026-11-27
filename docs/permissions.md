@@ -122,7 +122,7 @@ opens no ports and imports no operational workflows.
 
 | Component | Separate credential and access | Authorized behavior |
 |---|---|---|
-| n8n orchestrator | Repository-scoped Issues read/write, Pull requests read/write, Metadata read; private runner bearer credential | Reserve approved owner tasks, journal publication, create one review PR, collect and track. No Contents write or merge. |
+| n8n orchestrator | Repository-scoped Issues read/write, Pull requests read/write, Contents read for the base ref, and Metadata read; private runner bearer credential | Reserve approved owner tasks, journal publication, create one review PR, collect and track. No Contents write or merge. |
 | Dedicated Ubuntu runner account | Separate repository-scoped Contents read/write and Issues read; private Git credential helper and API token file | Revalidate issue/source, fetch and push issue-N without force, own private SQLite/worktrees and supervised worker units. No issue/PR writes. |
 | Codex | Owner-provisioned dedicated auth store and explicit allowlisted model identifier | Fresh noninteractive workspace-write invocation, approved scope, actual check reports. No runner bearer or GitHub token in prompt/environment; no push, PR, merge or service-manager use. |
 
