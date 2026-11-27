@@ -1,0 +1,75 @@
+# Runner HTTP contract v1
+
+Private server-local authenticated JSON HTTP. All endpoints require `Authorization: Bearer`
+using a dedicated secret, including reads. No secret in URLs. Reject unknown repository,
+absolute checkout path, command/model override or arbitrary shell instruction fields. Paths
+are runner-controlled. Validate strict schemas, 256 KiB request cap and bounded string fields;
+oversized context holds for owner/refinement rather than silent truncation. No public listener.
+
+## Endpoints
+
+| Method/path | Input | Response and effects |
+| --- | --- | --- |
+| GET /v1/health | none | 200 healthy or 503 recovery required; authenticated, no secret detail |
+| GET /v1/slot | none | Current reservation/generation or empty; includes unresolved holds |
+| PUT /v1/attempts/{uuid}/reservation | immutable task/authorization/input snapshot | 201 first durable reservation, 200 same payload replay, 409 other slot/payload conflict; no agent launch |
+| POST /v1/attempts/{uuid}/start | reservation generation, Building observation/source proof | 202 accepted after commit, 200 same already accepted/terminal attempt; no waiting for coding |
+| GET /v1/attempts/{uuid} | none | 200 stable status/result/effects; 404 unknown does not prove no earlier effects after restore/incomplete reconciliation |
+| PUT /v1/attempts/{uuid}/cancellation | stable reason and closure reference | 202 cancellation recorded or 200 replay; not proof the process stopped |
+| PUT /v1/attempts/{uuid}/effects/{kind} | expected intent/content digest then external confirmation | 200 journal update with compare-and-set; conflicting confirmation is 409 and hold |
+| POST /v1/attempts/{uuid}/release | generation, stopped proof and confirmed publication/state references | 200 safe idempotent release; 409 if running, uncertain, mismatched generation or required effects unresolved |
+
+Unauthorized reads/writes return 401, malformed schema 422, over-limit body 413. Busy/conflicting
+requests never mutate the existing attempt. All request timeouts are unknown outcomes until
+reconciled. Do not create a new UUID after a timeout. Stable attempt UUID is derived from repository,
+issue and unique authorization reference using a fixed UUID namespace, then stored durably.
+
+## Immutable reservation input
+
+Fields: contract_version=1, repository, issue_number, owner_author_id, authorization object
+(kind/id/initial approval evidence, optional question/answer or retry event), refinement source
+references and SHA-256 digests, approved specification text, discussion references/text/hashes,
+previous attempt and partial-work manifest references, expected branch/base, requested model
+configuration identifier (allowlisted runner configuration only). Context includes all approved
+criteria/constraints and unresolved decisions; do not let discussion override approved scope.
+Canonical sorted-key JSON UTF-8 serialization is hashed; never accept caller-supplied hash alone.
+
+n8n validates complete paginated GitHub history. Runner independently reads current issue author,
+closure/state and referenced immutable input before launch, using Issues read. Start requires
+Building and matching approval lineage. Re-read before spawning and before runner push. Failure
+to confirm freshness prevents launch/publication; it cannot broaden approved scope.
+
+## Dispatch, deadline and restart
+
+Persist accepted/dispatch intent then start the named systemd unit exactly once. Worker claims
+its persisted dispatch state transactionally before any Codex spawn. Duplicate service starts
+cannot acquire that claim. Record unit identity and boot id; never rely on PID alone. On API
+restart, inspect unit and ledger before accepting new work. API availability is not worker health.
+Keep completed unit evidence until its terminal result is durably reconciled; do not use automatic unit collection to erase dispatch evidence. An interrupted execution becomes Stuck, not automatically restarted. A still-live unit retains
+its original deadline. Unknown status holds the reservation for owner recovery.
+
+Use per-attempt Type=exec (not oneshot), RuntimeMaxSec=1795s, TimeoutStopSec=5s, KillMode=control-group, SendSIGKILL=yes,
+Restart=no. Start the execution budget at worker activation, conservatively including preparation.
+Record deadline before spawn. Clock uncertainty never grants extra runtime. Confirm empty unit
+cgroup before declaring stopped; descendants must not escape supervision. No privileged tasks,
+daemonization or service-manager access is part of the agent's authorized work.
+
+## Publication and release
+
+Runner owns Git push; n8n owns issue comments, labels and PR creation. For each effect, write an
+intent before performing it; reconcile remote exact SHA/marker/head/base after uncertain writes.
+No blind repeat POST. If a completed response is lost, later GET returns the same immutable
+result. Result reads do not consume or acknowledge it. Collection is replay-safe until explicit
+release; retain result after release for stale-poll reconciliation.
+
+For done, require successful push confirmation, matching result SHA and PR association before
+QA/release. An empty branch/no PR diff is Stuck with actual diagnostic, not claimed independent
+code verification. For question/stuck, confirm comment and target labels then release. Closure
+supersedes publication: record cancellation before further writes, stop worker, reconcile any
+already-issued writes and release without creating a new PR. If GitHub is unavailable, retain
+slot and private diagnostic; do not claim issue visibility until its write succeeds.
+
+A token grants the trusted n8n orchestrator these ledger mutations; no runner credential or
+control API is supplied to the model prompt. Basic B same-account execution is not a malicious
+agent isolation guarantee. A manually observed state change can race an in-flight REST request;
+reconcile already-issued effects rather than claiming a cross-system atomic transaction.
