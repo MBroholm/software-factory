@@ -80,3 +80,10 @@ Raw traces, fixture state, environment files, API keys and backups stay private/
 results contain whitelisted observations and links. Operational adoption requires owner PR
 review/manual import of matching reviewed JSON; no automated test substitutes for it. The
 stopped restore clone and inactive test workflows process no ordinary factory tasks.
+
+## Basic B implementation increment
+
+[Setup, Foundation and US1 validation](basic-b-us1-validation.md) records local runner/generated-
+graph checks and read-only n8n VM parameter checks for T001–T020, with
+[source fingerprints](basic-b-us1-sources.json). This is fake-adapter implementation evidence,
+not operational adoption or an additional genuine factory run. Later Basic B acceptance remains open.

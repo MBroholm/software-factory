@@ -1,10 +1,18 @@
-// Pure US2 policy, packaged with the unchanged US1 canonical-source helpers.
-function reservationCandidates(issues) {
+// Versioned reservation policy; Basic B uses durable runner ownership and approval-time ordering.
+function reservationCandidates(issues,queueEvents=null) {
   demand(new Set(issues.map(i=>i.number)).size===issues.length,'Duplicate issue pages');
   // Closed, non-owner and conflicting Building tasks also reserve the slot.
   if (issues.some(i=>!i.pull_request && i.labels?.some(l=>(typeof l==='string'?l:l.name)==='Building'))) return [];
   return issues.filter(i=>eligible(i) && i.labels?.some(l=>(typeof l==='string'?l:l.name)==='Approved'))
-    .map(i=>{demand(state(i)==='Approved','Conflicting approval state');return i;}).sort((a,b)=>a.number-b.number);
+    .map(i=>{demand(state(i)==='Approved','Conflicting approval state');return i;}).sort((a,b)=>{
+      if(!queueEvents)return a.number-b.number; // Historical v1 fixture policy.
+      const entered=issue=>{
+        const relevant=queueEvents.filter(e=>e.issue?.number===issue.number && e.label?.name==='Approved' && ['labeled','unlabeled'].includes(e.event)).sort((a,b)=>a.id-b.id);
+        const event=relevant.at(-1);demand(event?.event==='labeled' && event.actor?.id===OWNER_ID && Number.isFinite(Date.parse(event.created_at)),'Missing queue approval history');
+        return Date.parse(event.created_at);
+      };
+      return entered(a)-entered(b) || a.number-b.number;
+    });
 }
 function approval(issue,comments,events,expectedState='Approved') {
   demand(eligible(issue) && state(issue)===expectedState,'Issue no longer eligible');
@@ -42,7 +50,15 @@ function baseline(pulls,number) {
   return pulls.filter(p=>p.head?.repo?.full_name===REPOSITORY && p.head.ref===`issue-${number}` && p.base?.ref==='main').map(p=>{
     demand(Number.isSafeInteger(p.number) && /^[0-9a-f]{40}$/.test(p.head.sha) && ['open','closed'].includes(p.state),'Invalid PR baseline');
     return {number:p.number,head_sha:p.head.sha,state:p.state};
-  }).sort((a,b)=>a.number-b.number);
+  }).sort((a,b)=>{
+      if(!queueEvents)return a.number-b.number; // Historical v1 fixture policy.
+      const entered=issue=>{
+        const relevant=queueEvents.filter(e=>e.issue?.number===issue.number && e.label?.name==='Approved' && ['labeled','unlabeled'].includes(e.event)).sort((a,b)=>a.id-b.id);
+        const event=relevant.at(-1);demand(event?.event==='labeled' && event.actor?.id===OWNER_ID && Number.isFinite(Date.parse(event.created_at)),'Missing queue approval history');
+        return Date.parse(event.created_at);
+      };
+      return entered(a)-entered(b) || a.number-b.number;
+    });
 }
 function checkHandoffs(comments,plan) {
   for(const c of comments) {

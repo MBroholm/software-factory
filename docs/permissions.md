@@ -113,3 +113,26 @@ saved/published revision against the reviewed artifact before operational activa
 defines the handoff. Permission/autonomy expansions require documentation and owner review.
 This runbook adds no automatic deployment, merge, recovery, write retry or question resumption.
 Approval/resumption is accepted owner policy; no instructor confirmation is required.
+
+## Basic B US1 proposed permissions
+
+T001–T020 implement an inactive Basic B increment. These permissions supersede the Basic A
+role table only after owner review and provisioning; this change installs no services/accounts,
+opens no ports and imports no operational workflows.
+
+| Component | Separate credential and access | Authorized behavior |
+|---|---|---|
+| n8n orchestrator | Repository-scoped Issues read/write, Pull requests read/write, Metadata read; private runner bearer credential | Reserve approved owner tasks, journal publication, create one review PR, collect and track. No Contents write or merge. |
+| Dedicated Ubuntu runner account | Separate repository-scoped Contents read/write and Issues read; private Git credential helper and API token file | Revalidate issue/source, fetch and push issue-N without force, own private SQLite/worktrees and supervised worker units. No issue/PR writes. |
+| Codex | Owner-provisioned dedicated auth store and explicit allowlisted model identifier | Fresh noninteractive workspace-write invocation, approved scope, actual check reports. No runner bearer or GitHub token in prompt/environment; no push, PR, merge or service-manager use. |
+
+The owner must review this access/autonomy expansion, select the exact model/auth store,
+provision the dedicated unprivileged account/user manager with linger, and review systemd and
+network configuration. API binds only a configured private host bridge (or test loopback),
+with host firewall allowing the factory bridge and denying other interfaces. Container localhost
+is not host localhost. No public listener, Docker socket, operational volume or personal-home
+mount. Test and operational account, DB, work root, bearer and GitHub destinations are separate.
+Preflight refuses unknown target identity or an unreconciled slot. Basic B same-account execution
+is not malicious-code isolation. Agent output is untrusted public input: publish only sanitized
+allowlisted fields and attribute checks to the agent. Owner alone reviews/merges; operational
+adoption still requires manual import of the reviewed matching artifacts.

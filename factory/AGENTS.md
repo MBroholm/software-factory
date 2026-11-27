@@ -56,4 +56,9 @@ answer; expanded scope requires renewed explicit owner approval. This is accepte
 policy and requires no instructor confirmation. Basic A retains in-session answers and manual
 rework/recovery; this policy does not add automated question handling or recovery. Owner review
 and merge authority remain unchanged. Completed tasks and valid evidence are preserved; run
-only missing or change-affected checks. Basic B and advanced implementation remain out of scope.
+only missing or change-affected checks. The owner has authorized Basic B Setup, Foundation and
+US1 (T001–T020 in specs/002-basic-b-agent/tasks.md) on a separate implementation branch.
+This scope includes the private runner and inactive generated reserve/collect/track artifacts,
+with local fake-adapter validation. It does not authorize service installation, credential or
+network provisioning, operational import/activation, or advanced implementation. Later Basic B
+stories remain outside this increment. Retain the isolated-test and manual adoption rules above.

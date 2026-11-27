@@ -1,0 +1,12 @@
+# Review and install manually for a dedicated user. Never run from personal checkout.
+[Unit]
+Description=Private Basic B runner API
+After=network-online.target
+[Service]
+Type=exec
+ExecStart=%h/factory-venv/bin/python -m factory_runner serve --config %h/.config/factory-runner/config.toml
+UMask=0077
+NoNewPrivileges=yes
+Restart=on-failure
+[Install]
+WantedBy=default.target

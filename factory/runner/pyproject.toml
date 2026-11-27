@@ -1,0 +1,15 @@
+[build-system]
+requires = ["setuptools==84.2.1"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "factory-runner"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = ["fastapi==0.165.0", "uvicorn==0.54.0", "jsonschema==4.26.0"]
+
+[tool.setuptools.packages.find]
+include = ["factory_runner*"]
+
+[tool.setuptools.package-data]
+factory_runner = ["*.json"]

@@ -1,0 +1,14 @@
+# Retain completed-unit evidence; do not enable automatic collection.
+[Unit]
+Description=Basic B supervised attempt %i
+[Service]
+Type=exec
+ExecStart=%h/factory-venv/bin/python -m factory_runner worker --attempt %i --config %h/.config/factory-runner/config.toml
+RuntimeMaxSec=1795s
+TimeoutStopSec=5s
+KillMode=control-group
+SendSIGKILL=yes
+Restart=no
+RemainAfterExit=yes
+UMask=0077
+NoNewPrivileges=yes
