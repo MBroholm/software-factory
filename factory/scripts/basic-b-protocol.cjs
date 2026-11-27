@@ -54,4 +54,22 @@ function validateV2Association(issue,comments,pulls,a) {
  demand(!pulls.some(pr=>pr.head?.repo?.full_name===REPOSITORY && pr.head.ref===a.payload.branch && !candidates.includes(pr)),'Unrelated branch PR requires owner recovery');
  return {pr:candidates[0]??null,marker:prMarker};
 }
+function retryPayload(issue,comments,events,a,base,model,expectedState='Approved') {
+ demand(a.status==='released' && !a.cancellation && a.result?.outcome==='stuck' && a.result.stopped_proof?.cgroup_empty && a.effects.every(e=>e.status==='confirmed'),'Retry predecessor unresolved');
+ const plan=approval(issue,comments,events,expectedState),failures=v2marked(comments,'failure',issue.number).filter(x=>x.meta.attempt===a.id);
+ demand(failures.length===1 && sortedJSON(failures[0].meta)===sortedJSON({...attemptMetadata(a),result:a.result.id}),'Missing/changed retry failure');
+ const recorded=a.effects.find(e=>e.kind==='comment');demand(recorded?.status==='confirmed' && recorded.external.comment_id===failures[0].comment.id && recorded.content.body===failures[0].comment.body,'Failure differs from durable publication');
+ const failure=comments.find(c=>c.body.startsWith('<!-- factory:failure:v2 ') && c.body.includes(a.id));
+ demand(failure && Date.parse(failure.created_at)<Date.parse(plan.approval_timestamp),'Retry requires fresh explicit owner approval after failure');
+ demand(events.some(e=>e.event==='labeled' && e.label?.name==='Stuck' && e.id<plan.approval_event_id),'Missing recorded Stuck transition');
+ const same=plan.source_digest===a.payload.source.source_digest && plan.refinement_body_sha256===a.payload.source.refinement_body_sha256;
+ const frozen=initialPayload(issue,comments,events,base,model);
+ const p=frozen.payload;
+ if(same){p.source=a.payload.source;p.specification=a.payload.specification;p.discussion=a.payload.discussion;p.base_sha=a.payload.base_sha;}
+ p.predecessor=a.id;p.manifest=a.result.manifest;p.base_sha=a.payload.base_sha;
+ if(same)p.history=[...(a.payload.history??[]),...(a.payload.continuation?[a.payload.continuation]:[])];
+ const initial=same?a.payload.authorization.initial_approval_event:plan.approval_event_id;
+ p.authorization={id:`retry:${a.id}:${plan.approval_event_id}`,kind:'retry',initial_approval_event:initial,approval_event:plan.approval_event_id,approved_entered_at:plan.approval_timestamp,references:[initial,plan.approval_event_id]};
+ return {id:attemptUUID(p),payload:p,plan};
+}
 module.exports = {sortedJSON,attemptUUID,v2marked,initialPayload,attemptMetadata,attemptBody,validateV2Association};

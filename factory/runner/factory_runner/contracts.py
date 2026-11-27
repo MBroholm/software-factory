@@ -61,6 +61,9 @@ def validate(kind, value):
                 parsed=parse_answer(answer['body'],q['id'])
                 if parsed['scope']!='unchanged' or parsed['text']!=answer['text'] or digest(answer['body'])!=answer['body_sha256'] or answer['created_at']!=answer['updated_at']:
                     raise ValueError('invalid captured answer')
+            elif a['kind']=='retry':
+                if not value['predecessor'] or not a.get('approval_event') or a['id']!=f"retry:{value['predecessor']}:{a['approval_event']}" or a['references']!=[a['initial_approval_event'],a['approval_event']] or 'continuation' in value:
+                    raise ValueError('retry lineage mismatch')
             else: raise ValueError('unsupported authorization kind')
             if value['branch']!=f"issue-{value['issue_number']}": raise ValueError('branch mismatch')
             if digest(value['specification'])!=value['source']['specification_digest']: raise ValueError('specification digest mismatch')

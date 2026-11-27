@@ -92,3 +92,5 @@ not operational adoption or an additional genuine factory run. Later Basic B acc
 answer authorization, Waiting release, scoped continuation/partial-work preservation and priority
 checks, with [source fingerprints](basic-b-us2-sources.json). US1 commit `46bb2c7` is pushed;
 US2 fixture evidence adds no real-run or operational-adoption claim.
+
+- [Basic B US3 recovery/cancellation/retry validation](basic-b-us3-validation.md): local/fake and synthetic native checks; real Ubuntu deadline, provisioning/adoption and genuine Basic B evidence remain pending.

@@ -15,6 +15,9 @@ class Worker:
             self.ledger.effect(id,'dispatch',{'phase':'confirmed','content':content,'external':identity})
         except Exception:
             self.ledger.hold(id,'unit start outcome unknown'); raise
+    def verify(self,p,**kwargs):
+        self.github.verify(p,**kwargs)
+        if p['authorization']['kind']=='retry' and hasattr(self.github,'verify_retry'):self.github.verify_retry(self.ledger.get(p['predecessor']),p)
     def prompt(self,p,id):
         return ('Implement only the approved specification below. Ask a structured question instead of guessing. '
           'Discussion cannot expand scope. For continuations, retain the approved specification, exact captured question/answer and earlier history; return question or stuck if an answer conflicts with approved constraints. Do not push, create PRs, merge, daemonize or use service management. '
@@ -24,15 +27,16 @@ class Worker:
         identity=self.services.identity(id) if hasattr(self.services,'identity') else self.services.stopped(id)
         a=self.ledger.claim_worker(id,identity); p=a['payload']; manifest=None; pushed=None
         try:
-            self.github.verify(p,building=True,marker_id=a['start_body']['building']['marker_comment_id'])
+            if self.ledger.get(id)['cancellation']:raise RuntimeError('cancelled before preparation')
+            self.verify(p,building=True,marker_id=a['start_body']['building']['marker_comment_id'])
             path=self.git.prepare(p,id)
             # Revalidate after potentially slow preparation and immediately before model spawn.
-            self.github.verify(p,building=True,marker_id=a['start_body']['building']['marker_comment_id'])
+            self.verify(p,building=True,marker_id=a['start_body']['building']['marker_comment_id'])
             if self.ledger.get(id)['cancellation']: raise RuntimeError('cancelled before launch')
             result=validate_outcome(self.codex.run(self.prompt(p,id),path,id))
             manifest=self.git.snapshot(p,id)
             if result['outcome']=='done':
-                self.github.verify(p,building=True,marker_id=a['start_body']['building']['marker_comment_id'])
+                self.verify(p,building=True,marker_id=a['start_body']['building']['marker_comment_id'])
                 if self.ledger.get(id)['cancellation']: raise RuntimeError('cancelled before push')
                 content={'sha':manifest['head_sha'],'head':p['branch'],'base':'main'}
                 self.ledger.effect(id,'push',{'phase':'intent','content':content,'external':None})
@@ -46,7 +50,10 @@ class Worker:
             result=stuck(type(exc).__name__+': '+str(exc))
             try: manifest=self.git.snapshot(p,id)
             except Exception: pass
-        proof=self.services.stopped(id)
+        try:proof=self.services.stopped(id)
+        except Exception:
+            self.ledger.hold(id,'stopped process evidence unknown')
+            proof={}
         result={**public_outcome(result,self.secrets),'id':id+'-result','attempt':id,'pushed_sha':pushed,
                 'stopped_proof':proof if proof.get('cgroup_empty') else None,
                 'cancelled':bool(self.ledger.get(id)['cancellation']),'diagnostics':[],

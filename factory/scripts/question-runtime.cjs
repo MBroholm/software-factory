@@ -72,7 +72,7 @@ function selectBuildCandidate(issues,events,questions) {
  demand(!issues.some(i=>!i.pull_request && i.labels?.some(l=>(typeof l==='string'?l:l.name)==='Building')),'Orphan Building requires owner reconciliation');
  const candidates=issues.filter(i=>eligible(i) && i.labels?.some(l=>(typeof l==='string'?l:l.name)==='Approved'));
  const key=i=>{
-  const derived=questions.filter(a=>a.payload.issue_number===i.number && a.question?.claim && !a.question.consumed_by_attempt);
+  const derived=questions.filter(a=>a.payload.issue_number===i.number && ((a.question?.claim && !a.question.consumed_by_attempt) || (a.status==='released' && !a.cancellation && a.result?.outcome==='stuck')));
   demand(derived.length<=1,'Ambiguous continuation queue');
   const event=events.filter(e=>e.issue?.number===i.number && e.label?.name==='Approved' && ['labeled','unlabeled'].includes(e.event)).sort((a,b)=>a.id-b.id).at(-1);
   demand(event?.event==='labeled' && Number.isFinite(Date.parse(event.created_at)),'Missing Approved-entry queue history');

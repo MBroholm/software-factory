@@ -18,6 +18,8 @@ class Ledger:
         self.path=str(path); self.clock=clock
         with self.connect() as c:
             c.executescript('''
+            CREATE TABLE IF NOT EXISTS control (id INTEGER PRIMARY KEY CHECK(id=1), paused INTEGER NOT NULL);
+            INSERT OR IGNORE INTO control VALUES(1,0);
             CREATE TABLE IF NOT EXISTS tasks (
               repository TEXT NOT NULL, issue_number INTEGER NOT NULL, owner_id INTEGER NOT NULL,
               branch TEXT NOT NULL, current_attempt TEXT, manifest TEXT,
@@ -82,11 +84,13 @@ class Ledger:
             if old:
                 if old[0]!=digest(p): raise Conflict('immutable payload conflict')
                 return 200,self._get(c,id)
+            if c.execute('SELECT paused FROM control WHERE id=1').fetchone()[0]: raise Conflict('runner paused')
             slot=c.execute('SELECT * FROM reservation WHERE id=1').fetchone()
             if slot['attempt_id'] or slot['hold_reason']: raise Conflict('slot occupied or held')
             auth=p['authorization']; aid=p['repository']+':'+auth['id']
             if c.execute('SELECT 1 FROM authorizations WHERE id=?',(aid,)).fetchone(): raise Conflict('authorization consumed')
             if auth['kind']=='answer': self._check_continuation(c,p)
+            if auth['kind']=='retry': self._check_retry(c,p)
             c.execute('INSERT INTO tasks VALUES(?,?,?,?,?,?) ON CONFLICT(repository,issue_number) DO UPDATE SET current_attempt=excluded.current_attempt',
                       (p['repository'],p['issue_number'],p['owner_author_id'],p['branch'],id,None))
             c.execute('INSERT INTO authorizations VALUES(?,?,?,?,?,?,?,?,?)',(aid,p['repository'],p['issue_number'],auth['kind'],auth['initial_approval_event'],p['source']['specification_digest'],p['source']['source_digest'],canonical(auth['references']),auth['approved_entered_at']))
@@ -119,11 +123,15 @@ class Ledger:
             c.execute("UPDATE attempts SET status='dispatching',unit_name=? WHERE id=?",(f'factory-attempt@{id}.service',id))
     def unit(self,id,identity):
         with self.tx() as c:
+            a=self._get(c,id)
+            if a['unit_identity'] and a['unit_identity']!=identity: raise Conflict('unit identity immutable')
             c.execute('UPDATE attempts SET unit_identity=? WHERE id=?',(canonical(identity),id))
     def claim_worker(self,id,identity):
+        identity={k:identity[k] for k in ('unit_name','boot_id','invocation_id')}
         with self.tx() as c:
             a=self._get(c,id); self._owned(c,id)
             if a['status']!='dispatching' or a['cancellation']: raise Conflict('worker already claimed or cancelled')
+            if a['unit_identity'] and a['unit_identity']!=identity: raise Conflict('worker invocation mismatch')
             now=self.clock()
             c.execute("UPDATE attempts SET status='running',started_at=?,deadline=?,unit_identity=? WHERE id=?",(now,now+1795,canonical(identity),id))
             return self._get(c,id)
@@ -139,9 +147,11 @@ class Ledger:
                 return 200,a
             c.execute('UPDATE attempts SET cancellation=? WHERE id=?',(canonical(b),id))
             return 202,self._get(c,id)
-    def finish(self,id,result,manifest=None):
+    def finish(self,id,result,manifest=None,expected_status=None,unit_identity=None):
         with self.tx() as c:
             a=self._get(c,id)
+            if expected_status is not None and a['status'] not in expected_status: raise Conflict('reconciliation raced dispatch')
+            if unit_identity is not None:c.execute('UPDATE attempts SET unit_identity=? WHERE id=?',(canonical(unit_identity),id))
             if a['result']:
                 if a['result']!=result: raise Conflict('immutable result conflict')
                 return
@@ -215,3 +225,17 @@ class Ledger:
         from .effects import release
         validate('release',b)
         return release(self,id,b)
+
+    def retries(self):
+        with self.connect() as c:
+            return [self._get(c,r[0]) for r in c.execute("SELECT a.id FROM attempts a JOIN tasks t ON t.current_attempt=a.id WHERE a.status='released' AND a.cancellation IS NULL AND json_extract(a.result,'$.outcome')='stuck' ORDER BY a.id")]
+    def _check_retry(self,c,p):
+        a=self._get(c,p['predecessor']);old=a['payload']
+        current=c.execute('SELECT current_attempt FROM tasks WHERE repository=? AND issue_number=?',(p['repository'],p['issue_number'])).fetchone()
+        if not current or current[0]!=a['id'] or a['status']!='released' or a['cancellation'] or a['result']['outcome']!='stuck' or not a['result']['stopped_proof'] or any(e['status']!='confirmed' for e in a['effects']):raise Conflict('retry predecessor not reconciled')
+        for k in ('repository','issue_number','owner_author_id','branch'):
+            if p[k]!=old[k]:raise Conflict('retry task changed')
+        if p['manifest']!=a['result']['manifest']:raise Conflict('retry work provenance changed')
+        if p['source']==old['source'] and p.get('history',[])!=old.get('history',[])+([old['continuation']] if 'continuation' in old else []):raise Conflict('retry history changed')
+        if p['source']==old['source'] and (p['specification']!=old['specification'] or p['base_sha']!=old['base_sha'] or p['authorization']['initial_approval_event']!=old['authorization']['initial_approval_event']):raise Conflict('unchanged retry scope mismatch')
+        if p['source']!=old['source'] and p['authorization']['initial_approval_event']!=p['authorization']['approval_event']:raise Conflict('changed retry requires renewed explicit approval')

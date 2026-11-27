@@ -3,6 +3,7 @@ import hashlib
 import json
 import os
 import subprocess
+import time
 from pathlib import Path
 from .contracts import canonical, digest
 
@@ -13,7 +14,9 @@ class Git:
            'GIT_CONFIG_COUNT':'1','GIT_CONFIG_KEY_0':'credential.helper','GIT_CONFIG_VALUE_0':str(self.config.git_helper) if transport else ''}
         return e
     def run(self,args,path=None,transport=False,check=True):
-        r=subprocess.run(['git',*args],cwd=path or self.config.checkout,env=self.env(transport),capture_output=True,timeout=60)
+        remaining=min(60,self.deadline-time.monotonic()) if getattr(self,'deadline',None) else 60
+        if remaining<=0:raise TimeoutError('Git observation budget exhausted')
+        r=subprocess.run(['git',*args],cwd=path or self.config.checkout,env=self.env(transport),capture_output=True,timeout=remaining)
         if check and r.returncode: raise RuntimeError('Git operation failed: '+args[0])
         return r.stdout.decode('utf-8',errors='strict').rstrip('\n')
     def path(self,p): return self.config.work_root/'tasks'/str(p['issue_number'])

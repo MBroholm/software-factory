@@ -58,7 +58,7 @@ def diagnostic(message, secrets=()):
     text=re.sub(r'[\x00-\x08\x0b-\x1f\x7f]','',text)
     return text[:4096]
 
-def preflight(c,ledger):
+def preflight(c,ledger,allow_occupied=False):
     errors=[]; versions={}
     def check(ok,name):
         if not ok: errors.append(name)
@@ -98,5 +98,6 @@ def preflight(c,ledger):
             r=subprocess.run(['codex','exec','--help'],capture_output=True,text=True,timeout=5)
             check(r.returncode==0 and all(flag in r.stdout for flag in ('--ignore-user-config','--ignore-rules','--output-schema','--output-last-message','--sandbox','--model')),'Codex CLI contract unsupported')
         except Exception: errors.append('Codex CLI capability check failed')
-    s=ledger.slot(); check(not s['attempt_id'] and not s['hold_reason'],'slot requires reconciliation')
+    s=ledger.slot()
+    if not allow_occupied: check(not s['attempt_id'] and not s['hold_reason'],'slot requires reconciliation')
     return {'ok':not errors,'errors':errors,'versions':versions,'target':c.target_kind}

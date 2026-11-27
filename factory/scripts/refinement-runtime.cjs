@@ -44,7 +44,6 @@ function state(issue) {
   const labels = issue.labels.map(l => typeof l === 'string' ? l : l.name);
   const managed = labels.filter(l => STATES.includes(l));
   demand(managed.length === 1, 'Missing/conflicting task states; owner recovery required');
-  demand(managed[0]!=='Stuck', 'Stuck recovery belongs to US3');
   return managed[0];
 }
 function eligible(issue) {

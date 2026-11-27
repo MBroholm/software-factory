@@ -100,3 +100,29 @@ approval plus owner answer. The same answer claim creates only one deterministic
 Reservation consumes the claim atomically; neither an automated label event nor an answer without
 a durable released predecessor can act as initial approval. An interrupted or conflicting
 continuation remains held for later owner recovery rather than discarding retained work.
+
+## US3 recovery additions
+
+`GET /v1/retries` is authenticated and returns current safely released, uncancelled Stuck
+predecessors. It grants no approval. A strict retry reservation uses authorization kind `retry`,
+id `retry:<predecessor-uuid>:<fresh-owner-Approved-event>`, `approval_event`, original explicit
+approval (or the renewed event for changed source), references `[initial, approval_event]`,
+predecessor manifest and original branch/base. Unchanged-scope retry retains ordered answer
+history. Runner checks released/current/stopped predecessor and confirmed effects, and rereads
+the exact ledger-published failure plus fresh explicit owner approval before launch/push.
+
+API startup reconciles without redispatch. Status reads and cancellation requests repeat bounded
+named-unit reconciliation. Unit boot/invocation identity is immutable; a missing/reused unit,
+clock regression, unresolved write or incomplete cgroup evidence holds ownership. Confirmed
+interruption becomes stopped Stuck, with available manifest; a live unit retains its deadline.
+Undispatched cancellation uses a transactionally checked `not-dispatched` proof; it cannot race
+a claimed dispatch into false stopped status. API can serve held state for inspection while new
+reservations remain blocked. Cancellation acknowledgement alone remains insufficient for release.
+
+Private CLI pause/drain/inspect/backup/restore/resume does not reset guards, expire reservations
+or replay workers. Backup/restore require paused empty slot and all retained attempts released,
+plus a stopped named-unit inventory. Bundle includes SQLite snapshot, work root and dedicated
+checkout with fingerprints; credentials/config stay separately owner-managed. Restore requires
+original absolute paths, matching retained history, new destinations and recorded owner decision.
+Missing/different ledger history requires owner reconciliation; restore cannot rewind it. Resume
+is explicit and requires a fully drained/reconciled runner.

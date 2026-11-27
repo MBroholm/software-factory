@@ -51,9 +51,9 @@ function run(kind,w,fault=null){
      data={id:100+w.comments.length,user:{id:202449424},body:body.body,created_at:w.time,updated_at:w.time};w.comments.push(data);statusCode=201;
     }else if(url.endsWith('/events'))data=w.events.filter(e=>!e.issue||e.issue.number===number);
     else if(url.endsWith('/labels') && method==='POST'){
-     for(const label of body.labels){if(!issue.labels.some(x=>x.name===label))issue.labels.push({name:label});w.events.push({id:100+w.events.length,event:'labeled',label:{name:label},actor:{id:202449424},created_at:w.time});}data=issue.labels;
+     for(const label of body.labels){if(!issue.labels.some(x=>x.name===label))issue.labels.push({name:label});w.events.push({id:Math.max(99,...w.events.map(e=>e.id))+1,event:'labeled',label:{name:label},actor:{id:202449424},created_at:w.time});}data=issue.labels;
     }else if(method==='DELETE'){
-     const label=decodeURIComponent(url.split('/').at(-1));issue.labels=issue.labels.filter(x=>x.name!==label);w.events.push({id:100+w.events.length,event:'unlabeled',label:{name:label},actor:{id:202449424},created_at:w.time});data=issue.labels;
+     const label=decodeURIComponent(url.split('/').at(-1));issue.labels=issue.labels.filter(x=>x.name!==label);w.events.push({id:Math.max(99,...w.events.map(e=>e.id))+1,event:'unlabeled',label:{name:label},actor:{id:202449424},created_at:w.time});data=issue.labels;
     }else data=issue;
     if(method!=='GET')w.writes.push({name,method,url,body});response={statusCode,body:clone(data),headers:{}};
    }
@@ -68,7 +68,7 @@ function must(kind,w,fault){const r=run(kind,w,fault);assert.equal(r.error,null,
 function slot(w){return w.runner({method:'GET',path:'/v1/slot'}).body;}
 function build(w){must('reserve',w);const id=slot(w).attempt_id;assert(id);assert.equal(w.row.busy,false);assert.equal(w.issues[0].labels[0].name,'Building');assert(w.trace.indexOf('Reserve runner')<w.trace.indexOf('Add Building'));assert(w.trace.indexOf('Final Building issue')<w.trace.indexOf('Start attempt'));const a=w.runner({method:'GET',path:'/v1/attempts/'+id}).body;assert.equal(a.status,'dispatching');return id;}
 let count=0;
-function test(name,fn){const w=setup();try{fn(w);count++;console.log('PASS '+name);}finally{fs.rmSync(w.tmp,{recursive:true,force:true});}}
+function test(name,fn){if(process.argv.includes('--recovery-only') && !/stopped failure|lost failure|closed released/.test(name))return;const w=setup();try{fn(w);count++;console.log('PASS '+name);}finally{fs.rmSync(w.tmp,{recursive:true,force:true});}}
 test('reserve async, blocked second task, supervised fake agent, exact PR, QA and safe release',w=>{
  const id=build(w);must('reserve',w);assert.equal(slot(w).attempt_id,id);
  w.runner({action:'worker',id});must('collect',w);assert.equal(slot(w).attempt_id,null);assert.equal(w.pulls.length,1);assert.equal(w.issues[0].labels[0].name,'Your QA');assert.equal(w.row.busy,false);
@@ -81,8 +81,8 @@ test('lost PR acknowledgement holds then reconciles exact existing PR without du
  // Simulate explicit owner guard recovery, preserving the independent ledger and remote effects.
  w.row.busy=false;must('collect',w);assert.equal(w.pulls.length,1);assert.equal(slot(w).attempt_id,null);
 });
-test('closure before publication records cancellation and retains reservation',w=>{
- const id=build(w);w.runner({action:'worker',id});w.issues[0].state='closed';must('collect',w);assert.equal(w.pulls.length,0);assert.equal(slot(w).attempt_id,id);assert(w.runner({method:'GET',path:'/v1/attempts/'+id}).body.cancellation);
+test('closure after stopped result records cancellation, Done and safe release',w=>{
+ const id=build(w);w.runner({action:'worker',id});w.issues[0].state='closed';must('collect',w);assert.equal(w.pulls.length,0);assert.equal(slot(w).attempt_id,null);assert.equal(w.issues[0].labels[0].name,'Done');assert(w.runner({method:'GET',path:'/v1/attempts/'+id}).body.cancellation);
 });
 test('non-owner and stale approval do not launch',w=>{
  w.issues[0].user.id=9;must('reserve',w);assert.equal(slot(w).attempt_id,null);
@@ -116,6 +116,26 @@ test('lost question acknowledgement reconciles one marker and releases only with
  const id=build(w);w.runner({action:'worker',id,outcome:'question'});assert(run('collect',w,{at:'Post owner question',after:true}).error);assert.equal(slot(w).attempt_id,id);assert(w.row.busy);
  w.row.busy=false;must('collect',w);assert.equal(slot(w).attempt_id,null);assert.equal(w.comments.filter(c=>c.body.startsWith('<!-- factory:question:v2')).length,1);
 });
+if(process.argv.includes('--recovery')) {
+ test('stopped failure publishes once, releases Stuck and fresh owner retry preserves predecessor',w=>{
+  const id=build(w);w.runner({action:'worker',id,outcome:'stuck'});must('collect',w);
+  assert.equal(slot(w).attempt_id,null);assert.equal(w.issues[0].labels[0].name,'Stuck');
+  must('collect',w);assert.equal(w.comments.filter(c=>c.body.startsWith('<!-- factory:failure:v2')).length,1);
+  w.issues[0].labels=[{name:'Approved'}];w.time='2026-11-27T13:00:00Z';
+  w.events.push({id:900,event:'labeled',label:{name:'Approved'},actor:{id:202449424},issue:{number:w.issues[0].number},created_at:w.time});
+  must('reserve',w);const next=slot(w).attempt_id;assert.notEqual(next,id);
+  const a=w.runner({method:'GET',path:'/v1/attempts/'+next}).body;assert.equal(a.payload.authorization.kind,'retry');assert.equal(a.payload.predecessor,id);
+  w.runner({action:'worker',id:next});must('collect',w);assert.equal(w.pulls.length,1);
+ });
+ test('lost failure response reconciles without duplicate POST',w=>{
+  const id=build(w);w.runner({action:'worker',id,outcome:'stuck'});assert(run('collect',w,{at:'Post failure',after:true}).error);
+  assert.equal(slot(w).attempt_id,id);w.row.busy=false;must('collect',w);assert.equal(slot(w).attempt_id,null);assert.equal(w.comments.filter(c=>c.body.startsWith('<!-- factory:failure:v2')).length,1);
+ });
+ test('closed released Waiting and Stuck tasks are cancelled and labelled Done',w=>{
+  const id=build(w);w.runner({action:'worker',id,outcome:'question'});must('collect',w);w.issues[0].state='closed';must('track',w);
+  assert.equal(w.issues[0].labels[0].name,'Done');assert(w.runner({method:'GET',path:'/v1/attempts/'+id}).body.cancellation);assert.equal(slot(w).attempt_id,null);
+ });
+}
 console.log(`${count} generated Basic B graph scenarios passed using real SQLite/API and fake external effects.`);
 
 if(process.argv.includes('--native-fixtures')){fs.mkdirSync('factory/local/basic-b-native',{recursive:true});for(const [kind,set]of nativeSets)fs.writeFileSync(`factory/local/basic-b-native/${kind}-expressions.json`,JSON.stringify(set));}

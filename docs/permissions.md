@@ -146,3 +146,15 @@ Ideas/refinement and renewed explicit owner approval. Missing confirmation stays
 published question provides exact reply instructions and the workflow reports the missing step.
 No new credential scope, account, model, service, network exposure or operational activation is
 introduced by US2. Prior owner review/manual import and provisioning gates still apply.
+
+US3 adds local named-unit reconciliation, durable cancellation, stopped failure publication,
+explicit owner retry lineage and private pause/drain/inspect/backup/restore commands (T027–T034).
+The runner may stop its own recorded per-attempt unit; it never starts a replacement after a
+crash or changes the original runtime budget. Unknown invocation, clock or external-write state
+retains ownership for owner recovery. A new owner Approved event after recorded Stuck authorizes
+a distinct retry, with retained attributable work and unchanged scope or renewed approval.
+Closing an issue records cancellation before further publication; Done never proves a free slot.
+Recovery bundles contain private ledger/worktree/checkouts and stay outside tracked source.
+Restore requires paused/reconciled state, original absolute paths, matching retained history,
+verified stopped units and a recorded owner decision; ambiguous/older ledgers cannot be restored
+by this command. Owner provisioning, manual operational import and merge gates remain unchanged.

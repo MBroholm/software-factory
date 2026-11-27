@@ -45,7 +45,7 @@ class GitHub:
         if labels!=[state_override or ('Building' if building else 'Approved')]: raise ValueError('issue state changed')
         comments=self.pages(f'issues/{number}/comments'); events=self.pages(f'issues/{number}/events')
         auth=p['authorization']
-        if auth['kind'] not in {'initial','answer'}: raise ValueError('unsupported authorization')
+        if auth['kind'] not in {'initial','answer','retry'}: raise ValueError('unsupported authorization')
         approved=sorted((e for e in events if e.get('label',{}).get('name')=='Approved' and e['event'] in {'labeled','unlabeled'}),key=lambda e:e['id'])
         if building:
             removed=approved.pop() if approved else None
@@ -57,15 +57,26 @@ class GitHub:
         event=next((e for e in events if e['id']==auth['initial_approval_event']),None)
         if not event or event['event']!='labeled' or event.get('label',{}).get('name')!='Approved' or event['actor']['id']!=self.config.owner_id:
             raise ValueError('original explicit approval missing')
-        if auth['kind']=='answer':
+        if auth['kind']=='answer' or p.get('history'):
             from .questions import answer_claim
-            for captured in [*p.get('history',[]),p['continuation']]:
+            for captured in [*p.get('history',[]),*([p['continuation']] if 'continuation' in p else [])]:
                 q=captured['question'];predecessor_id=q['id'].removesuffix('-q1')
                 predecessor={'id':predecessor_id,'payload':p,'result':{'id':predecessor_id+'-result','question':{'text':q['text'],'context':q['context']}}}
                 actual=answer_claim(predecessor,comments,self.config.owner_id)
                 if actual['continuation']!=captured:
                     raise ValueError('consumed answer/question edited, deleted or ambiguous')
-            if actual['authorization_id']!=auth['id']: raise ValueError('answer authorization mismatch')
+            if auth['kind']=='answer' and actual['authorization_id']!=auth['id']: raise ValueError('answer authorization mismatch')
+        if auth['kind']=='retry':
+            failures=[]
+            for comment in comments:
+                match=re.match(r'^<!-- factory:failure:v2 (\{[^\n]+\}) -->\n',comment['body'])
+                if match:
+                    metadata=json.loads(match[1])
+                    if metadata.get('attempt')==p['predecessor']:
+                        if comment['user']['id']!=self.config.owner_id or comment['created_at']!=comment['updated_at'] or timestamp(comment['created_at'])>=timestamp(current['created_at']):raise ValueError('retry failure evidence changed')
+                        failures.append(comment)
+            stuck_events=[e for e in events if e.get('label',{}).get('name')=='Stuck' and e['event']=='labeled' and timestamp(e['created_at'])<timestamp(current['created_at'])]
+            if len(failures)!=1 or not stuck_events:raise ValueError('retry requires failure and subsequent owner approval')
         refinements=[]
         for c in comments:
             if not lf(c['body']).startswith('<!-- factory:refinement:v1'): continue
@@ -119,3 +130,12 @@ class GitHub:
             if actual!=claim: raise ValueError('current answer does not match proposed durable claim')
             return True
         finally: self.deadline=None
+
+    def verify_retry(self,predecessor,p):
+        effect=next((e for e in predecessor['effects'] if e['kind']=='comment' and e['status']=='confirmed'),None)
+        if not effect:raise ValueError('retry predecessor failure unconfirmed')
+        comments=self.pages(f"issues/{p['issue_number']}/comments")
+        matches=[c for c in comments if c['id']==effect['external']['comment_id']]
+        if len(matches)!=1:raise ValueError('retry failure deleted')
+        c=matches[0]
+        if c['body']!=effect['content']['body'] or c['user']['id']!=self.config.owner_id or c['created_at']!=c['updated_at'] or timestamp(c['created_at'])>=timestamp(p['authorization']['approved_entered_at']):raise ValueError('retry failure edited or approval stale')

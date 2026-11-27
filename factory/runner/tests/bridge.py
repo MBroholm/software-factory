@@ -15,6 +15,7 @@ if request.get('action')=='worker':
     id=request['id']; p=ledger.get(id)['payload']
     result=outcome()
     if request.get('outcome')=='question': result.update(outcome='question',question={'text':'Which format?','context':'Choose approved format.'})
+    if request.get('outcome')=='stuck': result.update(outcome='stuck',stuck_reason='Fixture failure, partial work retained')
     worker=Worker(ledger,GitHub(p),Git(),Codex(result),Services())
     worker.run(id); print(json.dumps(ledger.get(id)))
 else:

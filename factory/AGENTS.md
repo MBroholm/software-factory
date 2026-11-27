@@ -57,9 +57,9 @@ policy and requires no instructor confirmation. Basic A retains in-session answe
 rework/recovery; this policy does not add automated question handling or recovery. Owner review
 and merge authority remain unchanged. Completed tasks and valid evidence are preserved; run
 only missing or change-affected checks. The owner has authorized Basic B Setup, Foundation and
-US1 and US2 (T001–T026 in specs/002-basic-b-agent/tasks.md) on a separate implementation branch.
+US1, US2 and US3 (T001–T034 in specs/002-basic-b-agent/tasks.md) on a separate implementation branch.
 This scope includes the private runner and inactive generated refine/reserve/collect/track artifacts,
 with local fake-adapter validation. It does not authorize service installation, credential or
 network provisioning, operational import/activation, or advanced implementation. US2 adds issue
-questions, durable answer-derived authorization and fresh scoped continuation. US3 and later
-Basic B stories remain outside this increment. Retain the isolated-test and manual adoption rules above.
+questions, durable answer-derived authorization and fresh scoped continuation. US3 adds local recovery, cancellation, explicit retry and coherent backup/restore tooling. US4 and later
+Basic B work remain outside this increment. Retain the isolated-test and manual adoption rules above.

@@ -59,6 +59,8 @@ def create_app(ledger, bearer, repository, owner_id, models, dispatch=None, read
     async def health():
         s=ledger.slot(); ok=not s['hold_reason'] and (ready() if ready else s['attempt_id'] is None)
         return response(200 if ok else 503,{'healthy':ok})
+    @app.get('/v1/retries')
+    async def retries(): return ledger.retries()
     @app.get('/v1/questions')
     async def questions(): return ledger.questions()
     @app.put('/v1/attempts/{id}/answer')
@@ -93,7 +95,9 @@ def create_app(ledger, bearer, repository, owner_id, models, dispatch=None, read
         return response(status,a)
     @app.put('/v1/attempts/{id}/cancellation')
     async def cancel(id,request:Request):
-        identity(id); status,a=ledger.cancel(id,await body(request,'cancellation')); return response(status,a)
+        identity(id); status,a=ledger.cancel(id,await body(request,'cancellation'))
+        if observe: observe(id)
+        return response(status,ledger.get(id))
     @app.put('/v1/attempts/{id}/effects/{kind}')
     async def effect(id,kind,request:Request): identity(id); return ledger.effect(id,kind,await body(request,'effect'))
     @app.post('/v1/attempts/{id}/release')

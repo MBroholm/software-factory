@@ -51,7 +51,7 @@ function builder(kind){
    'Confirm idle':'Fail closed if persisted idle state differs from acknowledgement.',
    'Report completion':'Report bounded orchestration completion, never infer agent completion from guard release.'
   })[n.name];if(!n.notes)throw Error('Missing note '+n.name);}
-  w.name=`Basic B ${kind} — US2 INACTIVE`;w.active=false;w.pinData={};
+  w.name=`Basic B ${kind} — US3 INACTIVE`;w.active=false;w.pinData={};
   let i=0;for(const n of w.nodes){n.position=[i%7*320,Math.floor(i/7)*250];i++;}
   for(const [i,title,summary] of [[0,'Acquire workflow guard','Shared fail-stop short interlock; no automatic expiry or error-release.'],[1,'Read durable task state','Authenticated runner reads and complete GitHub history; unknown target or evidence stops.'],[2,'Journal and apply effects','Intent before write; no blind POST replay. Exact marker/head/base and source readback.'],[3,'Confirm and release','Reserve only acknowledges submission; collect releases durable slot only with stopped/publication proof. Owner reviews and manually imports matching artifacts.']])add(`${i+1}. ${title}`,'stickyNote',{content:`## ${i+1}. ${title}\n\n${summary}`,height:230,width:450}).position=[-500,i*850];
   const path=`factory/workflows/${kind}.json`,output=JSON.stringify(w,null,2)+'\n';if(process.argv.includes('--check')){if(read(path)!==output)throw Error(kind+'.json stale');console.log(kind+'.json matches source');}else fs.writeFileSync(path,output);
