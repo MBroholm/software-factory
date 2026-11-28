@@ -113,3 +113,48 @@ saved/published revision against the reviewed artifact before operational activa
 defines the handoff. Permission/autonomy expansions require documentation and owner review.
 This runbook adds no automatic deployment, merge, recovery, write retry or question resumption.
 Approval/resumption is accepted owner policy; no instructor confirmation is required.
+
+## Basic B US1 proposed permissions
+
+T001–T020 implement an inactive Basic B increment. These permissions supersede the Basic A
+role table only after owner review and provisioning; this change installs no services/accounts,
+opens no ports and imports no operational workflows.
+
+| Component | Separate credential and access | Authorized behavior |
+|---|---|---|
+| n8n orchestrator | Repository-scoped Issues read/write, Pull requests read/write, Contents read for the base ref, and Metadata read; private runner bearer credential | Reserve approved owner tasks, journal publication, create one review PR, collect and track. No Contents write or merge. |
+| Dedicated Ubuntu runner account | Separate repository-scoped Contents read/write and Issues read; private Git credential helper and API token file | Revalidate issue/source, fetch and push issue-N without force, own private SQLite/worktrees and supervised worker units. No issue/PR writes. |
+| Codex | Owner-provisioned dedicated auth store and explicit allowlisted model identifier | Fresh noninteractive workspace-write invocation, approved scope, actual check reports. No runner bearer or GitHub token in prompt/environment; no push, PR, merge or service-manager use. |
+
+The owner must review this access/autonomy expansion, select the exact model/auth store,
+provision the dedicated unprivileged account/user manager with linger, and review systemd and
+network configuration. API binds only a configured private host bridge (or test loopback),
+with host firewall allowing the factory bridge and denying other interfaces. Container localhost
+is not host localhost. No public listener, Docker socket, operational volume or personal-home
+mount. Test and operational account, DB, work root, bearer and GitHub destinations are separate.
+Preflight refuses unknown target identity or an unreconciled slot. Basic B same-account execution
+is not malicious-code isolation. Agent output is untrusted public input: publish only sanitized
+allowlisted fields and attribute checks to the agent. Owner alone reviews/merges; operational
+adoption still requires manual import of the reviewed matching artifacts.
+
+US2 extends the proposed Basic B increment with issue question publication and scoped continuation.
+The orchestrator may derive Approved only after the runner independently verifies and durably
+claims one matching owner answer on previously explicitly approved, unchanged source. An answer
+never grants initial approval. Exact unchanged-scope grammar, owner numeric identity, question
+id, chronology, unedited content and unique consumption are enforced. Changed scope returns to
+Ideas/refinement and renewed explicit owner approval. Missing confirmation stays Waiting; the
+published question provides exact reply instructions and the workflow reports the missing step.
+No new credential scope, account, model, service, network exposure or operational activation is
+introduced by US2. Prior owner review/manual import and provisioning gates still apply.
+
+US3 adds local named-unit reconciliation, durable cancellation, stopped failure publication,
+explicit owner retry lineage and private pause/drain/inspect/backup/restore commands (T027–T034).
+The runner may stop its own recorded per-attempt unit; it never starts a replacement after a
+crash or changes the original runtime budget. Unknown invocation, clock or external-write state
+retains ownership for owner recovery. A new owner Approved event after recorded Stuck authorizes
+a distinct retry, with retained attributable work and unchanged scope or renewed approval.
+Closing an issue records cancellation before further publication; Done never proves a free slot.
+Recovery bundles contain private ledger/worktree/checkouts and stay outside tracked source.
+Restore requires paused/reconciled state, original absolute paths, matching retained history,
+verified stopped units and a recorded owner decision; ambiguous/older ledgers cannot be restored
+by this command. Owner provisioning, manual operational import and merge gates remain unchanged.

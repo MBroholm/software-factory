@@ -1,0 +1,16 @@
+# Copy privately with mode 0600; owner supplies/reviews every destination and credential.
+repository = "OWNER_TEST_REPOSITORY/fixture"
+owner_id = 1
+bind = "127.0.0.1"
+port = 8787
+database = "/srv/factory-test/private/ledger.sqlite3"
+work_root = "/srv/factory-test/private/work"
+checkout = "/srv/factory-test/checkout"
+bearer_file = "/srv/factory-test/private/runner-bearer"
+github_token_file = "/srv/factory-test/private/github-runner-token"
+git_helper = "/srv/factory-test/private/git-credential-helper"
+codex_home = "/srv/factory-test/private/codex"
+model_id = "OWNER_SELECT_EXACT_MODEL"
+model_config = "OWNER_CONFIGURE_MODEL_ID"
+target_kind = "isolated-test"
+target_identity = "OWNER_TEST_REPOSITORY/fixture"

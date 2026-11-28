@@ -1,6 +1,8 @@
 # Basic A evidence index
 
-**2026-11-26: two genuine issue/PR-linked tasks demonstrated.** US1–US4 implementation and
+**Current tally: four of five genuine runs.** Two Basic A runs and two operational Basic B runs are linked below.
+
+**2026-11-26 snapshot: two genuine issue/PR-linked tasks demonstrated.** US1–US4 implementation and
 story/guard/recovery validation are recorded below. The final-project minimum is **five** real
 runs: at least **three more** genuine issue/PR-linked tasks remain. Synthetic fixtures, isolated
 fault injections, repeated polls and bootstrap PRs do not increase that count. Basic B, final
@@ -80,3 +82,25 @@ Raw traces, fixture state, environment files, API keys and backups stay private/
 results contain whitelisted observations and links. Operational adoption requires owner PR
 review/manual import of matching reviewed JSON; no automated test substitutes for it. The
 stopped restore clone and inactive test workflows process no ordinary factory tasks.
+
+## Basic B implementation increment
+
+[Setup, Foundation and US1 validation](basic-b-us1-validation.md) records local runner/generated-
+graph checks and read-only n8n VM parameter checks for T001–T020, with
+[source fingerprints](basic-b-us1-sources.json). This is fake-adapter implementation evidence,
+not operational adoption or an additional genuine factory run. Later Basic B acceptance remains open.
+
+[US2 question/answer validation](basic-b-us2-validation.md) records the next increment's durable
+answer authorization, Waiting release, scoped continuation/partial-work preservation and priority
+checks, with [source fingerprints](basic-b-us2-sources.json). US1 commit `46bb2c7` is pushed;
+US2 fixture evidence adds no real-run or operational-adoption claim.
+
+- [Basic B US3 recovery/cancellation/retry validation](basic-b-us3-validation.md): local/fake and synthetic native checks; real Ubuntu deadline, provisioning/adoption and genuine Basic B evidence remain pending.
+
+- [Basic B US4 local review and adoption-boundary validation](basic-b-us4-validation.md): exact v2/historical review, explicit manual QA rework, 14 fake-adapter graph scenarios and remaining adoption gates; source fingerprints in `basic-b-us4-sources.json`. No new genuine factory run.
+
+- [Basic B integrated validation](basic-b-validation.md) and [machine-readable results](basic-b-results.json): T039–T040 local/native tooling, exact fixture-copy mappings, retained failures and pending scheduled/provisioned checks. [Adoption preparation](basic-b-adoption.md) records four source fingerprints and uncompleted owner gates. No additional genuine run.
+
+- [First operational Basic B run](basic-b-real-run.md): issue #13 reached automatic PR #14 and owner merge after an audited credential recovery. Three of five genuine project runs are now recorded.
+
+- [Second operational Basic B run](basic-b-real-run.md#second-operational-basic-b-run): issue #15 incorporated owner feedback, then reached automatic PR #16, owner merge, and Done. Four of five genuine runs are recorded.

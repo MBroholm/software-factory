@@ -175,3 +175,19 @@ and full final-project acceptance are not claimed. Current credential scopes rem
 No workflow/runtime changes or acceptance reruns were made by this reconciliation. The merged
 source incorporates the reviewed/tested PR #11 fix; only evidence documentation conflicts were
 resolved. JSON/link/fence/whitespace and generator consistency checks were used for this merge.
+
+## Basic B local/native preparation (2026-11-27)
+
+US4 was committed/pushed as `ff14865`. Subsequent integrated validation and offline mapping
+preparation are recorded in [Basic B validation](basic-b-validation.md), with explicit pending
+scheduled acceptance, real Codex/deadline, owner provisioning/manual import and genuine Basic B
+run. [Adoption preparation](basic-b-adoption.md) grants no deployment authority. The genuine-run
+count remains two; three additional genuine task runs are still required.
+
+## First operational Basic B run (2026-11-28)
+
+[Issue #13 and PR #14](basic-b-real-run.md) complete the first operational Basic B review loop after a credential repair and audited recovery. Three genuine project runs are now recorded; two more are required.
+
+## Second operational Basic B run (2026-11-28)
+
+[Issue #15 and PR #16](basic-b-real-run.md#second-operational-basic-b-run) verified owner discussion captured in refinement, explicit approval, automated PR, owner merge, and Done. The project now has four genuine runs.

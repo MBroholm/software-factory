@@ -1,0 +1,120 @@
+{
+  "type": "object",
+  "properties": {
+    "outcome": {
+      "enum": [
+        "done",
+        "question",
+        "stuck"
+      ]
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4096
+    },
+    "question": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "text": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4096
+            },
+            "context": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4096
+            }
+          },
+          "required": [
+            "text",
+            "context"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "checks": {
+      "type": "array",
+      "maxItems": 100,
+      "items": {
+        "type": "object",
+        "properties": {
+          "command": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          },
+          "outcome": {
+            "enum": [
+              "passed",
+              "failed",
+              "not_run"
+            ]
+          },
+          "details": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          },
+          "tested_revision": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "environment": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          }
+        },
+        "required": [
+          "command",
+          "outcome",
+          "details",
+          "tested_revision",
+          "environment"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "unchecked_criteria": {
+      "type": "array",
+      "maxItems": 100,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 4096
+      }
+    },
+    "stuck_reason": {
+      "anyOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "outcome",
+    "summary",
+    "question",
+    "checks",
+    "unchecked_criteria",
+    "stuck_reason"
+  ],
+  "additionalProperties": false,
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$comment": "Conditional outcome rules are enforced by results.validate_outcome after schema validation, keeping CLI schema within the structured-output subset."
+}

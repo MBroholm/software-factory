@@ -56,4 +56,14 @@ answer; expanded scope requires renewed explicit owner approval. This is accepte
 policy and requires no instructor confirmation. Basic A retains in-session answers and manual
 rework/recovery; this policy does not add automated question handling or recovery. Owner review
 and merge authority remain unchanged. Completed tasks and valid evidence are preserved; run
-only missing or change-affected checks. Basic B and advanced implementation remain out of scope.
+only missing or change-affected checks. The owner has authorized Basic B Setup, Foundation and
+US1, US2, US3 and US4 (T001–T038 in specs/002-basic-b-agent/tasks.md) on a separate implementation branch.
+This scope includes the private runner and inactive generated refine/reserve/collect/track artifacts,
+with local fake-adapter validation. It does not authorize service installation, credential or
+network provisioning, operational import/activation, or advanced implementation. US2 adds issue
+questions, durable answer-derived authorization and fresh scoped continuation. US3 adds local
+recovery, cancellation, explicit retry and coherent backup/restore tooling. US4 adds review
+compatibility and owner-controlled adoption documentation. The owner subsequently authorized continuing remaining Basic B tasks. This includes local
+T039–T041 validation tooling and T043/T045 evidence preparation. Provisioning, operational
+adoption and real-run gates still require the explicit owner actions described above;
+advanced work remains outside scope. Retain the isolated-test and manual adoption rules above.

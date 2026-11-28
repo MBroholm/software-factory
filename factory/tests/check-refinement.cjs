@@ -110,7 +110,7 @@ test('SHA-256 UTF-8/LF known and multiblock vectors',()=>{
   for(const s of ['', 'abc','æ 😀\n','x'.repeat(5000)]) assert.equal(R.sha256(s),crypto.createHash('sha256').update(s).digest('hex'));
   assert.equal(R.source(issue(),[comment(2,'a\r\nb')]).source_digest,R.source(issue(),[comment(2,'a\nb')]).source_digest);
 });
-test('inactive graph, saved credentials, pagination, no generic retry or approval path',()=>{
+test('inactive graph, saved credentials, pagination, no generic retry or initial approval path',()=>{
   assert.equal(graph.active,false);assert.equal(nodes.size,graph.nodes.length);assert.deepEqual(graph.pinData,{});
   for(const n of nodes.values()) {
     assert(!n.continueOnFail && !n.retryOnFail && !n.disabled);
@@ -119,7 +119,8 @@ test('inactive graph, saved credentials, pagination, no generic retry or approva
       assert.equal(n.executeOnce,true,'HTTP pagination must not fan out downstream requests');
       assert.equal(n.parameters.genericAuthType,'httpHeaderAuth');assert(n.credentials.httpHeaderAuth.id.startsWith('OWNER_SELECT_'));
       assert.equal(n.parameters.options.response.response.fullResponse,true);
-      if(n.parameters.method!=='GET') assert(!n.parameters.jsonBody?.includes('Approved'));
+      if(n.parameters.method!=='GET' && n.name!=='Add answered Approved') assert(!n.parameters.jsonBody?.includes('Approved'));
+      if(n.name==='Add answered Approved')assert.equal(graph.connections['Validate before derived approval'].main[0][0].node,n.name);
       if(n.parameters.options.pagination) assert.equal(n.parameters.options.pagination.pagination.maxRequests,100);
     }
   }
@@ -180,7 +181,7 @@ test('captured edit/deletion, issue edit, edited/duplicate marker hold',()=>{
   }
 });
 test('stranded or conflicting state holds without mutation',()=>{
-  for(const labels of [['Refining'],['Ideas','Approved'],['Waiting for you']]) {const r=run({issues:[issue(1,labels)]});held(r);assert.equal(r.calls.length,1);}
+  for(const labels of [['Refining'],['Ideas','Approved']]) {const r=run({issues:[issue(1,labels)]});held(r);assert.equal(r.calls.length,1);}
 });
 test('reuse exact marked source at Ideas without inference or duplicate comment',()=>{
   const a=run();good(a);a.issues[0].labels=[{name:'Ideas'}];a.events[1].push(event('Ideas',30000));

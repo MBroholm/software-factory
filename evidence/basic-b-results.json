@@ -1,0 +1,566 @@
+{
+  "baseline_revision": "ff148652fca45dd2b11ce0c957ae4a0a7a406b33",
+  "environment": {
+    "os": "Fedora Linux 45",
+    "node": "v24.19.0",
+    "python": "3.15.2",
+    "git": "2.56.1",
+    "native": "designated factory-guard-test n8n 2.48.8, read-only VM/core checks"
+  },
+  "runner_tests": {
+    "discovered": 84,
+    "passed": 83,
+    "skipped": 1,
+    "skip_reason": "opt-in actual Ubuntu elapsed deadline"
+  },
+  "packaging": {
+    "workflows": 4,
+    "generated_and_byte_checked": true,
+    "mappings": "synthetic offline loopback; not live verified",
+    "public_mapping_ids": false
+  },
+  "edge_cases": [
+    {
+      "exercise": "Genuine approved owner task",
+      "expected": "Building before submit; async acceptance; issue-N result; one PR; owner decides merge",
+      "coverage": "US1/4, SC-001/006",
+      "local_status": "covered by fake-adapter/unit/native checks; see validation record",
+      "scheduled_or_provisioned_status": "not run"
+    },
+    {
+      "exercise": "Non-owner issue, stale source, AI/answer as initial approval",
+      "expected": "No start; visible refusal/hold for ambiguity",
+      "coverage": "FR-001/002",
+      "local_status": "covered by fake-adapter/unit/native checks; see validation record",
+      "scheduled_or_provisioned_status": "not run"
+    },
+    {
+      "exercise": "Valid structured question and marked owner answer",
+      "expected": "One question; Waiting; scoped answer becomes Approved; new invocation includes full context",
+      "coverage": "US2, SC-002",
+      "local_status": "covered by fake-adapter/unit/native checks; see validation record",
+      "scheduled_or_provisioned_status": "not run"
+    },
+    {
+      "exercise": "Non-owner/unrelated/edited/stale/multiple answers or changed scope",
+      "expected": "No unauthorized continuation; owner resolution or renewed refinement/approval",
+      "coverage": "D2, SC-002",
+      "local_status": "covered by fake-adapter/unit/native checks; see validation record",
+      "scheduled_or_provisioned_status": "not run"
+    },
+    {
+      "exercise": "Concurrent/duplicate reservation/start; lost HTTP reply",
+      "expected": "Same UUID/payload result, one worker; conflict rejected; slot retained",
+      "coverage": "FR-003/009, SC-003",
+      "local_status": "covered by fake-adapter/unit/native checks; see validation record",
+      "scheduled_or_provisioned_status": "not run"
+    },
+    {
+      "exercise": "Duplicate collection; lost comment/label/PR response",
+      "expected": "Reconcile journal/markers, no duplicate POST or false state; hold uncertainty",
+      "coverage": "FR-006/009, SC-003",
+      "local_status": "covered by fake-adapter/unit/native checks; see validation record",
+      "scheduled_or_provisioned_status": "not run"
+    },
+    {
+      "exercise": "Kill API before accept/dispatch, while coding, after push/result",
+      "expected": "Reconcile named unit/ledger; no second start; interrupted work Stuck and owner retry",
+      "coverage": "D3, SC-003/004",
+      "local_status": "covered by fake-adapter/unit/native checks; see validation record",
+      "scheduled_or_provisioned_status": "not run"
+    },
+    {
+      "exercise": "Restart host or worker; PID reuse; missing unit proof",
+      "expected": "Interrupted becomes Stuck if stopped proven; otherwise hold, never assume free",
+      "coverage": "FR-008/009",
+      "local_status": "covered by fake-adapter/unit/native checks; see validation record",
+      "scheduled_or_provisioned_status": "not run"
+    },
+    {
+      "exercise": "Failure, malformed outcome and full 30-minute timeout",
+      "expected": "Whole process tree stops; deadline not reset; Stuck reason/partial work visible",
+      "coverage": "SC-004",
+      "local_status": "covered by fake-adapter/unit/native checks; see validation record",
+      "scheduled_or_provisioned_status": "not run"
+    },
+    {
+      "exercise": "Close before start, during coding/push/PR effect",
+      "expected": "Cancellation persists; no new post-observation publication; reconcile earlier effects; stopped proof before release",
+      "coverage": "SC-005",
+      "local_status": "covered by fake-adapter/unit/native checks; see validation record",
+      "scheduled_or_provisioned_status": "not run"
+    },
+    {
+      "exercise": "Reset/release workflow guard while worker active",
+      "expected": "Durable reservation still blocks another build; collector can run after valid guard release",
+      "coverage": "FR-011",
+      "local_status": "covered by fake-adapter/unit/native checks; see validation record",
+      "scheduled_or_provisioned_status": "not run"
+    },
+    {
+      "exercise": "Waiting/Stuck/QA release and priority arrival",
+      "expected": "After confirmed effects/stopped state another task can run; answer/retry precedes ordinary work, never preempts",
+      "coverage": "FR-015, SC-007",
+      "local_status": "covered by fake-adapter/unit/native checks; see validation record",
+      "scheduled_or_provisioned_status": "not run"
+    },
+    {
+      "exercise": "Preserve dirty attributable work; conflicting branch/PR",
+      "expected": "Known work reused, unknown conflicts owner-held; no reset/force-push",
+      "coverage": "D3, FR-012",
+      "local_status": "covered by fake-adapter/unit/native checks; see validation record",
+      "scheduled_or_provisioned_status": "not run"
+    },
+    {
+      "exercise": "GitHub outage/rate limit, runner outage or unknown write",
+      "expected": "No blind retry/slot expiry; recover under pause/drain/inspect procedure",
+      "coverage": "FR-009/010",
+      "local_status": "covered by fake-adapter/unit/native checks; see validation record",
+      "scheduled_or_provisioned_status": "not run"
+    },
+    {
+      "exercise": "Merge/unmerged PR close/QA rework and issue close",
+      "expected": "Existing owner-review semantics retained, no advanced feedback automation",
+      "coverage": "US4",
+      "local_status": "covered by fake-adapter/unit/native checks; see validation record",
+      "scheduled_or_provisioned_status": "not run"
+    },
+    {
+      "exercise": "Backup/restore rehearsal",
+      "expected": "Ledger/worktree/secret configuration recovered together without forgetting potentially live work",
+      "coverage": "FR-009/013",
+      "local_status": "covered by fake-adapter/unit/native checks; see validation record",
+      "scheduled_or_provisioned_status": "not run"
+    },
+    {
+      "exercise": "Missing/wrong bearer; secret canary in diagnostics",
+      "expected": "No unauthorized work/results; canary absent from public artifacts",
+      "coverage": "FR-013",
+      "local_status": "covered by fake-adapter/unit/native checks; see validation record",
+      "scheduled_or_provisioned_status": "not run"
+    }
+  ],
+  "pending_tasks": [],
+  "genuine_task_count": 4,
+  "failures": [
+    "Sandbox Python bridge timeout; approved local execution passed",
+    "Sticky-note notes/content validation corrected",
+    "Expression-based Wait threshold validation corrected"
+  ],
+  "hooks": "No .specify/extensions.yml",
+  "combined_validation": {
+    "status": "passed",
+    "checks": [
+      {
+        "command": "/home/broholm/.nvm/versions/node/v24.19.0/bin/node factory/scripts/build-refine.cjs --check",
+        "status": 0
+      },
+      {
+        "command": "/home/broholm/.nvm/versions/node/v24.19.0/bin/node factory/scripts/build-reserve.cjs --check",
+        "status": 0
+      },
+      {
+        "command": "/home/broholm/.nvm/versions/node/v24.19.0/bin/node factory/scripts/build-track.cjs --check",
+        "status": 0
+      },
+      {
+        "command": "/home/broholm/.nvm/versions/node/v24.19.0/bin/node factory/scripts/build-collect.cjs --check",
+        "status": 0
+      },
+      {
+        "command": "/home/broholm/.nvm/versions/node/v24.19.0/bin/node factory/tests/check-basic-b-preparation.cjs",
+        "status": 0
+      },
+      {
+        "command": "/home/broholm/.nvm/versions/node/v24.19.0/bin/node factory/tests/check-refinement.cjs",
+        "status": 0
+      },
+      {
+        "command": "/home/broholm/.nvm/versions/node/v24.19.0/bin/node factory/tests/check-reservation.cjs --policy-only",
+        "status": 0
+      },
+      {
+        "command": "/home/broholm/.nvm/versions/node/v24.19.0/bin/node factory/tests/check-tracking.cjs",
+        "status": 0
+      },
+      {
+        "command": "/home/broholm/.nvm/versions/node/v24.19.0/bin/node factory/tests/basic-b-execution.cjs",
+        "status": 0
+      },
+      {
+        "command": "/home/broholm/.nvm/versions/node/v24.19.0/bin/node factory/tests/basic-b-questions.cjs",
+        "status": 0
+      },
+      {
+        "command": "/home/broholm/.nvm/versions/node/v24.19.0/bin/node factory/tests/basic-b-recovery.cjs",
+        "status": 0
+      },
+      {
+        "command": "/home/broholm/.nvm/versions/node/v24.19.0/bin/node factory/tests/basic-b-review.cjs",
+        "status": 0
+      },
+      {
+        "command": "/home/broholm/.nvm/versions/node/v24.19.0/bin/node factory/tests/basic-b-workflows.cjs --recovery --review --native-fixtures",
+        "status": 0
+      },
+      {
+        "command": "python3 factory/tests/run-basic-b-us1-expressions.py --waits",
+        "status": 0
+      }
+    ],
+    "graph_scenarios": 14,
+    "native_checks": {
+      "reserve": 583,
+      "collect": 621,
+      "track": 324,
+      "refine": 171
+    },
+    "core_waits_ms": [
+      10009,
+      30000
+    ],
+    "core_cancelled_wait_ms": 502,
+    "isolated_container_production_concurrency": 1,
+    "scope": "read-only VM/core timers; no scheduled workflow execution"
+  },
+  "completed_this_increment": [
+    "T039",
+    "T040",
+    "T043",
+    "T045"
+  ],
+  "source_sha256": {
+    "factory/scripts/basic-b-builder.cjs": "4b24bfb9987ce7d2a461c6f6e92701f2c23c3b57a6e225de172d9aa6ec13cc6a",
+    "factory/scripts/basic-b-protocol.cjs": "6eba3345a9813e69f04cc4bbe6ec3e23913e9804ebaee675eb740fb121e3d7ea",
+    "factory/scripts/build-collect-recovery.cjs": "727d9f1c6e9989b37f8e631237c1006104e8117eea7b821828f21dc4f90fb813",
+    "factory/scripts/build-collect.cjs": "1f8b27e04effe0ec5dbc306dcb676379ac9b3bce573ac3dd0e18223a0e00d6a7",
+    "factory/scripts/build-refine.cjs": "080819f6f01a135d21842e171b6840aacc628803747dc0aa86685a7dbe0eb962",
+    "factory/scripts/build-reserve.cjs": "375fde35bc71f90b0b9e37fca7af712ad35fa892fe3f64d438df4ecf16cc3641",
+    "factory/scripts/build-track.cjs": "cda1ad02aad56b8572564f7a8815e4a019e366fb824cd8ac4233966ebb1906b6",
+    "factory/scripts/collection-runtime.cjs": "efa4e70d42db875be2dea8b856d03ba19ec5d30281c8c51e34085d31fc811b1c",
+    "factory/scripts/evaluate_gemini.cjs": "e711cd8d536ca984df7c1d71391be8d93281cc0d515bb21722e350fa3736d091",
+    "factory/scripts/guard-template.json": "aae6801096ef03ac1af061f1f942c5c20cce80192e0284384ad528ba3226fb3d",
+    "factory/scripts/map-workflows.cjs": "0a2b826e9ecca3cc26168342bf7e39b7c7dfcaf15c1d3a44b42fa6d3992995d0",
+    "factory/scripts/measure_refinement_request.cjs": "8dfdd53e37a31c1a6db91e80dbe31fd596d04f44f8ac759fefb025e89aa4cd8f",
+    "factory/scripts/prepare_refinement_evaluation.py": "b671c777363d373046ee5d6e2a4840b7101868b65da045f8a68c92e830ddff56",
+    "factory/scripts/question-runtime.cjs": "c79b9e6c09701b3ea926fadbe12cf666774256b251036e5471712f51288c8d8c",
+    "factory/scripts/refinement-notes.cjs": "7225a9bc71d24f76fd2d61deab174e90362662e8bbd578ec4012c5301f7c6d9a",
+    "factory/scripts/refinement-runtime.cjs": "61e7c646a216a1eea1935a95d01f8c26d51851518cd84183d2b74d1256b58fac",
+    "factory/scripts/reservation-runtime.cjs": "f9f3d0b7a606ad30c3fa3c506b7e0d13219648b59441cbb1e26d7cda68f6f3be",
+    "factory/scripts/tracking-runtime.cjs": "761d96a32c2d088a6fa15e69a5d161d5e121d171211d12b0b58a6407ec0e5921",
+    "factory/workflows/collect.json": "abd0dd6cf78118491bdaf064e5d2f5d625b1dbe0614022e785c9903ce43e84f1",
+    "factory/workflows/refine.json": "a68f9d0c160c816e6cc04a3367af01ec6d2382f3b23a1b37a7180a5b2a2a8aa0",
+    "factory/workflows/reserve.json": "ed8ad287ef70ef1def944a52530ec79afe087810f80941aeaad1e6e845bdcf59",
+    "factory/workflows/track.json": "77d3bc2b59a3805716eea2f5203b37d8adbaf975d58016786329e64a7e312650",
+    "factory/tests/basic-b-execution.cjs": "e658d2ddd1f1868e6590136dc40b733b8c88910dbbc8e14a717b18bf2f573424",
+    "factory/tests/basic-b-questions.cjs": "5d3330e1cec2f8511a1283eb58df1f0bc31e8ae7c5b9e1a896e9e516a2f2da4b",
+    "factory/tests/basic-b-recovery.cjs": "3e8006628e48fd66794c078d50e745cd3a6b38708c6fdb4a0133e5b993e1bcc3",
+    "factory/tests/basic-b-review.cjs": "34c9f348bb44190f7733c6b7b036e9b1b198c4e4df251af4a9c561d3f500845b",
+    "factory/tests/basic-b-workflows.cjs": "5878d4dfe03d6eff7d3909874d79f2817d893213275394333c54f7c76d829b56",
+    "factory/tests/build-refinement-bridge.cjs": "1ef4a4456710e144ce88ae4727fb34e77bd4b145b477a1e3314b3a056c51cbff",
+    "factory/tests/build-refinement-schedule.cjs": "df6e25eff3095eaa0ea3797787324dae2483e780d8f59eda39d3fa8c35830800",
+    "factory/tests/build-reservation-bridge.cjs": "395f37e37bcbbea61d2b6bab5a13660ca0dba6f94ab3a4ba808cb18d02c4466b",
+    "factory/tests/build-reservation-schedule.cjs": "27bb4b0b78be5fa6b46f78faae88e4dcc70232296d8ae515bebf9552f1eaa3b9",
+    "factory/tests/build-tracking-test.cjs": "acac3673e559c28a0c75f8c54ee5fb52930c1cbcd4a11c13031c04d083fa8df4",
+    "factory/tests/check-basic-b-native-expressions.cjs": "20ee52a7f211ea9bcd4976e889d5bb092cfb9058d4f793dd167bb4a33bb5daee",
+    "factory/tests/check-basic-b-preparation.cjs": "559cdbdd1ac77bf3bec7d523fa45d2ed70825fe8c98e61475c46dcaaca7509ee",
+    "factory/tests/check-basic-b-us1-expressions.cjs": "8c4015ffa582f6e43959c6848b31116475c476428af1db2c2609e1c43be82b59",
+    "factory/tests/check-refinement-bridge.cjs": "f42d940b6227c474c8eb62bc524e9d6233f5a5df3653a334425559f8daca3a68",
+    "factory/tests/check-refinement-native-expressions.cjs": "649971da329a0c48d2de62c3b7c8de2c47e35f37b2ce9d2ae08de77687e191d4",
+    "factory/tests/check-refinement-native-waits.cjs": "5078311741b4dc1ae3cf7548265ef39b9e7054c1a0df06713f7ee6935e4de7e8",
+    "factory/tests/check-refinement.cjs": "756c55393a2dc9f58c4517a564c9c99fb83e3ada309c6768432d784d6798767a",
+    "factory/tests/check-reservation-bridge.cjs": "5e810d67c05faaf090a16ef89b69be5ac8f8a2ea64a7a8c2f67d3612a485573c",
+    "factory/tests/check-reservation-native-expressions.cjs": "606612911a7d356efd43c501af9c2aebdbd9095daa4eef526e436afa0e3eed41",
+    "factory/tests/check-reservation.cjs": "dacfe5a81aaed4a140a48ebd44c35babbb15633c1b2ff55af06d7a28c9df223b",
+    "factory/tests/check-test-preparation.cjs": "22fd745f5458aa53430e930b6d4de365cc761332a98558edbe61bc76cab50726",
+    "factory/tests/check-tracking.cjs": "8dc9e16c979e4918e9f1e18283b784e434ba6f1099cb680c61f74afc7b4b184e",
+    "factory/tests/check-workflow-mapping.cjs": "c40d34992e7b60e5a40849c64af9a2b1db6d85467d39c68579abe7e87bda3603",
+    "factory/tests/collect-refinement-traces.py": "f99777cf2de5c143d54d5a08de0b3304f12619288abdb26ec111275614e96983",
+    "factory/tests/collect-reservation-traces.py": "350edd1918f5639a2b86357ac650774a8e7f32f0f56a1935eb18756bbf0f3c45",
+    "factory/tests/collect-tracking-evidence.cjs": "17591b738a0e2c582577a4e8b24058b3d0b95546cdc03cc7965b9cfd96eae8f9",
+    "factory/tests/collect-us4.cjs": "75038c0c7e8614a6a6c61a998086fff3f538397813693182ebeee347e9e41a86",
+    "factory/tests/deploy-tracking-fixture.py": "050b0fd496aa662ac076ca0f6e050c1e29daec5783324c703ab1994c9c6dcd67",
+    "factory/tests/fixtures/refinement-cases.json": "8fdf7eb028f0fb263104686c0ede6c5db2ce352620e6df17e5876c3999807a79",
+    "factory/tests/guard-scenarios.md": "fecf4850a07fa884a112300fccb8bf253191fe6e0d54a529bcad30d41af3a1d0",
+    "factory/tests/historical/t008/README.md": "22ab61a51d3030fb8d381208226eeea4b671edb847c2a3aadd00d087c0277e93",
+    "factory/tests/historical/t008/build-guard-bridge.py": "12aed299dda762962d5395d231b9b2820958af19e1dfe1af3a9d6edf01c0ac1f",
+    "factory/tests/historical/t008/check-guard-skeletons.cjs": "123e00c1fb38e3d97437f6479ff6fbeac596d01349528378ede4cde7ee9ee2ab",
+    "factory/tests/historical/t008/collect-guard-traces.py": "c37ed59cfebc59b0f82cb0fac6e55fa8e67591b49e0620b5e3f4828565ff1292",
+    "factory/tests/historical/t008/guard-bridge-sources.json": "9de523d1f39338da97fa7522fe48f7df45d37dc9a1e6544c195d4b6bd89bcd1d",
+    "factory/tests/historical/t008/guard-bridge.json": "d3a86a881763bb5399d6420ae3b616f0d4024f61661cdd114d2c38c18db7474d",
+    "factory/tests/historical/t008/guard-bridge.md": "f95e47c40e2de3443155669d07c50e4e92368a9f6185fad292c424c9b11f16af",
+    "factory/tests/historical/t008/run-guard-bridge.py": "edf9ebe3d59242c6068a94bdbb4fe21001d333d691051152469a05a5e8600654",
+    "factory/tests/historical/t008/summarize-guard-results.py": "4efbbbb0baa212027d9abea8b720c7b41aa150ddd425036fff2b03566c559990",
+    "factory/tests/prepare-test-artifacts.cjs": "eb1e8fd386cde495c126b6e62a8399987f4f713da96b4511489a6a24e3830154",
+    "factory/tests/refinement-bridge-sources.json": "f55b6c18679591f78c6280239421da1c8732192bcb8a49390da7143d9032527b",
+    "factory/tests/refinement-bridge.json": "9aa7eda5ea90d3b74422895eb3d16f9d03a4253626d76db90580d6f55b6364d2",
+    "factory/tests/refinement-bridge.md": "0c00b4148fbd5cf6413c0bd831b1541e845ce55f59ff7bf18da9822d3413f5c7",
+    "factory/tests/refinement-fixture-server.cjs": "e6283f28b7743d7411625d6284f7ac61d802b9bacdd72631ed4c9b0147871b81",
+    "factory/tests/refinement-schedule-sources.json": "ab2848ef9859dccad4c54f135519ec08e906e471afe4a305765ad1ea3e420598",
+    "factory/tests/refinement-schedule.json": "0be31ffc6a9df81c0027d5c1046ed466eb2f95d23eb8e4df810ed954c4b0af3e",
+    "factory/tests/refinement-schedule.md": "293ecdbe48b2e4b35dc9ac37ba67f3f3d2c1c5ec0cae12dbd918538649f9394e",
+    "factory/tests/reservation-bridge-sources.json": "921bc500f2c490a36c22033b2b7618c26b7e190c0b21a70af403e7b0ba0e62cd",
+    "factory/tests/reservation-bridge.json": "49b04964ff4f9e0dcd3f54d57ccc6364abb2bb1a292512559e6afd92734a7e38",
+    "factory/tests/reservation-bridge.md": "61fb9157e91a70302d4bf06714ddf3566ca7231fd5763a5e9b608299a7a9c923",
+    "factory/tests/reservation-fixture-server.cjs": "3348a17d216c34dc1286b599a18abf54a7c552f325d71c5e55423f624a6100b8",
+    "factory/tests/reservation-schedule-sources.json": "5555c954eccc5b8da7749216f44cf7493dfa2e3636b85ca4332fb8f9b7b00e7c",
+    "factory/tests/reservation-schedule.json": "242f44a598981ce5c42ec3103052903529380a763c356d52d21d284f7016692e",
+    "factory/tests/reservation-schedule.md": "e5d79d29a9888d4e56a5619e7c1aaeaac7dc6e2f65b4153952184f8e53962b1b",
+    "factory/tests/run-basic-b-native.cjs": "4408b518ab14171df3ef6c02fda22fc0e940dbc62098e96948f17aba7bd58e2b",
+    "factory/tests/run-basic-b-us1-expressions.py": "0bf487d0b03ff111eaf8078aca087060f2c446f62cc01bd5e59a16442f98a3f2",
+    "factory/tests/run-refinement-bridge.py": "fb869d04eb7a1212e0eaec97ea44d5274d4a4093737ab5bf4ef6ecd152795a3e",
+    "factory/tests/run-refinement-schedule.py": "9118e78bddbec5bb97aa44ab61fcaf1634284461159e9a5a2ed7df046d0f815c",
+    "factory/tests/run-reservation-bridge.py": "2faf1480d28d58740f6a4b6af8e4c856743c2938ef27022f4437e05f32201569",
+    "factory/tests/run-reservation-schedule.py": "30169094d0e57b0fa48433629aa1d5c5f9560d37f791f2b665b82b05778d9ce5",
+    "factory/tests/run-tracking-native.cjs": "d799a34b6817b446b7b0c72e6e4be9ebc57509163b51daf65a1c227346ea57a2",
+    "factory/tests/run-tracking-race.cjs": "51e8f8353e5f4c72d33b8ecaec56ce3acfe61a0f670422365d30eabdb374237c",
+    "factory/tests/test-artifacts.cjs": "8b678febfe15d0da6a6e0731880c93cb540f5a438d2be8e14d5a4c09278acde6",
+    "factory/tests/test-preparation.md": "7a35362c640a5a28cea2586894f1cbbd5023918b1341ecd96b87aa2eae21a107",
+    "factory/tests/tracking-api.cjs": "f9abfe3969e286c489bc88a04e5bb14f7a4ee589f2d0b4ab436b47c4824e7dea",
+    "factory/tests/tracking-cases.cjs": "61d93c39f27ab75e770ad983953ee453b83acc7c7ead07de12a0ed4613301cb1",
+    "factory/tests/tracking-fixture-server.cjs": "bb898b2f2b75a22b8a5acb86e78f0a283b35d4cee002bc047d55469127a4e3ca",
+    "factory/tests/tracking-test.json": "936324e22f49ed2c5711f4a74e4c95013482cce277ca71032df1606138fa8318",
+    "factory/tests/tracking-test.md": "0abd6e300095da27d21bb2b16e53a9e1aa7e486440ff455cf85830fb1c5ec666",
+    "factory/tests/us4-backup.cjs": "9e9f0bf993fdfa2022c85e28137c5d05863148179f63b8f3070b6bf576662584",
+    "factory/tests/us4-backup.py": "c50118ec60f6ea2f8e4212cbbcb507c3ec6e80ffb66f666341430c2484cbd225",
+    "factory/tests/us4-guard.cjs": "da34a6b153d3e0af2ab2c6f4f776bdfe9e0a5b1cb878f7f4e5140b6c7cafec10",
+    "factory/tests/us4-recovery.cjs": "4148f2da07587ea5b9cb5c61ac7281d6d461172d56dc2ae2adea283d472743c2",
+    "factory/tests/us4-validation.md": "6fd66d03c495d8e705eed750a3b38be80dee63e378045612d5648b2921823b34",
+    "factory/runner/README.md": "97e81a504b2e3738c335f8e73976443ed6469ffe6a4cc39ca5093724f9b7c630",
+    "factory/runner/build/lib/factory_runner/__init__.py": "e766976b9633a1fcb8e806e9b421466f1d26d3b8f452a01167169de738eabe77",
+    "factory/runner/build/lib/factory_runner/__main__.py": "0e82ec5550c53f172a7ae5bb67a579ffe781057c0114210086a0176efefc81a3",
+    "factory/runner/build/lib/factory_runner/agent-result.json": "280df1fa39a26427167df2fccebbaa4ed7ed7d7a3d6e608d7423632661e7ab0d",
+    "factory/runner/build/lib/factory_runner/api.py": "a54f19e4d30adbba8394500b4e60158abbad09d890e1b7eda3cc6bf943ac9a1b",
+    "factory/runner/build/lib/factory_runner/codex.py": "ac781e3219a1919fd3d6a1ca8ec5fa348bfad02e799437f8e09f097bdb3b3f94",
+    "factory/runner/build/lib/factory_runner/config.py": "68f141721ed8f2e4706959aa0d575473ec67d3dde28f3f8fdf300cb13bc5a134",
+    "factory/runner/build/lib/factory_runner/contracts.py": "a4c4eb300d048b3442c8e95ff6a1c0a5a87315e45d5845221cc83c6e8ebf96f1",
+    "factory/runner/build/lib/factory_runner/effects.py": "6c0dc1036cb15b11e4ef75602b1b35e3556b2b508922cd0efa6b4ba87bd0ffa0",
+    "factory/runner/build/lib/factory_runner/git.py": "4d514feed59693a9b57ba635767a0c4d5e0eb8a9f3eab59b235ea3c3172e7971",
+    "factory/runner/build/lib/factory_runner/github.py": "da3c6724e6af9a33120cf15524e6387cd4f17f3546764bcc452a9f4ef9d429be",
+    "factory/runner/build/lib/factory_runner/ledger.py": "8b098aedca67e0bc723c4d2c3f5ef1ea95f5b7732c12c0b1f52b77ebfcbe0667",
+    "factory/runner/build/lib/factory_runner/questions.py": "02cdd09176eb27b794165685579ae0adb4028cb2767bfd01cfe6ea7881301f4e",
+    "factory/runner/build/lib/factory_runner/results.py": "fdcf865e1e0d39c193a914fed4652c46964fed5d57548d1264aeac84f288ded3",
+    "factory/runner/build/lib/factory_runner/services.py": "47c14eb68ffe164b11015fb75fdc908defe977492ef23a5c7dd541e9839609af",
+    "factory/runner/build/lib/factory_runner/worker.py": "37a2675d37c6459d65288541e9106ac8f68b595602334728009ef8210b91be75",
+    "factory/runner/config.example.toml": "03a686982fed94661e00886231ed3e8503cd3d77f2d477f71f196a262e324363",
+    "factory/runner/factory_runner/__init__.py": "e766976b9633a1fcb8e806e9b421466f1d26d3b8f452a01167169de738eabe77",
+    "factory/runner/factory_runner/__main__.py": "f63a138d9702a36711f0fe1e0af48da16dde8cc9dc9a4560bf3c3c6da473a90e",
+    "factory/runner/factory_runner/agent-result.json": "280df1fa39a26427167df2fccebbaa4ed7ed7d7a3d6e608d7423632661e7ab0d",
+    "factory/runner/factory_runner/api.py": "76ba3aaaf0f03aec339324d0e5e143e93649c2b8011e7b75e99b893bc6ec7a1a",
+    "factory/runner/factory_runner/codex.py": "ac781e3219a1919fd3d6a1ca8ec5fa348bfad02e799437f8e09f097bdb3b3f94",
+    "factory/runner/factory_runner/config.py": "2bf58aeb85df0b594091660756d3eacb5487dc13465a74d6dda50567e60d69a1",
+    "factory/runner/factory_runner/contracts.py": "e3ecb004fbdb1ccdfbfb4b30829d8463640891dd96e4b5d3ca910fa5f2b47155",
+    "factory/runner/factory_runner/effects.py": "6c0dc1036cb15b11e4ef75602b1b35e3556b2b508922cd0efa6b4ba87bd0ffa0",
+    "factory/runner/factory_runner/git.py": "3ed3f4abf1f60cee93c7d6a88da665ae915c86dc122fcba7cc468ee75db9cc84",
+    "factory/runner/factory_runner/github.py": "1f191fa646c828829cf6cf93e490e2f613498d593b103c45802c3ccd64249c74",
+    "factory/runner/factory_runner/ledger.py": "dd62d9463c3e1c1b9ef61a47542dafc056fb9242382b411198c2483ffe08bf3c",
+    "factory/runner/factory_runner/questions.py": "02cdd09176eb27b794165685579ae0adb4028cb2767bfd01cfe6ea7881301f4e",
+    "factory/runner/factory_runner/reconciler.py": "f6643f294eaac250f1004af077592d608824e4206cf7a533cf401aa914eb4c36",
+    "factory/runner/factory_runner/recovery.py": "113f62415c571c020ace18939961eb84293f9f01d1f97ada8be266132c87ed9f",
+    "factory/runner/factory_runner/results.py": "fdcf865e1e0d39c193a914fed4652c46964fed5d57548d1264aeac84f288ded3",
+    "factory/runner/factory_runner/services.py": "9c8027af0ecbde53564fbd08f61161e0140823aa11fbbe85a0753f4bb5cafd14",
+    "factory/runner/factory_runner/worker.py": "34108284a9b7ed067d0e2862f8f0b8a494648a747211f07f1899019fe62a0d90",
+    "factory/runner/pyproject.toml": "25f4c28b6767ac4ae927de556c8a7af517896eea1467bf5d941108b5f97d16c0",
+    "factory/runner/requirements.lock": "b640e97f166e4e9a8cd6cb6aa6d6a8603c0c4a31dd77567d031423d6e40e7e37",
+    "factory/runner/schemas/agent-result.json": "280df1fa39a26427167df2fccebbaa4ed7ed7d7a3d6e608d7423632661e7ab0d",
+    "factory/runner/systemd/factory-attempt@.service": "2c47fc15dcf5ffaa94a70977d4fcb0853a5b719ade3e079013ad458fbf6ab6c2",
+    "factory/runner/systemd/factory-runner.service": "696b2f0dbe2d2e9f8b9e78840e3bac84c396a2ec24f65f07751c51aa6f16603f",
+    "factory/runner/tests/bridge.py": "1842b139bc922fe4ff99af6160154c9d621014684122cc2be285473eeb5d5d13",
+    "factory/runner/tests/fakes/__init__.py": "94a9796495da4c8e68037a7742af93bc91ed017a1bbf090f23fc551d2cb64313",
+    "factory/runner/tests/support.py": "851780498d465b27e4624183a3188bbd7bb0888a908d332036d0c118418cb1de",
+    "factory/runner/tests/test_adapters.py": "9b2525a1f7e6afd71a90c16d2ce372112f3d636f6d31dbdc63ed1b5aae0174e1",
+    "factory/runner/tests/test_api_ledger.py": "cea3b628ab2cf116bd6d7a5c76090907e6e996371c30c4ec694dd59c033cd441",
+    "factory/runner/tests/test_backup.py": "98ce09f42cea3b45a3559cb82ece83c54544bec85a0c2fca7cf969e59b2cda00",
+    "factory/runner/tests/test_cancellation.py": "d16f27c557d1696427616b8570dfb378657f3955589a6f6c6edda5d3d1297222",
+    "factory/runner/tests/test_execution.py": "77b6421eb277b6606609141d3e791c74680fe16102082ff9fffe36702f493930",
+    "factory/runner/tests/test_questions.py": "4103ad93f47c89a85f8fe59c617b7a66341e94c8991118f517fc11fbd9f2d478",
+    "factory/runner/tests/test_recovery.py": "4bb34911b4a446c300b26a71e651ca7ef7cd324409cf7ae9c62f7fd523063d6e",
+    "factory/runner/tests/test_systemd_deadline.py": "1462f98d4e1cdb1c819ab96086a299371c4539f7899531d99f36457883b9bb4c",
+    "specs/002-basic-b-agent/checklists/requirements.md": "07c71758d881ec4c200b7ad62851a633c0eabe6c029918d0f162f478c69cff41",
+    "specs/002-basic-b-agent/contracts/agent-and-issue.md": "4fe3cc665dcc1b599a0d892b82d72db1071338895bd2d7e72b3e615768ffba88",
+    "specs/002-basic-b-agent/contracts/runner.md": "fb38f5b9af8b24bbccfb93c35dff47e9e8d87890a8492e66503829255701ff02",
+    "specs/002-basic-b-agent/data-model.md": "c481c1777997306283672284659e16ecbf43d2ad5c22b80d668e5f22da60c8d5",
+    "specs/002-basic-b-agent/plan.md": "c0a5c3a87e999126c40bdd88d72e56f807153a19ad4d628749673cabfde9a366",
+    "specs/002-basic-b-agent/quickstart.md": "7fb8a4ffe85a8af6ca906f690890e60555f1adb5121ceee60472eedb96c0dff3",
+    "specs/002-basic-b-agent/research.md": "725448c24e5552401d2b410b7e6cee8e74488f617a2d92f8074b507159a83479",
+    "specs/002-basic-b-agent/spec.md": "f511e6d2db4258e977c0de58cc50b43712a75be822a0f36a1f1060697e7d402f",
+    "specs/002-basic-b-agent/tasks.md": "3eb028204d722dc715179dce3e80cff80de47c8839a77620fa38e701748db312"
+  },
+  "isolated_smoke": {
+    "status": "passed",
+    "issue": 2,
+    "pr": 3,
+    "head": "707a79185ce174410f89b93fc8d3a30aa926f468",
+    "reserve_execution": 1740,
+    "collect_execution": 1741,
+    "track_execution": 1743,
+    "owner_merged": true,
+    "final_label": "Done",
+    "runner_generation": 5,
+    "operational_run": false
+  },
+  "ubuntu_deadline": {
+    "status": "passed",
+    "descendant_lifetime_seconds": 1795.919,
+    "observation_limit_seconds": 1801
+  },
+  "isolated_runner_network": {
+    "n8n_to_runner": "verified",
+    "unauthenticated_http_status": 401
+  },
+  "scheduled_runner_outage": {
+    "status": "passed",
+    "execution": 1744,
+    "failed_at": "Read runner slot",
+    "guard_held": true,
+    "runner_slot_after_recovery": "empty",
+    "guard_after_recovery": "idle"
+  },
+  "ubuntu_scratch_backup_restore": {
+    "status": "passed",
+    "scope": "disposable fixture paths, no live restore",
+    "overwrite_refused": true,
+    "restored_paused": true
+  },
+  "local_publication_canary": {
+    "status": "passed",
+    "scope": "local generated graph, SQLite/API and fake externals",
+    "scheduled_canary_status": "not run"
+  },
+  "scheduled_publication_canary": {
+    "status": "passed",
+    "execution": 1745,
+    "scope": "generated collection planner in isolated n8n, synthetic read nodes and local assertion",
+    "external_github_publication": false,
+    "fixture_deleted": true
+  },
+  "scheduled_collection_decisions": {
+    "status": "passed",
+    "execution": 1746,
+    "actions": [
+      "create_pr",
+      "confirm_pr",
+      "cancel",
+      "post_question",
+      "confirm_question",
+      "post_failure",
+      "confirm_failure"
+    ],
+    "scope": "generated collection planner on isolated n8n schedule with synthetic inputs; no external writes",
+    "fixture_deleted": true
+  },
+  "scheduled_full_graph_http_idle": {
+    "status": "passed",
+    "reserve_execution": 1747,
+    "collect_execution": 1748,
+    "scope": "full scheduled graphs, actual n8n Data Table, loopback fake externals, empty slot and queue",
+    "fixture_http_methods": [
+      "GET"
+    ],
+    "guard_after": "idle",
+    "temporary_workflows_deleted": true
+  },
+  "scheduled_full_graph_failure": {
+    "status": "passed",
+    "execution": 1749,
+    "matched_requests": 17,
+    "scope": "ordered method/path/body verification against loopback HTTP fixture; real n8n schedule and guard; no GitHub or runner state mutation",
+    "guard_after": "idle",
+    "temporary_workflow_deleted": true
+  },
+  "scheduled_full_graph_collection_matrix": {
+    "status": "passed",
+    "cases": [
+      {
+        "action": "create_pr",
+        "execution": 1750,
+        "matched_requests": 23
+      },
+      {
+        "action": "confirm_pr",
+        "execution": 1751,
+        "matched_requests": 21
+      },
+      {
+        "action": "post_question",
+        "execution": 1752,
+        "matched_requests": 18
+      },
+      {
+        "action": "confirm_question",
+        "execution": 1753,
+        "matched_requests": 16
+      },
+      {
+        "action": "cancel",
+        "execution": 1754,
+        "matched_requests": 14
+      }
+    ],
+    "scope": "full collector on isolated n8n with 10-second fixture schedule, real test guard and ordered loopback HTTP responses; no GitHub or runner writes",
+    "guard_after": "idle",
+    "temporary_workflow_deleted": true
+  },
+  "scheduled_full_graph_reserve_matrix": {
+    "status": "passed",
+    "cases": [
+      {
+        "scenario": "initial",
+        "execution": 1755,
+        "matched_requests": 21
+      },
+      {
+        "scenario": "answer",
+        "execution": 1756,
+        "matched_requests": 21
+      },
+      {
+        "scenario": "retry",
+        "execution": 1757,
+        "matched_requests": 21
+      },
+      {
+        "scenario": "slot_busy",
+        "execution": 1758,
+        "matched_requests": 1
+      },
+      {
+        "scenario": "no_candidate",
+        "execution": 1759,
+        "matched_requests": 5
+      }
+    ],
+    "scope": "full reserve on isolated n8n with 10-second fixture schedule, real test guard and ordered loopback HTTP responses; no GitHub or runner writes",
+    "guard_after": "idle",
+    "temporary_workflow_deleted": true
+  },
+  "ubuntu_runner_suite": {
+    "status": "passed",
+    "tests": 83,
+    "passed": 82,
+    "skipped": 1,
+    "skip_reason": "elapsed test ran separately"
+  },
+  "ubuntu_restart_dispatch": {
+    "status": "passed",
+    "scope": "fresh controller process, disposable SQLite and real transient systemd unit, no Codex or GitHub writes",
+    "same_invocation": true,
+    "deadline_retained": true,
+    "duplicate_dispatch_refused": true,
+    "cgroup_stopped_proof": true
+  },
+  "operational_runs": [
+    {
+      "issue": 13,
+      "pr": 14,
+      "outcome": "owner merged; Done",
+      "recovery": "PR creation 403; audited exact-intent recovery and collector retry"
+    },
+    {
+      "issue": 15,
+      "pr": 16,
+      "outcome": "owner merged; Done",
+      "recovery": null
+    }
+  ]
+}

@@ -1,8 +1,8 @@
 # Basic B validation quickstart
 
-This is the future implementation validation guide. Runner commands, files and collect workflow
-below are planned interfaces, not currently available software. This planning phase runs none
-of these services or tests and provisions no credentials.
+The runner, four inactive workflow artifacts and local fake-adapter validation are implemented.
+Provisioning, scheduled isolated acceptance, real model/deadline acceptance and operational
+adoption remain gated. See `evidence/basic-b-validation.md` for current actual outcomes.
 
 ## Preconditions and isolated setup
 
@@ -32,7 +32,7 @@ are later reviewed setup steps, not commands authorized by this guide.
 
 ## Local and isolated validation commands
 
-Planned acceptance entry points, to be implemented with the corresponding tasks:
+Local validation entry points (from the repository root):
 
 ```bash
 factory/local/basic-b-venv/bin/python -m unittest discover -s factory/runner/tests
@@ -40,14 +40,16 @@ node factory/scripts/build-refine.cjs --check
 node factory/scripts/build-reserve.cjs --check
 node factory/scripts/build-track.cjs --check
 node factory/scripts/build-collect.cjs --check
-node factory/tests/run-basic-b-native.cjs --config factory/local/basic-b-test.toml
+node factory/tests/run-basic-b-native.cjs
+# Optional read-only installed native VM checks:
+node factory/tests/run-basic-b-native.cjs --remote-vm
 ```
 
 Keep existing affected Basic A pure/native checks; do not rerun unrelated historical model trials.
 Validate workflow parameter expressions with the deployed VM engine, not default legacy imports.
 Map test copies through reviewed preparation tooling, verify every external destination before
 import, then execute only isolated fixtures. Verify every operational node/stage note matches
-behavior. No implementation or generated JSON is provided by this guide.
+behavior. See `factory/tests/test-preparation.md` for inactive four-workflow fixture mapping and exact mapping deltas.
 
 ## Acceptance matrix
 
