@@ -1,5 +1,7 @@
 # Product ideas
 
+The [project brief](../project-brief.md#scope) calls for a product in its own folder in the factory repository. Build the selected idea under `product/` and keep it comparable in scope to the brief's chess example, which breaks the game into roughly a dozen tasks. Track those tasks as issues in this repository and record any task dependencies in the issues.
+
 - **Pantry planner** — Track ingredients and their expiry dates, view what to use soon, and make a shopping list.
 - **Study timer** — Run configurable focus and break sessions, log completed sessions by subject, and review weekly totals.
 - **Shared expense splitter** — Record who paid for each group expense, split costs among selected people, and show who owes whom.
