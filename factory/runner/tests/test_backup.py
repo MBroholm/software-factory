@@ -1,11 +1,13 @@
+import io
 import json
 import tempfile
 import unittest
+from unittest.mock import patch
 from pathlib import Path
 from types import SimpleNamespace
 from support import payload
 from factory_runner.ledger import Ledger,Conflict
-from factory_runner.contracts import attempt_uuid
+from factory_runner.contracts import attempt_uuid,digest
 from factory_runner.recovery import Recovery
 
 class Backup(unittest.TestCase):
@@ -48,6 +50,49 @@ class Backup(unittest.TestCase):
                                          (attempt,)).fetchone()[0])
         self.assertEqual(audit['original_effect']['status'], 'unknown')
         self.assertEqual(audit['owner_record'], 'owner decision')
+
+    def test_rejected_pr_recovery_requires_exact_denial_and_runs_once(self):
+        p=payload()
+        attempt=attempt_uuid(p)
+        self.l.reserve(attempt,p)
+        sha='b'*40
+        with self.l.tx() as c:
+            result={'outcome':'done','pushed_sha':sha,'stopped_proof':{'cgroup_empty':True}}
+            c.execute("UPDATE attempts SET status='terminal',result=? WHERE id=?",(json.dumps(result),attempt))
+        pr={'head':p['branch'],'base':'main','title':'Fixture','body':'Fixture body'}
+        push={'sha':sha,'head':p['branch'],'base':'main'}
+        self.l.effect(attempt,'push',{'phase':'intent','content':push,'external':None})
+        self.l.effect(attempt,'push',{'phase':'confirmed','content':push,'external':{'sha':sha}})
+        self.l.effect(attempt,'pr',{'phase':'intent','content':pr,'external':None})
+        self.c.repository=p['repository']
+        git=SimpleNamespace(run=lambda args,**kw: f"https://github.com/{p['repository']}.git"
+            if args[0]=='remote' else sha+' refs/heads/'+p['branch'])
+        self.r.reconciler=SimpleNamespace(git=git,services=SimpleNamespace(verify_drained=lambda:True))
+        receipt={'status_code':403,'message':'Resource not accessible by personal access token',
+                 'attempt':attempt,'execution_id':88,'intent_hash':digest(pr)}
+        self.r.pause()
+        with patch('factory_runner.recovery.urlopen') as lookup:
+            with self.assertRaisesRegex(Conflict,'does not match'):
+                self.r.reconcile_rejected_pr(attempt,{**receipt,'intent_hash':'wrong'},'owner decision')
+            lookup.assert_not_called()
+            existing=io.StringIO('[{"number":4}]');existing.headers={}
+            lookup.return_value=existing
+            with self.assertRaisesRegex(Conflict,'existing PR'):
+                self.r.reconcile_rejected_pr(attempt,receipt,'owner decision')
+            self.assertEqual(next(e for e in self.l.get(attempt)['effects'] if e['kind']=='pr')['status'],'pending')
+            empty=io.StringIO('[]');empty.headers={}
+            lookup.return_value=empty
+            self.assertEqual(self.r.reconcile_rejected_pr(attempt,receipt,'owner decision')['pr'],'verified_rejected')
+            self.assertEqual(self.l.slot()['attempt_id'],attempt)
+            with self.l.connect() as c:
+                evidence=json.loads(c.execute('SELECT evidence FROM rejected_pr_recovery WHERE attempt_id=?',
+                                              (attempt,)).fetchone()[0])
+            self.assertEqual(evidence['original_effect']['content'],pr)
+            self.l.effect(attempt,'pr',{'phase':'intent','content':pr,'external':None})
+            another_empty=io.StringIO('[]');another_empty.headers={}
+            lookup.return_value=another_empty
+            with self.assertRaisesRegex(Conflict,'already used'):
+                self.r.reconcile_rejected_pr(attempt,receipt,'owner decision')
 
     def test_pause_blocks_reservation_and_unpaused_backup(self):
         with self.assertRaises(Conflict):self.r.backup(self.root/'bundle')

@@ -2,6 +2,8 @@
 import json
 import shutil
 import sqlite3
+from urllib.parse import urlencode
+from urllib.request import Request, urlopen
 from contextlib import closing
 from pathlib import Path
 from .contracts import canonical,digest
@@ -80,6 +82,66 @@ class Recovery:
             c.execute('UPDATE reservation SET hold_reason=NULL WHERE attempt_id=?', (attempt,))
         return {'attempt':attempt, 'push':'not_issued', 'generation':slot['generation']}
 
+    def reconcile_rejected_pr(self, attempt, receipt, owner_record):
+        """Allow one new collector submission after a verified GitHub denial."""
+        if not owner_record or not owner_record.strip() or len(owner_record)>512:
+            raise ValueError('recorded owner recovery decision required')
+        if (receipt.get('status_code')!=403 or receipt.get('message')!='Resource not accessible by personal access token'
+                or receipt.get('attempt')!=attempt or not str(receipt.get('execution_id','')).isdigit()):
+            raise Conflict('specific rejected GitHub PR receipt required')
+
+        def candidate(state):
+            slot,a=state['slot'],state['attempt']
+            if not state['paused'] or slot['attempt_id']!=attempt or slot['hold_reason']:
+                raise Conflict('paused matching reservation without another hold required')
+            r=a['result'] or {}
+            if (a['status']!='terminal' or a['cancellation'] or r.get('outcome')!='done'
+                    or not (r.get('stopped_proof') or {}).get('cgroup_empty') or not r.get('pushed_sha')):
+                raise Conflict('completed stopped result required')
+            effects={e['kind']:e for e in a['effects']}
+            pending=[e for e in effects.values() if e['status']!='confirmed']
+            if len(pending)!=1 or pending[0]['kind']!='pr' or pending[0]['status']!='pending':
+                raise Conflict('PR must be the only pending effect')
+            effect=pending[0]
+            if (effect['intent_hash']!=receipt.get('intent_hash')
+                    or a['repository']!=self.config.repository
+                    or effect['content'].get('head')!=f"issue-{a['issue_number']}"
+                    or effect['content'].get('base')!='main'
+                    or (effects.get('push',{}).get('external') or {}).get('sha')!=r['pushed_sha']):
+                raise Conflict('PR receipt, branch or push does not match')
+            return slot,a,effect
+
+        slot,a,effect=candidate(self.inspect())
+        self.reconciler.services.verify_drained()
+        owner=a['repository'].split('/')[0]
+        branch=effect['content']['head']
+        git=self.reconciler.git
+        if git.run(['remote','get-url','origin'])!=f"https://github.com/{a['repository']}.git":
+            raise Conflict('unexpected Git remote')
+        ref='refs/heads/'+branch
+        if git.run(['ls-remote','--heads','origin',ref],transport=True).split()!=[a['result']['pushed_sha'],ref]:
+            raise Conflict('pushed branch changed')
+        query=urlencode({'state':'all','head':owner+':'+branch,'per_page':1})
+        request=Request(f"https://api.github.com/repos/{a['repository']}/pulls?{query}",
+                        headers={'Accept':'application/vnd.github+json'})
+        with urlopen(request,timeout=10) as response:
+            if json.load(response)!=[] or response.headers.get('Link'):
+                raise Conflict('existing PR or incomplete GitHub readback')
+        with self.ledger.tx() as c:
+            current=dict(self.ledger._owned(c,attempt,slot['generation']))
+            paused=bool(c.execute('SELECT paused FROM control WHERE id=1').fetchone()[0])
+            _,checked,latest=candidate({'slot':current,'attempt':self.ledger._get(c,attempt),'paused':paused})
+            if latest!=effect or checked['result']!=a['result']:
+                raise Conflict('recovery evidence changed during readback')
+            if c.execute('SELECT 1 FROM rejected_pr_recovery WHERE attempt_id=?',(attempt,)).fetchone():
+                raise Conflict('PR rejection recovery already used')
+            evidence={'owner_record':owner_record.strip(),'receipt':receipt,'original_effect':effect,
+                      'generation':slot['generation'],'remote_sha':a['result']['pushed_sha'],
+                      'observed_at':self.ledger.clock()}
+            c.execute('INSERT INTO rejected_pr_recovery VALUES (?,?)',(attempt,canonical(evidence)))
+            c.execute("DELETE FROM effects WHERE attempt_id=? AND kind='pr'",(attempt,))
+        return {'attempt':attempt,'pr':'verified_rejected','generation':slot['generation']}
+
     def _safe(self):
         state=self.inspect()
         if not state['paused'] or state['slot']['attempt_id'] or state['slot']['hold_reason']:raise Conflict('pause and fully drain/reconcile before backup or restore')
@@ -115,7 +177,7 @@ class Recovery:
         # Never overwrite a ledger with fewer/different attempts or effects, even when empty now.
         with self.ledger.tx() as current,restored.connect() as source:
             self._safe()
-            for table in ('attempts','effects','authorizations','questions','tasks','push_recovery'):
+            for table in ('attempts','effects','authorizations','questions','tasks','push_recovery','rejected_pr_recovery'):
                 before=[tuple(r) for r in current.execute('SELECT * FROM '+table)]
                 after=[tuple(r) for r in source.execute('SELECT * FROM '+table)]
                 if before!=after:raise Conflict('restore would replace retained history; owner recovery must reconcile it first')

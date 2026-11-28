@@ -83,3 +83,13 @@ current directories privately first; restore refuses overwrites or a ledger that
 history. Lost/older ledger history requires explicit owner investigation outside this conservative
 command. Configuration and credential files remain separately owner-managed; they are not placed
 in bundles. Restore leaves the runner paused; explicit `resume` requires a fully drained/reconciled runner. No automatic recovery reset or replay is provided.
+
+A definitive GitHub credential denial can be reconciled with
+`reconcile-rejected-pr --attempt UUID --receipt /private/verified-receipt.json
+--owner-record "recorded decision"`. Use it only after pausing schedules and
+draining executions. The receipt must come from the failed n8n execution and
+contain its execution ID, attempt UUID, journal intent hash, exact HTTP 403
+status and GitHub credential-denial message. The runner verifies the stopped
+result, unchanged repository branch and SHA, and absence of a PR. It keeps an
+audit copy of the denied intent and permits one new collector submission for
+that attempt. Use the normal collector and verify release after recovery.

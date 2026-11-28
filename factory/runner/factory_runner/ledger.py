@@ -51,6 +51,8 @@ class Ledger:
               external TEXT, observed_at REAL NOT NULL, PRIMARY KEY(attempt_id,kind));
             CREATE TABLE IF NOT EXISTS push_recovery (
               attempt_id TEXT PRIMARY KEY REFERENCES attempts(id), evidence TEXT NOT NULL);
+            CREATE TABLE IF NOT EXISTS rejected_pr_recovery (
+              attempt_id TEXT PRIMARY KEY REFERENCES attempts(id), evidence TEXT NOT NULL);
             ''')
     def connect(self):
         c=sqlite3.connect(self.path,timeout=2,isolation_level=None,factory=Connection); c.row_factory=sqlite3.Row

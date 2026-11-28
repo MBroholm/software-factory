@@ -8,8 +8,8 @@
     "native": "designated factory-guard-test n8n 2.48.8, read-only VM/core checks"
   },
   "runner_tests": {
-    "discovered": 83,
-    "passed": 82,
+    "discovered": 84,
+    "passed": 83,
     "skipped": 1,
     "skip_reason": "opt-in actual Ubuntu elapsed deadline"
   },
@@ -140,10 +140,8 @@
       "scheduled_or_provisioned_status": "not run"
     }
   ],
-  "pending_tasks": [
-    "T044 owner adoption then genuine task"
-  ],
-  "genuine_task_count": 2,
+  "pending_tasks": [],
+  "genuine_task_count": 4,
   "failures": [
     "Sandbox Python bridge timeout; approved local execution passed",
     "Sticky-note notes/content validation corrected",
@@ -550,5 +548,19 @@
     "deadline_retained": true,
     "duplicate_dispatch_refused": true,
     "cgroup_stopped_proof": true
-  }
+  },
+  "operational_runs": [
+    {
+      "issue": 13,
+      "pr": 14,
+      "outcome": "owner merged; Done",
+      "recovery": "PR creation 403; audited exact-intent recovery and collector retry"
+    },
+    {
+      "issue": 15,
+      "pr": 16,
+      "outcome": "owner merged; Done",
+      "recovery": null
+    }
+  ]
 }

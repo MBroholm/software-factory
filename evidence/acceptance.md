@@ -183,3 +183,11 @@ preparation are recorded in [Basic B validation](basic-b-validation.md), with ex
 scheduled acceptance, real Codex/deadline, owner provisioning/manual import and genuine Basic B
 run. [Adoption preparation](basic-b-adoption.md) grants no deployment authority. The genuine-run
 count remains two; three additional genuine task runs are still required.
+
+## First operational Basic B run (2026-11-28)
+
+[Issue #13 and PR #14](basic-b-real-run.md) complete the first operational Basic B review loop after a credential repair and audited recovery. Three genuine project runs are now recorded; two more are required.
+
+## Second operational Basic B run (2026-11-28)
+
+[Issue #15 and PR #16](basic-b-real-run.md#second-operational-basic-b-run) verified owner discussion captured in refinement, explicit approval, automated PR, owner merge, and Done. The project now has four genuine runs.

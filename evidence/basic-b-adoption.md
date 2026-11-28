@@ -42,3 +42,14 @@ source/imported fingerprints after owner action; keep those fields pending until
 
 Rollback requires pause/drain and stopped/effect reconciliation. Preserve the current ledger,
 worktrees, manifests and unresolved intents; never restore an old ledger to forget a live attempt.
+
+## Observed operational cutover
+
+The owner configured the dedicated operational account and credentials, paused
+Basic A, and manually imported the four inactive artifacts mapped at `70beef6`.
+Readback verified the code, node mappings, connections, schedules and production
+concurrency of one. The editor omitted some workflow settings; the owner restored
+those settings before staggered activation. The four Basic B schedules were then
+verified active; Basic A remained inactive. See [operational run evidence](basic-b-real-run.md)
+for the credential denial and recovery in the first run, and the subsequent
+run through owner merge and Done. The rollback details stay in the local NAS log.

@@ -2,6 +2,7 @@
 import argparse
 import json
 import os
+from pathlib import Path
 from .config import Config, preflight, secret
 from .ledger import Ledger
 from .services import Services
@@ -12,13 +13,13 @@ from .worker import Worker
 
 def main():
     os.umask(0o077)
-    p=argparse.ArgumentParser(); p.add_argument('command',choices=['preflight','serve','worker','pause','drain','inspect','backup','restore','resume','reconcile-unissued-push'])
-    p.add_argument('--bundle');p.add_argument('--owner-record');p.add_argument('--config',required=True); p.add_argument('--attempt'); args=p.parse_args()
+    p=argparse.ArgumentParser(); p.add_argument('command',choices=['preflight','serve','worker','pause','drain','inspect','backup','restore','resume','reconcile-unissued-push','reconcile-rejected-pr'])
+    p.add_argument('--receipt');p.add_argument('--bundle');p.add_argument('--owner-record');p.add_argument('--config',required=True); p.add_argument('--attempt'); args=p.parse_args()
     c=Config.load(args.config); ledger=Ledger(c.database); services=Services()
     if args.command=='preflight':
         report=preflight(c,ledger); print(json.dumps(report)); return 0 if report['ok'] else 1
     worker=Worker(ledger,GitHub(c),Git(c),Codex(c),services,(secret(c.bearer_file),secret(c.github_token_file)))
-    if args.command in {'pause','drain','inspect','backup','restore','resume','reconcile-unissued-push'}:
+    if args.command in {'pause','drain','inspect','backup','restore','resume','reconcile-unissued-push','reconcile-rejected-pr'}:
         from .reconciler import Reconciler
         from .recovery import Recovery
         recovery=Recovery(ledger,c,Reconciler(ledger,services,worker.git))
@@ -28,6 +29,9 @@ def main():
         elif args.command=='reconcile-unissued-push':
             if not args.attempt:p.error('--attempt required')
             report=recovery.reconcile_unissued_push(args.attempt,args.owner_record)
+        elif args.command=='reconcile-rejected-pr':
+            if not args.attempt or not args.receipt:p.error('--attempt and --receipt required')
+            report=recovery.reconcile_rejected_pr(args.attempt,json.loads(Path(args.receipt).read_text()),args.owner_record)
         elif args.command=='drain':
             recovery.pause();recovery.reconciler.reconcile();report=recovery.inspect()
         else:
