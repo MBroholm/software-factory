@@ -51,37 +51,27 @@ shell commands; there is no `$VARIABLE` expansion or implicit process-environmen
 
 ## Outputs and import
 
-Test outputs: `factory/local/mapped/test/refine.json`, `factory/local/mapped/test/reserve.json`,
-`factory/local/mapped/test/track.json` and `manifest.json`. Operational outputs use
-`factory/local/mapped/operational/` after running:
+For an operational Basic B package, set `FACTORY_RUNNER_CREDENTIAL_ID` to the
+saved Header Auth credential ID. Set `FACTORY_RUNNER_URL` to the approved private
+HTTP origin with its port, and `FACTORY_RUNNER_MODEL_CONFIG` to the runner's
+`model_config` value. Use the package commands from the repository root.
 
 ```bash
 node factory/scripts/map-workflows.cjs --env factory/local/operational.env
+node factory/scripts/map-workflows.cjs --env factory/local/operational.env --check
 ```
 
-These are the files to select during manual import. The manifest records source/mapped SHA-256
-hashes and target; it contains no .env contents or API keys. Files are mode 600. Build/validate
-all selected inputs before writing. Re-run after source or mapping changes; `--check` detects
-stale or missing files without modifying them. To map just one workflow:
+Select the four inactive JSON copies in `factory/local/mapped/operational/basic-b/`
+for owner manual import. This directory preserves older Basic A packages. Its
+private manifest records source and mapped SHA-256 hashes and the exact node
+mapping changes. The mapper reads saved IDs and a private address. Bearer values,
+tokens, and API keys stay in their credential stores. Use `--workflow collect`
+or another individual workflow only when inspecting a mapping. For adoption,
+generate and verify the four as a single package.
 
-```bash
-node factory/scripts/map-workflows.cjs --env factory/local/test.env --workflow track
-```
-
-Only refinement needs the Gemini reference; reserve/track do not. Single-workflow runs write a
-separate `<workflow>-manifest.json`. Old outputs are retained, so verify the selected workflow
-with matching `--workflow ... --check` before importing.
-
-Mapping operational source to test IDs does **not** isolate its external writes: these JSONs
-retain real GitHub/Gemini HTTP destinations. Do not execute them on ordinary factory issues as
-an isolated test. Use the designated fixture copies and T033 destination/scope verification for
-synthetic testing. `FACTORY_TARGET` is an output selector, not a sandbox or verified identity.
-
-Owner PR review and manual matching-revision operational import remain required. Review the
-source hash against the reviewed source; mapping changes only table/credential references and
-inactive status. Confirm imported mappings before activation. This tool does not resolve the
-native-access or isolation checks by itself. US3 T033/T023 subsequently passed through the
-separate credential-free native test tooling; see [review validation](../evidence/review-validation.md).
+For synthetic workflows, use the separate Basic B fixture mapper documented in
+`factory/tests/test-preparation.md`. The operational mapper rejects test targets
+for Basic B exports, which retain operational GitHub and Gemini destinations.
 
 ## Basic B four-artifact mapping (inactive implementation)
 
